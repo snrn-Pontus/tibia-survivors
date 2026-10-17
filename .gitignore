@@ -1,0 +1,6 @@
+node_modules/
+dist/
+# Extracted from your own Tibia client; CipSoft's artwork, never commit it.
+public/assets/
+tools/.cache/
+__pycache__/

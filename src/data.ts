@@ -1,0 +1,103 @@
+// Game design on top of the real Tibia data: vocation kits, waves, server rates and shop prices.
+import type { VocationId } from "./tibia/db";
+
+export interface VocationDef {
+  id: VocationId;
+  name: string;
+  sprite: string;
+  blurb: string;
+  skills: number[]; // fist, club, sword, axe, distance, shielding
+  magicLevel: number;
+  equipment: string[]; // starter item names (STARTER_ITEMS in tools/fetch_tibia_data.py)
+  ammo?: string;
+  supplies: Record<string, number>;
+}
+
+export const START_LEVEL = 1; // a rookie; the vocation is chosen at VOCATION_LEVEL
+export const VOCATION_LEVEL = 8;
+export const START_GOLD = 0; // a fresh Tibia character has no gold
+
+/** Rookgaard: no vocation (Tibia's "None"), with the sword and wooden shield every rookie buys first. */
+export const ROOKIE: VocationDef = {
+  id: "none", name: "Rookie", sprite: "rookie", skills: [10, 10, 10, 10, 10, 10], magicLevel: 0,
+  equipment: ["club", "coat"], // the classic Rookgaard start; better gear is unlocked with souls
+  supplies: {},
+  blurb: "No vocation yet: reach level 8 to choose one.",
+};
+
+/** Vocations, chosen at level 8: their kit replaces the rookie gear; skills and level carry over. */
+export const VOCATIONS: VocationDef[] = [
+  { id: "knight", name: "Knight", sprite: "knight", skills: [12, 15, 15, 15, 12, 15], magicLevel: 0,
+    equipment: ["sword", "steel shield", "chain armor", "brass helmet", "brass legs", "leather boots"],
+    supplies: { "health potion": 40, "mana potion": 10 },
+    blurb: "Swords, axes and clubs. Exori spells and Wound Cleansing." },
+  { id: "paladin", name: "Paladin", sprite: "paladin", skills: [12, 12, 12, 12, 15, 12], magicLevel: 0,
+    equipment: ["bow", "leather armor", "leather helmet", "leather legs", "leather boots"], ammo: "arrow",
+    supplies: { "health potion": 25, "mana potion": 25, arrow: 300 },
+    blurb: "Bows and arrows. Ethereal Spear, Divine Missile, Divine Caldera." },
+  { id: "sorcerer", name: "Sorcerer", sprite: "sorcerer", skills: [12, 12, 12, 12, 12, 12], magicLevel: 0,
+    equipment: ["wand of vortex", "blue robe", "magician hat", "leather legs", "leather boots"],
+    supplies: { "health potion": 15, "mana potion": 40 },
+    blurb: "Wands; fire, energy and death magic. Great Fireball and Sudden Death runes." },
+  { id: "druid", name: "Druid", sprite: "druid", skills: [12, 12, 12, 12, 12, 12], magicLevel: 0,
+    equipment: ["snakebite rod", "blue robe", "magician hat", "leather legs", "leather boots"],
+    supplies: { "health potion": 15, "mana potion": 40 },
+    blurb: "Rods; ice and earth magic, strong healing. Avalanche and Stone Shower runes." },
+];
+
+/** Real Tibia's rates: x1. Boosts picked on level-up multiply them (see upgrades.ts). */
+export const expRate = (_level: number) => 1;
+export const SKILL_RATE = 1;
+export const MAGIC_RATE = 1;
+
+/** The world: zones by distance from where you start, like Tibia's hunting grounds. The world doesn't
+ *  follow your level; you choose how far out to push. Each zone's bosses show up, one at a time, after you've
+ *  killed enough there (`bossAt` kills for the first, then every `bossAt` more). */
+export interface Zone { name: string; level: number; from: number; pool: string[]; bosses: string[]; maxAlive: number; spawnEvery?: number }
+export const ZONE_WIDTH = 30; // tiles per ring
+export const BOSS_KILLS = 20;
+export const ZONES: Zone[] = [
+  { name: "Rookgaard Fields", level: 1, pool: ["rat", "bat", "snake", "spider", "cave rat"], bosses: ["munster"], maxAlive: 3, spawnEvery: 3 },
+  { name: "Rookgaard Wilds", level: 4, pool: ["cave rat", "wolf", "bug", "troll", "rotworm"], bosses: ["teleskor", "apprentice sheng"], maxAlive: 4, spawnEvery: 2.2 },
+  { name: "Troll Woods", level: 10, pool: ["troll", "orc", "rotworm", "poison spider", "orc spearman"], bosses: ["rotworm queen", "the snapper"], maxAlive: 6 },
+  { name: "Orc Fortress", level: 15, pool: ["orc", "orc spearman", "orc warrior", "skeleton", "amazon", "minotaur"], bosses: ["the horned fox"], maxAlive: 7 },
+  { name: "Minotaur Hills", level: 22, pool: ["orc warrior", "orc shaman", "minotaur", "ghoul", "dwarf soldier", "scorpion", "valkyrie"], bosses: ["dharalion", "general murius"], maxAlive: 8 },
+  { name: "Cyclopolis", level: 30, pool: ["valkyrie", "hunter", "slime", "cyclops", "orc berserker", "mummy", "bonelord"], bosses: ["necropharus"], maxAlive: 8 },
+  { name: "Ancient Tombs", level: 40, pool: ["cyclops", "mummy", "bonelord", "demon skeleton", "vampire", "necromancer", "dragon"], bosses: ["the evil eye"], maxAlive: 9 },
+  { name: "Vampire Crypts", level: 55, pool: ["dragon", "vampire", "necromancer", "giant spider", "banshee"], bosses: ["warlord ruzad", "zevelon duskbringer"], maxAlive: 9 },
+  { name: "Dragon Lairs", level: 70, pool: ["dragon", "giant spider", "banshee", "lich", "hero"], bosses: ["the old widow"], maxAlive: 10 },
+  { name: "Hero Cave", level: 90, pool: ["hero", "lich", "dragon lord", "behemoth"], bosses: ["the many"], maxAlive: 10 },
+  { name: "Dragon Lord Peaks", level: 110, pool: ["dragon lord", "behemoth", "hydra"], bosses: ["demodras"], maxAlive: 10 },
+  { name: "Hydra Swamps", level: 130, pool: ["dragon lord", "hydra", "behemoth", "demon"], bosses: ["the plasmother", "dracola"], maxAlive: 11 },
+  { name: "Pits of Inferno", level: 200, pool: ["demon", "behemoth", "hydra", "juggernaut"], bosses: ["orshabaal", "ghazbaran", "morgaroth", "ferumbras", "gaz'haragoth"], maxAlive: 12 },
+].map((z, i) => ({ ...z, from: i * ZONE_WIDTH }));
+
+/** Which zone a tile is in: rings around the start. */
+export function zoneAt(tx: number, ty: number): number {
+  return Math.min(ZONES.length - 1, Math.floor(Math.hypot(tx, ty) / ZONE_WIDTH));
+}
+
+export const spawnEvery = 1.4; // seconds between spawns while below the zone's maxAlive (unless the zone says otherwise)
+/** Souls also come from exploring and surviving, so even a run without kills moves you forward. */
+export const SOULS_PER_ZONE = 3; // x (zone number + 1), the first time you reach a zone in a run
+export const SOUL_EVERY = 30; // seconds alive per soul
+/** Souls (the meta currency) for a kill: a tenth of the experience, a fifth for bosses. At least 1. */
+export const soulsFor = (exp: number, boss: boolean) => Math.max(1, Math.round(exp / (boss ? 5 : 10)));
+/** Bestiary kill counts that unlock a stage (and a level-up style choice). */
+export const BESTIARY_STAGES = [5, 25, 100];
+
+/** Supplies sold in the shop (prices come from Canary's NPC shops), and how many per purchase. */
+export const SHOP: { name: string; count: number }[] = [
+  { name: "health potion", count: 10 }, { name: "mana potion", count: 10 },
+  { name: "strong health potion", count: 10 }, { name: "strong mana potion", count: 10 },
+  { name: "great health potion", count: 10 }, { name: "great mana potion", count: 10 },
+  { name: "great spirit potion", count: 10 }, { name: "ultimate health potion", count: 10 },
+  { name: "arrow", count: 100 },
+  { name: "light magic missile rune", count: 20 }, { name: "heavy magic missile rune", count: 20 },
+  { name: "stalagmite rune", count: 20 }, { name: "holy missile rune", count: 20 },
+  { name: "fireball rune", count: 20 }, { name: "icicle rune", count: 20 }, { name: "explosion rune", count: 20 },
+  { name: "stone shower rune", count: 20 }, { name: "thunderstorm rune", count: 20 },
+  { name: "great fireball rune", count: 20 }, { name: "avalanche rune", count: 20 },
+  { name: "sudden death rune", count: 20 }, { name: "intense healing rune", count: 10 },
+  { name: "ultimate healing rune", count: 10 },
+];
