@@ -35,7 +35,7 @@ export const VOCATIONS: VocationDef[] = [
     supplies: { "health potion": 40, "mana potion": 10 },
     blurb: "Axes, swords and clubs, with a shield. Exori spells and Wound Cleansing." },
   { id: "paladin", name: "Paladin", sprite: "paladin", skills: [12, 12, 12, 12, 15, 12], magicLevel: 0, ...kit("paladin"),
-    supplies: { "health potion": 25, "mana potion": 25, spear: 25, arrow: 250 },
+    supplies: { "health potion": 25, "mana potion": 25, spear: 25 },
     blurb: "Spears and a shield, or a bow. Ethereal Spear, Divine Missile, Divine Caldera." },
   { id: "sorcerer", name: "Sorcerer", sprite: "sorcerer", skills: [12, 12, 12, 12, 12, 12], magicLevel: 0, ...kit("sorcerer"),
     supplies: { "health potion": 15, "mana potion": 40 },

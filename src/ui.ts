@@ -280,10 +280,12 @@ export class UI {
       ch.gold -= price;
       const it = item(id)!, slot = ch.slotFor(it)!;
       const old = ch.equipment[slot];
-      if (old && old !== ch.thrown) ch.stash(old);
+      if (slot === "weapon") ch.takeOffWeapon();
+      else if (old) ch.stash(old);
       ch.equip(id);
       ch.fitAmmo();
       g.msg(`You bought and equipped ${it.name}.`, "#80ff80");
+      if (it.ammotype && ch.ammo?.ammotype !== it.ammotype) g.msg(`You have no ${it.ammotype}s for it: buy some under Ammunition.`, "#ff9c30");
     };
     const stock = (id: number, n: number, price: number, then?: () => void) => () => {
       ch.gold -= price;
@@ -314,8 +316,7 @@ export class UI {
           // Thrown weapons come in stacks; topping up the stack in your hand is fine.
           rows.push({ id: w.id, count: worn ? ch.supplies.get(w.id) ?? 0 : undefined, note, packs: packs(w.id, [10, 25, 50], () => {
             if (ch.equipment.weapon !== w.id) {
-              const old = ch.equipment.weapon;
-              if (old && old !== ch.thrown) ch.stash(old);
+              ch.takeOffWeapon();
               ch.equip(w.id);
             }
           }, w.usable) });

@@ -902,7 +902,7 @@ export class Hud {
 
   private supplies(g: Game) {
     const ch = g.ch;
-    const sup = [...ch.supplies.entries()].filter(([id, n]) => n > 0 && (POTIONS[id] || SPELLS.some((s) => s.runeId === id) || id === ch.equipment.ammo || id === ch.thrown));
+    const sup = [...ch.supplies.entries()].filter(([id, n]) => n > 0 && (POTIONS[id] || SPELLS.some((s) => s.runeId === id) || !!item(id)?.ammotype || id === ch.thrown));
     const sig = sup.map(([id, n]) => `${id}:${n}`).join();
     if (!this.changed("supplies", sig)) return;
     this.wins.get("supplies")!.body.innerHTML = `<div class="grid">${sup.map(([id, n]) =>

@@ -226,6 +226,19 @@ export class Character {
   /** A thrown weapon in hand (spear, throwing star...): the stack is counted in supplies, like ammunition. */
   get thrown(): number | undefined { return this.weapon?.weapontype === "missile" ? this.equipment.weapon : undefined; }
 
+  /** Put the weapon in hand into the backpack; a thrown weapon takes its whole stack with it (it used to stay
+   *  in supplies, out of sight, when you switched to a bow). */
+  takeOffWeapon() {
+    const id = this.equipment.weapon;
+    if (!id) return;
+    if (id === this.thrown) {
+      const n = this.supplies.get(id) ?? 0;
+      this.supplies.delete(id);
+      if (n > 0) this.stash(id, n);
+    } else this.stash(id);
+    delete this.equipment.weapon;
+  }
+
   /** The last spear broke: back to the best weapon in the backpack (or fists). */
   outOfThrown() {
     delete this.equipment.weapon;
@@ -360,8 +373,7 @@ export class Character {
     if (!w || !this.prefers(w) || !canWear(w, v.id, this.level)) {
       const kitWeapon = v.equipment.map((x) => (typeof x === "number" ? x : itemId(x))).find((id) => this.slotFor(item(id)!) === "weapon");
       if (kitWeapon) {
-        if (w && this.equipment.weapon !== this.thrown) this.stash(this.equipment.weapon!);
-        delete this.equipment.weapon;
+        this.takeOffWeapon();
         this.equip(kitWeapon);
       }
     }
@@ -428,8 +440,10 @@ export class Character {
     if (slot === "weapon" && it.slottype === "two-handed" && this.equipment.shield) { this.stash(this.equipment.shield); delete this.equipment.shield; }
     if (slot === "shield" && this.weapon?.slottype === "two-handed") { this.stash(this.equipment.weapon!); delete this.equipment.weapon; }
     const old = this.equipment[slot];
-    // A thrown weapon or ammunition you take off keeps its count in supplies; anything else goes in the backpack.
-    if (old && old !== this.thrown && slot !== "ammo") this.stash(old);
+    // What you took off goes in the backpack (spears with their stack); ammunition stays in supplies, where all
+    // of it is listed.
+    if (slot === "weapon") { if (old !== id) this.takeOffWeapon(); }
+    else if (old && slot !== "ammo") this.stash(old);
     this.equipment[slot] = id;
     if (stack) this.supplies.set(id, (this.supplies.get(id) ?? 0) + n);
     return null;
