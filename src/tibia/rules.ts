@@ -41,6 +41,25 @@ export function normalRandom(min: number, max: number): number {
 
 export const uniform = (min: number, max: number) => min + Math.floor(Math.random() * (max - min + 1));
 
+/** ConditionDamage::generateDamageList: the ticks of a damage-over-time condition, from `start` down to 1,
+ *  each value repeated while the running sum tracks `amount` (a 30 poison: 2 seven times, then 1 sixteen times). */
+export function damageList(amount: number, start: number): number[] {
+  amount = Math.abs(amount);
+  const list: number[] = [];
+  let sum = 0;
+  for (let i = start; i > 0; i--) {
+    const med = Math.trunc(((start + 1 - i) * amount) / start);
+    let x1: number, x2: number;
+    do {
+      sum += i;
+      list.push(i);
+      x1 = Math.abs(1 - (sum + i) / med);
+      x2 = Math.abs(1 - sum / med);
+    } while (x1 < x2);
+  }
+  return list;
+}
+
 /** Tibia's fight modes. Player::getAttackFactor and getDefenseFactor, and the fight factor in
  *  PlayerWheel::calculateMitigation. Full attack defends at 0.5 only right after an attack, else 1.0. */
 export type FightMode = "offensive" | "balanced" | "defensive";

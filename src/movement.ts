@@ -62,7 +62,8 @@ export function startStep(w: Walker, dx: number, dy: number, seconds: number, ca
   w.ty += dy;
   w.stepDur = seconds;
   w.stepT = carry;
-  if (dx || dy) w.dir = Math.abs(dx) > Math.abs(dy) ? (dx > 0 ? 1 : 3) : dy > 0 ? 2 : 0;
+  // A diagonal step faces east or west, as the Tibia client shows it.
+  if (dx || dy) w.dir = Math.abs(dx) >= Math.abs(dy) ? (dx > 0 ? 1 : 3) : dy > 0 ? 2 : 0;
 }
 
 /** Advance the current step. Returns time left over in this frame after the step ended (or -1 if still stepping). */

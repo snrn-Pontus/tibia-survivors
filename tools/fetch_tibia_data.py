@@ -24,6 +24,8 @@ MONSTERS = [
     "munster", "teleskor", "apprentice sheng", "rotworm queen", "the horned fox", "warlord ruzad", "the evil eye",
     "general murius", "necropharus", "dharalion", "the frog prince", "zevelon duskbringer", "the old widow",
     "the snapper", "the many", "the plasmother", "dracola", "ghazbaran", "morgaroth", "gaz'haragoth",
+    # only ever summoned (monster.summon in the files above)
+    "hyaena", "minotaur archer", "minotaur guard", "minotaur mage", "fire elemental", "bonebeast", "defiler", "deathslicer",
 ]
 
 SPELL_FILES = {
@@ -83,6 +85,26 @@ def fetch(path):
         return fh.read()
 
 
+def fetch_bytes(path):
+    fetch(path)
+    with open(os.path.join(CACHE, path.replace("/", "__")), "rb") as fh:
+        return fh.read()
+
+
+def stackable_ids():
+    """Items that stack (gold, arrows, potions, most creature products): the appearances' `cumulative` flag.
+    Canary ships the client's appearances.dat for exactly this."""
+    sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+    from tibia_assets import parse_message, _first
+    out = set()
+    for raw in parse_message(fetch_bytes("data/items/appearances.dat")).get(1, []):
+        f = parse_message(raw)
+        flags = parse_message(_first(f, 3, b""))
+        if _first(flags, 6, 0):  # AppearanceFlags.cumulative
+            out.add(_first(f, 1, 0))
+    return out
+
+
 def tree():
     local = os.path.join(CACHE, "tree.json")
     if not os.path.exists(local):
@@ -116,6 +138,11 @@ ELEMENT = {
     "COMBAT_FIREDAMAGE": "fire", "COMBAT_LIFEDRAIN": "lifedrain", "COMBAT_MANADRAIN": "manadrain",
     "COMBAT_DROWNDAMAGE": "drown", "COMBAT_ICEDAMAGE": "ice", "COMBAT_HOLYDAMAGE": "holy",
     "COMBAT_DEATHDAMAGE": "death", "COMBAT_HEALING": "healing", "COMBAT_UNDEFINEDDAMAGE": "physical",
+}
+# Damage over time, and the damage type each tick does (Canary's ConditionDamage).
+CONDITION = {
+    "CONDITION_POISON": "earth", "CONDITION_FIRE": "fire", "CONDITION_ENERGY": "energy", "CONDITION_DROWN": "drown",
+    "CONDITION_BLEEDING": "physical", "CONDITION_FREEZING": "ice", "CONDITION_DAZZLED": "holy", "CONDITION_CURSED": "death",
 }
 
 
@@ -185,10 +212,40 @@ def parse_monster(src, en):
     m["runHealth"] = int(flags.get("runHealth", 0) or 0)
     attacks = []
     for e in entries(lua_block(src, r"monster\.attacks\s*=\s*\{")):
-        f = lua_fields(e)
+        f = lua_fields(re.sub(r"\{[^{}]*\}", "", e))  # without the nested condition table (its interval is the tick)
         a = {"name": f.get("name"), "interval": f.get("interval", 2000), "chance": f.get("chance", 100),
              "min": abs(f.get("minDamage", 0) or 0), "max": abs(f.get("maxDamage", 0) or 0)}
-        if a["name"] != "melee":
+        # Damage over time. A hit that also poisons (condition = { totalDamage, interval }), or a spell that only
+        # does damage over time (name = "condition", min/max the total), ticking every 2 s unless it says otherwise.
+        sub = re.search(r"condition\s*=\s*\{([^{}]*)\}", e)
+        if sub:
+            c = lua_fields(sub.group(1))
+            if c.get("type") in CONDITION and c.get("totalDamage"):
+                tot = abs(c["totalDamage"])
+                a["condition"] = {"element": CONDITION[c["type"]], "min": tot, "max": tot, "tick": c.get("interval", 2000)}
+        if a["name"] in MONSTER_FIELDS:
+            # Field spells (Monsters::deserializeSpell): no damage of their own, they leave a field item on each tile.
+            a = {"name": "field", "interval": a["interval"], "chance": a["chance"], "min": 0, "max": 0,
+                 "field": MONSTER_FIELDS[a["name"]], "target": bool(f.get("target", False)),
+                 "shoot": en.get(f.get("shootEffect"), 0), "effect": en.get(f.get("effect"), 0)}
+            for k in ("range", "radius", "length", "spread"):
+                if isinstance(f.get(k), int):
+                    a[k] = f[k]
+            attacks.append(a)
+            continue
+        if a["name"] == "condition":
+            if f.get("type") not in CONDITION or not a["max"]:
+                continue  # e.g. drowning without damage
+            a["condition"] = {"element": CONDITION[f["type"]], "min": min(a["min"], a["max"]), "max": max(a["min"], a["max"]), "tick": 2000}
+            a["element"] = CONDITION[f["type"]]
+            a["min"] = a["max"] = 0
+            for k in ("range", "radius", "length", "spread"):
+                if isinstance(f.get(k), int):
+                    a[k] = f[k]
+            a["target"] = bool(f.get("target", False))
+            a["shoot"] = en.get(f.get("shootEffect"), 0)
+            a["effect"] = en.get(f.get("effect"), 0)
+        elif a["name"] != "melee":
             a["element"] = ELEMENT.get(f.get("type"), None)
             for k in ("range", "radius", "length", "spread"):
                 if isinstance(f.get(k), int):
@@ -200,10 +257,16 @@ def parse_monster(src, en):
                 continue  # skip non-damage spells (speed, outfit, fields, summons)
         attacks.append(a)
     m["attacks"] = attacks
+    summon = lua_block(src, r"monster\.summon\s*=\s*\{")
+    m["maxSummons"] = int(lua_fields(re.sub(r"\{.*\}", "", summon, flags=re.S)).get("maxSummons", 0) or 0)
+    m["summons"] = [{"name": f["name"].lower(), "interval": f.get("interval", 1000), "chance": f.get("chance", 0), "count": f.get("count", 1)}
+                    for f in map(lua_fields, entries(lua_block(summon, r"summons\s*=\s*\{"))) if isinstance(f.get("name"), str)]
     defs = lua_block(src, r"monster\.defenses\s*=\s*\{")
     df = lua_fields(re.sub(r"\{[^{}]*\}", "", defs))
     m["defense"] = int(df.get("defense", 0) or 0)
     m["armor"] = int(df.get("armor", 0) or 0)
+    mit = df.get("mitigation", 0)
+    m["mitigation"] = float(mit) if isinstance(mit, (int, float)) else 0.0  # percent (Creature::mitigateDamage); some files say ???
     heals = []
     for e in entries(defs):
         f = lua_fields(e)
@@ -231,6 +294,52 @@ def parse_monster(src, en):
             loot.append({"name": f["name"], "chance": f.get("chance", 0), "max": f.get("maxCount", 1)})
     m["loot"] = loot
     return m
+
+
+# ---------- magic fields ----------
+
+# What a monster's field spell creates (Monsters::deserializeSpell): ITEM_FIREFIELD_PVP_FULL, ITEM_POISONFIELD_PVP,
+# ITEM_ENERGYFIELD_PVP from utils_definitions.hpp.
+MONSTER_FIELDS = {"firefield": 2118, "poisonfield": 105, "energyfield": 2122}
+FIELD_ELEMENT = {"fire": "fire", "poison": "earth", "energy": "energy"}
+
+
+def damage_list(amount, start):
+    """ConditionDamage::generateDamageList (see src/tibia/rules.ts damageList)."""
+    out, total = [], 0
+    for i in range(start, 0, -1):
+        med = ((start + 1 - i) * amount) // start
+        while True:
+            total += i
+            out.append(i)
+            if not abs(1 - (total + i) / med) < abs(1 - total / med):
+                break
+    return out
+
+
+def parse_fields():
+    """Every stage a monster's field goes through: its damage (ItemParse::parseFieldCombatDamage), how long it
+    lies there (duration, seconds) and what it decays to. `ticks` is the burn/poison you get on stepping in:
+    `count` rounds of `damage` (or, with a `start`, a shrinking damage list), one every `every` ms."""
+    src = fetch("data/items/items.xml")
+    out, todo = {}, list(MONSTER_FIELDS.values())
+    while todo:
+        iid = todo.pop()
+        if iid in out or not iid:
+            continue
+        body = re.search(r'<item id="%d"[^>]*>(.*?)</item>' % iid, src, re.S).group(1)
+        name = re.search(r'<item id="%d"[^>]*name="([^"]*)"' % iid, src).group(1)
+        top = dict(re.findall(r'^\s*<attribute key="(\w+)" value="([^"]*)"', body, re.M))
+        fld = re.search(r'<attribute key="field" value="(\w+)"\s*(/>|>(.*?)</attribute>)', body, re.S)
+        sub = dict(re.findall(r'<attribute key="(\w+)" value="([^"]*)"', fld.group(3) or ""))
+        ticks = []
+        if "damage" in sub:
+            dmg, start = int(sub["damage"]), int(sub.get("start", 0))
+            ticks = damage_list(dmg, start) if start else [dmg] * int(sub.get("count", 1))
+        out[iid] = {"id": iid, "name": name, "element": FIELD_ELEMENT[fld.group(1)], "duration": int(top.get("duration", 0)),
+                    "decayTo": int(top.get("decayTo", 0)), "ticks": ticks, "every": int(sub.get("ticks", 2000))}
+        todo.append(out[iid]["decayTo"])
+    return out
 
 
 # ---------- spells ----------
@@ -440,6 +549,10 @@ def main():
     keep = real_loot | set(by_name[n] for n in STARTER_ITEMS if n in by_name) | equipped
     items = {i: it for i, it in items.items() if i in keep or it.get("slot") or it.get("weapontype") or it.get("transformequipto")}
     starter = {n: by_name[n] for n in STARTER_ITEMS if n in by_name}
+    stack = stackable_ids()
+    for i, it in items.items():
+        if i in stack:
+            it["stackable"] = 1
 
     voc_src = fetch("data/XML/vocations.xml")
     vocations = {}
@@ -478,6 +591,7 @@ def main():
         "monsters": monsters, "spells": spells, "areas": {k: AREAS[k] for k in used_areas if k in AREAS},
         "items": items, "starter": starter, "vocations": vocations, "potions": potions,
         "prices": {i: p for i, p in prices.items() if i in items},
+        "fields": parse_fields(),
     }
     os.makedirs(os.path.dirname(OUT), exist_ok=True)
     with open(OUT, "w", encoding="utf-8") as fh:

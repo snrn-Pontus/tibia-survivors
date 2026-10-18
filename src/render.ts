@@ -1,5 +1,9 @@
-import type { Atlas, CreatureAnim } from "./atlas";
-import { TILE, type Game } from "./game";
+import { stackPattern, type Atlas, type CreatureAnim } from "./atlas";
+import { TILE, type Game, type LootDest } from "./game";
+import { PRICES } from "./tibia/db";
+
+/** Coins are worth their face value (the corpse marker shows the most valuable thing inside). */
+const COIN_VALUE: Record<number, number> = { 3031: 1, 3035: 100, 3043: 10000 };
 import { tileCenter } from "./movement";
 import { hash } from "./world";
 
@@ -76,6 +80,13 @@ export class Renderer {
       ctx.globalAlpha = 1;
     }
 
+    // Magic fields burn on the ground, animated (only the ones on screen).
+    for (const f of g.fields.values()) {
+      if (f.tx < tx0 || f.tx > tx1 || f.ty < ty0 || f.ty > ty1) continue;
+      const anim = atlas.data.items[f.id];
+      if (anim) atlas.draw(ctx, atlas.animFrame(anim, g.time + f.tx * 0.37 + f.ty * 0.61), tileCenter(f.tx), tileCenter(f.ty));
+    }
+
     // Boss treasure chests.
     const chest = atlas.data.items[2478];
     if (chest) for (const c of g.chests) atlas.draw(ctx, chest.frames[0], tileCenter(c.tx), tileCenter(c.ty));
@@ -107,6 +118,26 @@ export class Renderer {
         atlas.draw(ctx, this.creatureFrame(atlas.data.creatures[g.vocation.sprite], p.dir, p.moving, p.dist, g.time), p.x, p.y);
         ctx.globalAlpha = 1;
       }
+    }
+
+    // Unlooted corpses: their best item floats above them, bobbing in a soft glow, over everything that stands.
+    for (const c of g.corpses) {
+      if (c.looted || !c.loot.length) continue;
+      const worth = (l: { id: number; n: number }) => (COIN_VALUE[l.id] ?? PRICES[l.id]?.sell ?? 0) * l.n;
+      const best = c.loot.reduce((a, b) => (worth(b) > worth(a) ? b : a));
+      const anim = atlas.data.items[best.id];
+      if (!anim) continue;
+      const frame = anim.stack ? anim.stack[stackPattern(best.n)] : anim.frames[0];
+      const x = tileCenter(c.tx), y = tileCenter(c.ty) - 22 + Math.sin(g.time * 3 + c.tx * 1.7 + c.ty) * 1.5;
+      ctx.globalAlpha = Math.min(1, (c.until - g.time) / 5);
+      ctx.fillStyle = "rgba(255, 220, 120, 0.28)";
+      ctx.beginPath();
+      ctx.arc(x, y, 9, 0, Math.PI * 2);
+      ctx.fill();
+      const [sx, sy, w, h] = atlas.data.frames[frame];
+      const k = Math.min(1, 16 / Math.max(w, h));
+      ctx.drawImage(atlas.img, sx, sy, w, h, Math.round(x - (w * k) / 2), Math.round(y - (h * k) / 2), w * k, h * k);
+      ctx.globalAlpha = 1;
     }
 
     for (const m of g.missiles) {
@@ -156,9 +187,9 @@ export class Renderer {
   }
 
   /** Loot hops out of the corpse, then flies across the window into the side panel: gold to the gold
-   *  counter, items to the supplies window. Drawn on a full-window canvas; `at` is the game canvas's
-   *  offset in that canvas, `gold` and `bag` the targets, all in its pixels. */
-  drawLootFx(g: Game, fx: CanvasRenderingContext2D, at: [number, number], gold: [number, number], bag: [number, number]) {
+   *  counter, items to the backpack, potions to supplies. Drawn on a full-window canvas; `at` is the game
+   *  canvas's offset in that canvas, `to` the targets, all in its pixels. */
+  drawLootFx(g: Game, fx: CanvasRenderingContext2D, at: [number, number], to: Record<LootDest, [number, number]>) {
     fx.setTransform(1, 0, 0, 1, 0, 0);
     fx.clearRect(0, 0, fx.canvas.width, fx.canvas.height);
     fx.imageSmoothingEnabled = false;
@@ -176,7 +207,7 @@ export class Renderer {
       } else {
         const k = Math.min(1, (t - 0.3) / 0.6), e = k * k;
         const fromX = startX + ((f.id % 7) - 3) * 4 * S, fromY = startY - 6 * S;
-        const [toX, toY] = f.gold ? gold : bag;
+        const [toX, toY] = to[f.to];
         x = fromX + (toX - fromX) * e;
         y = fromY + (toY - fromY) * e - Math.sin(k * Math.PI) * 30 * S;
         size *= 1 - 0.5 * k;
@@ -187,7 +218,8 @@ export class Renderer {
         fx.arc(x, y, size * 0.8, 0, Math.PI * 2);
         fx.fill();
       }
-      fx.drawImage(this.icon(`i${f.id}`, () => this.atlas.itemIcon(f.id)), x - size / 2, y - size / 2, size, size);
+      const pat = stackPattern(f.n);
+      fx.drawImage(this.icon(`i${f.id}:${pat}`, () => this.atlas.itemIcon(f.id, 32, 1, f.n)), x - size / 2, y - size / 2, size, size);
     }
   }
 

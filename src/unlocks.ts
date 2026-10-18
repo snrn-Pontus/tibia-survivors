@@ -11,7 +11,13 @@ export function applyUnlocks(g: Game, save: Save) {
     else if (t.id === "potions" && tier.count) ch.supplies.set(266, (ch.supplies.get(266) ?? 0) + tier.count);
     else if (t.id === "gold" && tier.count) ch.gold += tier.count;
     else if (t.id === "rerolls" && tier.count) g.rerolls = tier.count;
+    else if (t.id === "rook_xp") ch.rookXp = tier.count ?? 1;
+    else if (t.id === "rook_train") ch.rookTrain = tier.count ?? 1;
+    else if (t.id === "rook_regen") ch.rookRegen = tier.count ?? 1;
+    else if (t.id === "dawnport" && tier.cost) g.dawnport();
   }
   for (const [id, l] of Object.entries(save.boosts)) if (l) ch.boosts.set(id as BoostId, l);
   ch.blessings = save.blessings;
+  g.discovered = new Set(save.zones ?? []);
+  g.killTotals = { ...(save.kills ?? {}) };
 }

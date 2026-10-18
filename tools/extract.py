@@ -137,6 +137,16 @@ def export_simple(a, p, app):
     return {"frames": frames, "ms": [lo for lo, _ in g.phases]}
 
 
+def export_item(a, p, app):
+    out = export_simple(a, p, app)
+    g = app.frame_groups[0]
+    # Stackables have 4 x 2 patterns, one per count step (otclient's Item::calculatePatterns):
+    # 1, 2, 3, 4 on the first row, then 5-9, 10-24, 25-49 and 50+.
+    if g.pattern_width == 4 and g.pattern_height == 2:
+        out["stack"] = [p.add(a.sprite(g.sprite_ids[g.sprite_index(x=i % 4, y=i // 4)])) for i in range(8)]
+    return out
+
+
 def export_missile(a, p, app):
     g = app.frame_groups[0]
     # angle order: E, SE, S, SW, W, NW, N, NE  ->  pattern (x, y)
@@ -170,7 +180,11 @@ def main():
     for iid in game["items"]:
         app = a.objects.get(int(iid))
         if app and app.frame_groups and app.frame_groups[0].sprite_ids:
-            data["items"][iid] = export_simple(a, p, app)
+            data["items"][iid] = export_item(a, p, app)
+    for iid in game.get("fields", {}):  # magic fields on the ground, animated
+        app = a.objects.get(int(iid))
+        if app and app.frame_groups and app.frame_groups[0].sprite_ids:
+            data["items"][iid] = export_item(a, p, app)
     print("effects", len(data["effects"]), "missiles", len(data["missiles"]), "items", len(data["items"]))
     data["ground"] = [p.add(a.sprite(a.objects[g].frame_groups[0].sprite_ids[0])) for g in GROUND]
     for kind, ids in DECOR.items():

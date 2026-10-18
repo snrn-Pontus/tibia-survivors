@@ -1,5 +1,5 @@
 // Game design on top of the real Tibia data: vocation kits, waves, server rates and shop prices.
-import type { VocationId } from "./tibia/db";
+import { MONSTERS, type VocationId } from "./tibia/db";
 
 export interface VocationDef {
   id: VocationId;
@@ -53,11 +53,15 @@ export const MAGIC_RATE = 1;
 /** The world: zones by distance from where you start, like Tibia's hunting grounds. The world doesn't
  *  follow your level; you choose how far out to push. Each zone's bosses show up, one at a time, after you've
  *  killed enough there (`bossAt` kills for the first, then every `bossAt` more). */
-export interface Zone { name: string; level: number; from: number; pool: string[]; bosses: string[]; maxAlive: number; spawnEvery?: number }
+export interface Zone {
+  name: string; level: number; from: number; pool: string[]; bosses: string[]; maxAlive: number; spawnEvery?: number;
+  weights?: number[]; // how often each of `pool` spawns, relative (default: all the same)
+}
 export const ZONE_WIDTH = 30; // tiles per ring
 export const BOSS_KILLS = 20;
 export const ZONES: Zone[] = [
-  { name: "Rookgaard Fields", level: 1, pool: ["rat", "bat", "snake", "spider", "cave rat"], bosses: ["munster"], maxAlive: 3, spawnEvery: 3 },
+  // Mostly plain rats, like the fields outside Rookgaard's village; the odd cave rat, bat, snake or spider.
+  { name: "Rookgaard Fields", level: 1, pool: ["rat", "cave rat", "bat", "snake", "spider"], weights: [16, 2, 1, 1, 1], bosses: ["munster"], maxAlive: 3, spawnEvery: 3 },
   { name: "Rookgaard Wilds", level: 4, pool: ["cave rat", "wolf", "bug", "troll", "rotworm"], bosses: ["teleskor", "apprentice sheng"], maxAlive: 4, spawnEvery: 2.2 },
   { name: "Troll Woods", level: 10, pool: ["troll", "orc", "rotworm", "poison spider", "orc spearman"], bosses: ["rotworm queen", "the snapper"], maxAlive: 6 },
   { name: "Orc Fortress", level: 15, pool: ["orc", "orc spearman", "orc warrior", "skeleton", "amazon", "minotaur"], bosses: ["the horned fox"], maxAlive: 7 },
@@ -79,10 +83,28 @@ export function zoneAt(tx: number, ty: number): number {
 
 export const spawnEvery = 1.4; // seconds between spawns while below the zone's maxAlive (unless the zone says otherwise)
 /** Souls also come from exploring and surviving, so even a run without kills moves you forward. */
-export const SOULS_PER_ZONE = 3; // x (zone number + 1), the first time you reach a zone in a run
+// x (zone number + 1), once per account: the first time you kill a creature in a zone (Troll Woods: 30). Paying
+// for reaching a zone each run made sprinting outward at level 1 the best way to earn souls.
+export const SOULS_PER_ZONE = 10;
 export const SOUL_EVERY = 30; // seconds alive per soul
 /** Souls (the meta currency) for a kill: a tenth of the experience, a fifth for bosses. At least 1. */
 export const soulsFor = (exp: number, boss: boolean) => Math.max(1, Math.round(exp / (boss ? 5 : 10)));
+/** Achievements: kill a creature this many times over all your runs. Each milestone pays souls, from a
+ *  tenth of its experience times 1, 5 and 25 (at least 5, 10 and 15); bosses count 1, 5 and 25 kills and pay
+ *  twice that. */
+export const KILL_MILESTONES = [10, 100, 1000];
+export const BOSS_MILESTONES = [1, 5, 25];
+const MILESTONE_TITLES = ["Hunter", "Slayer", "Bane"];
+export function achievement(key: string, total: number): { title: string; count: number; souls: number } | null {
+  const m = MONSTERS[key];
+  if (!m) return null;
+  const boss = ZONES.some((z) => z.bosses.includes(key));
+  const tier = (boss ? BOSS_MILESTONES : KILL_MILESTONES).indexOf(total);
+  if (tier < 0) return null;
+  const souls = Math.max(5 * (tier + 1), Math.round((m.experience / 10) * [1, 5, 25][tier] * (boss ? 2 : 1)));
+  return { title: `${m.name} ${MILESTONE_TITLES[tier]}`, count: total, souls };
+}
+
 /** Bestiary kill counts that unlock a stage (and a level-up style choice). */
 export const BESTIARY_STAGES = [5, 25, 100];
 

@@ -1,8 +1,8 @@
 import { Character } from "./character";
-import { BESTIARY_STAGES, BOSS_KILLS, SOUL_EVERY, SOULS_PER_ZONE, soulsFor, spawnEvery, VOCATION_LEVEL, zoneAt, ZONES, type VocationDef } from "./data";
+import { achievement, BESTIARY_STAGES, BOSS_KILLS, SOUL_EVERY, SOULS_PER_ZONE, soulsFor, spawnEvery, VOCATION_LEVEL, zoneAt, ZONES, type VocationDef } from "./data";
 import { advance, DIAGONAL_COST, isStepping, newWalker, startStep, stepDuration, TILE, tileCenter, type Walker } from "./movement";
-import { areaOffsets, canWear, item, MONSTERS, POTIONS, PRICES, radiusRows, SPELLS, spellArea, spellFormula, waveRows, type Element, type MonsterAttack, type MonsterData, type Offsets, type SpellData } from "./tibia/db";
-import { blockHit, distanceDamage, distanceHitChance, FIGHT_MODES, meleeDamage, mitigation, normalRandom, playerDefense, SKILL, uniform, type FightMode } from "./tibia/rules";
+import { areaOffsets, canWear, FIELDS, item, MONSTERS, POTIONS, PRICES, radiusRows, SPELLS, spellArea, spellFormula, waveRows, type Element, type MonsterAttack, type MonsterData, type Offsets, type SpellData } from "./tibia/db";
+import { blockHit, damageList, distanceDamage, expForLevel, distanceHitChance, FIGHT_MODES, meleeDamage, mitigation, normalRandom, playerDefense, SKILL, uniform, type FightMode } from "./tibia/rules";
 import { imbuement } from "./tibia/imbuements";
 import { boost, MAX_PENDING } from "./upgrades";
 import { EVOLUTIONS, type EvolutionId } from "./evolutions";
@@ -20,11 +20,15 @@ export interface Monster extends Walker {
   maxHp: number;
   timers: number[]; // per attack: seconds until its next try
   healTimer: number;
-  blockCount: number; // Creature::blockCount: defense works on at most this many hits, +1 per second up to 2
-  blockTimer: number;
   dead: boolean;
   boss: boolean;
+  master?: number; // summoned by this monster: no experience, no corpse, and it dies with its master
+  summonTimers: number[]; // per monster.summon entry: seconds until its next roll
 }
+/** A magic field on the ground (a fire, poison or energy field item), until it decays. */
+export interface Field { tx: number; ty: number; id: number; until: number }
+/** Damage over time on the player, one per kind (Tibia's poisoned, burning, electrified... icons). */
+export interface DamageCondition { ticks: number[]; every: number; next: number }
 
 export interface Missile { fx: number; fy: number; tx: number; ty: number; t: number; dur: number; id: number }
 export interface Effect { id: number; x: number; y: number; t: number; dur: number }
@@ -33,13 +37,17 @@ export interface FloatText { x: number; y: number; text: string; color: string; 
 export interface Corpse { tx: number; ty: number; item: number; name: string; loot: { id: number; n: number }[]; looted: boolean; until: number }
 export const CORPSE_SECONDS = 60;
 
-/** A looted thing flying from the corpse into your bag (gold goes to the gold counter). */
-export interface LootFx { id: number; x: number; y: number; t: number; delay: number; gold: boolean; rare: boolean }
+/** Where looted things fly: the gold counter, the backpack, the supplies window or the equipment. */
+export type LootDest = "gold" | "bag" | "supplies" | "worn";
+/** A looted thing flying from the corpse to where it went. */
+export interface LootFx { id: number; n: number; x: number; y: number; t: number; delay: number; to: LootDest; rare: boolean }
 /** Loot worth this much (NPC sell price) gets the rare-drop treatment. */
 export const RARE_VALUE = 1000;
 
 /** Console channels: everything shows in Default; loot and combat lines also get their own tab. */
 export type Channel = "default" | "loot" | "combat";
+/** Auto-targeting: the closest creature, or the one with the least health left (by percent, like the battle list). */
+export type Targeting = "closest" | "weakest";
 export interface LogLine { text: string; color: string; t: number; n: number; channel: Channel }
 
 export type GameEvent = { type: "vocation" } | { type: "levelup" } | { type: "dead" } | { type: "chest"; result: ChestResult };
@@ -56,6 +64,8 @@ const key = (tx: number, ty: number) => (tx + 0x8000) * 0x10000 + (ty + 0x8000);
 const ORTHO: [number, number][] = [[0, -1], [1, 0], [0, 1], [-1, 0]];
 const DIAG: [number, number][] = [[1, -1], [1, 1], [-1, 1], [-1, -1]];
 const FLOW_R = 22;
+const PLAYER_DIAGONAL_COST = Math.SQRT2; // a diagonal step for you (see updatePlayer)
+const FLEE_STOP = 7; // tiles: how far a fleeing monster runs (the game view is 15 x 11)
 const FLOW_W = FLOW_R * 2 + 1;
 export const cheb = (ax: number, ay: number, bx: number, by: number) => Math.max(Math.abs(ax - bx), Math.abs(ay - by));
 export const dirTo = (dx: number, dy: number) => (Math.abs(dx) > Math.abs(dy) ? (dx > 0 ? 1 : 3) : dy > 0 ? 2 : 0);
@@ -71,12 +81,15 @@ export class Game {
   pendingChoices = 0; // one choice per level gained (and per skill advance, see advance())
   private nextSkillPick = 0;
   chase = true; // Tibia fight mode: chase opponent (C toggles "stand while fighting")
+  targeting: Targeting = "closest"; // which creature auto-targeting picks (T toggles)
+  conditions = new Map<Element, DamageCondition>(); // poison, fire, energy... ticking on you, by damage type
   fightMode: FightMode = "offensive"; // offensive / balanced / defensive: Tibia's attack and defense factors
   lastAttack = -99; // full attack only drops your defense right after you swing
   logCount = 0;
   monsters: Monster[] = [];
   missiles: Missile[] = [];
   corpses: Corpse[] = [];
+  fields = new Map<number, Field>(); // by tile
   lootFx: LootFx[] = [];
   goldGained = 0; // recent gold, shown big above you; resets when it fades
   goldGainedAt = -99;
@@ -109,7 +122,8 @@ export class Game {
   souls = 0; // earned this run; banked when it ends
   rerolls = 0; // level-up rerolls left this run
   private zoneKills: number[] = [];
-  private visited = new Set<number>();
+  killTotals: Record<string, number> = {}; // kills per creature over all runs (from the save), for achievements
+  discovered = new Set<number>(); // zones you've made a kill in, ever (from the save): each pays souls once
   private soulClock = 0;
   private zoneBossesDone: number[] = [];
   private occupied = new Map<number, Monster>();
@@ -188,6 +202,8 @@ export class Game {
     if (this.player.tx !== this.flowX || this.player.ty !== this.flowY || this.flowAge > 0.25) this.computeFlow();
     this.spawn(dt);
     this.updateMonsters(dt);
+    this.updateConditions();
+    this.updateFields();
     this.updateRegen(dt);
     this.soulClock += dt;
     if (this.soulClock >= SOUL_EVERY) { this.soulClock -= SOUL_EVERY; this.souls++; }
@@ -207,6 +223,7 @@ export class Game {
     if (this.ch.hp <= 0 && this.ch.blessings > 0) {
       // A blessing saves you, as in Tibia (minus the temple trip).
       this.ch.blessings--;
+      this.conditions.clear(); // dying clears them
       this.ch.hp = this.ch.maxHp;
       this.ch.mana = this.ch.maxMana;
       this.addEffect(11, this.player.x, this.player.y);
@@ -238,12 +255,17 @@ export class Game {
       [sx, sy] = step;
     }
     if (!sx && !sy) return;
-    // Holding two directions walks a staircase instead of paying the 3x diagonal cost.
-    let dx = sx, dy = sy;
+    // Holding two directions steps diagonally. Canary makes a diagonal step take 3x as long (monsters still
+    // do), which made two keys walk a staircase; you pay the real distance instead (x1.41). Into a wall or a
+    // creature, it slides along whichever straight step is free.
+    let dx = sx, dy = sy, cost = 1;
     if (sx && sy) {
-      const first: [number, number] = p.lastAxis === 0 ? [0, sy] : [sx, 0];
-      const other: [number, number] = p.lastAxis === 0 ? [sx, 0] : [0, sy];
-      [dx, dy] = this.walkable(p.tx + first[0], p.ty + first[1]) ? first : other;
+      if (this.walkable(p.tx + sx, p.ty + sy)) cost = PLAYER_DIAGONAL_COST;
+      else {
+        const first: [number, number] = p.lastAxis === 0 ? [0, sy] : [sx, 0];
+        const other: [number, number] = p.lastAxis === 0 ? [sx, 0] : [0, sy];
+        [dx, dy] = this.walkable(p.tx + first[0], p.ty + first[1]) ? first : other;
+      }
     }
     const ghost = this.ch.evolutions.has("draken");
     if (ghost ? this.world.blocked(p.tx + dx, p.ty + dy) : !this.walkable(p.tx + dx, p.ty + dy)) {
@@ -251,33 +273,42 @@ export class Game {
       return;
     }
     p.lastAxis = dx ? 0 : 1;
-    startStep(p, dx, dy, stepDuration(this.ch.speed) / 1000, Math.min(left, 0.05));
+    startStep(p, dx, dy, (stepDuration(this.ch.speed) * cost) / 1000, Math.min(left, 0.05));
     advance(p, 0);
     p.moving = true;
+    this.stepIntoField(p.tx, p.ty);
   }
 
-  /** First step of a shortest walk (4-way, around trees and creatures) to a tile next to (gx, gy). */
+  /** First step of the quickest walk (8-way, around trees, creatures and fields) to a tile next to (gx, gy). */
   private pathStep(gx: number, gy: number): [number, number] | null {
-    const p = this.player, R = 12, W = R * 2 + 1;
+    // Dijkstra over 8 directions with Dial's buckets: a straight step costs 5, a diagonal 7 (your x1.41).
+    const p = this.player, R = 12, W = R * 2 + 1, STRAIGHT = 5, DIAGONAL = 7;
     const prev = new Int32Array(W * W).fill(-1);
+    const cost = new Int32Array(W * W).fill(0x7fffffff);
     const idx = (x: number, y: number) => (y - p.ty + R) * W + (x - p.tx + R);
-    const q: [number, number][] = [[p.tx, p.ty]];
-    prev[idx(p.tx, p.ty)] = idx(p.tx, p.ty);
-    for (let h = 0; h < q.length; h++) {
-      const [x, y] = q[h];
-      if (cheb(x, y, gx, gy) <= 1 && (x !== p.tx || y !== p.ty)) {
-        // Walk back to the first step.
-        let i = idx(x, y);
-        while (prev[i] !== idx(p.tx, p.ty)) i = prev[i];
-        return [(i % W) - R, Math.floor(i / W) - R];
-      }
-      for (const [dx, dy] of ORTHO) {
-        const nx = x + dx, ny = y + dy;
-        if (Math.abs(nx - p.tx) > R || Math.abs(ny - p.ty) > R) continue;
-        const ni = idx(nx, ny);
-        if (prev[ni] !== -1 || !this.walkable(nx, ny)) continue;
-        prev[ni] = idx(x, y);
-        q.push([nx, ny]);
+    const start = idx(p.tx, p.ty);
+    const buckets: number[][] = [[start]];
+    prev[start] = start;
+    cost[start] = 0;
+    for (let c = 0; c < buckets.length; c++) {
+      for (const i of buckets[c] ?? []) {
+        if (cost[i] !== c) continue; // reached cheaper since
+        const x = (i % W) - R + p.tx, y = Math.floor(i / W) - R + p.ty;
+        if (cheb(x, y, gx, gy) <= 1 && i !== start) {
+          // Walk back to the first step.
+          let j = i;
+          while (prev[j] !== start) j = prev[j];
+          return [(j % W) - R, Math.floor(j / W) - R];
+        }
+        for (const [dx, dy] of [...ORTHO, ...DIAG]) {
+          const nx = x + dx, ny = y + dy;
+          if (Math.abs(nx - p.tx) > R || Math.abs(ny - p.ty) > R) continue;
+          const ni = idx(nx, ny), nc = c + (dx && dy ? DIAGONAL : STRAIGHT);
+          if (nc >= cost[ni] || !this.walkable(nx, ny) || this.fieldHurts(nx, ny)) continue; // autowalk goes around fields
+          cost[ni] = nc;
+          prev[ni] = i;
+          (buckets[nc] ??= []).push(ni);
+        }
       }
     }
     return null;
@@ -285,8 +316,8 @@ export class Game {
 
   private updateRegen(dt: number) {
     const ch = this.ch, vd = ch.vd, r = this.regen;
-    // Vocation regeneration while fed (vocations.xml).
-    r.hp += dt * 1000;
+    // Vocation regeneration while fed (vocations.xml); the Rookgaard regeneration unlock speeds up a rookie's.
+    r.hp += dt * 1000 * (ch.voc.id === "none" ? ch.rookRegen : 1);
     while (r.hp >= vd.gainHpTicks) { r.hp -= vd.gainHpTicks; ch.hp = Math.min(ch.maxHp, ch.hp + vd.gainHpAmount); }
     r.mana += dt * 1000;
     while (r.mana >= vd.gainManaTicks) { r.mana -= vd.gainManaTicks; ch.mana = Math.min(ch.maxMana, ch.mana + vd.gainManaAmount); }
@@ -385,14 +416,6 @@ export class Game {
     const z = zoneAt(this.player.tx, this.player.ty);
     if (z !== this.zone) {
       this.zone = z;
-      if (!this.visited.has(z)) {
-        this.visited.add(z);
-        const found = SOULS_PER_ZONE * (z + 1);
-        if (z > 0) {
-          this.souls += found;
-          this.msg(`Exploring a new zone: +${found} souls.`, "#c9a0ff");
-        }
-      }
       this.deepest = Math.max(this.deepest, z);
       const info = ZONES[z];
       this.banner = { text: `${info.name} (level ${info.level}+)`, t: 3 };
@@ -413,19 +436,23 @@ export class Game {
     this.spawnTimer -= dt;
     if (this.spawnTimer > 0) return;
     this.spawnTimer = zone.spawnEvery ?? spawnEvery;
-    const alive = this.monsters.filter((m) => !m.boss).length;
+    const alive = this.monsters.filter((m) => !m.boss && m.master === undefined).length; // summons don't count
     if (alive >= zone.maxAlive) return;
-    this.spawnMonster(zone.pool[Math.floor(Math.random() * zone.pool.length)], false);
+    const w = zone.weights ?? zone.pool.map(() => 1);
+    let r = Math.random() * w.reduce((a, b) => a + b, 0), i = 0;
+    while (i < zone.pool.length - 1 && (r -= w[i]) >= 0) i++;
+    this.spawnMonster(zone.pool[i], false);
   }
 
-  private spawnMonster(name: string, boss: boolean): Monster | null {
+  private spawnMonster(name: string, boss: boolean, at?: [number, number]): Monster | null {
     const data = MONSTERS[name];
     if (!data) return null;
-    const t = this.offscreenTile(Math.random() * Math.PI * 2);
+    const t = at ?? this.offscreenTile(Math.random() * Math.PI * 2);
     if (!t) return null;
     const m: Monster = {
       ...newWalker(t[0], t[1]), id: this.nextId++, key: name, data, hp: data.health, maxHp: data.health,
-      timers: data.attacks.map((a) => Math.random() * (a.interval / 1000)), healTimer: 2, blockCount: 2, blockTimer: 0, dead: false, boss,
+      timers: data.attacks.map((a) => Math.random() * (a.interval / 1000)), healTimer: 2, dead: false, boss,
+      summonTimers: (data.summons ?? []).map((s) => s.interval / 1000),
     };
     this.occupied.set(key(m.tx, m.ty), m);
     this.monsters.push(m);
@@ -457,16 +484,16 @@ export class Game {
     for (const m of this.monsters) {
       if (m.dead) continue;
       const d = cheb(m.tx, m.ty, p.tx, p.ty);
-      m.blockTimer += dt;
-      if (m.blockTimer >= 1) { m.blockTimer = 0; m.blockCount = Math.min(2, m.blockCount + 1); }
-      this.monsterAttacks(m, dt, d);
-      if (m.dead || advance(m, dt) < 0) continue;
-      if (m.hp < m.data.runHealth && d > Math.max(this.viewW, this.viewH) / TILE / 2 + 2) {
-        // A fleeing monster that made it off screen got away.
+      if (m.master !== undefined && !this.monsters.some((x) => x.id === m.master && !x.dead)) {
+        // Its master got away: it goes too.
         m.dead = true;
         this.occupied.delete(key(m.tx, m.ty));
+        this.addEffect(3, m.x, m.y);
         continue;
       }
+      this.monsterAttacks(m, dt, d);
+      this.monsterSummons(m, dt, d);
+      if (m.dead || advance(m, dt) < 0) continue;
       if (d > far && !m.boss) {
         // Left far behind: come back around, as in Vampire Survivors.
         const t = this.offscreenTile(Math.random() * Math.PI * 2);
@@ -486,8 +513,12 @@ export class Game {
   private chooseStep(m: Monster, d: number): [number, number] | null {
     const p = this.player;
     const fleeing = m.hp < m.data.runHealth;
+    // A hurt monster runs (runHealth), but only to the edge of your screen: there it stands, so you can still
+    // catch it (it used to vanish, bosses too).
+    if (fleeing && d >= FLEE_STOP) return null;
     const want = fleeing ? 99 : Math.max(1, m.data.targetDistance);
-    const free = (s: [number, number]) => this.walkable(m.tx + s[0], m.ty + s[1]);
+    // Monsters don't walk into fields that would hurt them (they do if they're immune: a demon in fire).
+    const free = (s: [number, number]) => this.walkable(m.tx + s[0], m.ty + s[1]) && !this.fieldHurts(m.tx + s[0], m.ty + s[1], m);
     if (d < want) {
       // Ranged monsters keep their distance; hurt ones run.
       const away = ORTHO.filter((s) => free(s) && cheb(m.tx + s[0], m.ty + s[1], p.tx, p.ty) > d);
@@ -522,7 +553,8 @@ export class Game {
       if (a.name === "melee") {
         if (d <= 1) {
           m.dir = dirTo(p.tx - m.tx, p.ty - m.ty);
-          this.hurtPlayer(normalRandom(a.min, a.max), "physical", m, true);
+          // A bite that gets through can poison too (a blocked one doesn't).
+          if (this.hurtPlayer(normalRandom(a.min, a.max), "physical", m, true) > 0 && a.condition) this.applyCondition(a.condition);
         }
         return;
       }
@@ -561,6 +593,12 @@ export class Game {
     } else if (d > 7) return;
 
     if (a.shoot && !a.length) this.addMissile(a.shoot, m.x, m.y, p.x, p.y);
+    if (a.field) {
+      // A field spell does no damage itself: it leaves a field on every free tile of the area (yours included).
+      const area = tiles ? tiles.map(([ox, oy]) => [cx + ox, cy + oy]) : [[p.tx, p.ty]];
+      for (const [tx, ty] of area) if ((tx !== m.tx || ty !== m.ty) && !this.world.blocked(tx, ty)) this.placeField(tx, ty, a.field);
+      return;
+    }
     let hit = true;
     if (tiles) {
       hit = false;
@@ -571,17 +609,95 @@ export class Game {
         if (tx === p.tx && ty === p.ty) hit = true;
       }
     } else this.addEffect(a.effect ?? 0, p.x, p.y);
-    if (hit) this.hurtPlayer(normalRandom(a.min, a.max), a.element ?? "physical", m, false);
+    if (!hit) return;
+    // A "condition" spell only does damage over time; a combat spell can do both.
+    const dealt = a.max > 0 ? this.hurtPlayer(normalRandom(a.min, a.max), a.element ?? "physical", m, false) : 1;
+    if (dealt > 0 && a.condition) this.applyCondition(a.condition);
+  }
+
+  /** The Dawnport unlock: skip Rookgaard. You start at level 8 with the level-up choices a rookie would have
+   *  earned, and choose a vocation right away; skills stay where a new character's are. */
+  dawnport() {
+    const ch = this.ch;
+    ch.exp = expForLevel(VOCATION_LEVEL);
+    ch.level = VOCATION_LEVEL;
+    ch.hp = ch.maxHp;
+    ch.mana = ch.maxMana;
+    this.pendingChoices = Math.min(MAX_PENDING, VOCATION_LEVEL - 1);
+    this.events.unshift({ type: "vocation" });
+    this.events.push({ type: "levelup" });
+    this.msg("You arrive on Dawnport, ready to choose a vocation.", "#ffd34d");
+  }
+
+  // ---------- magic fields ----------
+
+  private placeField(tx: number, ty: number, id: number) {
+    this.fields.set(key(tx, ty), { tx, ty, id, until: this.time + FIELDS[id].duration });
+    // Landing on you counts as stepping in.
+    if (tx === this.player.tx && ty === this.player.ty) this.stepIntoField(tx, ty);
+  }
+
+  /** Would this tile's field hurt you (or monster m)? Spent fire fields and immune monsters are safe. */
+  fieldHurts(tx: number, ty: number, m?: Monster) {
+    const f = this.fields.get(key(tx, ty));
+    if (!f) return false;
+    const fd = FIELDS[f.id];
+    return fd.ticks.length > 0 && (!m || (m.data.elements[fd.element] ?? 0) < 100);
+  }
+
+  /** MagicField::onStepInField: its condition starts with a tick right away, replacing the one you have
+   *  (field conditions force the update). Standing in it does nothing more; stepping in again restarts it. */
+  private stepIntoField(tx: number, ty: number) {
+    const f = this.fields.get(key(tx, ty));
+    if (!f) return;
+    const fd = FIELDS[f.id];
+    if (fd.ticks.length) this.conditions.set(fd.element, { ticks: [...fd.ticks], every: fd.every / 1000, next: this.time });
+  }
+
+  /** Fields decay (items.xml decayTo): a fire field cools down twice, then goes out. */
+  private updateFields() {
+    for (const [k, f] of this.fields) {
+      if (this.time < f.until) continue;
+      const next = FIELDS[f.id].decayTo;
+      if (next && FIELDS[next]) {
+        f.id = next;
+        f.until += FIELDS[next].duration;
+      } else this.fields.delete(k);
+    }
+  }
+
+  /** monster.summon (Monster::onThinkDefense): while it's after you, each kind of summon rolls its chance
+   *  every interval, up to its count and the monster's maxSummons. They appear next to it. */
+  private monsterSummons(m: Monster, dt: number, d: number) {
+    const list = m.data.summons;
+    if (!list?.length || m.master !== undefined || d > 8) return;
+    list.forEach((s, i) => {
+      m.summonTimers[i] -= dt;
+      if (m.summonTimers[i] > 0) return;
+      m.summonTimers[i] += s.interval / 1000;
+      const mine = this.monsters.filter((x) => !x.dead && x.master === m.id);
+      if (mine.length >= m.data.maxSummons || mine.filter((x) => x.key === s.name).length >= s.count) return;
+      if (s.chance < uniform(1, 100)) return;
+      const spots = [...ORTHO, ...DIAG].map(([dx, dy]) => [m.tx + dx, m.ty + dy]).filter(([x, y]) => this.walkable(x, y));
+      if (!spots.length) return;
+      const [tx, ty] = spots[Math.floor(Math.random() * spots.length)];
+      const sm = this.spawnMonster(s.name, false, [tx, ty]);
+      if (!sm) return;
+      sm.master = m.id;
+      this.addEffect(13, m.x, m.y); // CONST_ME_MAGIC_BLUE on the summoner
+      this.addEffect(11, sm.x, sm.y); // CONST_ME_TELEPORT where it appears
+    });
   }
 
   /** Damage to the player, with Tibia's blocking: defense (melee), armor (physical), equipment absorb (elements). */
-  private hurtPlayer(dmg: number, el: Element, m: Monster, melee: boolean) {
+  /** Returns the damage that got through (before the magic shield), so a hit that lands can also poison. */
+  private hurtPlayer(dmg: number, el: Element, m: Monster, melee: boolean): number {
     const ch = this.ch, p = this.player;
     if (el === "manadrain") {
       const v = Math.min(ch.mana, dmg);
       ch.mana -= v;
       if (v > 0) this.addText(p.x, p.y - 40, String(v), ELEMENT_COLORS.manadrain);
-      return;
+      return 0;
     }
     // Creature::blockHit, in Canary's order: absorb (equipment protection), then defense and armor,
     // then mitigation. Defense only works while a block is left: 2 at most, +1 per second, and every
@@ -600,7 +716,18 @@ export class Game {
     if (dmg > 0 && el !== "lifedrain") dmg -= Math.floor((dmg * mitigation(ch.vd, ch.skill(SKILL.shielding), sh, w, FIGHT_MODES[this.fightMode].mitigation)) / 100);
     // Power-ups on top of the Tibia rules.
     if (ch.evolutions.has("avatarsteel")) dmg = Math.round(dmg * 0.7);
-    if (dmg > 0 && this.manaShield > 0 && this.time < this.manaShieldUntil) {
+    if (dmg <= 0) {
+      this.addEffect(melee ? 4 : 3, p.x, p.y); // blocked
+      return 0;
+    }
+    this.loseHealth(dmg, el, `due to an attack by ${article(m.data.name)}`);
+    return dmg;
+  }
+
+  /** Damage that got past blocking: the magic shield takes what it can, the rest comes off your health. */
+  private loseHealth(dmg: number, el: Element, why: string) {
+    const ch = this.ch, p = this.player;
+    if (this.manaShield > 0 && this.time < this.manaShieldUntil) {
       const v = Math.min(dmg, ch.mana, this.manaShield);
       ch.mana -= v;
       this.manaShield -= v;
@@ -608,21 +735,46 @@ export class Game {
       if (v > 0) this.addText(p.x + 10, p.y - 40, String(v), ELEMENT_COLORS.manadrain);
       if (dmg <= 0) return;
     }
-    if (dmg <= 0) {
-      this.addEffect(melee ? 4 : 3, p.x, p.y); // blocked
-      return;
-    }
     ch.hp -= dmg;
     p.hurt = 0.15;
     if (el === "physical") this.addEffect(1, p.x, p.y);
     this.addText(p.x, p.y - 40, String(dmg), ELEMENT_COLORS[el]);
-    this.msg(`You lose ${dmg} hitpoint${dmg === 1 ? "" : "s"} due to an attack by ${article(m.data.name)}.`, "#bbb", "combat");
+    this.msg(`You lose ${dmg} hitpoint${dmg === 1 ? "" : "s"}${why ? ` ${why}` : ""}.`, "#bbb", "combat");
+  }
+
+  // ---------- conditions: damage over time on you ----------
+
+  /** Get poisoned, burned, electrified... Canary's ConditionDamage: a total rolled from min-max, split into
+   *  ticks that start at a twentieth of it and shrink to 1. A new one only replaces the current one of the
+   *  same kind if it would do more damage than what's left. */
+  private applyCondition(c: NonNullable<MonsterAttack["condition"]>) {
+    const amount = uniform(c.min, c.max);
+    if (amount <= 0) return;
+    const cur = this.conditions.get(c.element);
+    if (cur && cur.ticks.reduce((a, b) => a + b, 0) >= amount) return;
+    // The first tick comes one interval after it starts.
+    this.conditions.set(c.element, { ticks: damageList(amount, Math.max(1, Math.ceil(amount / 20))), every: c.tick / 1000, next: this.time + c.tick / 1000 });
+  }
+
+  private updateConditions() {
+    for (const [el, c] of this.conditions) {
+      while (c.ticks.length && this.time >= c.next) {
+        c.next += c.every;
+        // Ticks go through equipment protection only: no defense, armor or mitigation (combatBlockHit without them).
+        const dmg = Math.round((c.ticks.shift()! * (100 - this.ch.absorb(el))) / 100);
+        if (dmg > 0) this.loseHealth(dmg, el, "");
+      }
+      if (!c.ticks.length) this.conditions.delete(el);
+    }
   }
 
   // ---------- player combat ----------
 
-  /** Damage a monster: its elemental resistance, then its defense and armor where they apply. */
-  damageMonster(m: Monster, dmg: number, el: Element, useDefense: boolean, useArmor: boolean) {
+  /** Damage a monster: its armor where it applies, its elemental resistance, then its mitigation. Monster
+   *  defense isn't used: Canary still applies it (a rat's defense of 5 cancels nearly every hit of a fresh
+   *  character), but real Tibia's creatures only show armor and mitigation, and a new character kills rats.
+   *  This is Canary with its disableMonsterArmor switch, keeping the armor. */
+  damageMonster(m: Monster, dmg: number, el: Element, useArmor: boolean) {
     if (m.dead) return;
     const ch = this.ch;
     // Strike imbuement: 10% chance of a critical hit.
@@ -630,14 +782,11 @@ export class Game {
     const bloodRage = ch.evolutions.has("bloodrage");
     const isCrit = (crit > 0 || bloodRage) && Math.random() < (bloodRage ? 0.3 : 0.1);
     if (isCrit) dmg = Math.round(dmg * (1 + crit / 100));
-    // Monster::blockHit: defense and armor (Creature::blockHit) first, then the element modifier.
-    if (useDefense || useArmor) {
-      const hasBlock = m.blockCount > 0;
-      if (hasBlock) m.blockCount--;
-      dmg = blockHit(dmg, m.data.defense, m.data.armor, useDefense && hasBlock, useArmor);
-    }
+    // Monster::blockHit: armor (Creature::blockHit), the element modifier, then mitigation (Creature::mitigateDamage).
+    if (useArmor) dmg = blockHit(dmg, 0, m.data.armor, false, true);
     const pct = m.data.elements[el] ?? 0;
     dmg = Math.round((dmg * (100 - pct)) / 100);
+    if (el !== "lifedrain" && el !== "manadrain") dmg = Math.round(dmg * (1 - (m.data.mitigation ?? 0) / 100));
     if (dmg <= 0) {
       this.addEffect(pct >= 100 ? 4 : 3, m.x, m.y);
       return;
@@ -656,12 +805,46 @@ export class Game {
 
   private killMonster(m: Monster) {
     m.dead = true;
+    this.occupied.delete(key(m.tx, m.ty));
+    // Its summons die with it (Monster::death).
+    for (const s of this.monsters) {
+      if (s.master === m.id && !s.dead) {
+        s.dead = true;
+        this.occupied.delete(key(s.tx, s.ty));
+        this.addEffect(3, s.x, s.y);
+      }
+    }
+    // A summon is worth nothing: no experience, souls or bestiary, and no corpse to loot (Canary sets
+    // skillLoss and lootDrop off on summons).
+    if (m.master !== undefined) {
+      this.addEffect(3, m.x, m.y);
+      return;
+    }
     this.kills++;
     // Souls for the meta progression, and kill counts per zone for its bosses.
     const soul = soulsFor(m.data.experience, m.boss);
     this.souls += soul;
     const mz = zoneAt(m.tx, m.ty);
     this.zoneKills[mz] = (this.zoneKills[mz] ?? 0) + 1;
+    // The first kill ever in a zone, of a creature that lives there, pays its exploration souls (once per
+    // account, so rushing outward pays nothing, and neither does killing a rat that followed you out).
+    const native = ZONES[mz].pool.includes(m.key) || ZONES[mz].bosses.includes(m.key);
+    if (mz > 0 && native && !this.discovered.has(mz)) {
+      this.discovered.add(mz);
+      const found = SOULS_PER_ZONE * (mz + 1);
+      this.souls += found;
+      this.banner = { text: `${ZONES[mz].name} discovered! +${found} souls`, t: 3 };
+      this.msg(`Your first kill in ${ZONES[mz].name}: +${found} souls.`, "#c9a0ff");
+    }
+    // Achievements: kills of a creature over all your runs; milestones pay souls.
+    const total = (this.killTotals[m.key] ?? 0) + 1;
+    this.killTotals[m.key] = total;
+    const ach = achievement(m.key, total);
+    if (ach) {
+      this.souls += ach.souls;
+      this.banner = { text: `Achievement: ${ach.title}! +${ach.souls} souls`, t: 3.5 };
+      this.msg(`Achievement unlocked: ${ach.title} (${ach.count} ${m.data.name} kills). +${ach.souls} souls.`, "#c9a0ff");
+    }
     // Bestiary: kill counts per creature unlock stages, each worth a choice.
     const seen = (this.bestiary.get(m.data.name) ?? 0) + 1;
     this.bestiary.set(m.data.name, seen);
@@ -673,7 +856,8 @@ export class Game {
     }
     this.occupied.delete(key(m.tx, m.ty));
     this.addEffect(3, m.x, m.y);
-    const { gained, amount } = this.ch.addExp(m.data.experience);
+    const { gained, amount, learned } = this.ch.addExp(m.data.experience);
+    for (const s of learned) this.msg(`You learned ${s.name} (${s.words}).`, "#80c0ff");
     this.addText(this.player.x, this.player.y - 52, String(amount), "#ffffff");
     if (gained) {
       const from = this.ch.level - gained;
@@ -738,21 +922,25 @@ export class Game {
       const it = item(lid)!;
       got.push(n > 1 ? `${n} ${it.name}s` : `${/^[aeiou]/.test(it.name) ? "an" : "a"} ${it.name}`);
       const coins = l.id === 3031 || l.id === 3035 || l.id === 3043;
-      let equipped = false;
+      let equipped = false, to: LootDest = coins ? "gold" : "bag";
       if (l.id === 3031) ch.gold += n;
       else if (l.id === 3035) ch.gold += n * 100;
       else if (l.id === 3043) ch.gold += n * 10000;
-      else if (POTIONS[l.id] || SPELLS.some((s) => s.runeId === l.id) || l.id === ch.equipment.ammo) {
+      else if (POTIONS[l.id] || SPELLS.some((s) => s.runeId === l.id) || l.id === ch.equipment.ammo || l.id === ch.thrown) {
         ch.supplies.set(l.id, (ch.supplies.get(l.id) ?? 0) + n);
+        to = "supplies";
       } else if (ch.offer(l.id)) {
         if (n > 1) ch.stash(l.id, n - 1);
         equipped = true;
+        to = "worn";
         this.msg(`You equip ${it.name}.`, "#80ff80", "loot");
-      } else if (ch.evolutions.has("goldpouch")) ch.gold += (PRICES[l.id]?.sell ?? 0) * n;
-      else ch.stash(l.id, n);
-      // Flair: every item hops out of the body and flies to your bag; rare ones get a fanfare.
+      } else if (ch.evolutions.has("goldpouch")) {
+        ch.gold += (PRICES[l.id]?.sell ?? 0) * n;
+        to = "gold";
+      } else ch.stash(l.id, n);
+      // Flair: every item hops out of the body and flies to where it went; rare ones get a fanfare.
       const rare = !coins && (equipped || (PRICES[l.id]?.sell ?? 0) >= RARE_VALUE);
-      this.lootFx.push({ id: l.id, x: cx, y: cy, t: 0, delay: i * 0.08, gold: coins, rare });
+      this.lootFx.push({ id: l.id, n, x: cx, y: cy, t: 0, delay: i * 0.08, to, rare });
       if (rare) {
         this.banner = { text: equipped ? `Upgrade! ${it.name}` : `Rare drop: ${it.name}!`, t: 3 };
         this.addEffect(11, cx, cy);
@@ -781,7 +969,24 @@ export class Game {
       if (ch.mana < cost) return false;
       this.advance(ch.spendMana(cost));
       this.addMissile(missileFor(w!.shoottype), p.x, p.y, m.x, m.y);
-      this.damageMonster(m, normalRandom(w!.fromdamage ?? 0, w!.todamage ?? 0), (w!.wandtype as Element) ?? "energy", false, false);
+      this.damageMonster(m, normalRandom(w!.fromdamage ?? 0, w!.todamage ?? 0), (w!.wandtype as Element) ?? "energy", false);
+    } else if (t === "missile") {
+      // Spears, throwing stars...: distance fighting with the weapon's own attack and hit chance. A throw that
+      // breaks it (its breakchance) uses one up; the others you pick up again.
+      const id = ch.thrown!, left = ch.supplies.get(id) ?? 0;
+      if (left <= 0) { ch.outOfThrown(); return false; }
+      this.addMissile(missileFor(w!.shoottype), p.x, p.y, m.x, m.y);
+      this.advance(ch.train(SKILL.distance));
+      if (Math.random() * 100 < distanceHitChance(w!.maxhitchance)) {
+        this.weaponHit(m, distanceDamage(ch.level, ch.skill(SKILL.distance), ch.attackValue, ch.vd, af));
+      } else this.addEffect(3, m.x, m.y);
+      if (Math.random() * 100 < Number(w!.breakchance ?? 0)) {
+        ch.supplies.set(id, left - 1);
+        if (left - 1 <= 0) {
+          this.msg(`Your last ${w!.name} broke.`, "#ff9c30");
+          ch.outOfThrown();
+        }
+      }
     } else if (t === "distance") {
       ch.fitAmmo();
       const ammoId = ch.equipment.ammo;
@@ -810,18 +1015,18 @@ export class Game {
       const part = Math.round((dmg * d.values[tier - 1]) / 100);
       physical -= part;
       if (part <= 0) continue;
-      this.damageMonster(m, part, d.element!, false, false);
+      this.damageMonster(m, part, d.element!, false);
       if (this.ch.evolutions.has("elementalburst")) {
         for (const [dx, dy] of [...ORTHO, ...DIAG]) {
           const o = this.monsterAt(m.tx + dx, m.ty + dy);
           if (o && o !== m) {
             this.addEffect(d.effect, o.x, o.y);
-            this.damageMonster(o, part, d.element!, false, false);
+            this.damageMonster(o, part, d.element!, false);
           }
         }
       }
     }
-    if (physical > 0) this.damageMonster(m, physical, "physical", true, true);
+    if (physical > 0) this.damageMonster(m, physical, "physical", true);
   }
 
   /** Tiles a spell hits: around the player, in the facing direction, or on/around the target. */
@@ -904,7 +1109,7 @@ export class Game {
     for (const [tx, ty] of this.spellTiles(s, dir, target)) {
       this.addEffect(s.effect, tileCenter(tx), tileCenter(ty));
       const m = this.monsterAt(tx, ty);
-      if (m) this.damageMonster(m, normalRandom(Math.floor(lo), Math.floor(hi)), s.element, false, s.blockArmor);
+      if (m) this.damageMonster(m, normalRandom(Math.floor(lo), Math.floor(hi)), s.element, s.blockArmor);
     }
   }
 

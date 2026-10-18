@@ -4,9 +4,10 @@ import { ROOKIE } from "./data";
 import { applyUnlocks } from "./unlocks";
 import { loadSave, writeSave } from "./meta";
 import { autoCombat } from "./autocast";
-import { Game } from "./game";
+import { Game, type LootDest } from "./game";
 import { HOTKEYS, HOTKEYS_ALT, Hud } from "./hud";
 import { Renderer } from "./render";
+import { installTooltips } from "./tooltip";
 import { showMissingAssets, UI } from "./ui";
 import { World } from "./world";
 import { imbuement, TIERS } from "./tibia/imbuements";
@@ -33,6 +34,7 @@ async function boot() {
     return;
   }
   const ui = new UI(overlay, atlas);
+  installTooltips();
   const renderer = new Renderer(ctx, atlas);
   const effectDur = (id: number) => (atlas.data.effects[id] ? atlas.effectDuration(id) : 0);
   const world = new World(atlas.data.decor);
@@ -83,15 +85,20 @@ async function boot() {
     save.runs++;
     writeSave(save);
     game = g;
-    hud.bind(g);
+    hud.bind(g, save.souls);
     paused = false;
     if (import.meta.env.DEV) (window as unknown as { game: Game }).game = game;
   };
 
   /** End of a run: the souls earned are banked (all of them, even on death). */
+  const banked = new WeakMap<Game, number>(); // souls of a run already in the bank
   const bankRun = (g: Game): number => {
     const save = loadSave();
-    save.souls += g.souls;
+    save.souls += g.souls - (banked.get(g) ?? 0); // only what isn't banked yet (a page kept in the back/forward cache)
+    banked.set(g, g.souls);
+    save.zones = [...g.discovered];
+    save.kills = { ...g.killTotals };
+    save.maxLevel = Math.max(save.maxLevel ?? 0, g.ch.level);
     const b = save.best;
     if (!b || g.deepest > b.zone || (g.deepest === b.zone && g.ch.level > b.level)) {
       save.best = { zone: g.deepest, level: g.ch.level, kills: g.kills };
@@ -99,6 +106,11 @@ async function boot() {
     writeSave(save);
     return g.souls;
   };
+
+  // Reloading or closing the page mid-run banks it, like quitting the run.
+  addEventListener("pagehide", () => {
+    if (game && !game.over) bankRun(game);
+  });
 
   const togglePause = () => {
     if (!game || game.over) return;
@@ -171,6 +183,7 @@ async function boot() {
     keys.add(e.code);
     if (e.code === "Escape" || e.code === "KeyP") togglePause();
     if (e.code === "KeyC" && game && !ui.open) hud.setChase(!hud.chase);
+    if (e.code === "KeyT" && game && !ui.open) hud.setTargeting(hud.targeting === "closest" ? "weakest" : "closest");
     // Hotbar: F1-F12, or the number row.
     const hk = Math.max(HOTKEYS.indexOf(e.code), HOTKEYS_ALT.indexOf(e.code));
     if (hk >= 0 && game && !ui.open && !paused) {
@@ -242,7 +255,8 @@ async function boot() {
       renderer.draw(game);
       hud.update(game, renderer, dpr, dt);
       const r = canvas.getBoundingClientRect(), t = hud.lootTargets();
-      renderer.drawLootFx(game, fx, [r.left * dpr, r.top * dpr], [t.gold[0] * dpr, t.gold[1] * dpr], [t.bag[0] * dpr, t.bag[1] * dpr]);
+      for (const k in t) t[k as LootDest] = [t[k as LootDest][0] * dpr, t[k as LootDest][1] * dpr];
+      renderer.drawLootFx(game, fx, [r.left * dpr, r.top * dpr], t);
     } else {
       backdrop.time += dt;
       renderer.draw(backdrop);

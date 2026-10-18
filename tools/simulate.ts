@@ -24,7 +24,7 @@ for (let k = 1; k <= runs; k++) {
   const save = loadSave();
   // Shopping: the cheapest available gear tier or boost level, until broke.
   for (;;) {
-    const gear = TRACKS.map((t) => ({ t, next: t.tiers[tier(save, t.id) + 1] })).filter((x) => x.next && x.next.cost <= save.souls)
+    const gear = TRACKS.map((t) => ({ t, next: t.tiers[tier(save, t.id) + 1] })).filter((x) => x.next && x.next.cost <= save.souls && !x.t.locked?.(save))
       .map((x) => ({ cost: x.next!.cost, buy: () => buyTier(save, x.t) }));
     const boosts = wants.filter((id) => (save.boosts[id] ?? 0) < MAX_BOOST).map((id) => ({ cost: boostCost(id, save.boosts[id] ?? 0), buy: () => buyBoost(save, id) }))
       .filter((o) => o.cost <= save.souls);
@@ -40,9 +40,12 @@ for (let k = 1; k <= runs; k++) {
   after.blessings = 0;
   after.runs++;
   after.souls += g.souls;
+  after.maxLevel = Math.max(after.maxLevel ?? 0, g.ch.level);
+  after.zones = [...g.discovered];
+  after.kills = { ...g.killTotals };
   writeSave(after);
   const t = Math.round(g.time);
   console.log(`run ${String(k).padStart(2)} ${Math.floor(t / 60)}:${String(t % 60).padStart(2, "0")} L${g.ch.level} ${g.ch.voc.name} ml${g.ch.ml} `
     + `sk${g.ch.skills.map((s) => s.level).join(",")} kills${g.kills} zone:${ZONES[g.deepest].name} +${g.souls} souls (bank ${after.souls}) `
-    + `gear[${TRACKS.map((t) => tier(save, t.id)).join("")}] boosts[${Object.entries(save.boosts).map(([i, l]) => i + l).join(" ")}]`);
+    + `unlocks[${TRACKS.map((t) => tier(save, t.id)).join("")}] boosts[${Object.entries(save.boosts).map(([i, l]) => i + l).join(" ")}]`);
 }

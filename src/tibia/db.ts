@@ -18,7 +18,16 @@ export interface MonsterAttack {
   target?: boolean;
   shoot?: number;
   effect?: number;
+  /** Damage over time on a hit (poison from a melee bite), or all a "condition" spell does: a total rolled
+   *  from min-max, dealt in shrinking ticks every `tick` ms (Canary's ConditionDamage). */
+  condition?: { element: Element; min: number; max: number; tick: number };
+  field?: number; // a field spell: the magic field item it leaves on every tile of its area
 }
+
+/** A magic field lying on the ground (items.xml): stepping in starts its ticks, one every `every` ms
+ *  (fire: 7 x 20, poison: a shrinking 100, energy: one 25). It lasts `duration` seconds, then turns into
+ *  `decayTo` (a fire field cools down twice before it goes out) or disappears. */
+export interface FieldData { id: number; name: string; element: Element; duration: number; decayTo: number; ticks: number[]; every: number }
 
 export interface MonsterData {
   name: string;
@@ -30,11 +39,15 @@ export interface MonsterData {
   targetDistance: number;
   runHealth: number;
   attacks: MonsterAttack[];
-  defense: number;
+  defense: number; // in the data, but not used on monsters (see Game.damageMonster)
   armor: number;
+  mitigation: number; // percent of damage it shrugs off
   heals: { interval: number; chance: number; min: number; max: number }[];
   elements: Partial<Record<Element, number>>;
   loot: { id: number; chance: number; max: number }[];
+  /** monster.summon: at most maxSummons alive; each kind rolls `chance`% every `interval` ms, up to `count` of it. */
+  maxSummons: number;
+  summons: { name: string; interval: number; chance: number; count: number }[];
 }
 
 export interface SpellData {
@@ -125,6 +138,7 @@ const data = raw as unknown as {
   vocations: Record<VocationId, VocationData>;
   potions: Record<string, PotionData>;
   prices: Record<string, { buy?: number; sell?: number }>;
+  fields: Record<string, FieldData>;
 };
 
 export const MONSTERS = data.monsters;
@@ -132,6 +146,7 @@ export const SPELLS = data.spells;
 export const VOCATION_DATA = data.vocations;
 export const POTIONS = data.potions;
 export const STARTER = data.starter;
+export const FIELDS = data.fields;
 /** NPC prices: the cheapest an NPC sells for, the most one pays (from Canary's NPC shop lists). */
 export const PRICES = data.prices;
 

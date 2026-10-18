@@ -107,6 +107,8 @@ body:not(.ingame) #side, body:not(.ingame) #hotbar, body:not(.ingame) #console, 
 .sk .hd { grid-column: 1 / -1; color: var(--gold); font-weight: bold; }
 
 /* battle */
+.win-head .target-mode { width: auto; padding: 0 4px; color: #9cc8ff; }
+.win-head .target-mode.weakest { color: #ff8080; }
 .brow { display: flex; align-items: center; gap: 4px; padding: 1px; cursor: pointer; border: 1px solid transparent; }
 .brow:hover { background: #3a3733; }
 .brow canvas { width: 26px; height: 26px; image-rendering: pixelated; background: var(--well); border: 1px solid var(--edge); flex: none; }
@@ -121,8 +123,30 @@ body:not(.ingame) #side, body:not(.ingame) #hotbar, body:not(.ingame) #console, 
 .empty-note { color: #777; font-size: 10px; padding: 2px; }
 
 /* supplies */
-.grid { display: grid; grid-template-columns: repeat(auto-fill, 34px); gap: 3px; }
+.grid { display: grid; grid-template-columns: repeat(auto-fill, 34px); grid-auto-rows: 34px; gap: 3px; }
 .loot-line { margin-top: 4px; color: #bbb; }
+
+/* backpack: a Tibia container window (34 px cells, counts bottom right in #e7e7e7, shown from 2 up) */
+.win-ico { width: 16px; height: 16px; image-rendering: pixelated; margin-left: -3px; }
+.win-ico:not([src]) { visibility: hidden; }
+.grid.box .slot[data-i] { cursor: pointer; }
+.grid.box .slot[data-i]:hover { box-shadow: inset 0 0 0 1px #8a8478; }
+.grid.box .count { right: 2px; color: #e7e7e7; }
+.slot.bp { cursor: pointer; }
+.grid.box .slot.wear:hover { box-shadow: inset 0 0 0 1px #80c060; }
+
+/* item tooltips (tooltip.ts) */
+#tip { position: fixed; left: 0; top: 0; z-index: 20; pointer-events: none; max-width: 260px; padding: 5px 8px;
+  font: 11px/1.45 Verdana, sans-serif; color: #ddd; background: rgba(20, 19, 18, 0.96); border: 1px solid #6b5a3a;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.6); }
+#tip[hidden] { display: none; }
+#tip b { color: #fff; font-size: 12px; }
+#tip i { color: #aaa; font-style: normal; }
+#tip small { color: #888; }
+#tip .up { color: #70e070; }
+#tip .down, #tip .bad { color: #ff7060; }
+#tip .gold { color: #ffd34d; }
+.slot.bp:hover { box-shadow: inset 0 0 0 1px #8a8478; }
 
 /* hotbar: F1-F12 */
 #hotbar { display: flex; justify-content: center; gap: 3px; padding: 4px; background: var(--stone); border-top: 2px solid var(--edge); }
@@ -204,7 +228,34 @@ td { padding: 3px 14px; text-align: left; }
 td:first-child { color: #999; }
 
 /* Pause screen: character sheet + NPC shop */
-.pause { max-width: min(1000px, 96vw); }
+.pause { max-width: min(1100px, 96vw); width: 1100px; }
+.pause .cols > .sheet { flex: 0 0 260px; }
+.trade { min-width: 0; }
+.stabs { display: flex; flex-wrap: wrap; gap: 3px; margin-bottom: 6px; }
+.btn.stab { margin: 0; padding: 4px 10px; font-size: 12px; font-weight: normal; }
+.btn.stab.on { border-color: #e8c66a; color: #ffd34d; background: linear-gradient(#5a5240, #3a3426); }
+.trade .btn.sell { margin-bottom: 6px; }
+.slist { max-height: 56vh; overflow-y: auto; display: flex; flex-direction: column; gap: 2px; padding-right: 4px; scrollbar-width: thin; }
+.srow { display: flex; align-items: center; gap: 8px; padding: 3px 6px; background: #1d1c1a; border: 1px solid #2c2a26; }
+.srow:hover { background: #262420; border-color: #4a463f; }
+.srow .ico canvas { width: 32px; height: 32px; image-rendering: pixelated; display: block; }
+.srow .info { flex: 1; min-width: 0; font-size: 12px; line-height: 1.35; }
+.srow .info b { display: block; color: #eee; font-weight: normal; }
+.srow .info b i { color: #999; font-style: normal; }
+.srow .info small { color: #9a968c; }
+.srow .packs { display: flex; gap: 3px; flex: none; }
+.btn.pk { margin: 0; padding: 3px 7px; font-size: 11px; font-weight: normal; color: #ffd34d; min-width: 54px; }
+.btn.pk:disabled { color: #888; }
+.tag { font-size: 10px; padding: 0 4px; border: 1px solid; margin-left: 2px; }
+.tag.up { color: #70e070; border-color: #3a6a3a; }
+.tag.on { color: #9cc8ff; border-color: #3a5a7a; }
+.prepare h3 small { font-weight: normal; }
+.achs { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 3px; text-align: left; font-size: 12px; }
+.ach { padding: 3px 6px; background: #1d1c1a; border: 1px solid #2c2a26; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.ach .stars { color: #ffd34d; letter-spacing: -1px; }
+.ach.boss { border-color: #6b5a3a; }
+.ach i { color: #888; font-style: normal; }
+.bad { color: #ff7060; }
 .cols { display: flex; gap: 28px; text-align: left; }
 .cols > div { flex: 1; }
 h3 { margin: 0 0 8px; color: #e8c66a; font-size: 15px; }

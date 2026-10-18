@@ -1,4 +1,5 @@
 // The player's character sheet: level, experience, skills, equipment and supplies, with Tibia's rules.
+import { BACKPACK, Container } from "./container";
 import { expRate, MAGIC_RATE, SKILL_RATE, START_GOLD, START_LEVEL, type VocationDef } from "./data";
 import { canWear, item, itemId, POTIONS, PRICES, SPELLS, VOCATION_DATA, wornItem, type Element, type ItemData, type SpellData, type VocationData } from "./tibia/db";
 import { IMBUEMENTS, imbuement, type ImbuementKind } from "./tibia/imbuements";
@@ -32,11 +33,15 @@ export class Character {
   equipment: Partial<Record<Slot, number>> = {};
   supplies = new Map<number, number>(); // potions, runes, ammo
   known = new Set<string>(); // spell files
-  backpack = new Map<number, number>(); // loot we can't use: item id -> count
+  backpack = new Container(BACKPACK); // the backpack slot: loot we can't use, nested backpacks and all
   imbuements = new Map<string, number>(); // id -> tier (1 Basic, 2 Intricate, 3 Powerful)
   boosts = new Map<BoostId, number>(); // id -> level
   evolutions = new Set<EvolutionId>();
   blessings = 0; // Tibia blessings: each one saves you from a death
+  // Rookgaard unlocks: experience and skill training multipliers that end with the vocation choice.
+  rookXp = 1;
+  rookTrain = 1;
+  rookRegen = 1; // health regeneration (a rookie gets 1 hit point per 12 s)
 
   constructor(public voc: VocationDef) {
     this.vd = VOCATION_DATA[voc.id];
@@ -155,6 +160,21 @@ export class Character {
   get weapon(): ItemData | undefined { return this.equipment.weapon ? item(this.equipment.weapon) : undefined; }
   get shield(): ItemData | undefined { return this.equipment.shield ? item(this.equipment.shield) : undefined; }
   get ammo(): ItemData | undefined { return this.equipment.ammo ? item(this.equipment.ammo) : undefined; }
+  /** A thrown weapon in hand (spear, throwing star...): the stack is counted in supplies, like ammunition. */
+  get thrown(): number | undefined { return this.weapon?.weapontype === "missile" ? this.equipment.weapon : undefined; }
+
+  /** The last spear broke: back to the best weapon in the backpack (or fists). */
+  outOfThrown() {
+    delete this.equipment.weapon;
+    let best: number | undefined, bestScore = -1;
+    for (const t of this.backpack.all()) {
+      const it = item(t.id);
+      if (!it || it.weapontype === "missile" || this.slotFor(it) !== "weapon" || !canWear(it, this.voc.id, this.level)) continue;
+      const s = this.score(it, "weapon");
+      if (s > bestScore) { bestScore = s; best = t.id; }
+    }
+    if (best !== undefined && this.backpack.take(best)) this.equip(best);
+  }
 
   /** The skill the current weapon trains and uses. */
   get weaponSkill(): number {
@@ -181,8 +201,9 @@ export class Character {
   // ---------- progression ----------
 
   /** Returns the levels gained. */
-  addExp(raw: number): { gained: number; amount: number } {
-    const amount = Math.round(raw * expRate(this.level) * this.rate("xp") * (this.evolutions.has("stamina") ? 4 : 1));
+  addExp(raw: number): { gained: number; amount: number; learned: SpellData[] } {
+    const rook = this.voc.id === "none" ? this.rookXp : 1;
+    const amount = Math.round(raw * expRate(this.level) * this.rate("xp") * rook * (this.evolutions.has("stamina") ? 4 : 1));
     this.exp += amount;
     let gained = 0;
     while (this.exp >= expForLevel(this.level + 1)) {
@@ -192,7 +213,10 @@ export class Character {
       this.hp = Math.min(this.maxHp, this.hp + this.maxHp - hp0);
       this.mana = Math.min(this.maxMana, this.mana + this.maxMana - mana0);
     }
-    return { gained, amount };
+    // New spells come with the level (in Tibia you'd buy them from your guild's NPC).
+    const learned = gained ? this.learnable() : [];
+    for (const s of learned) this.known.add(s.file);
+    return { gained, amount, learned };
   }
 
   /** Skill tries (scaled by the server's skill rate). Returns advancement messages. */
@@ -200,7 +224,7 @@ export class Character {
     const msgs: string[] = [];
     const s = this.skills[skill];
     const b = BOOSTS.find((d) => d.skill === skill);
-    s.tries += tries * SKILL_RATE * (b ? this.rate(b.id) : 1);
+    s.tries += tries * SKILL_RATE * (b ? this.rate(b.id) : 1) * (this.voc.id === "none" ? this.rookTrain : 1);
     while (s.tries >= this.reqTries(skill, s.level)) {
       s.tries -= this.reqTries(skill, s.level);
       s.level++;
@@ -243,7 +267,9 @@ export class Character {
 
   /** Runes this vocation conjures (and so may use here), with enough level and magic level. */
   usableRunes(): SpellData[] {
-    return SPELLS.filter((s) => s.kind === "rune" && s.vocations.includes(this.voc.id) && (s.level ?? 0) <= this.level && (s.magicLevel ?? 0) <= this.ml);
+    // Anyone may use a rune with the level and magic level for it (a knight's ultimate healing rune, a
+    // paladin's sudden death); only conjuring is vocation-bound.
+    return SPELLS.filter((s) => s.kind === "rune" && (s.level ?? 0) <= this.level && (s.magicLevel ?? 0) <= this.ml);
   }
 
   // ---------- equipment ----------
@@ -273,13 +299,12 @@ export class Character {
       const id = itemId(name);
       this.supplies.set(id, (this.supplies.get(id) ?? 0) + n);
     }
-    for (const s of this.learnable()) if ((s.level ?? 0) <= 8) this.known.add(s.file);
+    for (const s of this.learnable()) this.known.add(s.file);
     for (const id of [...this.imbuements.keys()]) if (!imbuement(id).for(v.id, this.weaponSkill)) this.imbuements.delete(id);
   }
 
   /** Which slot an item goes in for this vocation, or null if the class doesn't use it. */
   slotFor(it: ItemData): Slot | null {
-    const v = this.voc.id;
     const wt = it.weapontype;
     // Bows and wands carry no "slot" attribute in items.xml, only a weapon type.
     const slot = it.slot ?? (wt && ["sword", "axe", "club", "distance", "missile", "wand"].includes(wt) ? "hand"
@@ -288,16 +313,54 @@ export class Character {
       case "head": case "necklace": case "armor": case "legs": case "feet": case "ring":
         return slot as Slot;
       case "ammo":
-        return v === "paladin" && (it.ammotype === "arrow" || it.ammotype === "bolt") ? "ammo" : null;
+        return it.ammotype === "arrow" || it.ammotype === "bolt" ? "ammo" : null;
       case "shield":
-        if (wt === "spellbook") return v === "sorcerer" || v === "druid" ? "shield" : null;
-        return v === "knight" || v === "none" ? "shield" : null;
+        return "shield";
       case "hand":
-        if ((v === "knight" || v === "none") && wt && wt in WEAPON_SKILL) return "weapon";
-        if (v === "paladin" && wt === "distance" && (it.ammotype === "arrow" || it.ammotype === "bolt")) return "weapon";
-        if ((v === "sorcerer" || v === "druid") && wt === "wand") return "weapon";
-        return null;
+        return wt && (wt in WEAPON_SKILL || wt === "distance" || wt === "missile" || wt === "wand") ? "weapon" : null;
     }
+    return null;
+  }
+
+  /** As in Tibia, anyone can use gear without a vocation requirement (a paladin with spears and a shield, a
+   *  knight with a bow); wands, rods and spellbooks say who may (see canWear). This is what a vocation picks
+   *  by itself, though: for auto-equipping loot, the starting kit and the bot's shopping. */
+  prefers(it: ItemData): boolean {
+    const v = this.voc.id, wt = it.weapontype, mage = v === "sorcerer" || v === "druid";
+    switch (this.slotFor(it)) {
+      case "weapon":
+        if (v === "paladin") return wt === "distance" || wt === "missile";
+        if (mage) return wt === "wand";
+        return !!wt && wt in WEAPON_SKILL;
+      case "shield":
+        return wt === "spellbook" ? mage : !mage && !(v === "paladin" && this.weapon?.slottype === "two-handed");
+      case "ammo":
+        return v === "paladin";
+      case null:
+        return false;
+      default:
+        return true;
+    }
+  }
+
+  /** Put on an item from the backpack (a click in the backpack window). Whatever it replaces goes in the
+   *  backpack; a stack of spears or arrows goes to the weapon or ammo slot whole. Returns an error, if any. */
+  wearFromBackpack(id: number): string | null {
+    const it = item(id);
+    const slot = it ? this.slotFor(it) : null;
+    if (!it || !slot) return "You can't wear this.";
+    if (it.level && this.level < it.level) return `You need level ${it.level} to wear this.`;
+    if (!canWear(it, this.voc.id, this.level)) return "Your vocation can't use this.";
+    const stack = slot === "ammo" || it.weapontype === "missile";
+    const n = stack ? this.backpack.takeAll(id) : this.backpack.take(id) ? 1 : 0;
+    if (!n) return "You don't have that.";
+    if (slot === "weapon" && it.slottype === "two-handed" && this.equipment.shield) { this.stash(this.equipment.shield); delete this.equipment.shield; }
+    if (slot === "shield" && this.weapon?.slottype === "two-handed") { this.stash(this.equipment.weapon!); delete this.equipment.weapon; }
+    const old = this.equipment[slot];
+    // A thrown weapon or ammunition you take off keeps its count in supplies; anything else goes in the backpack.
+    if (old && old !== this.thrown && slot !== "ammo") this.stash(old);
+    this.equipment[slot] = id;
+    if (stack) this.supplies.set(id, (this.supplies.get(id) ?? 0) + n);
     return null;
   }
 
@@ -307,6 +370,7 @@ export class Character {
     if (slot === "weapon") {
       if (w.weapontype === "wand") return ((w.fromdamage ?? 0) + (w.todamage ?? 0)) / 2;
       if (w.weapontype === "distance") return (w.attack ?? 0) + (w.range ?? 0) + (Number(w.hitchance) || 0);
+      if (w.weapontype === "missile") return (w.attack ?? 0) * this.skills[SKILL.distance].level;
       const skill = this.skills[WEAPON_SKILL[w.weapontype!] ?? 0].level;
       return ((w.attack ?? 0) + Number(w.elementfire ?? 0) + Number(w.elementice ?? 0) + Number(w.elementearth ?? 0) + Number(w.elementenergy ?? 0)) * skill
         + (w.defense ?? 0) * 0.5;
@@ -327,8 +391,10 @@ export class Character {
     if (!it) return false;
     const slot = this.slotFor(it);
     if (!slot) return false;
+    // Two hands: a two-handed weapon puts the shield in the backpack, and a shield the two-handed weapon.
+    if (it.slottype === "two-handed" && this.equipment.shield) { this.stash(this.equipment.shield); delete this.equipment.shield; }
+    if (slot === "shield" && this.weapon?.slottype === "two-handed") { this.stash(this.equipment.weapon!); delete this.equipment.weapon; }
     this.equipment[slot] = id;
-    if (it.slottype === "two-handed") delete this.equipment.shield;
     return true;
   }
 
@@ -345,13 +411,11 @@ export class Character {
     return out.sort((a, b) => (item(a.id)!.level ?? 0) - (item(b.id)!.level ?? 0) || a.price - b.price);
   }
 
-  /** Ammunition for the equipped bow or crossbow. */
+  /** Arrows and bolts NPCs sell (all of them, whatever you hold). */
   shopAmmo(): { id: number; price: number; usable: boolean }[] {
-    const type = this.weapon?.ammotype;
-    if (!type) return [];
     return Object.entries(PRICES)
       .map(([k, pr]) => ({ id: Number(k), price: pr.buy ?? 0, it: item(Number(k)) }))
-      .filter((x) => x.price && x.it && x.it.ammotype === type && x.it.weapontype !== "distance")
+      .filter((x) => x.price && x.it && x.it.ammotype && x.it.weapontype !== "distance")
       .map((x) => ({ id: x.id, price: x.price, usable: canWear(x.it!, this.voc.id, this.level) }))
       .sort((a, b) => (item(a.id)!.attack ?? 0) - (item(b.id)!.attack ?? 0));
   }
@@ -375,7 +439,7 @@ export class Character {
     const out: { id: number; slot: Slot; price: number }[] = [];
     for (const [k, pr] of Object.entries(PRICES)) {
       const id = Number(k), it = item(id);
-      if (!pr.buy || !it || !canWear(it, this.voc.id, this.level)) continue;
+      if (!pr.buy || !it || !canWear(it, this.voc.id, this.level) || !this.prefers(it)) continue;
       const slot = this.slotFor(it);
       if (!slot || slot === "ammo" || (slot === "shield" && this.weapon?.slottype === "two-handed")) continue;
       const cur = this.equipment[slot];
@@ -387,25 +451,22 @@ export class Character {
 
   /** What NPCs pay for the loot in the backpack. */
   lootValue(): number {
-    let v = 0;
-    for (const [id, n] of this.backpack) v += (PRICES[id]?.sell ?? 0) * n;
-    return v;
+    return this.backpack.worth();
   }
 
   stash(id: number, n = 1) {
-    this.backpack.set(id, (this.backpack.get(id) ?? 0) + n);
+    this.backpack.add(id, n);
   }
 
   get backpackCount() {
-    let c = 0;
-    for (const n of this.backpack.values()) c += n;
-    return c;
+    return this.backpack.count();
   }
 
-  /** Equip an item if it fits this vocation and beats what's worn. */
+  /** Equip an item if it fits this vocation and beats what's worn. A thrown weapon is never swapped in on
+   *  its own: a stack is something you buy, one looted spear isn't a weapon. */
   offer(id: number): boolean {
     const it = item(id);
-    if (!it || !canWear(it, this.voc.id, this.level)) return false;
+    if (!it || !canWear(it, this.voc.id, this.level) || it.weapontype === "missile" || !this.prefers(it)) return false;
     const slot = this.slotFor(it);
     if (!slot) return false;
     if (slot === "shield" && this.weapon?.slottype === "two-handed") return false;

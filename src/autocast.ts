@@ -19,10 +19,11 @@ export function autoCombat(g: Game) {
     else if (manaPct < MANA_POTION_AT && (ch.voc.id !== "knight" || hpPct > 0.7)) drinkBest(g, "mana");
   }
 
-  // Healing spells (healing group, 1 s).
+  // Healing spells and healing runes (healing group, 1 s): the strongest one available.
   if (hpPct < HEAL_AT && g.time >= g.groupReady.healing) {
-    const heal = knownSpells(g, "healing").filter((s) => ready(g, s) && ch.mana >= g.manaCost(s))
-      .sort((a, b) => expected(g, b) - expected(g, a))[0];
+    const spells = knownSpells(g, "healing").filter((s) => ready(g, s) && ch.mana >= g.manaCost(s));
+    const runes = ch.usableRunes().filter((s) => s.group === "healing" && ready(g, s) && (ch.supplies.get(s.runeId!) ?? 0) > 0);
+    const heal = [...spells, ...runes].sort((a, b) => expected(g, b) - expected(g, a))[0];
     if (heal) g.cast(heal, p.dir);
   }
 
@@ -34,22 +35,31 @@ export function autoCombat(g: Game) {
   }
 
   // Keep a target: the current one while it lives and stays near, else the closest one our weapon can hurt
-  // (a knight's sword does nothing to a ghost).
+  // (a knight's sword does nothing to a ghost). Targeting "weakest" picks the one with the least health left.
   const weaponEl = ch.weapon?.weapontype === "wand" ? (ch.weapon.wandtype as Element) ?? "energy" : "physical";
   const hurtable = (m: Monster) => (m.data.elements[weaponEl] ?? 0) < 100;
   // A target you picked yourself stays until it dies or leaves the screen.
   const picked = g.manualTarget ? g.monsters.find((m) => m.id === g.targetId && !m.dead && cheb(m.tx, m.ty, p.tx, p.ty) <= 10) : undefined;
   if (!picked) g.manualTarget = false;
-  let target = picked ?? g.monsters.find((m) => m.id === g.targetId && !m.dead && hurtable(m) && cheb(m.tx, m.ty, p.tx, p.ty) <= 7);
-  const adjacent = g.monstersInRange(1).filter(hurtable);
-  if (!picked && ch.attackRange === 1 && adjacent.length && (!target || cheb(target.tx, target.ty, p.tx, p.ty) > 1)) target = adjacent[0];
-  if (!picked && target && cheb(target.tx, target.ty, p.tx, p.ty) > ch.attackRange) {
-    // Out of weapon range (a fleeing monster, say): switch to one we can hit now.
-    const inRange = g.monstersInRange(ch.attackRange).filter(hurtable)[0];
-    if (inRange) target = inRange;
-  }
-  if (!target) {
-    target = g.monstersInRange(7).filter(hurtable).sort((a, b) => cheb(a.tx, a.ty, p.tx, p.ty) - cheb(b.tx, b.ty, p.tx, p.ty))[0];
+  const dist = (m: Monster) => cheb(m.tx, m.ty, p.tx, p.ty);
+  // A monster you're fighting that runs away stays your target while it's on screen; chase mode follows it.
+  const current = g.monsters.find((m) => m.id === g.targetId && !m.dead && hurtable(m) && dist(m) <= 7);
+  let target = picked ?? (current && current.hp < current.data.runHealth ? current : undefined);
+  if (!target && g.targeting === "weakest") {
+    // Least health left (by percent), closest first on a tie: among those we can hit from here, else nearby.
+    // Re-picked every tick, so it switches as soon as another one drops lower.
+    const best = (ms: Monster[]) => ms.sort((a, b) => a.hp / a.maxHp - b.hp / b.maxHp || dist(a) - dist(b))[0];
+    target = best(g.monstersInRange(ch.attackRange).filter(hurtable)) ?? best(g.monstersInRange(7).filter(hurtable));
+  } else if (!target) {
+    target = current;
+    const adjacent = g.monstersInRange(1).filter(hurtable);
+    if (ch.attackRange === 1 && adjacent.length && (!target || dist(target) > 1)) target = adjacent[0];
+    if (target && dist(target) > ch.attackRange) {
+      // Out of weapon range (a ranged monster keeping its distance, say): switch to one we can hit now.
+      const inRange = g.monstersInRange(ch.attackRange).filter(hurtable)[0];
+      if (inRange) target = inRange;
+    }
+    if (!target) target = g.monstersInRange(7).filter(hurtable).sort((a, b) => dist(a) - dist(b))[0];
   }
   g.targetId = target?.id ?? 0;
   if (!target) return;
@@ -64,7 +74,7 @@ export function autoCombat(g: Game) {
   if (g.time < g.groupReady.attack) return;
   const reserve = Math.min(ch.maxMana * 0.25, 2 * Math.max(0, ...knownSpells(g, "healing").map((s) => s.mana ?? 0)));
   let best: { s: SpellData; dir: number; target?: Monster; value: number } | null = null;
-  for (const s of [...knownSpells(g, "attack"), ...ch.usableRunes()]) {
+  for (const s of [...knownSpells(g, "attack"), ...ch.usableRunes().filter((r) => r.group === "attack")]) {
     if (!ready(g, s)) continue;
     if (s.kind === "rune" ? (ch.supplies.get(s.runeId!) ?? 0) <= 0 : ch.mana - g.manaCost(s) < (ch.voc.id === "knight" ? 0 : reserve)) continue;
     const per = expected(g, s);

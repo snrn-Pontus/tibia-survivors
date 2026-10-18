@@ -1,23 +1,26 @@
 // The client around the game view, as HTML (the way Minibia and the Tibia client lay it out): window
-// columns on the right (status, minimap, equipment with fight modes, skills, battle list, supplies),
+// columns on the right (status, minimap, equipment with fight modes, skills, battle list, backpack, supplies),
 // an F1-F12 hotbar and a tabbed console under the view, and names and health bars over the canvas.
 // Windows can be minimized, closed, resized and dragged between columns; the layout is remembered.
-import type { Atlas } from "./atlas";
+import { stackPattern, type Atlas } from "./atlas";
 import { SLOTS, type Slot } from "./character";
+import { stackable, type Container } from "./container";
+import { tooltipCharacter } from "./tooltip";
 import { zoneAt, ZONES } from "./data";
 import { evolution } from "./evolutions";
-import { cheb, type Channel, type Game, type Monster } from "./game";
+import { cheb, ELEMENT_COLORS, type Channel, type Game, type LootDest, type Monster, type Targeting } from "./game";
 import type { Renderer } from "./render";
-import { item, POTIONS, SPELLS, type SpellData } from "./tibia/db";
+import { item, POTIONS, PRICES, SPELLS, type Element as DamageType, type SpellData } from "./tibia/db";
 import { FIGHT_MODES, SKILL_NAMES, type FightMode } from "./tibia/rules";
 import { boost, boostRate, formatRate, hasteBonus } from "./upgrades";
 
 const LAYOUT_KEY = "tibia-survivors-ui-v1";
-type WinId = "equipment" | "skills" | "battle" | "supplies";
+type WinId = "equipment" | "skills" | "battle" | "backpack" | "supplies";
 const WINDOWS: { id: WinId; title: string; height?: number }[] = [
   { id: "equipment", title: "Equipment" },
   { id: "skills", title: "Skills", height: 230 },
   { id: "battle", title: "Battle", height: 220 },
+  { id: "backpack", title: "Backpack", height: 216 },
   { id: "supplies", title: "Supplies", height: 110 },
 ];
 interface Layout {
@@ -27,11 +30,12 @@ interface Layout {
   height: Partial<Record<WinId, number>>;
   fightMode: FightMode;
   chase: boolean;
+  targeting: Targeting;
   zoom: number; // minimap pixels per tile
 }
 const DEFAULT_LAYOUT: Layout = {
-  cols: { a: ["equipment", "skills"], b: ["battle", "supplies"] },
-  min: {}, closed: {}, height: {}, fightMode: "offensive", chase: true, zoom: 2,
+  cols: { a: ["equipment", "skills"], b: ["battle", "backpack", "supplies"] },
+  min: {}, closed: {}, height: {}, fightMode: "offensive", chase: true, targeting: "closest", zoom: 2,
 };
 
 function loadLayout(): Layout {
@@ -62,6 +66,12 @@ const ZONE_RGB = ZONES.map((_, i) => {
   return [Math.round(70 + 110 * k), Math.round(120 - 80 * k), Math.round(55 - 25 * k)];
 });
 
+/** Tibia's condition icons for damage over time, by the damage type it ticks. */
+const CONDITION_ICONS: Partial<Record<DamageType, [string, string]>> = {
+  earth: ["☠", "Poisoned"], fire: ["🔥", "Burning"], energy: ["ϟ", "Electrified"], drown: ["≈", "Drowning"],
+  physical: ["✚", "Bleeding"], ice: ["❄", "Freezing"], holy: ["☀", "Dazzled"], death: ["✝", "Cursed"],
+};
+
 type HotEntry = { kind: "spell"; s: SpellData } | { kind: "potion"; id: number };
 const entryKey = (e: HotEntry) => (e.kind === "spell" ? `s:${e.s.file}` : `p:${e.id}`);
 export const HOTKEYS = ["F1", "F2", "F3", "F4", "F5", "F6", "F7", "F8", "F9", "F10", "F11", "F12"];
@@ -70,7 +80,7 @@ export const HOTKEYS_ALT = ["Digit1", "Digit2", "Digit3", "Digit4", "Digit5", "D
 
 export class Hud {
   private layout = loadLayout();
-  private wins = new Map<WinId, { root: HTMLElement; body: HTMLElement }>();
+  private wins = new Map<WinId, { root: HTMLElement; head: HTMLElement; body: HTMLElement }>();
   private toolBtns = new Map<WinId, HTMLElement>();
   private colA = document.getElementById("col-a")!;
   private colB = document.getElementById("col-b")!;
@@ -93,11 +103,21 @@ export class Hud {
   private modeBtns = new Map<string, HTMLElement>();
   private goldEl!: HTMLElement;
   private soulsEl!: HTMLElement;
+  private bankedSouls = 0; // in the bank when the run started
   private shownGold = 0;
   private goldPulse = 0;
+  // backpack: the container window shows one container at a time, like Tibia's
+  private bpSlot!: HTMLElement;
+  private bpIcon = el("img", "win-ico");
+  private bpTitle!: HTMLElement;
+  private bpUp = el("button", "", "▲");
+  private bpGrid = el("div", "grid box");
+  private bpWorth = el("div", "loot-line");
+  private open: Container | null = null; // null: the main backpack
   // battle
   private rows = new Map<number, HTMLElement>();
   private battleEmpty = el("div", "empty-note", "No creatures in sight.");
+  private targetBtn = el("button", "target-mode");
   // hotbar
   private hot: (HotEntry | null)[] = [];
   private hotEls: { root: HTMLElement; img: HTMLImageElement; cd: HTMLElement; count: HTMLElement }[] = [];
@@ -127,7 +147,10 @@ export class Hud {
     if (!u) this.urls.set(k, (u = make().toDataURL()));
     return u;
   }
-  private itemUrl(id: number) { return this.url(`i${id}`, () => this.atlas.itemIcon(id)); }
+  private itemUrl(id: number, n = 1) {
+    const pat = stackable(id) ? stackPattern(n) : 0;
+    return this.url(`i${id}:${pat}`, () => this.atlas.itemIcon(id, 32, 1, n));
+  }
   private spellUrl(s: SpellData) {
     return this.url(`s${s.file}`, () => {
       if (s.runeId) return this.atlas.itemIcon(s.runeId);
@@ -182,6 +205,8 @@ export class Hud {
     for (const w of WINDOWS) this.wins.set(w.id, this.makeWindow(w.id, w.title));
     this.placeWindows();
     this.buildEquipment();
+    this.buildBackpack();
+    this.buildBattle();
     for (const c of [this.colA, this.colB]) {
       c.addEventListener("dragover", (e) => this.dragOver(e, c));
       c.addEventListener("drop", (e) => { e.preventDefault(); this.dragEnd(); });
@@ -233,7 +258,7 @@ export class Hud {
     head.addEventListener("dragend", () => this.dragEnd());
     root.append(head, body, foot);
     root.classList.toggle("min", !!this.layout.min[id]);
-    return { root, body };
+    return { root, head, body };
   }
 
   private dragOver(e: DragEvent, col: HTMLElement) {
@@ -277,10 +302,18 @@ export class Hud {
     const wrap = el("div", "equip-win");
     const grid = el("div", "slots");
     // Tibia's inventory: amulet, helmet, backpack / weapon, armor, shield / ring, legs, ammo / boots.
-    const layout: (Slot | null)[] = ["necklace", "head", null, "weapon", "armor", "shield", "ring", "legs", "ammo", null, "feet", null];
+    const layout: (Slot | "backpack" | null)[] = ["necklace", "head", "backpack", "weapon", "armor", "shield", "ring", "legs", "ammo", null, "feet", null];
     for (const slot of layout) {
       const s = el("div", "slot");
       if (!slot) { s.classList.add("none"); grid.append(s); continue; }
+      if (slot === "backpack") {
+        // Click the backpack to open it, like in Tibia.
+        s.classList.add("bp");
+        s.addEventListener("click", () => this.openBox(null));
+        this.bpSlot = s;
+        grid.append(s);
+        continue;
+      }
       s.dataset.slot = slot === "necklace" ? "amulet" : slot === "feet" ? "boots" : slot === "head" ? "helmet" : slot;
       this.slotEls.set(slot, s);
       grid.append(s);
@@ -309,6 +342,74 @@ export class Hud {
     body.append(wrap, purse);
   }
 
+  private buildBackpack() {
+    const { head, body } = this.wins.get("backpack")!;
+    this.bpTitle = head.querySelector("span")!;
+    head.prepend(this.bpIcon);
+    this.bpUp.title = "Back to the container this one is in";
+    this.bpUp.addEventListener("click", () => this.openBox(this.open?.parent ?? null));
+    this.bpTitle.after(this.bpUp);
+    body.append(this.bpGrid, this.bpWorth);
+    // Click a container to open it in this window (Tibia's default); click anything else to look at it.
+    this.bpGrid.addEventListener("click", (e) => {
+      const i = Number((e.target as HTMLElement).closest<HTMLElement>(".slot")?.dataset.i);
+      const t = this.shownBox()?.items[i];
+      if (!t) return;
+      if (t.inner) this.openBox(t.inner);
+      else this.useItem(t.id, t.n);
+    });
+  }
+
+  /** Click an item in the backpack: wear it if it can be worn (what it replaces goes in the backpack),
+   *  otherwise look at it. */
+  private useItem(id: number, n: number) {
+    const g = this.g, it = item(id);
+    if (!g || !it) return;
+    if (!g.ch.slotFor(it)) { this.status(this.look(id, n)); return; }
+    const err = g.ch.wearFromBackpack(id);
+    if (err) { this.status(err); return; }
+    g.ch.fitAmmo();
+    g.msg(`You equip ${it.name}.`, "#80ff80");
+    this.status(`You equip ${it.name}.`);
+    this.sig.delete("backpack");
+    this.backpack(g);
+    this.equipment(g);
+  }
+
+  /** Tibia's "You see" text, with what an NPC pays. */
+  private look(id: number, n: number) {
+    const it = item(id)!, each = PRICES[id]?.sell ?? 0;
+    const what = n > 1 ? `${n} ${it.name}s` : `${/^[aeiou]/.test(it.name) ? "an" : "a"} ${it.name}`;
+    return `You see ${what}.${each ? ` NPCs pay ${fmt(each * n)} gold.` : ""}`;
+  }
+
+  /** Show a container in the backpack window (null: the main backpack), opening the window if needed. */
+  private openBox(c: Container | null) {
+    this.open = c;
+    this.setClosed("backpack", false);
+    if (this.layout.min.backpack) {
+      this.layout.min.backpack = false;
+      this.wins.get("backpack")!.root.classList.remove("min");
+      this.save();
+    }
+    this.sig.delete("backpack");
+    if (this.g) this.backpack(this.g);
+  }
+
+  /** The container on show, if it's still in the backpack (selling empties it, nested backpacks too). */
+  private shownBox(): Container | null {
+    const root = this.g?.ch.backpack ?? null;
+    const c = this.open;
+    if (!c || !root) return root;
+    for (let x = c; x !== root; x = x.parent!) {
+      if (!x.parent || !x.parent.items.some((t) => t.inner === x)) {
+        this.open = null;
+        return root;
+      }
+    }
+    return c;
+  }
+
   setFightMode(m: FightMode) {
     this.layout.fightMode = m;
     this.save();
@@ -331,10 +432,33 @@ export class Hud {
 
   get chase() { return this.layout.chase; }
 
+  /** Battle window header: who auto-targeting goes for, closest or weakest. The list sorts the same way. */
+  private buildBattle() {
+    const head = this.wins.get("battle")!.head;
+    this.targetBtn.addEventListener("click", () => this.setTargeting(this.layout.targeting === "closest" ? "weakest" : "closest"));
+    head.querySelector("span")!.after(this.targetBtn);
+  }
+
+  setTargeting(t: Targeting) {
+    this.layout.targeting = t;
+    this.save();
+    if (this.g) {
+      this.g.targeting = t;
+      this.g.msg(t === "closest" ? "Targeting: closest creature." : "Targeting: creature with the lowest health.", "#80c0ff");
+    }
+    this.syncModes();
+  }
+
+  get targeting() { return this.layout.targeting; }
+
   private syncModes() {
     for (const m of ["offensive", "balanced", "defensive"]) this.modeBtns.get(m)!.classList.toggle("on", this.layout.fightMode === m);
     this.modeBtns.get("chase")!.classList.toggle("on", this.layout.chase);
     this.modeBtns.get("stand")!.classList.toggle("on", !this.layout.chase);
+    const weakest = this.layout.targeting === "weakest";
+    this.targetBtn.textContent = weakest ? "♥ Weakest" : "◎ Closest";
+    this.targetBtn.classList.toggle("weakest", weakest);
+    this.targetBtn.title = `Auto-target the ${weakest ? "creature with the lowest health" : "closest creature"}. Click or T to switch.`;
   }
 
   private buildHotbar() {
@@ -380,7 +504,9 @@ export class Hud {
   // ---------- per run ----------
 
   /** A new run (or the title screen, with null). */
-  bind(g: Game | null) {
+  bind(g: Game | null, bankedSouls = 0) {
+    this.bankedSouls = bankedSouls;
+    tooltipCharacter(g?.ch ?? null);
     this.g = g;
     document.body.classList.toggle("ingame", !!g);
     this.hot = new Array(12).fill(null);
@@ -392,9 +518,11 @@ export class Hud {
     for (const l of this.labelEls.values()) l.root.remove();
     this.labelEls.clear();
     this.shownGold = 0;
+    this.open = null;
     if (g) {
       g.fightMode = this.layout.fightMode;
       g.chase = this.layout.chase;
+      g.targeting = this.layout.targeting;
     }
     this.syncModes();
   }
@@ -415,22 +543,27 @@ export class Hud {
     this.equipment(g);
     this.skills(g);
     this.battle(g);
+    this.backpack(g);
     this.supplies(g);
     this.drawMinimap();
   }
 
   /** Where looted gold and items fly to, in window pixels. */
-  lootTargets(): { gold: [number, number]; bag: [number, number] } {
+  lootTargets(): Record<LootDest, [number, number]> {
     const center = (e: Element | null | undefined): [number, number] | null => {
       if (!e) return null;
       const r = e.getBoundingClientRect();
       return r.width ? [r.left + r.width / 2, r.top + r.height / 2] : null;
     };
     const fallback = center(this.colA) ?? [innerWidth, innerHeight / 2];
-    return {
-      gold: center(this.goldEl) ?? fallback,
-      bag: center(this.wins.get("supplies")!.root.classList.contains("min") ? this.wins.get("supplies")!.root : this.wins.get("supplies")!.body) ?? fallback,
+    const win = (id: WinId) => {
+      const w = this.wins.get(id)!;
+      return center(w.root.classList.contains("min") ? w.root : w.body);
     };
+    // Loot lands in the backpack's first slot (Tibia puts new items in front), else on the backpack itself.
+    const bag = (this.wins.get("backpack")!.root.classList.contains("min") ? null : center(this.bpGrid.firstElementChild))
+      ?? center(this.bpSlot) ?? fallback;
+    return { gold: center(this.goldEl) ?? fallback, bag, supplies: win("supplies") ?? bag, worn: win("equipment") ?? fallback };
   }
 
   /** Tibia's white status message at the bottom of the game view. */
@@ -465,6 +598,12 @@ export class Hud {
     const conds: [string, string, string][] = [];
     if (g.monsters.some((m) => !m.dead && cheb(m.tx, m.ty, p.tx, p.ty) <= 1) || g.time - g.lastAttack < 3) conds.push(["⚔", "#ff8080", "In battle"]);
     if (shield) conds.push(["MS", "#b090ff", `Magic shield: ${fmt(g.manaShield)} left, ${Math.ceil(g.manaShieldUntil - g.time)} s`]);
+    // Damage over time, with Tibia's condition names.
+    for (const [el, c] of g.conditions) {
+      const [glyph, name] = CONDITION_ICONS[el] ?? ["!", "Hurt"];
+      const left = c.ticks.reduce((a, b) => a + b, 0);
+      conds.push([glyph, ELEMENT_COLORS[el], `${name}: ${left} damage left, ${c.ticks[0]} every ${c.every} s`]);
+    }
     if (ch.boostLevel("haste") || ch.evolutions.has("draken")) conds.push(["»", "#80ff80", `Hasted: speed ${ch.speed}`]);
     if (ch.blessings) conds.push([`✝${ch.blessings}`, "#ffd34d", `${ch.blessings} blessing${ch.blessings > 1 ? "s" : ""}: saved from death`]);
     if (g.fightMode !== "offensive") conds.push([g.fightMode === "balanced" ? "⚖" : "⛨", g.fightMode === "balanced" ? "#ffd34d" : "#80b0ff", FIGHT_MODES[g.fightMode].name]);
@@ -486,7 +625,9 @@ export class Hud {
     this.goldEl.textContent = fmt(this.shownGold);
     this.goldEl.style.transform = `scale(${1 + 0.3 * this.goldPulse})`;
     this.goldEl.style.color = this.goldPulse > 0 ? "#ffe680" : "";
-    this.soulsEl.textContent = fmt(g.souls);
+    // Your total: what's banked plus what this run has earned (banked when it ends).
+    this.soulsEl.textContent = fmt(this.bankedSouls + g.souls);
+    this.soulsEl.title = `${fmt(this.bankedSouls)} banked + ${fmt(g.souls)} this run`;
   }
 
   private bannerText(g: Game) {
@@ -548,11 +689,11 @@ export class Hud {
       const s = this.slotEls.get(slot);
       if (!s) continue;
       const id = ch.equipment[slot];
-      const n = slot === "ammo" && id ? ch.supplies.get(id) ?? 0 : 0;
+      const n = id && (slot === "ammo" || id === ch.thrown) ? ch.supplies.get(id) ?? 0 : 0;
       if (!this.changed(`slot:${slot}`, `${id}:${n}`)) continue;
       s.classList.toggle("empty", !id);
       s.innerHTML = id ? `<img src="${this.itemUrl(id)}" alt=""><span class="count">${n || ""}</span>` : "";
-      s.title = id ? item(id)?.name ?? "" : "";
+      if (id) { s.dataset.item = String(id); s.dataset.n = String(n || 1); } else { delete s.dataset.item; delete s.dataset.n; }
     }
   }
 
@@ -586,13 +727,15 @@ export class Hud {
     if (this.changed("skills", html)) this.wins.get("skills")!.body.innerHTML = `<div class="sk">${html}</div>`;
   }
 
-  /** Tibia's battle window: creatures on screen, nearest first. Click one to attack it. */
+  /** Tibia's battle window: creatures on screen, nearest first (or lowest health first, targeting the
+   *  weakest). Click one to attack it. */
   private battle(g: Game) {
     const body = this.wins.get("battle")!.body;
     const p = g.player;
     const hw = g.viewW / 2 + 16, hh = g.viewH / 2 + 16;
+    const near = (m: Monster) => Math.hypot(m.x - p.x, m.y - p.y);
     const list = g.monsters.filter((m) => !m.dead && Math.abs(m.x - p.x) < hw && Math.abs(m.y - p.y) < hh)
-      .sort((a, b) => Math.hypot(a.x - p.x, a.y - p.y) - Math.hypot(b.x - p.x, b.y - p.y));
+      .sort((a, b) => (g.targeting === "weakest" ? a.hp / a.maxHp - b.hp / b.maxHp : 0) || near(a) - near(b));
     const seen = new Set<number>();
     for (const m of list) {
       seen.add(m.id);
@@ -626,15 +769,41 @@ export class Hud {
     return row;
   }
 
+  /** Tibia's container window: every slot of the container, items first (newest in front), stack counts
+   *  in the corner, and an up arrow when it's inside another one. */
+  private backpack(g: Game) {
+    const root = g.ch.backpack, box = this.shownBox()!;
+    const worth = root.worth(), n = root.count();
+    const sig = `${box === root}|${box.items.map((t) => `${t.id}:${t.n}:${t.inner?.items.length ?? ""}`).join()}|${worth}`;
+    if (!this.changed("backpack", sig)) return;
+    const title = (s: string) => s[0].toUpperCase() + s.slice(1);
+    this.bpTitle.textContent = title(box.name);
+    this.bpIcon.src = this.itemUrl(box.id);
+    this.bpUp.hidden = box === root;
+    const slots: string[] = [];
+    for (let i = 0; i < box.cap; i++) {
+      const t = box.items[i];
+      if (!t) { slots.push(`<div class="slot"></div>`); continue; }
+      const count = stackable(t.id) && t.n > 1 ? `<span class="count">${t.n}</span>` : "";
+      // Containers say how full they are; everything else gets the item tooltip (and equips on a click).
+      const tip = t.inner ? `title="${title(t.inner.name)} (${t.inner.items.length}/${t.inner.cap}): click to open"` : `data-item="${t.id}" data-n="${t.n}"`;
+      const wearable = !t.inner && !!g.ch.slotFor(item(t.id)!);
+      slots.push(`<div class="slot${t.inner ? " box" : ""}${wearable ? " wear" : ""}" data-i="${i}" ${tip}><img src="${this.itemUrl(t.id, t.n)}" alt="">${count}</div>`);
+    }
+    this.bpGrid.innerHTML = slots.join("");
+    this.bpWorth.innerHTML = n ? `${fmt(n)} item${n === 1 ? "" : "s"}, worth <span class="gold">${fmt(worth)}</span> gold` : "Empty. Loot lands here.";
+    // The backpack in the equipment window.
+    this.bpSlot.innerHTML = `<img src="${this.itemUrl(root.id)}" alt="">`;
+    this.bpSlot.title = `${title(root.name)}: ${fmt(n)} items, worth ${fmt(worth)} gold. Click to open.`;
+  }
+
   private supplies(g: Game) {
     const ch = g.ch;
-    const sup = [...ch.supplies.entries()].filter(([id, n]) => n > 0 && (POTIONS[id] || SPELLS.some((s) => s.runeId === id) || id === ch.equipment.ammo));
-    const bag = ch.backpackCount, worth = ch.lootValue();
-    const sig = `${sup.map(([id, n]) => `${id}:${n}`).join()}|${bag}|${worth}`;
+    const sup = [...ch.supplies.entries()].filter(([id, n]) => n > 0 && (POTIONS[id] || SPELLS.some((s) => s.runeId === id) || id === ch.equipment.ammo || id === ch.thrown));
+    const sig = sup.map(([id, n]) => `${id}:${n}`).join();
     if (!this.changed("supplies", sig)) return;
     this.wins.get("supplies")!.body.innerHTML = `<div class="grid">${sup.map(([id, n]) =>
-      `<div class="slot"><img src="${this.itemUrl(id)}" alt=""><span class="count">${n}</span></div>`).join("")}</div>`
-      + `<div class="loot-line">Loot: ${fmt(bag)} item${bag === 1 ? "" : "s"}, worth <span class="gold">${fmt(worth)}</span> gold</div>`;
+      `<div class="slot" data-item="${id}" data-n="${n}"><img src="${this.itemUrl(id, n)}" alt=""><span class="count">${n}</span></div>`).join("")}</div>`;
   }
 
   // ---------- hotbar ----------

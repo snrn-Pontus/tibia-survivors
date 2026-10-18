@@ -19,8 +19,11 @@
      "max": 8
     }
    ],
+   "maxSummons": 0,
+   "summons": [],
    "defense": 5,
    "armor": 1,
+   "mitigation": 0.07,
    "heals": [],
    "elements": {
     "earth": 20,
@@ -60,8 +63,11 @@
      "max": 8
     }
    ],
+   "maxSummons": 0,
+   "summons": [],
    "defense": 5,
    "armor": 1,
+   "mitigation": 0.15,
    "heals": [],
    "elements": {
     "earth": -10
@@ -87,14 +93,23 @@
    "attacks": [
     {
      "name": "melee",
-     "interval": 4000,
+     "interval": 2000,
      "chance": 100,
      "min": 0,
-     "max": 8
+     "max": 8,
+     "condition": {
+      "element": "earth",
+      "min": 15,
+      "max": 15,
+      "tick": 4000
+     }
     }
    ],
+   "maxSummons": 0,
+   "summons": [],
    "defense": 5,
    "armor": 0,
+   "mitigation": 0.03,
    "heals": [],
    "elements": {
     "energy": 20,
@@ -122,8 +137,11 @@
      "max": 9
     }
    ],
+   "maxSummons": 0,
+   "summons": [],
    "defense": 2,
    "armor": 2,
+   "mitigation": 0.05,
    "heals": [],
    "elements": {
     "fire": -20
@@ -161,8 +179,11 @@
      "max": 23
     }
    ],
+   "maxSummons": 0,
+   "summons": [],
    "defense": 5,
    "armor": 2,
+   "mitigation": 0.07,
    "heals": [],
    "elements": {
     "fire": -10
@@ -200,8 +221,11 @@
      "max": 20
     }
    ],
+   "maxSummons": 0,
+   "summons": [],
    "defense": 5,
    "armor": 1,
+   "mitigation": 0.1,
    "heals": [],
    "elements": {
     "ice": -10,
@@ -241,8 +265,11 @@
      "max": 10
     }
    ],
+   "maxSummons": 0,
+   "summons": [],
    "defense": 5,
    "armor": 1,
+   "mitigation": 0.1,
    "heals": [],
    "elements": {
     "fire": -10
@@ -291,8 +318,11 @@
      "max": 15
     }
    ],
+   "maxSummons": 0,
+   "summons": [],
    "defense": 10,
    "armor": 6,
+   "mitigation": 0.2,
    "heals": [],
    "elements": {
     "energy": 20,
@@ -390,8 +420,11 @@
      "max": 35
     }
    ],
+   "maxSummons": 0,
+   "summons": [],
    "defense": 10,
    "armor": 4,
+   "mitigation": 0.2,
    "heals": [],
    "elements": {
     "energy": 20,
@@ -479,8 +512,11 @@
      "max": 40
     }
    ],
+   "maxSummons": 0,
+   "summons": [],
    "defense": 10,
    "armor": 8,
+   "mitigation": 0.28,
    "heals": [],
    "elements": {},
    "loot": [
@@ -545,14 +581,23 @@
    "attacks": [
     {
      "name": "melee",
-     "interval": 4000,
+     "interval": 2000,
      "chance": 100,
      "min": 0,
-     "max": 20
+     "max": 20,
+     "condition": {
+      "element": "earth",
+      "min": 30,
+      "max": 30,
+      "tick": 4000
+     }
     }
    ],
+   "maxSummons": 0,
+   "summons": [],
    "defense": 5,
    "armor": 2,
+   "mitigation": 0.15,
    "heals": [],
    "elements": {
     "earth": 100,
@@ -603,8 +648,11 @@
      "effect": 0
     }
    ],
+   "maxSummons": 0,
+   "summons": [],
    "defense": 10,
    "armor": 6,
+   "mitigation": 0.3,
    "heals": [],
    "elements": {
     "energy": 20,
@@ -711,8 +759,18 @@
      "effect": 0
     }
    ],
+   "maxSummons": 4,
+   "summons": [
+    {
+     "name": "snake",
+     "interval": 2000,
+     "chance": 20,
+     "count": 3
+    }
+   ],
    "defense": 10,
    "armor": 8,
+   "mitigation": 0.25,
    "heals": [
     {
      "interval": 2000,
@@ -807,8 +865,11 @@
      "max": 60
     }
    ],
+   "maxSummons": 0,
+   "summons": [],
    "defense": 15,
    "armor": 8,
+   "mitigation": 0.36,
    "heals": [],
    "elements": {
     "energy": 30,
@@ -914,8 +975,11 @@
      "effect": 0
     }
    ],
+   "maxSummons": 0,
+   "summons": [],
    "defense": 10,
    "armor": 2,
+   "mitigation": 0.23,
    "heals": [],
    "elements": {
     "lifedrain": 100,
@@ -1018,8 +1082,11 @@
      "effect": 39
     }
    ],
+   "maxSummons": 0,
+   "summons": [],
    "defense": 15,
    "armor": 8,
+   "mitigation": 0.43,
    "heals": [
     {
      "interval": 2000,
@@ -1126,8 +1193,11 @@
      "max": 45
     }
    ],
+   "maxSummons": 0,
+   "summons": [],
    "defense": 15,
    "armor": 11,
+   "mitigation": 0.28,
    "heals": [],
    "elements": {
     "fire": 20,
@@ -1226,8 +1296,18 @@
      "max": 110
     }
    ],
+   "maxSummons": 3,
+   "summons": [
+    {
+     "name": "slime",
+     "interval": 2000,
+     "chance": 10,
+     "count": 3
+    }
+   ],
    "defense": 15,
    "armor": 3,
+   "mitigation": 0.25,
    "heals": [],
    "elements": {
     "energy": -10,
@@ -1249,14 +1329,23 @@
    "attacks": [
     {
      "name": "melee",
-     "interval": 4000,
+     "interval": 2000,
      "chance": 100,
      "min": 0,
-     "max": 50
+     "max": 50,
+     "condition": {
+      "element": "earth",
+      "min": 340,
+      "max": 340,
+      "tick": 4000
+     }
     }
    ],
+   "maxSummons": 0,
+   "summons": [],
    "defense": 5,
    "armor": 14,
+   "mitigation": 0.13,
    "heals": [],
    "elements": {
     "energy": 20,
@@ -1303,8 +1392,11 @@
      "effect": 0
     }
    ],
+   "maxSummons": 0,
+   "summons": [],
    "defense": 15,
    "armor": 9,
+   "mitigation": 0.51,
    "heals": [],
    "elements": {
     "earth": 10,
@@ -1414,8 +1506,11 @@
      "effect": 0
     }
    ],
+   "maxSummons": 0,
+   "summons": [],
    "defense": 15,
    "armor": 8,
+   "mitigation": 0.25,
    "heals": [],
    "elements": {
     "physical": -5,
@@ -1551,8 +1646,11 @@
      "effect": 0
     }
    ],
+   "maxSummons": 0,
+   "summons": [],
    "defense": 10,
    "armor": 10,
+   "mitigation": 0.28,
    "heals": [],
    "elements": {
     "physical": -5,
@@ -1649,8 +1747,11 @@
      "effect": 0
     }
    ],
+   "maxSummons": 0,
+   "summons": [],
    "defense": 12,
    "armor": 12,
+   "mitigation": 0.36,
    "heals": [],
    "elements": {
     "physical": -10,
@@ -1763,8 +1864,11 @@
      "max": 200
     }
    ],
+   "maxSummons": 0,
+   "summons": [],
    "defense": 15,
    "armor": 12,
+   "mitigation": 0.3,
    "heals": [],
    "elements": {
     "energy": 15,
@@ -1852,8 +1956,11 @@
      "max": 105
     }
    ],
+   "maxSummons": 0,
+   "summons": [],
    "defense": 20,
    "armor": 17,
+   "mitigation": 0.62,
    "heals": [],
    "elements": {
     "energy": 25,
@@ -1950,10 +2057,16 @@
    "attacks": [
     {
      "name": "melee",
-     "interval": 4000,
+     "interval": 2000,
      "chance": 100,
      "min": 0,
-     "max": 85
+     "max": 85,
+     "condition": {
+      "element": "earth",
+      "min": 4,
+      "max": 4,
+      "tick": 4000
+     }
     },
     {
      "name": "combat",
@@ -1968,8 +2081,11 @@
      "effect": 39
     }
    ],
+   "maxSummons": 0,
+   "summons": [],
    "defense": 15,
    "armor": 14,
+   "mitigation": 0.59,
    "heals": [],
    "elements": {
     "earth": 100,
@@ -2094,8 +2210,11 @@
      "effect": 14
     }
    ],
+   "maxSummons": 0,
+   "summons": [],
    "defense": 5,
    "armor": 10,
+   "mitigation": 0.51,
    "heals": [],
    "elements": {
     "physical": 100,
@@ -2185,8 +2304,11 @@
      "effect": 39
     }
    ],
+   "maxSummons": 0,
+   "summons": [],
    "defense": 30,
    "armor": 25,
+   "mitigation": 0.91,
    "heals": [],
    "elements": {
     "earth": 100,
@@ -2300,10 +2422,29 @@
    "attacks": [
     {
      "name": "melee",
-     "interval": 4000,
+     "interval": 2000,
      "chance": 100,
      "min": 0,
-     "max": 300
+     "max": 300,
+     "condition": {
+      "element": "earth",
+      "min": 160,
+      "max": 160,
+      "tick": 4000
+     }
+    },
+    {
+     "name": "field",
+     "interval": 2000,
+     "chance": 10,
+     "min": 0,
+     "max": 0,
+     "field": 105,
+     "target": true,
+     "shoot": 15,
+     "effect": 0,
+     "range": 7,
+     "radius": 1
     },
     {
      "name": "combat",
@@ -2319,8 +2460,18 @@
      "effect": 0
     }
    ],
+   "maxSummons": 2,
+   "summons": [
+    {
+     "name": "poison spider",
+     "interval": 2000,
+     "chance": 10,
+     "count": 2
+    }
+   ],
    "defense": 0,
    "armor": 30,
+   "mitigation": 1.04,
    "heals": [],
    "elements": {
     "energy": 20,
@@ -2438,8 +2589,11 @@
      "effect": 39
     }
    ],
+   "maxSummons": 0,
+   "summons": [],
    "defense": 30,
    "armor": 28,
+   "mitigation": 1.04,
    "heals": [
     {
      "interval": 2000,
@@ -2555,10 +2709,16 @@
    "attacks": [
     {
      "name": "melee",
-     "interval": 4000,
+     "interval": 2000,
      "chance": 100,
      "min": 0,
-     "max": 80
+     "max": 80,
+     "condition": {
+      "element": "earth",
+      "min": 160,
+      "max": 160,
+      "tick": 4000
+     }
     },
     {
      "name": "combat",
@@ -2585,8 +2745,30 @@
      "effect": 21
     }
    ],
+   "maxSummons": 3,
+   "summons": [
+    {
+     "name": "ghoul",
+     "interval": 2000,
+     "chance": 15,
+     "count": 1
+    },
+    {
+     "name": "ghost",
+     "interval": 2000,
+     "chance": 5,
+     "count": 1
+    },
+    {
+     "name": "mummy",
+     "interval": 2000,
+     "chance": 5,
+     "count": 1
+    }
+   ],
    "defense": 25,
    "armor": 50,
+   "mitigation": 1.04,
    "heals": [
     {
      "interval": 2000,
@@ -2782,8 +2964,18 @@
      "effect": 0
     }
    ],
+   "maxSummons": 6,
+   "summons": [
+    {
+     "name": "skeleton",
+     "interval": 2000,
+     "chance": 20,
+     "count": 6
+    }
+   ],
    "defense": 5,
    "armor": 5,
+   "mitigation": 0.51,
    "heals": [],
    "elements": {
     "earth": 100,
@@ -2903,8 +3095,11 @@
      "effect": 7
     }
    ],
+   "maxSummons": 0,
+   "summons": [],
    "defense": 30,
    "armor": 25,
+   "mitigation": 0.99,
    "heals": [
     {
      "interval": 2000,
@@ -3059,10 +3254,16 @@
    "attacks": [
     {
      "name": "melee",
-     "interval": 4000,
+     "interval": 2000,
      "chance": 100,
      "min": 0,
-     "max": 100
+     "max": 100,
+     "condition": {
+      "element": "earth",
+      "min": 3,
+      "max": 3,
+      "tick": 4000
+     }
     },
     {
      "name": "combat",
@@ -3090,8 +3291,11 @@
      "effect": 39
     }
    ],
+   "maxSummons": 0,
+   "summons": [],
    "defense": 25,
    "armor": 25,
+   "mitigation": 1.74,
    "heals": [
     {
      "interval": 2000,
@@ -3269,8 +3473,11 @@
      "effect": 0
     }
    ],
+   "maxSummons": 0,
+   "summons": [],
    "defense": 40,
    "armor": 35,
+   "mitigation": 1.32,
    "heals": [
     {
      "interval": 2000,
@@ -3475,6 +3682,25 @@
      "effect": 14
     },
     {
+     "name": "condition",
+     "interval": 2000,
+     "chance": 10,
+     "min": 0,
+     "max": 0,
+     "condition": {
+      "element": "earth",
+      "min": 300,
+      "max": 400,
+      "tick": 2000
+     },
+     "element": "earth",
+     "length": 7,
+     "spread": 0,
+     "target": false,
+     "shoot": 0,
+     "effect": 17
+    },
+    {
      "name": "combat",
      "interval": 2000,
      "chance": 10,
@@ -3499,8 +3725,18 @@
      "effect": 14
     }
    ],
+   "maxSummons": 4,
+   "summons": [
+    {
+     "name": "bonebeast",
+     "interval": 2000,
+     "chance": 10,
+     "count": 4
+    }
+   ],
    "defense": 25,
    "armor": 50,
+   "mitigation": 1.6,
    "heals": [
     {
      "interval": 2000,
@@ -3661,8 +3897,11 @@
      "effect": 0
     }
    ],
+   "maxSummons": 0,
+   "summons": [],
    "defense": 45,
    "armor": 50,
+   "mitigation": 1.74,
    "heals": [],
    "elements": {
     "physical": 10,
@@ -3871,8 +4110,11 @@
      "effect": 47
     }
    ],
+   "maxSummons": 0,
+   "summons": [],
    "defense": 35,
    "armor": 27,
+   "mitigation": 1.18,
    "heals": [
     {
      "interval": 2000,
@@ -4018,6 +4260,19 @@
      "effect": 7
     },
     {
+     "name": "field",
+     "interval": 2000,
+     "chance": 10,
+     "min": 0,
+     "max": 0,
+     "field": 2118,
+     "target": true,
+     "shoot": 4,
+     "effect": 0,
+     "range": 7,
+     "radius": 4
+    },
+    {
      "name": "combat",
      "interval": 2000,
      "chance": 22,
@@ -4031,8 +4286,11 @@
      "effect": 7
     }
    ],
+   "maxSummons": 0,
+   "summons": [],
    "defense": 34,
    "armor": 34,
+   "mitigation": 1.29,
    "heals": [
     {
      "interval": 2000,
@@ -4211,6 +4469,19 @@
      "effect": 7
     },
     {
+     "name": "field",
+     "interval": 2000,
+     "chance": 10,
+     "min": 0,
+     "max": 0,
+     "field": 2118,
+     "target": true,
+     "shoot": 4,
+     "effect": 0,
+     "range": 7,
+     "radius": 1
+    },
+    {
      "name": "combat",
      "interval": 2000,
      "chance": 10,
@@ -4236,8 +4507,18 @@
      "effect": 0
     }
    ],
+   "maxSummons": 1,
+   "summons": [
+    {
+     "name": "fire elemental",
+     "interval": 2000,
+     "chance": 10,
+     "count": 1
+    }
+   ],
    "defense": 55,
    "armor": 44,
+   "mitigation": 1.74,
    "heals": [
     {
      "interval": 2000,
@@ -4490,8 +4771,11 @@
      "effect": 0
     }
    ],
+   "maxSummons": 0,
+   "summons": [],
    "defense": 60,
    "armor": 70,
+   "mitigation": 1.74,
    "heals": [
     {
      "interval": 2000,
@@ -4725,6 +5009,19 @@
      "effect": 7
     },
     {
+     "name": "field",
+     "interval": 1000,
+     "chance": 10,
+     "min": 0,
+     "max": 0,
+     "field": 2118,
+     "target": true,
+     "shoot": 4,
+     "effect": 0,
+     "range": 7,
+     "radius": 6
+    },
+    {
      "name": "combat",
      "interval": 4000,
      "chance": 20,
@@ -4738,8 +5035,18 @@
      "effect": 7
     }
    ],
+   "maxSummons": 2,
+   "summons": [
+    {
+     "name": "dragon",
+     "interval": 1000,
+     "chance": 17,
+     "count": 2
+    }
+   ],
    "defense": 25,
    "armor": 45,
+   "mitigation": 1.99,
    "heals": [
     {
      "interval": 1000,
@@ -4889,6 +5196,19 @@
      "effect": 7
     },
     {
+     "name": "field",
+     "interval": 1000,
+     "chance": 10,
+     "min": 0,
+     "max": 0,
+     "field": 2118,
+     "target": true,
+     "shoot": 4,
+     "effect": 0,
+     "range": 7,
+     "radius": 4
+    },
+    {
      "name": "combat",
      "interval": 1000,
      "chance": 15,
@@ -4902,8 +5222,18 @@
      "effect": 12
     }
    ],
+   "maxSummons": 4,
+   "summons": [
+    {
+     "name": "demon",
+     "interval": 1000,
+     "chance": 10,
+     "count": 4
+    }
+   ],
    "defense": 111,
    "armor": 90,
+   "mitigation": 0.0,
    "heals": [
     {
      "interval": 1000,
@@ -5259,6 +5589,24 @@
      "effect": 3
     },
     {
+     "name": "condition",
+     "interval": 2000,
+     "chance": 15,
+     "min": 0,
+     "max": 0,
+     "condition": {
+      "element": "earth",
+      "min": 20,
+      "max": 40,
+      "tick": 2000
+     },
+     "element": "earth",
+     "range": 7,
+     "target": false,
+     "shoot": 15,
+     "effect": 0
+    },
+    {
      "name": "combat",
      "interval": 2000,
      "chance": 15,
@@ -5270,10 +5618,57 @@
      "target": false,
      "shoot": 0,
      "effect": 1
+    },
+    {
+     "name": "condition",
+     "interval": 2000,
+     "chance": 18,
+     "min": 0,
+     "max": 0,
+     "condition": {
+      "element": "energy",
+      "min": 300,
+      "max": 400,
+      "tick": 2000
+     },
+     "element": "energy",
+     "radius": 6,
+     "target": false,
+     "shoot": 0,
+     "effect": 12
+    },
+    {
+     "name": "condition",
+     "interval": 3000,
+     "chance": 20,
+     "min": 0,
+     "max": 0,
+     "condition": {
+      "element": "fire",
+      "min": 500,
+      "max": 600,
+      "tick": 2000
+     },
+     "element": "fire",
+     "range": 7,
+     "radius": 7,
+     "target": true,
+     "shoot": 4,
+     "effect": 7
+    }
+   ],
+   "maxSummons": 4,
+   "summons": [
+    {
+     "name": "demon",
+     "interval": 3000,
+     "chance": 12,
+     "count": 4
     }
    ],
    "defense": 120,
    "armor": 100,
+   "mitigation": 0.0,
    "heals": [
     {
      "interval": 2000,
@@ -5523,8 +5918,18 @@
      "max": 15
     }
    ],
+   "maxSummons": 2,
+   "summons": [
+    {
+     "name": "rat",
+     "interval": 2000,
+     "chance": 20,
+     "count": 2
+    }
+   ],
    "defense": 4,
    "armor": 2,
+   "mitigation": 0.0,
    "heals": [],
    "elements": {},
    "loot": [
@@ -5573,8 +5978,11 @@
      "max": 30
     }
    ],
+   "maxSummons": 0,
+   "summons": [],
    "defense": 15,
    "armor": 15,
+   "mitigation": 0.0,
    "heals": [],
    "elements": {
     "holy": -5
@@ -5640,6 +6048,19 @@
      "max": 10
     },
     {
+     "name": "field",
+     "interval": 1000,
+     "chance": 8,
+     "min": 0,
+     "max": 0,
+     "field": 2122,
+     "target": true,
+     "shoot": 5,
+     "effect": 0,
+     "range": 7,
+     "radius": 1
+    },
+    {
      "name": "combat",
      "interval": 1000,
      "chance": 14,
@@ -5664,8 +6085,18 @@
      "effect": 7
     }
    ],
+   "maxSummons": 2,
+   "summons": [
+    {
+     "name": "hyaena",
+     "interval": 5000,
+     "chance": 30,
+     "count": 2
+    }
+   ],
    "defense": 13,
    "armor": 12,
+   "mitigation": 0.0,
    "heals": [
     {
      "interval": 4000,
@@ -5743,8 +6174,11 @@
      "max": 80
     }
    ],
+   "maxSummons": 0,
+   "summons": [],
    "defense": 15,
    "armor": 10,
+   "mitigation": 0.58,
    "heals": [],
    "elements": {
     "earth": 40,
@@ -5798,8 +6232,30 @@
      "effect": 0
     }
    ],
+   "maxSummons": 6,
+   "summons": [
+    {
+     "name": "minotaur archer",
+     "interval": 1000,
+     "chance": 13,
+     "count": 2
+    },
+    {
+     "name": "minotaur guard",
+     "interval": 1000,
+     "chance": 13,
+     "count": 2
+    },
+    {
+     "name": "minotaur mage",
+     "interval": 1000,
+     "chance": 13,
+     "count": 2
+    }
+   ],
    "defense": 16,
    "armor": 17,
+   "mitigation": 0.0,
    "heals": [
     {
      "interval": 1000,
@@ -5899,8 +6355,18 @@
      "max": 300
     }
    ],
+   "maxSummons": 2,
+   "summons": [
+    {
+     "name": "orc berserker",
+     "interval": 2000,
+     "chance": 30,
+     "count": 2
+    }
+   ],
    "defense": 35,
    "armor": 32,
+   "mitigation": 0.0,
    "heals": [],
    "elements": {
     "energy": 1,
@@ -6094,8 +6560,24 @@
      "effect": 2
     }
    ],
+   "maxSummons": 5,
+   "summons": [
+    {
+     "name": "demon skeleton",
+     "interval": 1000,
+     "chance": 13,
+     "count": 5
+    },
+    {
+     "name": "ghost",
+     "interval": 1000,
+     "chance": 12,
+     "count": 3
+    }
+   ],
    "defense": 23,
    "armor": 19,
+   "mitigation": 0.0,
    "heals": [
     {
      "interval": 1000,
@@ -6188,8 +6670,24 @@
      "effect": 10
     }
    ],
+   "maxSummons": 4,
+   "summons": [
+    {
+     "name": "minotaur archer",
+     "interval": 1000,
+     "chance": 15,
+     "count": 2
+    },
+    {
+     "name": "minotaur guard",
+     "interval": 1000,
+     "chance": 12,
+     "count": 2
+    }
+   ],
    "defense": 22,
    "armor": 16,
+   "mitigation": 0.0,
    "heals": [
     {
      "interval": 1000,
@@ -6299,10 +6797,16 @@
    "attacks": [
     {
      "name": "melee",
-     "interval": 4000,
+     "interval": 2000,
      "chance": 100,
      "min": 0,
-     "max": 80
+     "max": 80,
+     "condition": {
+      "element": "earth",
+      "min": 8,
+      "max": 8,
+      "tick": 4000
+     }
     },
     {
      "name": "combat",
@@ -6353,8 +6857,30 @@
      "effect": 12
     }
    ],
+   "maxSummons": 6,
+   "summons": [
+    {
+     "name": "ghoul",
+     "interval": 1000,
+     "chance": 20,
+     "count": 2
+    },
+    {
+     "name": "ghost",
+     "interval": 1000,
+     "chance": 17,
+     "count": 2
+    },
+    {
+     "name": "mummy",
+     "interval": 1000,
+     "chance": 15,
+     "count": 2
+    }
+   ],
    "defense": 25,
    "armor": 25,
+   "mitigation": 1.18,
    "heals": [
     {
      "interval": 2000,
@@ -6496,8 +7022,18 @@
      "effect": 0
     }
    ],
+   "maxSummons": 2,
+   "summons": [
+    {
+     "name": "demon skeleton",
+     "interval": 1000,
+     "chance": 6,
+     "count": 2
+    }
+   ],
    "defense": 25,
    "armor": 15,
+   "mitigation": 0.0,
    "heals": [
     {
      "interval": 1000,
@@ -6619,8 +7155,11 @@
      "max": 0
     }
    ],
+   "maxSummons": 0,
+   "summons": [],
    "defense": 2,
    "armor": 3,
+   "mitigation": 0.0,
    "heals": [],
    "elements": {
     "physical": 98,
@@ -6660,8 +7199,18 @@
      "effect": 18
     }
    ],
+   "maxSummons": 3,
+   "summons": [
+    {
+     "name": "vampire",
+     "interval": 3000,
+     "chance": 40,
+     "count": 3
+    }
+   ],
    "defense": 30,
    "armor": 30,
+   "mitigation": 0.0,
    "heals": [
     {
      "interval": 1000,
@@ -6737,10 +7286,33 @@
      "target": false,
      "shoot": 15,
      "effect": 21
+    },
+    {
+     "name": "field",
+     "interval": 1000,
+     "chance": 10,
+     "min": 0,
+     "max": 0,
+     "field": 105,
+     "target": true,
+     "shoot": 15,
+     "effect": 0,
+     "range": 7,
+     "radius": 4
+    }
+   ],
+   "maxSummons": 2,
+   "summons": [
+    {
+     "name": "giant spider",
+     "interval": 1000,
+     "chance": 13,
+     "count": 2
     }
    ],
    "defense": 21,
    "armor": 45,
+   "mitigation": 1.54,
    "heals": [
     {
      "interval": 1000,
@@ -6851,8 +7423,11 @@
      "max": 60
     }
    ],
+   "maxSummons": 0,
+   "summons": [],
    "defense": 5,
    "armor": 13,
+   "mitigation": 0.28,
    "heals": [],
    "elements": {
     "physical": -5,
@@ -6955,8 +7530,11 @@
      "effect": 44
     }
    ],
+   "maxSummons": 0,
+   "summons": [],
    "defense": 35,
    "armor": 35,
+   "mitigation": 1.48,
    "heals": [
     {
      "interval": 2000,
@@ -7066,8 +7644,18 @@
      "effect": 17
     }
    ],
+   "maxSummons": 2,
+   "summons": [
+    {
+     "name": "defiler",
+     "interval": 4000,
+     "chance": 20,
+     "count": 2
+    }
+   ],
    "defense": 30,
    "armor": 30,
+   "mitigation": 0.0,
    "heals": [
     {
      "interval": 1000,
@@ -7215,8 +7803,11 @@
      "effect": 0
     }
    ],
+   "maxSummons": 0,
+   "summons": [],
    "defense": 39,
    "armor": 40,
+   "mitigation": 0.0,
    "heals": [
     {
      "interval": 4000,
@@ -7414,8 +8005,18 @@
      "effect": 38
     }
    ],
+   "maxSummons": 4,
+   "summons": [
+    {
+     "name": "deathslicer",
+     "interval": 4000,
+     "chance": 20,
+     "count": 4
+    }
+   ],
    "defense": 65,
    "armor": 55,
+   "mitigation": 0.0,
    "heals": [
     {
      "interval": 3000,
@@ -7821,8 +8422,18 @@
      "effect": 10
     }
    ],
+   "maxSummons": 6,
+   "summons": [
+    {
+     "name": "demon",
+     "interval": 4000,
+     "chance": 33,
+     "count": 6
+    }
+   ],
    "defense": 65,
    "armor": 130,
+   "mitigation": 0.0,
    "heals": [
     {
      "interval": 3000,
@@ -8270,8 +8881,11 @@
      "effect": 15
     }
    ],
+   "maxSummons": 0,
+   "summons": [],
    "defense": 65,
    "armor": 55,
+   "mitigation": 0.0,
    "heals": [
     {
      "interval": 3000,
@@ -8581,6 +9195,879 @@
      "max": 1
     }
    ]
+  },
+  "hyaena": {
+   "name": "Hyaena",
+   "health": 60,
+   "experience": 20,
+   "speed": 98,
+   "lookType": 94,
+   "corpse": 6026,
+   "targetDistance": 1,
+   "runHealth": 30,
+   "attacks": [
+    {
+     "name": "melee",
+     "interval": 2000,
+     "chance": 100,
+     "min": 0,
+     "max": 20
+    }
+   ],
+   "maxSummons": 0,
+   "summons": [],
+   "defense": 15,
+   "armor": 1,
+   "mitigation": 0.13,
+   "heals": [],
+   "elements": {},
+   "loot": [
+    {
+     "name": "meat",
+     "chance": 30860,
+     "max": 2,
+     "id": 3577
+    },
+    {
+     "name": "worm",
+     "chance": 50130,
+     "max": 3,
+     "id": 3492
+    }
+   ]
+  },
+  "minotaur archer": {
+   "name": "Minotaur Archer",
+   "health": 100,
+   "experience": 65,
+   "speed": 80,
+   "lookType": 24,
+   "corpse": 5982,
+   "targetDistance": 4,
+   "runHealth": 10,
+   "attacks": [
+    {
+     "name": "melee",
+     "interval": 2000,
+     "chance": 100,
+     "min": 0,
+     "max": 25
+    },
+    {
+     "name": "combat",
+     "interval": 2000,
+     "chance": 40,
+     "min": 0,
+     "max": 80,
+     "element": "physical",
+     "range": 7,
+     "target": false,
+     "shoot": 2,
+     "effect": 0
+    }
+   ],
+   "maxSummons": 0,
+   "summons": [],
+   "defense": 10,
+   "armor": 6,
+   "mitigation": 0.2,
+   "heals": [],
+   "elements": {
+    "fire": 20,
+    "ice": -10,
+    "holy": 10,
+    "death": -5
+   },
+   "loot": [
+    {
+     "name": "gold coin",
+     "chance": 75410,
+     "max": 30,
+     "id": 3031
+    },
+    {
+     "name": "crossbow",
+     "chance": 830,
+     "max": 1,
+     "id": 3349
+    },
+    {
+     "name": "brass armor",
+     "chance": 530,
+     "max": 1,
+     "id": 3359
+    },
+    {
+     "name": "scale armor",
+     "chance": 530,
+     "max": 1,
+     "id": 3377
+    },
+    {
+     "name": "bolt",
+     "chance": 90450,
+     "max": 20,
+     "id": 3446
+    },
+    {
+     "name": "meat",
+     "chance": 5000,
+     "max": 1,
+     "id": 3577
+    },
+    {
+     "name": "minotaur leather",
+     "chance": 1900,
+     "max": 1,
+     "id": 5878
+    },
+    {
+     "name": "piercing bolt",
+     "chance": 12340,
+     "max": 4,
+     "id": 7363
+    },
+    {
+     "name": "broken crossbow",
+     "chance": 15400,
+     "max": 1,
+     "id": 11451
+    },
+    {
+     "name": "minotaur horn",
+     "chance": 1990,
+     "max": 2,
+     "id": 11472
+    },
+    {
+     "name": "piece of archer armor",
+     "chance": 8260,
+     "max": 1,
+     "id": 11483
+    }
+   ]
+  },
+  "minotaur guard": {
+   "name": "Minotaur Guard",
+   "health": 185,
+   "experience": 160,
+   "speed": 95,
+   "lookType": 29,
+   "corpse": 5983,
+   "targetDistance": 1,
+   "runHealth": 0,
+   "attacks": [
+    {
+     "name": "melee",
+     "interval": 2000,
+     "chance": 100,
+     "min": 0,
+     "max": 100
+    }
+   ],
+   "maxSummons": 0,
+   "summons": [],
+   "defense": 20,
+   "armor": 15,
+   "mitigation": 0.83,
+   "heals": [],
+   "elements": {
+    "fire": 20,
+    "ice": -10,
+    "holy": 10,
+    "death": -10
+   },
+   "loot": [
+    {
+     "name": "gold coin",
+     "chance": 59640,
+     "max": 20,
+     "id": 3031
+    },
+    {
+     "name": "double axe",
+     "chance": 400,
+     "max": 1,
+     "id": 3275
+    },
+    {
+     "name": "chain armor",
+     "chance": 2980,
+     "max": 1,
+     "id": 3358
+    },
+    {
+     "name": "brass armor",
+     "chance": 4390,
+     "max": 1,
+     "id": 3359
+    },
+    {
+     "name": "battle shield",
+     "chance": 2150,
+     "max": 1,
+     "id": 3413
+    },
+    {
+     "name": "fishing rod",
+     "chance": 480,
+     "max": 1,
+     "id": 3483
+    },
+    {
+     "name": "minotaur leather",
+     "chance": 1000,
+     "max": 1,
+     "id": 5878
+    },
+    {
+     "id": 7401,
+     "chance": 80,
+     "max": 1
+    },
+    {
+     "name": "health potion",
+     "chance": 400,
+     "max": 1,
+     "id": 266
+    },
+    {
+     "name": "minotaur horn",
+     "chance": 8330,
+     "max": 2,
+     "id": 11472
+    },
+    {
+     "name": "piece of warrior armor",
+     "chance": 5040,
+     "max": 1,
+     "id": 11482
+    }
+   ]
+  },
+  "minotaur mage": {
+   "name": "Minotaur Mage",
+   "health": 155,
+   "experience": 150,
+   "speed": 85,
+   "lookType": 23,
+   "corpse": 5981,
+   "targetDistance": 4,
+   "runHealth": 0,
+   "attacks": [
+    {
+     "name": "melee",
+     "interval": 2000,
+     "chance": 100,
+     "min": 0,
+     "max": 20
+    },
+    {
+     "name": "combat",
+     "interval": 2000,
+     "chance": 15,
+     "min": 20,
+     "max": 59,
+     "element": "energy",
+     "range": 7,
+     "target": false,
+     "shoot": 5,
+     "effect": 12
+    },
+    {
+     "name": "combat",
+     "interval": 2000,
+     "chance": 15,
+     "min": 50,
+     "max": 105,
+     "element": "fire",
+     "range": 7,
+     "radius": 1,
+     "target": true,
+     "shoot": 4,
+     "effect": 7
+    },
+    {
+     "name": "field",
+     "interval": 2000,
+     "chance": 10,
+     "min": 0,
+     "max": 0,
+     "field": 2122,
+     "target": true,
+     "shoot": 36,
+     "effect": 0,
+     "range": 7,
+     "radius": 1
+    }
+   ],
+   "maxSummons": 0,
+   "summons": [],
+   "defense": 15,
+   "armor": 18,
+   "mitigation": 1.04,
+   "heals": [],
+   "elements": {
+    "energy": 20,
+    "earth": 20,
+    "ice": -10,
+    "holy": 10,
+    "death": -5
+   },
+   "loot": [
+    {
+     "id": 2920,
+     "chance": 4950,
+     "max": 1
+    },
+    {
+     "name": "gold coin",
+     "chance": 85780,
+     "max": 35,
+     "id": 3031
+    },
+    {
+     "name": "wand of cosmic energy",
+     "chance": 600,
+     "max": 1,
+     "id": 3073
+    },
+    {
+     "name": "leather helmet",
+     "chance": 3000,
+     "max": 1,
+     "id": 3355
+    },
+    {
+     "name": "leather legs",
+     "chance": 5190,
+     "max": 1,
+     "id": 3559
+    },
+    {
+     "id": 3595,
+     "chance": 15003,
+     "max": 8
+    },
+    {
+     "name": "minotaur leather",
+     "chance": 2290,
+     "max": 1,
+     "id": 5878
+    },
+    {
+     "name": "taurus mace",
+     "chance": 1000,
+     "max": 1,
+     "id": 7425
+    },
+    {
+     "name": "mana potion",
+     "chance": 490,
+     "max": 1,
+     "id": 268
+    },
+    {
+     "name": "minotaur horn",
+     "chance": 3020,
+     "max": 2,
+     "id": 11472
+    },
+    {
+     "name": "purple robe",
+     "chance": 6430,
+     "max": 2,
+     "id": 11473
+    }
+   ]
+  },
+  "fire elemental": {
+   "name": "Fire Elemental",
+   "health": 280,
+   "experience": 220,
+   "speed": 95,
+   "lookType": 49,
+   "corpse": 8136,
+   "targetDistance": 1,
+   "runHealth": 0,
+   "attacks": [
+    {
+     "name": "melee",
+     "interval": 2000,
+     "chance": 100,
+     "min": 0,
+     "max": 100
+    },
+    {
+     "name": "combat",
+     "interval": 2000,
+     "chance": 20,
+     "min": 45,
+     "max": 160,
+     "element": "fire",
+     "range": 7,
+     "radius": 2,
+     "target": true,
+     "shoot": 4,
+     "effect": 7
+    },
+    {
+     "name": "field",
+     "interval": 2000,
+     "chance": 25,
+     "min": 0,
+     "max": 0,
+     "field": 2118,
+     "target": true,
+     "shoot": 4,
+     "effect": 0,
+     "range": 7,
+     "radius": 1
+    }
+   ],
+   "maxSummons": 0,
+   "summons": [],
+   "defense": 15,
+   "armor": 18,
+   "mitigation": 0.51,
+   "heals": [],
+   "elements": {
+    "fire": 100,
+    "lifedrain": 100,
+    "ice": -25,
+    "death": 100
+   },
+   "loot": []
+  },
+  "bonebeast": {
+   "name": "Bonebeast",
+   "health": 515,
+   "experience": 580,
+   "speed": 109,
+   "lookType": 101,
+   "corpse": 6030,
+   "targetDistance": 1,
+   "runHealth": 0,
+   "attacks": [
+    {
+     "name": "melee",
+     "interval": 2000,
+     "chance": 100,
+     "min": 0,
+     "max": 200,
+     "condition": {
+      "element": "earth",
+      "min": 100,
+      "max": 100,
+      "tick": 4000
+     }
+    },
+    {
+     "name": "combat",
+     "interval": 2000,
+     "chance": 15,
+     "min": 50,
+     "max": 90,
+     "element": "earth",
+     "range": 7,
+     "target": false,
+     "shoot": 15,
+     "effect": 21
+    },
+    {
+     "name": "combat",
+     "interval": 2000,
+     "chance": 10,
+     "min": 25,
+     "max": 47,
+     "element": "lifedrain",
+     "radius": 3,
+     "target": false,
+     "shoot": 0,
+     "effect": 14
+    },
+    {
+     "name": "condition",
+     "interval": 2000,
+     "chance": 10,
+     "min": 0,
+     "max": 0,
+     "condition": {
+      "element": "earth",
+      "min": 50,
+      "max": 60,
+      "tick": 2000
+     },
+     "element": "earth",
+     "radius": 3,
+     "target": false,
+     "shoot": 0,
+     "effect": 21
+    },
+    {
+     "name": "condition",
+     "interval": 2000,
+     "chance": 10,
+     "min": 0,
+     "max": 0,
+     "condition": {
+      "element": "earth",
+      "min": 70,
+      "max": 80,
+      "tick": 2000
+     },
+     "element": "earth",
+     "length": 6,
+     "spread": 0,
+     "target": false,
+     "shoot": 0,
+     "effect": 21
+    }
+   ],
+   "maxSummons": 0,
+   "summons": [],
+   "defense": 30,
+   "armor": 40,
+   "mitigation": 1.15,
+   "heals": [
+    {
+     "interval": 2000,
+     "chance": 15,
+     "min": 50,
+     "max": 60
+    }
+   ],
+   "elements": {
+    "earth": 100,
+    "fire": -10,
+    "lifedrain": 100,
+    "drown": 100,
+    "holy": -25,
+    "death": 100
+   },
+   "loot": [
+    {
+     "name": "gold coin",
+     "chance": 50000,
+     "max": 90,
+     "id": 3031
+    },
+    {
+     "id": 3114,
+     "chance": 20000,
+     "max": 1
+    },
+    {
+     "id": 3115,
+     "chance": 47750,
+     "max": 1
+    },
+    {
+     "name": "bone club",
+     "chance": 4950,
+     "max": 1,
+     "id": 3337
+    },
+    {
+     "name": "plate armor",
+     "chance": 8000,
+     "max": 1,
+     "id": 3357
+    },
+    {
+     "name": "bone shield",
+     "chance": 2000,
+     "max": 1,
+     "id": 3441
+    },
+    {
+     "name": "green mushroom",
+     "chance": 1350,
+     "max": 1,
+     "id": 3732
+    },
+    {
+     "name": "hardened bone",
+     "chance": 960,
+     "max": 1,
+     "id": 5925
+    },
+    {
+     "name": "health potion",
+     "chance": 540,
+     "max": 1,
+     "id": 266
+    },
+    {
+     "name": "bonebeast trophy",
+     "chance": 120,
+     "max": 1,
+     "id": 10244
+    },
+    {
+     "name": "bony tail",
+     "chance": 9780,
+     "max": 1,
+     "id": 10277
+    }
+   ]
+  },
+  "defiler": {
+   "name": "Defiler",
+   "health": 3650,
+   "experience": 3700,
+   "speed": 80,
+   "lookType": 238,
+   "corpse": 6532,
+   "targetDistance": 1,
+   "runHealth": 85,
+   "attacks": [
+    {
+     "name": "melee",
+     "interval": 2000,
+     "chance": 100,
+     "min": 0,
+     "max": 240,
+     "condition": {
+      "element": "earth",
+      "min": 150,
+      "max": 150,
+      "tick": 4000
+     }
+    },
+    {
+     "name": "combat",
+     "interval": 2000,
+     "chance": 20,
+     "min": 160,
+     "max": 270,
+     "element": "earth",
+     "range": 7,
+     "target": false,
+     "shoot": 15,
+     "effect": 0
+    },
+    {
+     "name": "condition",
+     "interval": 2000,
+     "chance": 15,
+     "min": 0,
+     "max": 0,
+     "condition": {
+      "element": "earth",
+      "min": 400,
+      "max": 640,
+      "tick": 2000
+     },
+     "element": "earth",
+     "range": 7,
+     "radius": 7,
+     "target": false,
+     "shoot": 0,
+     "effect": 17
+    },
+    {
+     "name": "combat",
+     "interval": 2000,
+     "chance": 20,
+     "min": 120,
+     "max": 170,
+     "element": "earth",
+     "radius": 3,
+     "target": false,
+     "shoot": 0,
+     "effect": 21
+    },
+    {
+     "name": "condition",
+     "interval": 2000,
+     "chance": 10,
+     "min": 0,
+     "max": 0,
+     "condition": {
+      "element": "earth",
+      "min": 500,
+      "max": 1000,
+      "tick": 2000
+     },
+     "element": "earth",
+     "length": 8,
+     "spread": 3,
+     "target": false,
+     "shoot": 0,
+     "effect": 46
+    }
+   ],
+   "maxSummons": 0,
+   "summons": [],
+   "defense": 20,
+   "armor": 60,
+   "mitigation": 1.32,
+   "heals": [
+    {
+     "interval": 2000,
+     "chance": 10,
+     "min": 280,
+     "max": 350
+    }
+   ],
+   "elements": {
+    "energy": 10,
+    "earth": 100,
+    "fire": -25,
+    "ice": 20
+   },
+   "loot": [
+    {
+     "name": "small diamond",
+     "chance": 2439,
+     "max": 2,
+     "id": 3028
+    },
+    {
+     "name": "small ruby",
+     "chance": 3000,
+     "max": 2,
+     "id": 3030
+    },
+    {
+     "name": "gold coin",
+     "chance": 100000,
+     "max": 100,
+     "id": 3031
+    },
+    {
+     "name": "gold coin",
+     "chance": 100000,
+     "max": 100,
+     "id": 3031
+    },
+    {
+     "name": "gold coin",
+     "chance": 100000,
+     "max": 72,
+     "id": 3031
+    },
+    {
+     "name": "small emerald",
+     "chance": 5366,
+     "max": 3,
+     "id": 3032
+    },
+    {
+     "name": "talon",
+     "chance": 5710,
+     "max": 1,
+     "id": 3034
+    },
+    {
+     "name": "platinum coin",
+     "chance": 95000,
+     "max": 6,
+     "id": 3035
+    },
+    {
+     "name": "yellow gem",
+     "chance": 1219,
+     "max": 1,
+     "id": 3037
+    },
+    {
+     "name": "green gem",
+     "chance": 613,
+     "max": 1,
+     "id": 3038
+    },
+    {
+     "id": 3039,
+     "chance": 1538,
+     "max": 1
+    },
+    {
+     "name": "blue gem",
+     "chance": 300,
+     "max": 1,
+     "id": 3041
+    },
+    {
+     "name": "soul orb",
+     "chance": 20000,
+     "max": 1,
+     "id": 5944
+    },
+    {
+     "id": 6299,
+     "chance": 3030,
+     "max": 1
+    },
+    {
+     "name": "demonic essence",
+     "chance": 20320,
+     "max": 1,
+     "id": 6499
+    },
+    {
+     "name": "glob of acid slime",
+     "chance": 14210,
+     "max": 1,
+     "id": 9054
+    },
+    {
+     "name": "glob of tar",
+     "chance": 12000,
+     "max": 1,
+     "id": 9055
+    }
+   ]
+  },
+  "deathslicer": {
+   "name": "Deathslicer",
+   "health": 8200,
+   "experience": 0,
+   "speed": 100,
+   "lookType": 102,
+   "corpse": 3138,
+   "targetDistance": 1,
+   "runHealth": 0,
+   "attacks": [
+    {
+     "name": "melee",
+     "interval": 2000,
+     "chance": 100,
+     "min": 0,
+     "max": 500
+    },
+    {
+     "name": "combat",
+     "interval": 2000,
+     "chance": 25,
+     "min": 200,
+     "max": 400,
+     "element": "energy",
+     "radius": 2,
+     "target": false,
+     "shoot": 0,
+     "effect": 4
+    }
+   ],
+   "maxSummons": 0,
+   "summons": [],
+   "defense": 15,
+   "armor": 15,
+   "mitigation": 2.3,
+   "heals": [],
+   "elements": {
+    "physical": 100,
+    "energy": 100,
+    "earth": 100,
+    "fire": 100,
+    "lifedrain": 100,
+    "drown": 100,
+    "ice": 100,
+    "holy": 100,
+    "death": 100
+   },
+   "loot": []
   }
  },
  "spells": [
@@ -10127,10 +11614,37 @@
   }
  ],
  "areas": {
-  "AREA_BEAM6": [
+  "AREA_WAVE4": [
    [
+    1,
+    1,
+    1,
+    1,
     1
    ],
+   [
+    0,
+    1,
+    1,
+    1,
+    0
+   ],
+   [
+    0,
+    1,
+    1,
+    1,
+    0
+   ],
+   [
+    0,
+    0,
+    3,
+    0,
+    0
+   ]
+  ],
+  "AREA_BEAM5": [
    [
     1
    ],
@@ -10145,88 +11659,6 @@
    ],
    [
     3
-   ]
-  ],
-  "AREA_CIRCLE3X3": [
-   [
-    0,
-    0,
-    1,
-    1,
-    1,
-    0,
-    0
-   ],
-   [
-    0,
-    1,
-    1,
-    1,
-    1,
-    1,
-    0
-   ],
-   [
-    1,
-    1,
-    1,
-    1,
-    1,
-    1,
-    1
-   ],
-   [
-    1,
-    1,
-    1,
-    3,
-    1,
-    1,
-    1
-   ],
-   [
-    1,
-    1,
-    1,
-    1,
-    1,
-    1,
-    1
-   ],
-   [
-    0,
-    1,
-    1,
-    1,
-    1,
-    1,
-    0
-   ],
-   [
-    0,
-    0,
-    1,
-    1,
-    1,
-    0,
-    0
-   ]
-  ],
-  "AREA_SQUARE1X1": [
-   [
-    1,
-    1,
-    1
-   ],
-   [
-    1,
-    3,
-    1
-   ],
-   [
-    1,
-    1,
-    1
    ]
   ],
   "AREA_BEAM8": [
@@ -10255,56 +11687,20 @@
     3
    ]
   ],
-  "AREA_WAVE6": [
+  "AREA_SHORTWAVE3": [
    [
-    0,
-    0,
-    0,
-    0,
-    0
+    1,
+    1,
+    1
    ],
    [
-    0,
-    1,
-    3,
-    1,
-    0
-   ],
-   [
-    0,
-    0,
-    0,
-    0,
-    0
-   ]
-  ],
-  "AREA_WAVE4": [
-   [
-    1,
-    1,
     1,
     1,
     1
    ],
    [
     0,
-    1,
-    1,
-    1,
-    0
-   ],
-   [
-    0,
-    1,
-    1,
-    1,
-    0
-   ],
-   [
-    0,
-    0,
     3,
-    0,
     0
    ]
   ],
@@ -10505,34 +11901,10 @@
     0
    ]
   ],
-  "AREA_SQUAREWAVE5": [
+  "AREA_BEAM6": [
    [
-    1,
-    1,
     1
    ],
-   [
-    1,
-    1,
-    1
-   ],
-   [
-    1,
-    1,
-    1
-   ],
-   [
-    0,
-    1,
-    0
-   ],
-   [
-    0,
-    3,
-    0
-   ]
-  ],
-  "AREA_BEAM5": [
    [
     1
    ],
@@ -10547,6 +11919,29 @@
    ],
    [
     3
+   ]
+  ],
+  "AREA_WAVE6": [
+   [
+    0,
+    0,
+    0,
+    0,
+    0
+   ],
+   [
+    0,
+    1,
+    3,
+    1,
+    0
+   ],
+   [
+    0,
+    0,
+    0,
+    0,
+    0
    ]
   ],
   "AREA_CIRCLE5X5": [
@@ -10694,7 +12089,89 @@
     0
    ]
   ],
-  "AREA_SHORTWAVE3": [
+  "AREA_CIRCLE3X3": [
+   [
+    0,
+    0,
+    1,
+    1,
+    1,
+    0,
+    0
+   ],
+   [
+    0,
+    1,
+    1,
+    1,
+    1,
+    1,
+    0
+   ],
+   [
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1
+   ],
+   [
+    1,
+    1,
+    1,
+    3,
+    1,
+    1,
+    1
+   ],
+   [
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1
+   ],
+   [
+    0,
+    1,
+    1,
+    1,
+    1,
+    1,
+    0
+   ],
+   [
+    0,
+    0,
+    1,
+    1,
+    1,
+    0,
+    0
+   ]
+  ],
+  "AREA_SQUARE1X1": [
+   [
+    1,
+    1,
+    1
+   ],
+   [
+    1,
+    3,
+    1
+   ],
+   [
+    1,
+    1,
+    1
+   ]
+  ],
+  "AREA_SQUAREWAVE5": [
    [
     1,
     1,
@@ -10704,6 +12181,16 @@
     1,
     1,
     1
+   ],
+   [
+    1,
+    1,
+    1
+   ],
+   [
+    0,
+    1,
+    0
    ],
    [
     0,
@@ -10732,27 +12219,33 @@
  "items": {
   "236": {
    "id": 236,
-   "name": "strong health potion"
+   "name": "strong health potion",
+   "stackable": 1
   },
   "237": {
    "id": 237,
-   "name": "strong mana potion"
+   "name": "strong mana potion",
+   "stackable": 1
   },
   "238": {
    "id": 238,
-   "name": "great mana potion"
+   "name": "great mana potion",
+   "stackable": 1
   },
   "239": {
    "id": 239,
-   "name": "great health potion"
+   "name": "great health potion",
+   "stackable": 1
   },
   "266": {
    "id": 266,
-   "name": "health potion"
+   "name": "health potion",
+   "stackable": 1
   },
   "268": {
    "id": 268,
-   "name": "mana potion"
+   "name": "mana potion",
+   "stackable": 1
   },
   "761": {
    "id": 761,
@@ -10766,7 +12259,8 @@
    "action": "removecount",
    "level": 20,
    "unproperly": "true",
-   "slot": "ammo"
+   "slot": "ammo",
+   "stackable": 1
   },
   "762": {
    "id": 762,
@@ -10780,7 +12274,8 @@
    "action": "removecount",
    "level": 20,
    "unproperly": "true",
-   "slot": "ammo"
+   "slot": "ammo",
+   "stackable": 1
   },
   "763": {
    "id": 763,
@@ -10794,7 +12289,8 @@
    "action": "removecount",
    "level": 20,
    "unproperly": "true",
-   "slot": "ammo"
+   "slot": "ammo",
+   "stackable": 1
   },
   "774": {
    "id": 774,
@@ -10808,7 +12304,8 @@
    "action": "removecount",
    "level": 20,
    "unproperly": "true",
-   "slot": "ammo"
+   "slot": "ammo",
+   "stackable": 1
   },
   "811": {
    "id": 811,
@@ -10903,7 +12400,8 @@
    "range": 4,
    "attack": 5,
    "breakchance": 3,
-   "slot": "hand"
+   "slot": "hand",
+   "stackable": 1
   },
   "2127": {
    "id": 2127,
@@ -11101,7 +12599,8 @@
   },
   "3010": {
    "id": 3010,
-   "name": "emerald bangle"
+   "name": "emerald bangle",
+   "stackable": 1
   },
   "3012": {
    "id": 3012,
@@ -11120,7 +12619,8 @@
   },
   "3017": {
    "id": 3017,
-   "name": "silver brooch"
+   "name": "silver brooch",
+   "stackable": 1
   },
   "3019": {
    "id": 3019,
@@ -11129,67 +12629,83 @@
   },
   "3026": {
    "id": 3026,
-   "name": "white pearl"
+   "name": "white pearl",
+   "stackable": 1
   },
   "3027": {
    "id": 3027,
-   "name": "black pearl"
+   "name": "black pearl",
+   "stackable": 1
   },
   "3028": {
    "id": 3028,
-   "name": "small diamond"
+   "name": "small diamond",
+   "stackable": 1
   },
   "3029": {
    "id": 3029,
-   "name": "small sapphire"
+   "name": "small sapphire",
+   "stackable": 1
   },
   "3030": {
    "id": 3030,
-   "name": "small ruby"
+   "name": "small ruby",
+   "stackable": 1
   },
   "3031": {
    "id": 3031,
-   "name": "gold coin"
+   "name": "gold coin",
+   "stackable": 1
   },
   "3032": {
    "id": 3032,
-   "name": "small emerald"
+   "name": "small emerald",
+   "stackable": 1
   },
   "3033": {
    "id": 3033,
-   "name": "small amethyst"
+   "name": "small amethyst",
+   "stackable": 1
   },
   "3034": {
    "id": 3034,
-   "name": "talon"
+   "name": "talon",
+   "stackable": 1
   },
   "3035": {
    "id": 3035,
-   "name": "platinum coin"
+   "name": "platinum coin",
+   "stackable": 1
   },
   "3036": {
    "id": 3036,
-   "name": "violet gem"
+   "name": "violet gem",
+   "stackable": 1
   },
   "3037": {
    "id": 3037,
-   "name": "yellow gem"
+   "name": "yellow gem",
+   "stackable": 1
   },
   "3038": {
    "id": 3038,
-   "name": "green gem"
+   "name": "green gem",
+   "stackable": 1
   },
   "3039": {
    "id": 3039,
-   "name": "red gem"
+   "name": "red gem",
+   "stackable": 1
   },
   "3041": {
    "id": 3041,
-   "name": "blue gem"
+   "name": "blue gem",
+   "stackable": 1
   },
   "3043": {
    "id": 3043,
-   "name": "crystal coin"
+   "name": "crystal coin",
+   "stackable": 1
   },
   "3045": {
    "id": 3045,
@@ -11274,7 +12790,8 @@
   },
   "3058": {
    "id": 3058,
-   "name": "strange symbol"
+   "name": "strange symbol",
+   "stackable": 1
   },
   "3059": {
    "id": 3059,
@@ -11286,15 +12803,18 @@
   },
   "3060": {
    "id": 3060,
-   "name": "orb"
+   "name": "orb",
+   "stackable": 1
   },
   "3061": {
    "id": 3061,
-   "name": "life crystal"
+   "name": "life crystal",
+   "stackable": 1
   },
   "3062": {
    "id": 3062,
-   "name": "mind stone"
+   "name": "mind stone",
+   "stackable": 1
   },
   "3063": {
    "id": 3063,
@@ -11443,7 +12963,8 @@
   },
   "3078": {
    "id": 3078,
-   "name": "mysterious fetish"
+   "name": "mysterious fetish",
+   "stackable": 1
   },
   "3079": {
    "id": 3079,
@@ -11592,118 +13113,136 @@
   },
   "3114": {
    "id": 3114,
-   "name": "skull"
+   "name": "skull",
+   "stackable": 1
   },
   "3115": {
    "id": 3115,
-   "name": "bone"
+   "name": "bone",
+   "stackable": 1
   },
   "3116": {
    "id": 3116,
-   "name": "big bone"
+   "name": "big bone",
+   "stackable": 1
   },
   "3147": {
    "id": 3147,
    "name": "blank rune",
-   "type": "rune"
+   "type": "rune",
+   "stackable": 1
   },
   "3152": {
    "id": 3152,
    "name": "intense healing rune",
    "type": "rune",
    "runespellname": "adura gran",
-   "charges": 1
+   "charges": 1,
+   "stackable": 1
   },
   "3155": {
    "id": 3155,
    "name": "sudden death rune",
    "type": "rune",
    "runespellname": "adori gran mort",
-   "charges": 3
+   "charges": 3,
+   "stackable": 1
   },
   "3158": {
    "id": 3158,
    "name": "icicle rune",
    "type": "rune",
    "runespellname": "adori frigo",
-   "charges": 5
+   "charges": 5,
+   "stackable": 1
   },
   "3160": {
    "id": 3160,
    "name": "ultimate healing rune",
    "type": "rune",
    "runespellname": "adura vita",
-   "charges": 1
+   "charges": 1,
+   "stackable": 1
   },
   "3161": {
    "id": 3161,
    "name": "avalanche rune",
    "type": "rune",
    "runespellname": "adori mas frigo",
-   "charges": 4
+   "charges": 4,
+   "stackable": 1
   },
   "3174": {
    "id": 3174,
    "name": "light magic missile rune",
    "type": "rune",
    "runespellname": "adori min vis",
-   "charges": 10
+   "charges": 10,
+   "stackable": 1
   },
   "3175": {
    "id": 3175,
    "name": "stone shower rune",
    "type": "rune",
    "runespellname": "adori mas tera",
-   "charges": 4
+   "charges": 4,
+   "stackable": 1
   },
   "3179": {
    "id": 3179,
    "name": "stalagmite rune",
    "type": "rune",
    "runespellname": "adori tera",
-   "charges": 10
+   "charges": 10,
+   "stackable": 1
   },
   "3182": {
    "id": 3182,
    "name": "holy missile rune",
    "type": "rune",
    "runespellname": "adori san",
-   "charges": 5
+   "charges": 5,
+   "stackable": 1
   },
   "3189": {
    "id": 3189,
    "name": "fireball rune",
    "type": "rune",
    "runespellname": "adori flam",
-   "charges": 5
+   "charges": 5,
+   "stackable": 1
   },
   "3191": {
    "id": 3191,
    "name": "great fireball rune",
    "type": "rune",
    "runespellname": "adori mas flam",
-   "charges": 4
+   "charges": 4,
+   "stackable": 1
   },
   "3198": {
    "id": 3198,
    "name": "heavy magic missile rune",
    "type": "rune",
    "runespellname": "adori vis",
-   "charges": 10
+   "charges": 10,
+   "stackable": 1
   },
   "3200": {
    "id": 3200,
    "name": "explosion rune",
    "type": "rune",
    "runespellname": "adevo mas hur",
-   "charges": 6
+   "charges": 6,
+   "stackable": 1
   },
   "3202": {
    "id": 3202,
    "name": "thunderstorm rune",
    "type": "rune",
    "runespellname": "adori mas vis",
-   "charges": 4
+   "charges": 4,
+   "stackable": 1
   },
   "3257": {
    "id": 3257,
@@ -11836,7 +13375,8 @@
    "range": 3,
    "attack": 25,
    "breakchance": 3,
-   "slot": "hand"
+   "slot": "hand",
+   "stackable": 1
   },
   "3279": {
    "id": 3279,
@@ -11925,7 +13465,8 @@
    "range": 4,
    "attack": 30,
    "breakchance": 10,
-   "slot": "hand"
+   "slot": "hand",
+   "stackable": 1
   },
   "3289": {
    "id": 3289,
@@ -11994,7 +13535,8 @@
    "range": 4,
    "attack": 25,
    "breakchance": 7,
-   "slot": "hand"
+   "slot": "hand",
+   "stackable": 1
   },
   "3299": {
    "id": 3299,
@@ -12215,7 +13757,8 @@
    "breakchance": 6,
    "level": 20,
    "unproperly": "true",
-   "slot": "hand"
+   "slot": "hand",
+   "stackable": 1
   },
   "3349": {
    "id": 3349,
@@ -12642,7 +14185,8 @@
    "maxhitchance": 87,
    "attack": 30,
    "action": "removecount",
-   "slot": "ammo"
+   "slot": "ammo",
+   "stackable": 1
   },
   "3447": {
    "id": 3447,
@@ -12653,7 +14197,8 @@
    "maxhitchance": 91,
    "attack": 25,
    "action": "removecount",
-   "slot": "ammo"
+   "slot": "ammo",
+   "stackable": 1
   },
   "3448": {
    "id": 3448,
@@ -12662,7 +14207,8 @@
    "ammotype": "arrow",
    "shoottype": "poisonarrow",
    "maxhitchance": 91,
-   "attack": 23
+   "attack": 23,
+   "stackable": 1
   },
   "3449": {
    "id": 3449,
@@ -12671,7 +14217,8 @@
    "ammotype": "arrow",
    "shoottype": "burstarrow",
    "maxhitchance": 100,
-   "attack": 27
+   "attack": 27,
+   "stackable": 1
   },
   "3450": {
    "id": 3450,
@@ -12684,7 +14231,8 @@
    "action": "removecount",
    "level": 55,
    "unproperly": "true",
-   "slot": "ammo"
+   "slot": "ammo",
+   "stackable": 1
   },
   "3453": {
    "id": 3453,
@@ -12712,7 +14260,8 @@
   },
   "3492": {
    "id": 3492,
-   "name": "worm"
+   "name": "worm",
+   "stackable": 1
   },
   "3551": {
    "id": 3551,
@@ -12830,99 +14379,122 @@
   "3577": {
    "id": 3577,
    "name": "meat",
-   "showcount": 0
+   "showcount": 0,
+   "stackable": 1
   },
   "3578": {
    "id": 3578,
-   "name": "fish"
+   "name": "fish",
+   "stackable": 1
   },
   "3582": {
    "id": 3582,
    "name": "ham",
-   "showcount": 0
+   "showcount": 0,
+   "stackable": 1
   },
   "3583": {
    "id": 3583,
    "name": "dragon ham",
-   "showcount": 0
+   "showcount": 0,
+   "stackable": 1
   },
   "3585": {
    "id": 3585,
-   "name": "red apple"
+   "name": "red apple",
+   "stackable": 1
   },
   "3586": {
    "id": 3586,
-   "name": "orange"
+   "name": "orange",
+   "stackable": 1
   },
   "3590": {
    "id": 3590,
-   "name": "cherry"
+   "name": "cherry",
+   "stackable": 1
   },
   "3592": {
    "id": 3592,
    "name": "grapes",
-   "showcount": 0
+   "showcount": 0,
+   "stackable": 1
   },
   "3593": {
    "id": 3593,
-   "name": "melon"
+   "name": "melon",
+   "stackable": 1
   },
   "3595": {
    "id": 3595,
-   "name": "carrot"
+   "name": "carrot",
+   "stackable": 1
   },
   "3597": {
    "id": 3597,
-   "name": "corncob"
+   "name": "corncob",
+   "stackable": 1
   },
   "3598": {
    "id": 3598,
-   "name": "cookie"
+   "name": "cookie",
+   "stackable": 1
   },
   "3600": {
    "id": 3600,
-   "name": "bread"
+   "name": "bread",
+   "stackable": 1
   },
   "3601": {
    "id": 3601,
-   "name": "roll"
+   "name": "roll",
+   "stackable": 1
   },
   "3602": {
    "id": 3602,
-   "name": "brown bread"
+   "name": "brown bread",
+   "stackable": 1
   },
   "3607": {
    "id": 3607,
    "name": "cheese",
-   "showcount": 0
+   "showcount": 0,
+   "stackable": 1
   },
   "3658": {
    "id": 3658,
-   "name": "red rose"
+   "name": "red rose",
+   "stackable": 1
   },
   "3661": {
    "id": 3661,
-   "name": "grave flower"
+   "name": "grave flower",
+   "stackable": 1
   },
   "3723": {
    "id": 3723,
-   "name": "white mushroom"
+   "name": "white mushroom",
+   "stackable": 1
   },
   "3731": {
    "id": 3731,
-   "name": "fire mushroom"
+   "name": "fire mushroom",
+   "stackable": 1
   },
   "3732": {
    "id": 3732,
-   "name": "green mushroom"
+   "name": "green mushroom",
+   "stackable": 1
   },
   "3738": {
    "id": 3738,
-   "name": "sling herb"
+   "name": "sling herb",
+   "stackable": 1
   },
   "3740": {
    "id": 3740,
-   "name": "shadow herb"
+   "name": "shadow herb",
+   "stackable": 1
   },
   "3994": {
    "id": 3994,
@@ -12936,7 +14508,8 @@
   },
   "4839": {
    "id": 4839,
-   "name": "hydra egg"
+   "name": "hydra egg",
+   "stackable": 1
   },
   "5460": {
    "id": 5460,
@@ -12953,63 +14526,77 @@
   },
   "5804": {
    "id": 5804,
-   "name": "nose ring"
+   "name": "nose ring",
+   "stackable": 1
   },
   "5808": {
    "id": 5808,
-   "name": "Orshabaal's brain"
+   "name": "Orshabaal's brain",
+   "stackable": 1
   },
   "5809": {
    "id": 5809,
-   "name": "soul stone"
+   "name": "soul stone",
+   "stackable": 1
   },
   "5875": {
    "id": 5875,
-   "name": "sniper gloves"
+   "name": "sniper gloves",
+   "stackable": 1
   },
   "5877": {
    "id": 5877,
    "name": "green dragon leather",
-   "showcount": 0
+   "showcount": 0,
+   "stackable": 1
   },
   "5878": {
    "id": 5878,
    "name": "minotaur leather",
-   "showcount": 0
+   "showcount": 0,
+   "stackable": 1
   },
   "5879": {
    "id": 5879,
    "name": "spider silk",
-   "showcount": 0
+   "showcount": 0,
+   "stackable": 1
   },
   "5880": {
    "id": 5880,
    "name": "iron ore",
-   "showcount": 0
+   "showcount": 0,
+   "stackable": 1
   },
   "5882": {
    "id": 5882,
-   "name": "red dragon scale"
+   "name": "red dragon scale",
+   "stackable": 1
   },
   "5886": {
    "id": 5886,
-   "name": "spool of yarn"
+   "name": "spool of yarn",
+   "stackable": 1
   },
   "5893": {
    "id": 5893,
-   "name": "perfect behemoth fang"
+   "name": "perfect behemoth fang",
+   "stackable": 1
   },
   "5894": {
    "id": 5894,
-   "name": "bat wing"
+   "name": "bat wing",
+   "stackable": 1
   },
   "5897": {
    "id": 5897,
-   "name": "wolf paw"
+   "name": "wolf paw",
+   "stackable": 1
   },
   "5898": {
    "id": 5898,
-   "name": "bonelord eye"
+   "name": "bonelord eye",
+   "stackable": 1
   },
   "5903": {
    "id": 5903,
@@ -13023,52 +14610,64 @@
   },
   "5909": {
    "id": 5909,
-   "name": "white piece of cloth"
+   "name": "white piece of cloth",
+   "stackable": 1
   },
   "5911": {
    "id": 5911,
-   "name": "red piece of cloth"
+   "name": "red piece of cloth",
+   "stackable": 1
   },
   "5913": {
    "id": 5913,
-   "name": "brown piece of cloth"
+   "name": "brown piece of cloth",
+   "stackable": 1
   },
   "5914": {
    "id": 5914,
-   "name": "yellow piece of cloth"
+   "name": "yellow piece of cloth",
+   "stackable": 1
   },
   "5919": {
    "id": 5919,
-   "name": "dragon claw"
+   "name": "dragon claw",
+   "stackable": 1
   },
   "5920": {
    "id": 5920,
-   "name": "green dragon scale"
+   "name": "green dragon scale",
+   "stackable": 1
   },
   "5922": {
    "id": 5922,
-   "name": "holy orchid"
+   "name": "holy orchid",
+   "stackable": 1
   },
   "5925": {
    "id": 5925,
-   "name": "hardened bone"
+   "name": "hardened bone",
+   "stackable": 1
   },
   "5930": {
    "id": 5930,
-   "name": "behemoth claw"
+   "name": "behemoth claw",
+   "stackable": 1
   },
   "5943": {
    "id": 5943,
-   "name": "Morgaroth's heart"
+   "name": "Morgaroth's heart",
+   "stackable": 1
   },
   "5944": {
    "id": 5944,
-   "name": "soul orb"
+   "name": "soul orb",
+   "stackable": 1
   },
   "5948": {
    "id": 5948,
    "name": "red dragon leather",
-   "showcount": 0
+   "showcount": 0,
+   "stackable": 1
   },
   "5949": {
    "id": 5949,
@@ -13084,7 +14683,8 @@
   },
   "5954": {
    "id": 5954,
-   "name": "demon horn"
+   "name": "demon horn",
+   "stackable": 1
   },
   "5960": {
    "id": 5960,
@@ -13191,6 +14791,12 @@
    "fluidsource": "blood",
    "containersize": 10
   },
+  "5982": {
+   "id": 5982,
+   "name": "dead minotaur",
+   "fluidsource": "blood",
+   "containersize": 10
+  },
   "5983": {
    "id": 5983,
    "name": "dead minotaur",
@@ -13277,11 +14883,22 @@
    "fluidsource": "blood",
    "containersize": 44
   },
+  "6026": {
+   "id": 6026,
+   "name": "dead hyaena",
+   "fluidsource": "blood",
+   "containersize": 14
+  },
   "6028": {
    "id": 6028,
    "name": "slain lich",
    "fluidsource": "blood",
    "containersize": 7
+  },
+  "6030": {
+   "id": 6030,
+   "name": "slain bonebeast",
+   "containersize": 24
   },
   "6037": {
    "id": 6037,
@@ -13358,7 +14975,8 @@
   },
   "6499": {
    "id": 6499,
-   "name": "demonic essence"
+   "name": "demonic essence",
+   "stackable": 1
   },
   "6528": {
    "id": 6528,
@@ -13371,7 +14989,8 @@
    "action": "removecount",
    "level": 110,
    "unproperly": "true",
-   "slot": "ammo"
+   "slot": "ammo",
+   "stackable": 1
   },
   "6532": {
    "id": 6532,
@@ -13381,11 +15000,13 @@
   },
   "6535": {
    "id": 6535,
-   "name": "Plasmother's remains"
+   "name": "Plasmother's remains",
+   "stackable": 1
   },
   "6546": {
    "id": 6546,
-   "name": "Dracola's eye"
+   "name": "Dracola's eye",
+   "stackable": 1
   },
   "6553": {
    "id": 6553,
@@ -13400,7 +15021,8 @@
   },
   "6558": {
    "id": 6558,
-   "name": "flask of demonic blood"
+   "name": "flask of demonic blood",
+   "stackable": 1
   },
   "6578": {
    "id": 6578,
@@ -13431,7 +15053,8 @@
    "action": "removecount",
    "level": 30,
    "unproperly": "true",
-   "slot": "ammo"
+   "slot": "ammo",
+   "stackable": 1
   },
   "7364": {
    "id": 7364,
@@ -13444,7 +15067,8 @@
    "action": "removecount",
    "level": 20,
    "unproperly": "true",
-   "slot": "ammo"
+   "slot": "ammo",
+   "stackable": 1
   },
   "7365": {
    "id": 7365,
@@ -13457,7 +15081,8 @@
    "action": "removecount",
    "level": 40,
    "unproperly": "true",
-   "slot": "ammo"
+   "slot": "ammo",
+   "stackable": 1
   },
   "7368": {
    "id": 7368,
@@ -13470,7 +15095,8 @@
    "breakchance": 33,
    "level": 80,
    "unproperly": "true",
-   "slot": "hand"
+   "slot": "hand",
+   "stackable": 1
   },
   "7378": {
    "id": 7378,
@@ -13483,7 +15109,8 @@
    "breakchance": 3,
    "level": 25,
    "unproperly": "true",
-   "slot": "hand"
+   "slot": "hand",
+   "stackable": 1
   },
   "7382": {
    "id": 7382,
@@ -13660,6 +15287,16 @@
    "unproperly": "true",
    "vocation": "Knight;true, Elite Knight"
   },
+  "7425": {
+   "id": 7425,
+   "name": "taurus mace",
+   "weapontype": "club",
+   "slottype": "two-handed",
+   "attack": 30,
+   "defense": 18,
+   "level": 20,
+   "unproperly": "true"
+  },
   "7427": {
    "id": 7427,
    "name": "chaos mace",
@@ -13735,11 +15372,13 @@
   },
   "7642": {
    "id": 7642,
-   "name": "great spirit potion"
+   "name": "great spirit potion",
+   "stackable": 1
   },
   "7643": {
    "id": 7643,
-   "name": "ultimate health potion"
+   "name": "ultimate health potion",
+   "stackable": 1
   },
   "7991": {
    "id": 7991,
@@ -13750,7 +15389,8 @@
   },
   "8014": {
    "id": 8014,
-   "name": "cucumber"
+   "name": "cucumber",
+   "stackable": 1
   },
   "8022": {
    "id": 8022,
@@ -13805,7 +15445,8 @@
   "8031": {
    "id": 8031,
    "name": "spider fangs",
-   "showcount": 0
+   "showcount": 0,
+   "stackable": 1
   },
   "8037": {
    "id": 8037,
@@ -14132,13 +15773,20 @@
    "name": "dead rotworm queen",
    "containersize": 8
   },
+  "8136": {
+   "id": 8136,
+   "name": "remains of an elemental",
+   "containersize": 11
+  },
   "8143": {
    "id": 8143,
-   "name": "gland"
+   "name": "gland",
+   "stackable": 1
   },
   "8192": {
    "id": 8192,
-   "name": "vampire lord token"
+   "name": "vampire lord token",
+   "stackable": 1
   },
   "8860": {
    "id": 8860,
@@ -14152,13 +15800,25 @@
    "containersize": 8,
    "slot": "backpack"
   },
+  "9054": {
+   "id": 9054,
+   "name": "glob of acid slime",
+   "stackable": 1
+  },
+  "9055": {
+   "id": 9055,
+   "name": "glob of tar",
+   "stackable": 1
+  },
   "9057": {
    "id": 9057,
-   "name": "small topaz"
+   "name": "small topaz",
+   "stackable": 1
   },
   "9058": {
    "id": 9058,
-   "name": "gold ingot"
+   "name": "gold ingot",
+   "stackable": 1
   },
   "9302": {
    "id": 9302,
@@ -14199,44 +15859,54 @@
   },
   "9635": {
    "id": 9635,
-   "name": "elvish talisman"
+   "name": "elvish talisman",
+   "stackable": 1
   },
   "9647": {
    "id": 9647,
-   "name": "demonic skeletal hand"
+   "name": "demonic skeletal hand",
+   "stackable": 1
   },
   "9649": {
    "id": 9649,
-   "name": "gauze bandage"
+   "name": "gauze bandage",
+   "stackable": 1
   },
   "9651": {
    "id": 9651,
-   "name": "scorpion tail"
+   "name": "scorpion tail",
+   "stackable": 1
   },
   "9657": {
    "id": 9657,
-   "name": "cyclops toe"
+   "name": "cyclops toe",
+   "stackable": 1
   },
   "9685": {
    "id": 9685,
    "name": "vampire teeth",
-   "showcount": 0
+   "showcount": 0,
+   "stackable": 1
   },
   "9689": {
    "id": 9689,
-   "name": "bunch of troll hair"
+   "name": "bunch of troll hair",
+   "stackable": 1
   },
   "9690": {
    "id": 9690,
-   "name": "ghostly tissue"
+   "name": "ghostly tissue",
+   "stackable": 1
   },
   "9692": {
    "id": 9692,
-   "name": "lump of dirt"
+   "name": "lump of dirt",
+   "stackable": 1
   },
   "10196": {
    "id": 10196,
-   "name": "orc tooth"
+   "name": "orc tooth",
+   "stackable": 1
   },
   "10202": {
    "id": 10202,
@@ -14244,9 +15914,19 @@
    "containersize": 20,
    "slot": "backpack"
   },
+  "10244": {
+   "id": 10244,
+   "name": "bonebeast trophy"
+  },
+  "10277": {
+   "id": 10277,
+   "name": "bony tail",
+   "stackable": 1
+  },
   "10282": {
    "id": 10282,
-   "name": "hydra head"
+   "name": "hydra head",
+   "stackable": 1
   },
   "10290": {
    "id": 10290,
@@ -14254,11 +15934,13 @@
   },
   "10291": {
    "id": 10291,
-   "name": "rotten piece of cloth"
+   "name": "rotten piece of cloth",
+   "stackable": 1
   },
   "10320": {
    "id": 10320,
-   "name": "book of necromantic rituals"
+   "name": "book of necromantic rituals",
+   "stackable": 1
   },
   "10324": {
    "id": 10324,
@@ -14286,23 +15968,28 @@
   },
   "10341": {
    "id": 10341,
-   "name": "phoenix charm"
+   "name": "phoenix charm",
+   "stackable": 1
   },
   "10342": {
    "id": 10342,
-   "name": "unity charm"
+   "name": "unity charm",
+   "stackable": 1
   },
   "10343": {
    "id": 10343,
-   "name": "spiritual charm"
+   "name": "spiritual charm",
+   "stackable": 1
   },
   "10344": {
    "id": 10344,
-   "name": "twin sun charm"
+   "name": "twin sun charm",
+   "stackable": 1
   },
   "10345": {
    "id": 10345,
-   "name": "solitude charm"
+   "name": "solitude charm",
+   "stackable": 1
   },
   "10392": {
    "id": 10392,
@@ -14327,111 +16014,152 @@
   },
   "10420": {
    "id": 10420,
-   "name": "petrified scream"
+   "name": "petrified scream",
+   "stackable": 1
   },
   "11443": {
    "id": 11443,
-   "name": "girlish hair decoration"
+   "name": "girlish hair decoration",
+   "stackable": 1
   },
   "11444": {
    "id": 11444,
-   "name": "protective charm"
+   "name": "protective charm",
+   "stackable": 1
   },
   "11446": {
    "id": 11446,
    "name": "hair of a banshee",
-   "showcount": 0
+   "showcount": 0,
+   "stackable": 1
   },
   "11447": {
    "id": 11447,
-   "name": "battle stone"
+   "name": "battle stone",
+   "stackable": 1
   },
   "11449": {
    "id": 11449,
    "name": "blood preservation",
-   "showcount": 0
+   "showcount": 0,
+   "stackable": 1
   },
   "11450": {
    "id": 11450,
-   "name": "small notebook"
+   "name": "small notebook",
+   "stackable": 1
+  },
+  "11451": {
+   "id": 11451,
+   "name": "broken crossbow",
+   "stackable": 1
   },
   "11452": {
    "id": 11452,
-   "name": "broken shamanic staff"
+   "name": "broken shamanic staff",
+   "stackable": 1
   },
   "11453": {
    "id": 11453,
-   "name": "broken helmet"
+   "name": "broken helmet",
+   "stackable": 1
   },
   "11457": {
    "id": 11457,
-   "name": "dragon's tail"
+   "name": "dragon's tail",
+   "stackable": 1
   },
   "11465": {
    "id": 11465,
-   "name": "elven astral observer"
+   "name": "elven astral observer",
+   "stackable": 1
   },
   "11466": {
    "id": 11466,
-   "name": "flask of embalming fluid"
+   "name": "flask of embalming fluid",
+   "stackable": 1
   },
   "11467": {
    "id": 11467,
-   "name": "ghoul snack"
+   "name": "ghoul snack",
+   "stackable": 1
   },
   "11469": {
    "id": 11469,
-   "name": "hunter's quiver"
+   "name": "hunter's quiver",
+   "stackable": 1
   },
   "11472": {
    "id": 11472,
-   "name": "minotaur horn"
+   "name": "minotaur horn",
+   "stackable": 1
+  },
+  "11473": {
+   "id": 11473,
+   "name": "purple robe",
+   "stackable": 1
   },
   "11475": {
    "id": 11475,
-   "name": "necromantic robe"
+   "name": "necromantic robe",
+   "stackable": 1
   },
   "11477": {
    "id": 11477,
    "name": "orcish gear",
-   "showcount": 0
+   "showcount": 0,
+   "stackable": 1
   },
   "11478": {
    "id": 11478,
-   "name": "shamanic hood"
+   "name": "shamanic hood",
+   "stackable": 1
   },
   "11479": {
    "id": 11479,
    "name": "orc leather",
-   "showcount": 0
+   "showcount": 0,
+   "stackable": 1
   },
   "11480": {
    "id": 11480,
-   "name": "skull belt"
+   "name": "skull belt",
+   "stackable": 1
   },
   "11481": {
    "id": 11481,
-   "name": "pelvis bone"
+   "name": "pelvis bone",
+   "stackable": 1
   },
   "11482": {
    "id": 11482,
-   "name": "piece of warrior armor"
+   "name": "piece of warrior armor",
+   "stackable": 1
+  },
+  "11483": {
+   "id": 11483,
+   "name": "piece of archer armor",
+   "stackable": 1
   },
   "11484": {
    "id": 11484,
-   "name": "pile of grave earth"
+   "name": "pile of grave earth",
+   "stackable": 1
   },
   "11485": {
    "id": 11485,
-   "name": "poison spider shell"
+   "name": "poison spider shell",
+   "stackable": 1
   },
   "11510": {
    "id": 11510,
-   "name": "scroll of heroic deeds"
+   "name": "scroll of heroic deeds",
+   "stackable": 1
   },
   "11512": {
    "id": 11512,
-   "name": "small flask of eyedrops"
+   "name": "small flask of eyedrops",
+   "stackable": 1
   },
   "12304": {
    "id": 12304,
@@ -14452,7 +16180,8 @@
    "action": "removecount",
    "level": 30,
    "unproperly": "true",
-   "slot": "ammo"
+   "slot": "ammo",
+   "stackable": 1
   },
   "14252": {
    "id": 14252,
@@ -14465,7 +16194,8 @@
    "action": "removecount",
    "level": 40,
    "unproperly": "true",
-   "slot": "ammo"
+   "slot": "ammo",
+   "stackable": 1
   },
   "15793": {
    "id": 15793,
@@ -14478,19 +16208,23 @@
    "action": "removecount",
    "level": 90,
    "unproperly": "true",
-   "slot": "ammo"
+   "slot": "ammo",
+   "stackable": 1
   },
   "16120": {
    "id": 16120,
-   "name": "violet crystal shard"
+   "name": "violet crystal shard",
+   "stackable": 1
   },
   "16122": {
    "id": 16122,
-   "name": "green crystal splinter"
+   "name": "green crystal splinter",
+   "stackable": 1
   },
   "16124": {
    "id": 16124,
-   "name": "blue crystal splinter"
+   "name": "blue crystal splinter",
+   "stackable": 1
   },
   "16141": {
    "id": 16141,
@@ -14503,7 +16237,8 @@
    "action": "removecount",
    "level": 90,
    "unproperly": "true",
-   "slot": "ammo"
+   "slot": "ammo",
+   "stackable": 1
   },
   "16142": {
    "id": 16142,
@@ -14516,7 +16251,8 @@
    "action": "removecount",
    "level": 70,
    "unproperly": "true",
-   "slot": "ammo"
+   "slot": "ammo",
+   "stackable": 1
   },
   "16143": {
    "id": 16143,
@@ -14530,7 +16266,8 @@
    "action": "removecount",
    "level": 70,
    "unproperly": "true",
-   "slot": "ammo"
+   "slot": "ammo",
+   "stackable": 1
   },
   "18042": {
    "id": 18042,
@@ -14570,11 +16307,13 @@
   },
   "20062": {
    "id": 20062,
-   "name": "cluster of solace"
+   "name": "cluster of solace",
+   "stackable": 1
   },
   "20063": {
    "id": 20063,
-   "name": "dream matter"
+   "name": "dream matter",
+   "stackable": 1
   },
   "20064": {
    "id": 20064,
@@ -14919,7 +16658,8 @@
   },
   "20264": {
    "id": 20264,
-   "name": "unrealized dream"
+   "name": "unrealized dream",
+   "stackable": 1
   },
   "20274": {
    "id": 20274,
@@ -14927,7 +16667,8 @@
   },
   "20276": {
    "id": 20276,
-   "name": "dream warden mask"
+   "name": "dream warden mask",
+   "stackable": 1
   },
   "20277": {
    "id": 20277,
@@ -15174,7 +16915,8 @@
   },
   "23986": {
    "id": 23986,
-   "name": "heavy old tome"
+   "name": "heavy old tome",
+   "stackable": 1
   },
   "27449": {
    "id": 27449,
@@ -15329,7 +17071,8 @@
    "ammotype": "arrow",
    "shoottype": "diamondarrow",
    "maxhitchance": 100,
-   "attack": 37
+   "attack": 37,
+   "stackable": 1
   },
   "35902": {
    "id": 35902,
@@ -15342,7 +17085,8 @@
    "action": "removecount",
    "level": 150,
    "unproperly": "true",
-   "slot": "ammo"
+   "slot": "ammo",
+   "stackable": 1
   },
   "50163": {
    "id": 50163,
@@ -16807,6 +18551,9 @@
   "5898": {
    "sell": 80
   },
+  "10277": {
+   "sell": 210
+  },
   "5954": {
    "sell": 1000,
    "buy": 1000
@@ -16823,6 +18570,12 @@
   },
   "9649": {
    "sell": 90
+  },
+  "9054": {
+   "sell": 25
+  },
+  "9055": {
+   "sell": 30
   },
   "5920": {
    "sell": 100,
@@ -16904,6 +18657,9 @@
   },
   "5907": {
    "buy": 35000
+  },
+  "10244": {
+   "sell": 6000
   },
   "7397": {
    "sell": 3000
@@ -17104,6 +18860,9 @@
   "11475": {
    "sell": 250
   },
+  "11473": {
+   "sell": 110
+  },
   "5948": {
    "sell": 200
   },
@@ -17197,8 +18956,14 @@
   "8031": {
    "sell": 10
   },
+  "11451": {
+   "sell": 30
+  },
   "11472": {
    "sell": 75
+  },
+  "11483": {
+   "sell": 20
   },
   "11482": {
    "sell": 50
@@ -17328,6 +19093,9 @@
   },
   "3554": {
    "sell": 30000
+  },
+  "7425": {
+   "sell": 500
   },
   "3442": {
    "sell": 35000
@@ -17503,6 +19271,118 @@
   },
   "6535": {
    "sell": 50000
+  }
+ },
+ "fields": {
+  "2122": {
+   "id": 2122,
+   "name": "energy field",
+   "element": "energy",
+   "duration": 98,
+   "decayTo": 0,
+   "ticks": [
+    25
+   ],
+   "every": 10000
+  },
+  "105": {
+   "id": 105,
+   "name": "poison field",
+   "element": "earth",
+   "duration": 248,
+   "decayTo": 0,
+   "ticks": [
+    5,
+    5,
+    5,
+    5,
+    4,
+    4,
+    4,
+    4,
+    4,
+    3,
+    3,
+    3,
+    3,
+    3,
+    3,
+    3,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1
+   ],
+   "every": 5000
+  },
+  "2118": {
+   "id": 2118,
+   "name": "fire field",
+   "element": "fire",
+   "duration": 200,
+   "decayTo": 2119,
+   "ticks": [
+    20,
+    20,
+    20,
+    20,
+    20,
+    20,
+    20
+   ],
+   "every": 10000
+  },
+  "2119": {
+   "id": 2119,
+   "name": "fire field",
+   "element": "fire",
+   "duration": 148,
+   "decayTo": 2120,
+   "ticks": [
+    10,
+    10,
+    10,
+    10,
+    10,
+    10,
+    10
+   ],
+   "every": 10000
+  },
+  "2120": {
+   "id": 2120,
+   "name": "fire field",
+   "element": "fire",
+   "duration": 98,
+   "decayTo": 0,
+   "ticks": [],
+   "every": 2000
   }
  }
 }

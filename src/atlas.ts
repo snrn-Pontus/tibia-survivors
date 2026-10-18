@@ -18,9 +18,14 @@ export interface AtlasData {
   creatures: Record<string, CreatureAnim>;
   effects: Record<string, SimpleAnim>;
   missiles: Record<string, { dirs: number[] }>;
-  items: Record<string, SimpleAnim>;
+  items: Record<string, SimpleAnim & { stack?: number[] }>; // stack: the 8 count sprites of stackables
   ground: number[];
   decor: Record<string, [number, boolean][]>; // [frame, blocks movement]
+}
+
+/** Which of a stackable's 8 sprites a count shows (otclient's Item::calculatePatterns): x + 4 y. */
+export function stackPattern(n: number) {
+  return n <= 1 ? 0 : n < 5 ? n - 1 : n < 10 ? 4 : n < 25 ? 5 : n < 50 ? 6 : 7;
 }
 
 export class Atlas {
@@ -69,11 +74,11 @@ export class Atlas {
     return c;
   }
 
-  /** Items are keyed by their Tibia item id. */
-  itemIcon(id: number, size = 32, zoom = 1) {
+  /** Items are keyed by their Tibia item id; stackables look different by count (a coin, a few, a pile). */
+  itemIcon(id: number, size = 32, zoom = 1, count = 1) {
     const it = this.data.items[id];
     if (!it) return this.icon(this.data.ground[0], size, zoom);
-    return this.icon(it.frames[0], size, zoom);
+    return this.icon(it.stack ? it.stack[stackPattern(count)] : it.frames[0], size, zoom);
   }
 
   /** Tibia missiles have 8 directional sprites; pick one by direction. Order: E, SE, S, SW, W, NW, N, NE. */

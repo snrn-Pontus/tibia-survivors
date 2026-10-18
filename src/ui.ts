@@ -1,5 +1,5 @@
 import type { Atlas } from "./atlas";
-import { ROOKIE, SHOP, VOCATIONS, ZONES, type VocationDef } from "./data";
+import { achievement, BOSS_MILESTONES, KILL_MILESTONES, ROOKIE, SHOP, VOCATIONS, ZONES, type VocationDef } from "./data";
 import type { LevelChoice } from "./character";
 import type { Game } from "./game";
 import { imbuement, TIERS } from "./tibia/imbuements";
@@ -7,11 +7,14 @@ import { boost, BOOSTS, MAX_BOOST, MAX_SLOTS } from "./upgrades";
 import { BLESSING_COST, boostCost, buyBlessing, buyBoost, buyTier, loadSave, tier, trackTier, TRACKS, type Save } from "./meta";
 import { EVOLUTIONS, evolution, evolutionsFor } from "./evolutions";
 import type { ChestResult } from "./game";
-import { canWear, item, itemId, POTIONS, PRICES, SPELLS, wornItem, type SpellData } from "./tibia/db";
+import { canWear, item, itemId, MONSTERS, POTIONS, PRICES, SPELLS, wornItem, type ItemData, type SpellData } from "./tibia/db";
 import { SKILL_NAMES } from "./tibia/rules";
 
 /** DOM overlay menus. Every screen is a list of focusable buttons, so keys and gamepads can drive it. */
+type ShopTab = "weapons" | "armor" | "ammo" | "potions" | "runes" | "sell";
+
 export class UI {
+  private shopTab: ShopTab = "weapons";
   private buttons: HTMLElement[] = [];
   private focus = 0;
   private previews: { canvas: HTMLCanvasElement; sprite: string }[] = [];
@@ -77,12 +80,17 @@ export class UI {
     type Entry = { icon: number; label: string; sub: string; cost: number | null; buy: () => boolean };
     const entry = (e: Entry) => `<button class="btn buy" ${e.cost === null || save.souls < e.cost ? "disabled" : ""}>
       <span class="ico" data-id="${e.icon}"></span><span class="label">${e.label}<small>${e.sub}</small></span>
-      <span class="price">${e.cost === null ? "max" : `${e.cost.toLocaleString("en-US")} souls`}</span></button>`;
-    const gear: Entry[] = TRACKS.map((t) => {
+      <span class="price">${e.cost === null ? (e.sub.endsWith(" first") ? "locked" : "max") : `${e.cost.toLocaleString("en-US")} souls`}</span></button>`;
+    const ROOK_ICONS: Record<string, number> = { rook_xp: 3061, rook_train: 3270, rook_regen: 3577, dawnport: 2853 };
+    const trackEntry = (t: (typeof TRACKS)[number]): Entry => {
       const cur = trackTier(save, t), next = t.tiers[tier(save, t.id) + 1];
-      const icon = next?.item ?? cur.item ?? (t.id === "potions" ? 266 : t.id === "gold" ? 3031 : 3061);
-      return { icon, label: t.name, sub: next ? `${cur.label} → ${next.label}` : cur.label, cost: next ? next.cost : null, buy: () => buyTier(save, t) };
-    });
+      const icon = next?.item ?? cur.item ?? ROOK_ICONS[t.id] ?? (t.id === "potions" ? 266 : t.id === "gold" ? 3031 : 3061);
+      const lock = next ? t.locked?.(save) : null;
+      return { icon, label: t.name, sub: lock ? `${next!.label}: ${lock.toLowerCase()} first` : next ? `${cur.label} → ${next.label}` : cur.label,
+        cost: next && !lock ? next.cost : null, buy: () => buyTier(save, t) };
+    };
+    const gear = TRACKS.filter((t) => !t.rook).map(trackEntry);
+    const rook = TRACKS.filter((t) => t.rook).map(trackEntry);
     const boosts: Entry[] = BOOSTS.map((b) => {
       const lvl = save.boosts[b.id] ?? 0, maxed = lvl >= MAX_BOOST;
       return { icon: b.icon, label: `${b.name} ${lvl}`, sub: b.desc(Math.min(MAX_BOOST, lvl + (maxed ? 0 : 1))),
@@ -98,13 +106,16 @@ export class UI {
         <b>Enter Rookgaard</b><small>Real Tibia: level 1, ${trackTier(save, TRACKS[0]).label} in hand. Choose a vocation at level 8.
         Walk further out for harder zones. Every kill earns souls, kept when you die.</small></button></div>
       <h3>Starting gear</h3><div class="shop boosts">${gear.map(entry).join("")}</div>
+      <h3>Rookgaard <small>(levels 1-8 go faster; these stop working when you choose a vocation)</small></h3>
+      <div class="shop boosts">${rook.map(entry).join("")}</div>
       <h3>Boosts <small>(multiply experience, loot, gold or skill training in every run)</small></h3>
       <div class="shop boosts">${boosts.map(entry).join("")}</div>
+      ${achievementsHtml(save)}
       <p class="hint">WASD / arrows / gamepad to move; your character fights by itself. Battle list: click to attack. P / Esc pauses.</p>`);
     const card = el.querySelector<HTMLElement>(".start")!;
     this.previews.push({ canvas: card.querySelector("canvas")!, sprite: ROOKIE.sprite });
     el.querySelectorAll<HTMLElement>(".buy .ico").forEach((c) => c.appendChild(this.icon(Number(c.dataset.id))));
-    const all = [...gear, ...boosts];
+    const all = [...gear, ...rook, ...boosts];
     const buys = all.map((e, i) => () => { if (e.buy()) this.title(loadSave(), onStart, 1 + i); });
     this.setButtons([card, ...el.querySelectorAll<HTMLElement>(".buy")], [onStart, ...buys], focus);
   }
@@ -201,63 +212,125 @@ export class UI {
     this.setButtons([el.querySelector<HTMLElement>(".btn")!], [onClose]);
   }
 
-  pause(g: Game, onResume: () => void, onQuit: () => void, focus = 0) {
+  /** Pause: the character sheet, and NPC trade in tabs (weapons, armor, ammunition, potions, runes, selling).
+   *  Every item row shows its stats and what it needs, hover it for the full tooltip, and has a buy button
+   *  per pack size. */
+  pause(g: Game, onResume: () => void, onQuit: () => void, focus = 0, tab = this.shopTab) {
+    this.shopTab = tab;
     const ch = g.ch;
-    const loot = ch.lootValue();
+    const reopen = (f: number, t = tab) => this.pause(g, onResume, onQuit, f, t);
     const skills = ch.skills.map((s, i) => `<tr><td>${SKILL_NAMES[i]}</td><td>${ch.skill(i)}</td></tr>`).join("");
-    // Every buy button, in page order, with what it does.
-    type Entry = { id: number; label: string; price: number; ok: boolean; buy: () => void };
-    const sections: { title: string; entries: Entry[]; empty?: string }[] = [];
-    const equipBuy = (id: number, price: number) => () => {
+    const gold = (n: number) => n.toLocaleString("en-US");
+
+    // ---- the rows of the open tab: an item, a note, and its pack buttons ----
+    type Pack = { n: number; price: number; ok: boolean; label?: string; buy: () => void };
+    type Row = { id: number; count?: number; note: string; packs: Pack[] };
+    const rows: Row[] = [];
+    const need = (it: ItemData) => {
+      const out: string[] = [];
+      if (it.level && ch.level < it.level) out.push(`level ${it.level}`);
+      if (!canWear({ ...it, level: 0 }, ch.voc.id, 9999)) out.push("another vocation");
+      return out.length ? `<span class="bad">needs ${out.join(", ")}</span>` : "";
+    };
+    const equip = (id: number, price: number) => () => {
       ch.gold -= price;
       const it = item(id)!, slot = ch.slotFor(it)!;
       const old = ch.equipment[slot];
-      if (old) ch.stash(old);
+      if (old && old !== ch.thrown) ch.stash(old);
       ch.equip(id);
       ch.fitAmmo();
       g.msg(`You bought and equipped ${it.name}.`, "#80ff80");
     };
-    sections.push({
-      title: "Weapons", empty: "No NPC sells weapons for your class.",
-      entries: ch.shopWeapons().map((w) => ({
-        id: w.id, price: w.price, ok: w.usable && ch.equipment.weapon !== w.id,
-        label: `${item(w.id)!.name}${ch.equipment.weapon === w.id ? " (equipped)" : ""} <small>${stats(w.id)}</small>`,
-        buy: equipBuy(w.id, w.price),
-      })),
-    });
-    const ammo = ch.shopAmmo();
-    if (ammo.length) {
-      sections.push({
-        title: "Ammunition",
-        entries: ammo.map((a) => ({
-          id: a.id, price: a.price * 100, ok: a.usable, label: `100× ${item(a.id)!.name} <small>${stats(a.id)}</small>`,
-          buy: () => {
-            ch.gold -= a.price * 100;
-            ch.supplies.set(a.id, (ch.supplies.get(a.id) ?? 0) + 100);
-            if ((item(a.id)!.attack ?? 0) >= (ch.ammo?.attack ?? 0) || ch.ammo?.ammotype !== ch.weapon?.ammotype) ch.equipment.ammo = a.id;
-          },
-        })),
-      });
+    const stock = (id: number, n: number, price: number, then?: () => void) => () => {
+      ch.gold -= price;
+      ch.supplies.set(id, (ch.supplies.get(id) ?? 0) + n);
+      then?.();
+      g.msg(`You bought ${n} ${item(id)!.name}${n > 1 ? "s" : ""}.`, "#80ff80");
+    };
+    const packs = (id: number, sizes: number[], then?: () => void, ok = true): Pack[] => {
+      const each = PRICES[id]?.buy ?? 0;
+      return sizes.map((n) => ({ n, price: each * n, ok, buy: stock(id, n, each * n, then) }));
+    };
+    const better = (id: number) => {
+      const it = item(id)!, slot = ch.slotFor(it), cur = slot ? ch.equipment[slot] : undefined;
+      if (!slot) return "";
+      if (cur === id) return `<span class="tag on">equipped</span>`;
+      if (!cur) return `<span class="tag up">empty slot</span>`;
+      const d = ch.score(it, slot) - ch.score(item(cur)!, slot);
+      return d > 0 ? `<span class="tag up">better</span>` : "";
+    };
+    const vocName = ch.voc.name.toLowerCase();
+    if (tab === "weapons") {
+      // Your vocation's own kind of weapon first, then everything else you may wield.
+      const list = ch.shopWeapons().sort((a, b) => Number(ch.prefers(item(b.id)!)) - Number(ch.prefers(item(a.id)!)));
+      for (const w of list) {
+        const it = item(w.id)!, worn = ch.equipment.weapon === w.id;
+        const note = [stats(w.id), better(w.id), need(it)].filter(Boolean).join(" ");
+        if (it.weapontype === "missile") {
+          // Thrown weapons come in stacks; topping up the stack in your hand is fine.
+          rows.push({ id: w.id, count: worn ? ch.supplies.get(w.id) ?? 0 : undefined, note, packs: packs(w.id, [10, 25, 50], () => {
+            if (ch.equipment.weapon !== w.id) {
+              const old = ch.equipment.weapon;
+              if (old && old !== ch.thrown) ch.stash(old);
+              ch.equip(w.id);
+            }
+          }, w.usable) });
+        } else rows.push({ id: w.id, note, packs: [{ n: 1, price: w.price, ok: w.usable && !worn, label: worn ? "equipped" : undefined, buy: equip(w.id, w.price) }] });
+      }
+    } else if (tab === "armor") {
+      const order: Record<string, number> = { shield: 0, head: 1, armor: 2, legs: 3, feet: 4, necklace: 5, ring: 6 };
+      const list = Object.entries(PRICES).map(([k, pr]) => ({ id: Number(k), price: pr.buy ?? 0, it: item(Number(k)) }))
+        .filter((x) => x.price && x.it && (ch.slotFor(x.it) ?? "") in order && canWear(x.it, ch.voc.id, 9999) && (x.it.level ?? 0) <= ch.level + 40)
+        .sort((a, b) => order[ch.slotFor(a.it!)!] - order[ch.slotFor(b.it!)!] || (a.it!.level ?? 0) - (b.it!.level ?? 0) || a.price - b.price);
+      for (const x of list) {
+        const worn = Object.values(ch.equipment).includes(x.id);
+        rows.push({ id: x.id, note: [stats(x.id), better(x.id), need(x.it!)].filter(Boolean).join(" "),
+          packs: [{ n: 1, price: x.price, ok: canWear(x.it!, ch.voc.id, ch.level) && !worn, label: worn ? "equipped" : undefined, buy: equip(x.id, x.price) }] });
+      }
+    } else if (tab === "ammo") {
+      // All of it, whatever you hold: buying arrows before the bow is fine.
+      for (const a of ch.shopAmmo()) {
+        const it = item(a.id)!, fits = ch.weapon?.ammotype === it.ammotype;
+        const note = [stats(a.id), ch.equipment.ammo === a.id ? `<span class="tag on">in use</span>` : fits ? "" : `<span class="hint">for ${it.ammotype === "bolt" ? "crossbows" : "bows"}</span>`, need(it)].filter(Boolean).join(" ");
+        rows.push({ id: a.id, count: ch.supplies.get(a.id) || undefined, note, packs: packs(a.id, [10, 50, 100], () => ch.fitAmmo(), a.usable) });
+      }
+    } else if (tab === "potions" || tab === "runes") {
+      for (const s of SHOP) {
+        const id = itemId(s.name), isRune = SPELLS.some((r) => r.runeId === id);
+        if (isRune !== (tab === "runes") || !PRICES[id]?.buy || item(id)?.ammotype) continue;
+        const pot = POTIONS[id], rune = SPELLS.find((r) => r.runeId === id);
+        if (pot?.voc && !pot.voc.includes(ch.voc.id)) continue; // potions are vocation-bound in Tibia
+        const req: string[] = [];
+        if (rune && ch.level < (rune.level ?? 0)) req.push(`level ${rune.level}`);
+        if (rune && ch.ml < (rune.magicLevel ?? 0)) req.push(`magic level ${rune.magicLevel}`);
+        if (pot?.level && ch.level < pot.level) req.push(`level ${pot.level}`);
+        const what = pot ? [pot.health && `heals ${pot.health[0]}-${pot.health[1]}`, pot.mana && `${pot.mana[0]}-${pot.mana[1]} mana`].filter(Boolean).join(", ")
+          : rune ? `${rune.group === "healing" ? "healing" : rune.element}${rune.needTarget ? ", single target" : ", area"}` : "";
+        rows.push({ id, count: ch.supplies.get(id) || undefined, note: `<small>${what}</small>${req.length ? ` <span class="bad">needs ${req.join(", ")}</span>` : ""}`,
+          packs: packs(id, isRune ? [5, 10, 25, 50] : [1, 5, 10, 25]) });
+      }
+    } else {
+      // Sell: everything in the backpack, by item.
+      const have = new Map<number, number>();
+      for (const t of ch.backpack.all()) have.set(t.id, (have.get(t.id) ?? 0) + t.n);
+      // Coins change at face value.
+      const value = (id: number) => ({ 3031: 1, 3035: 100, 3043: 10000 } as Record<number, number>)[id] ?? PRICES[id]?.sell ?? 0;
+      for (const [id, n] of [...have].sort((a, b) => value(b[0]) * b[1] - value(a[0]) * a[1])) {
+        const each = value(id);
+        rows.push({ id, count: n, note: each ? `<small>${gold(each)} gold each</small>` : `<span class="hint">no NPC buys this</span>`,
+          packs: [{ n, price: -each * n, ok: each > 0, label: each ? `sell · ${gold(each * n)}` : "sell", buy: () => {
+            ch.gold += each * ch.backpack.takeAll(id);
+            g.msg(`You sold ${n} ${item(id)!.name}${n > 1 ? "s" : ""} for ${gold(each * n)} gold.`, "#ffd34d");
+          } }] });
+      }
     }
-    sections.push({
-      title: "Supplies",
-      entries: SHOP.filter((s) => usable(g, s.name) && PRICES[itemId(s.name)]?.buy && !item(itemId(s.name))?.ammotype).map((s) => {
-        const id = itemId(s.name), price = PRICES[id].buy! * s.count;
-        return { id, price, ok: true, label: `${s.count}× ${item(id)!.name}`, buy: () => {
-          ch.gold -= price;
-          ch.supplies.set(id, (ch.supplies.get(id) ?? 0) + s.count);
-        } };
-      }),
-    });
-    sections.push({
-      title: "Equipment upgrades", empty: "Nothing better for your class and level right now.",
-      entries: ch.shopUpgrades().filter((e) => e.slot !== "weapon").slice(0, 12).map((e) => ({
-        id: e.id, price: e.price, ok: true, label: `${item(e.id)!.name} <small>${stats(e.id)}</small>`, buy: equipBuy(e.id, e.price),
-      })),
-    });
-    const entries = sections.flatMap((s) => s.entries);
-    const html = (e: Entry) => `<button class="btn buy" ${!e.ok || ch.gold < e.price ? "disabled" : ""}>
-      <span class="ico" data-id="${e.id}"></span>${e.label}<span class="price">${e.price.toLocaleString("en-US")}</span></button>`;
+
+    const TABS: [ShopTab, string][] = [["weapons", "Weapons"], ["armor", "Armor"], ["ammo", "Ammunition"], ["potions", "Potions"], ["runes", "Runes"], ["sell", "Sell"]];
+    const loot = ch.lootValue();
+    const packBtn = (p: Pack) => `<button class="btn pk" ${!p.ok || ch.gold < p.price ? "disabled" : ""}>${p.label ?? `${p.n > 1 ? `${p.n}× · ` : ""}${gold(p.price)}`}</button>`;
+    const rowHtml = (r: Row) => `<div class="srow" data-item="${r.id}" data-n="${r.count ?? 1}"><span class="ico" data-id="${r.id}"></span>
+      <div class="info"><b>${item(r.id)!.name}${r.count ? ` <i>(${gold(r.count)})</i>` : ""}</b>${r.note}</div>
+      <div class="packs">${r.packs.map(packBtn).join("")}</div></div>`;
     const boosts = [...ch.boosts].map(([id, l]) => `${boost(id)!.name} ${l} <i>(${boost(id)!.desc(l).replace(/\.$/, "")})</i>`);
     const imbues = [...ch.imbuements].map(([id, t]) => `${TIERS[t - 1]} ${imbuement(id).name}`);
     const el = this.screen("pause", `
@@ -274,27 +347,40 @@ export class UI {
           ${g.ch.blessings ? `<p class="spells">Blessings: ${g.ch.blessings}</p>` : ""}
           <h4>Spells</h4>
           <p class="spells">${[...ch.known].map((f) => SPELLS.find((s) => s.file === f)!).map((s) => `${s.name} <i>${s.words}</i>`).join("<br>") || "None yet"}</p></div>
-        <div><h3>NPC trade <span class="gold">${ch.gold.toLocaleString("en-US")} gold</span></h3>
-          <button class="btn sell" ${loot ? "" : "disabled"}>Sell ${ch.backpackCount.toLocaleString("en-US")} looted items for ${loot.toLocaleString("en-US")} gold</button>
-          ${sections.map((s) => `<h4>${s.title}</h4><div class="shop">${s.entries.length ? s.entries.map(html).join("") : `<p class="hint">${s.empty ?? ""}</p>`}</div>`).join("")}
+        <div class="trade"><h3>NPC trade <span class="gold">${gold(ch.gold)} gold</span></h3>
+          <div class="stabs">${TABS.map(([t, name]) => `<button class="btn stab${t === tab ? " on" : ""}">${name}</button>`).join("")}</div>
+          ${tab === "sell" ? `<button class="btn sell" ${loot ? "" : "disabled"}>Sell everything: ${gold(ch.backpackCount)} items for ${gold(loot)} gold</button>` : ""}
+          <div class="slist">${rows.map(rowHtml).join("") || `<p class="hint">${tab === "sell" ? "Your backpack is empty." : "Nothing for sale here."}</p>`}</div>
         </div>
       </div>
       <div class="row"><button class="btn">Resume</button><button class="btn">Quit run</button></div>`);
-    el.querySelectorAll<HTMLElement>(".buy .ico").forEach((c) => c.appendChild(this.icon(Number(c.dataset.id))));
-    const reopen = (i: number) => this.pause(g, onResume, onQuit, i);
-    const sell = () => {
-      ch.gold += loot;
-      g.msg(`You sold ${ch.backpackCount} items for ${loot} gold.`, "#ffd34d");
-      ch.backpack.clear();
-      reopen(2);
-    };
-    const buys = entries.map((e, i) => () => {
-      if (!e.ok || ch.gold < e.price) return;
-      e.buy();
-      reopen(3 + i);
+    el.querySelectorAll<HTMLElement>(".srow .ico").forEach((c) => c.appendChild(this.icon(Number(c.dataset.id))));
+    // Buttons in page order: resume, quit, the tabs, sell everything, then every pack button.
+    const btns = [...el.querySelectorAll<HTMLElement>(".row .btn"), ...el.querySelectorAll<HTMLElement>(".stab")];
+    const acts: (() => void)[] = [onResume, onQuit, ...TABS.map(([t]) => () => reopen(2 + TABS.findIndex(([x]) => x === t), t))];
+    const sellAll = el.querySelector<HTMLElement>(".sell");
+    if (sellAll) {
+      btns.push(sellAll);
+      acts.push(() => {
+        if (!loot) return;
+        ch.gold += loot;
+        g.msg(`You sold ${ch.backpackCount} items for ${gold(loot)} gold.`, "#ffd34d");
+        ch.backpack.clear();
+        reopen(btns.indexOf(sellAll));
+      });
+    }
+    const packBtns = [...el.querySelectorAll<HTMLElement>(".pk")];
+    rows.flatMap((r) => r.packs).forEach((p, i) => {
+      btns.push(packBtns[i]);
+      const at = btns.length - 1;
+      acts.push(() => {
+        if (!p.ok || ch.gold < p.price) return;
+        p.buy();
+        reopen(at);
+      });
     });
-    const btns = [...el.querySelectorAll<HTMLElement>(".row .btn"), el.querySelector<HTMLElement>(".sell")!, ...el.querySelectorAll<HTMLElement>(".buy")];
-    this.setButtons(btns, [onResume, onQuit, sell, ...buys], focus);
+    this.setButtons(btns, acts, Math.min(focus, btns.length - 1));
+    el.querySelector(".pk.focus, .stab.focus")?.scrollIntoView({ block: "nearest" });
   }
 
   end(g: Game, souls: number, onMenu: () => void) {
@@ -325,18 +411,28 @@ export class UI {
 }
 
 /** Can this character use a shop item at all (class potions, class runes, its ammo)? */
-function usable(g: Game, name: string): boolean {
-  const ch = g.ch, id = itemId(name);
-  const pot = POTIONS[id];
-  if (pot) return !pot.voc || pot.voc.includes(ch.voc.id);
-  const rune = SPELLS.find((s) => s.runeId === id);
-  if (rune) return rune.vocations.includes(ch.voc.id);
-  const it = item(id);
-  if (it?.ammotype) return ch.voc.id === "paladin";
-  return !!it && canWear(it, ch.voc.id, 999);
+/** Short stat line for an item, like Tibia's look text: (Atk:24 Def:21) (Arm:12). */
+/** Achievements on the title screen: every creature you've killed, its milestones reached (stars), and
+ *  how far the next one is and what it pays. */
+function achievementsHtml(save: Save): string {
+  const kills = Object.entries(save.kills ?? {}).filter(([, n]) => n > 0);
+  if (!kills.length) return "";
+  let done = 0, all = 0;
+  const chips = kills.sort((a, b) => b[1] - a[1]).map(([key, n]) => {
+    const boss = ZONES.some((z) => z.bosses.includes(key));
+    const ms = boss ? BOSS_MILESTONES : KILL_MILESTONES;
+    const reached = ms.filter((m) => n >= m).length;
+    done += reached;
+    all += ms.length;
+    const next = ms.find((m) => n < m);
+    const pay = next ? achievement(key, next)?.souls : 0;
+    const name = MONSTERS[key]?.name ?? key;
+    return `<div class="ach${boss ? " boss" : ""}" title="${next ? `${next - n} more for +${pay} souls` : "All milestones reached"}">`
+      + `<span class="stars">${"★".repeat(reached)}${"☆".repeat(ms.length - reached)}</span> ${name} <i>${n.toLocaleString("en-US")}${next ? ` / ${next.toLocaleString("en-US")}` : ""}</i></div>`;
+  });
+  return `<h3>Achievements <small>(${done}/${all} · kill milestones per creature pay souls)</small></h3><div class="achs">${chips.join("")}</div>`;
 }
 
-/** Short stat line for an item, like Tibia's look text: (Atk:24 Def:21) (Arm:12). */
 function stats(id: number): string {
   const it = wornItem(id)!;
   const parts: string[] = [];
