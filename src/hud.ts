@@ -604,7 +604,8 @@ export class Hud {
       const left = c.ticks.reduce((a, b) => a + b, 0);
       conds.push([glyph, ELEMENT_COLORS[el], `${name}: ${left} damage left, ${c.ticks[0]} every ${c.every} s`]);
     }
-    if (ch.boostLevel("haste") || ch.evolutions.has("draken")) conds.push(["»", "#80ff80", `Hasted: speed ${ch.speed}`]);
+    if (ch.paralyze) conds.push(["⌛", "#ff9c30", `Paralyzed: speed ${ch.speed} for ${Math.ceil(g.paralyzedUntil - g.time)} s`]);
+    else if (ch.boostLevel("haste") || ch.evolutions.has("draken")) conds.push(["»", "#80ff80", `Hasted: speed ${ch.speed}`]);
     if (ch.blessings) conds.push([`✝${ch.blessings}`, "#ffd34d", `${ch.blessings} blessing${ch.blessings > 1 ? "s" : ""}: saved from death`]);
     if (g.fightMode !== "offensive") conds.push([g.fightMode === "balanced" ? "⚖" : "⛨", g.fightMode === "balanced" ? "#ffd34d" : "#80b0ff", FIGHT_MODES[g.fightMode].name]);
     const sig = conds.map((c) => c.join()).join("|");

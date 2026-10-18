@@ -22,6 +22,8 @@ export interface MonsterAttack {
    *  from min-max, dealt in shrinking ticks every `tick` ms (Canary's ConditionDamage). */
   condition?: { element: Element; min: number; max: number; tick: number };
   field?: number; // a field spell: the magic field item it leaves on every tile of its area
+  speedChange?: number; // a paralyze spell: how much of your base speed it takes, per mille (negative)
+  duration?: number; // ms
 }
 
 /** A magic field lying on the ground (items.xml): stepping in starts its ticks, one every `every` ms
@@ -139,6 +141,8 @@ const data = raw as unknown as {
   potions: Record<string, PotionData>;
   prices: Record<string, { buy?: number; sell?: number }>;
   fields: Record<string, FieldData>;
+  kits: Record<"knight" | "paladin" | "sorcerer" | "druid", { items: number[]; container: [number, number][] }>;
+  rookShop: Record<string, number>;
 };
 
 export const MONSTERS = data.monsters;
@@ -147,6 +151,10 @@ export const VOCATION_DATA = data.vocations;
 export const POTIONS = data.potions;
 export const STARTER = data.starter;
 export const FIELDS = data.fields;
+/** Canary's starting kits per vocation (send_first_items.lua). */
+export const KITS = data.kits;
+/** What Rookgaard's NPCs sell, and for how much (Obi, Dixi, Lee'Delle, Al Dee). */
+export const ROOK_SHOP = data.rookShop;
 /** NPC prices: the cheapest an NPC sells for, the most one pays (from Canary's NPC shop lists). */
 export const PRICES = data.prices;
 

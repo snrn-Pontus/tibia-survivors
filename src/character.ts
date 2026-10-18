@@ -47,7 +47,7 @@ export class Character {
     this.vd = VOCATION_DATA[voc.id];
     this.skills = voc.skills.map((level) => ({ level, tries: 0 }));
     this.magicLevel = voc.magicLevel;
-    for (const name of voc.equipment) this.equip(itemId(name));
+    for (const x of voc.equipment) this.equip(typeof x === "number" ? x : itemId(x));
     for (const [name, n] of Object.entries(voc.supplies)) this.supplies.set(itemId(name), n);
     if (voc.ammo) this.equipment.ammo = itemId(voc.ammo);
     for (const s of this.learnable()) this.known.add(s.file); // spells up to level 8 come with the vocation
@@ -67,7 +67,13 @@ export class Character {
   }
 
   /** Base speed 110 + (level - 1), plus boots of haste, time ring... */
-  get speed() { return this.vd.baseSpeed + (this.level - 1) + this.bonus("speed") + this.imbued("speed") + hasteBonus(this.boostLevel("haste")) + (this.evolutions.has("draken") ? 60 : 0); }
+  get speed() {
+    const base = this.vd.baseSpeed + (this.level - 1);
+    const speed = base + this.bonus("speed") + this.imbued("speed") + hasteBonus(this.boostLevel("haste")) + (this.evolutions.has("draken") ? 60 : 0);
+    // Paralyzed: ConditionSpeed takes speedChange/1000 of your base speed (a -700 paralyze leaves 30%).
+    return Math.max(40, Math.round(speed + (base * this.paralyze) / 1000));
+  }
+  paralyze = 0; // speedChange of the paralysis on you (negative), 0 when free; Game times it
 
   boostLevel(id: BoostId) { return this.boosts.get(id) ?? 0; }
   /** Rate multiplier from a boost (x1 when not picked). */
@@ -291,7 +297,13 @@ export class Character {
     this.vd = VOCATION_DATA[v.id];
     const old = Object.values(this.equipment).filter((id): id is number => !!id);
     this.equipment = {};
-    for (const name of v.equipment) this.equip(itemId(name));
+    for (const x of v.equipment) this.equip(typeof x === "number" ? x : itemId(x));
+    // The kit's backpack: potions and ammunition to supplies, gear to the backpack (rope and shovel stay home).
+    for (const [id, n] of v.backpack ?? []) {
+      const it = item(id);
+      if (POTIONS[id] || it?.ammotype) this.supplies.set(id, (this.supplies.get(id) ?? 0) + n);
+      else if (it && this.slotFor(it)) this.stash(id, n);
+    }
     // Keep rookie gear that beats the vocation's kit (unlocked starting gear, loot); the rest goes in the bag.
     for (const id of old) if (!this.offer(id)) this.stash(id);
     if (v.ammo) this.equipment.ammo = itemId(v.ammo);

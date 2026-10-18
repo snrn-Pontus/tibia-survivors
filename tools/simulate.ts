@@ -17,7 +17,7 @@ const effectDur = (id: number) => {
 };
 const voc = Number(process.argv[2] ?? 0), runs = Number(process.argv[3] ?? 10);
 const v = VOCATIONS[voc];
-const train: BoostId = v.id === "knight" ? "train_sword" : v.id === "paladin" ? "train_distance" : "train_magic";
+const train: BoostId = v.id === "knight" ? "train_axe" : v.id === "paladin" ? "train_distance" : "train_magic"; // the knight's kit is an axe
 const wants: BoostId[] = ["xp", "gold", train, "loot", "haste", "train_shielding", "train_club"];
 
 for (let k = 1; k <= runs; k++) {

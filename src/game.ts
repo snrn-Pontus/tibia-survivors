@@ -82,7 +82,8 @@ export class Game {
   private nextSkillPick = 0;
   chase = true; // Tibia fight mode: chase opponent (C toggles "stand while fighting")
   targeting: Targeting = "closest"; // which creature auto-targeting picks (T toggles)
-  conditions = new Map<Element, DamageCondition>(); // poison, fire, energy... ticking on you, by damage type
+  conditions = new Map<Element, DamageCondition>();
+  paralyzedUntil = 0; // a monster's paralyze spell on you (Character.paralyze is how strong) // poison, fire, energy... ticking on you, by damage type
   fightMode: FightMode = "offensive"; // offensive / balanced / defensive: Tibia's attack and defense factors
   lastAttack = -99; // full attack only drops your defense right after you swing
   logCount = 0;
@@ -204,6 +205,7 @@ export class Game {
     this.updateMonsters(dt);
     this.updateConditions();
     this.updateFields();
+    if (this.ch.paralyze && this.time >= this.paralyzedUntil) this.ch.paralyze = 0;
     this.updateRegen(dt);
     this.soulClock += dt;
     if (this.soulClock >= SOUL_EVERY) { this.soulClock -= SOUL_EVERY; this.souls++; }
@@ -593,6 +595,19 @@ export class Game {
     } else if (d > 7) return;
 
     if (a.shoot && !a.length) this.addMissile(a.shoot, m.x, m.y, p.x, p.y);
+    if (a.name === "paralyze") {
+      // A paralyze spell (monster "speed" with a negative speedChange): slows you while it lasts, the
+      // stronger one wins (Tibia's paralysis icon).
+      const hits = !tiles || tiles.some(([ox, oy]) => cx + ox === p.tx && cy + oy === p.ty);
+      if (!tiles) this.addEffect(a.effect ?? 0, p.x, p.y);
+      else for (const [ox, oy] of tiles) this.addEffect(a.effect ?? 0, tileCenter(cx + ox), tileCenter(cy + oy));
+      if (hits && (this.time >= this.paralyzedUntil || a.speedChange! <= this.ch.paralyze)) {
+        this.ch.paralyze = a.speedChange!;
+        this.paralyzedUntil = this.time + (a.duration ?? 10000) / 1000;
+        this.msg(`You are paralyzed by ${article(m.data.name)}.`, "#ff9c30", "combat");
+      }
+      return;
+    }
     if (a.field) {
       // A field spell does no damage itself: it leaves a field on every free tile of the area (yours included).
       const area = tiles ? tiles.map(([ox, oy]) => [cx + ox, cy + oy]) : [[p.tx, p.ty]];

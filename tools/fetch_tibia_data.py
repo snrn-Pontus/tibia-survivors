@@ -10,9 +10,11 @@ import sys
 import urllib.request
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-CACHE = os.path.join(ROOT, "tools", ".cache")
 OUT = os.path.join(ROOT, "src", "tibia", "data.json")
-BASE = "https://raw.githubusercontent.com/opentibiabr/canary/main/"
+# Canary is pinned to one commit, so data.json is reproducible; move it forward on purpose.
+CANARY_COMMIT = "52550d5e3c0ffe565f4bd1014f4e5575abf1059b"  # main, 2026-10-17
+CACHE = os.path.join(ROOT, "tools", ".cache", "canary-" + CANARY_COMMIT[:10])
+BASE = f"https://raw.githubusercontent.com/opentibiabr/canary/{CANARY_COMMIT}/"
 
 MONSTERS = [
     "rat", "bat", "snake", "spider", "bug", "wolf", "cave rat", "troll", "orc", "rotworm", "poison spider",
@@ -109,7 +111,7 @@ def tree():
     local = os.path.join(CACHE, "tree.json")
     if not os.path.exists(local):
         os.makedirs(CACHE, exist_ok=True)
-        req = urllib.request.Request("https://api.github.com/repos/opentibiabr/canary/git/trees/main?recursive=1",
+        req = urllib.request.Request(f"https://api.github.com/repos/opentibiabr/canary/git/trees/{CANARY_COMMIT}?recursive=1",
                                      headers={"User-Agent": "tibia-survivors"})
         with urllib.request.urlopen(req) as r, open(local, "wb") as fh:
             fh.write(r.read())
@@ -223,6 +225,18 @@ def parse_monster(src, en):
             if c.get("type") in CONDITION and c.get("totalDamage"):
                 tot = abs(c["totalDamage"])
                 a["condition"] = {"element": CONDITION[c["type"]], "min": tot, "max": tot, "tick": c.get("interval", 2000)}
+        if a["name"] == "speed":
+            change = f.get("speedChange")
+            if not isinstance(change, int) or change >= 0:
+                continue  # haste on itself, or nothing to change
+            a = {"name": "paralyze", "interval": a["interval"], "chance": a["chance"], "min": 0, "max": 0,
+                 "speedChange": max(-1000, change), "duration": f.get("duration", 10000), "target": bool(f.get("target", False)),
+                 "shoot": en.get(f.get("shootEffect"), 0), "effect": en.get(f.get("effect"), 0)}
+            for k in ("range", "radius", "length", "spread"):
+                if isinstance(f.get(k), int):
+                    a[k] = f[k]
+            attacks.append(a)
+            continue
         if a["name"] in MONSTER_FIELDS:
             # Field spells (Monsters::deserializeSpell): no damage of their own, they leave a field item on each tile.
             a = {"name": "field", "interval": a["interval"], "chance": a["chance"], "min": 0, "max": 0,
@@ -294,6 +308,23 @@ def parse_monster(src, en):
             loot.append({"name": f["name"], "chance": f.get("chance", 0), "max": f.get("maxCount", 1)})
     m["loot"] = loot
     return m
+
+
+# ---------- starting kits, Rookgaard's shops ----------
+
+ROOK_NPCS = ["obi", "dixi", "lee_delle", "al_dee"]  # Rookgaard's weapon, armor and general traders
+
+
+def parse_kits():
+    """What each vocation starts with (data/scripts/creaturescripts/player/send_first_items.lua): items worn,
+    and a backpack's contents as (id, count)."""
+    src = fetch("data/scripts/creaturescripts/player/send_first_items.lua")
+    out = {}
+    for voc in ("KNIGHT", "PALADIN", "SORCERER", "DRUID"):
+        block = lua_block(src, r"\[VOCATION\.ID\.%s\]\s*=\s*\{" % voc)
+        pairs = lambda name: [tuple(int(x) for x in re.findall(r"\d+", e)[:2]) for e in entries(lua_block(block, name + r"\s*=\s*\{"))]
+        out[voc.lower()] = {"items": [i for i, _ in pairs("items")], "container": pairs("container")}
+    return out
 
 
 # ---------- magic fields ----------
@@ -529,7 +560,15 @@ def main():
             if isinstance(f.get("sell"), int) and f["sell"] > 0:
                 pr["sell"] = max(pr.get("sell", 0), f["sell"])
 
+    kits = parse_kits()
+    rook_shop = {}
+    for npc in ROOK_NPCS:
+        for e in re.findall(r"\{[^{}]*clientId\s*=\s*\d+[^{}]*\}", fetch(f"data-otservbr-global/npc/{npc}.lua")):
+            f = lua_fields(e)
+            if isinstance(f.get("clientId"), int) and isinstance(f.get("buy"), int) and f["buy"] > 0:
+                rook_shop[f["clientId"]] = min(rook_shop.get(f["clientId"], 1 << 30), f["buy"])
     loot_ids = {l["id"] for m in monsters.values() for l in m["loot"] if "id" in l}
+    loot_ids |= {i for k in kits.values() for i in k["items"]} | {i for k in kits.values() for i, _ in k["container"]} | set(rook_shop)
     loot_ids |= {m["corpse"] for m in monsters.values() if m["corpse"]}
     real_loot = set(loot_ids)
     loot_ids |= {i for i, p in prices.items() if "buy" in p}  # anything an NPC sells could be bought
@@ -587,11 +626,13 @@ def main():
 
     used_areas = {s["area"] for s in spells if "area" in s}
     data = {
-        "source": "opentibiabr/canary (main)",
+        "source": f"opentibiabr/canary@{CANARY_COMMIT}",
         "monsters": monsters, "spells": spells, "areas": {k: AREAS[k] for k in used_areas if k in AREAS},
         "items": items, "starter": starter, "vocations": vocations, "potions": potions,
         "prices": {i: p for i, p in prices.items() if i in items},
         "fields": parse_fields(),
+        "kits": kits,
+        "rookShop": {i: p for i, p in rook_shop.items() if i in items},
     }
     os.makedirs(os.path.dirname(OUT), exist_ok=True)
     with open(OUT, "w", encoding="utf-8") as fh:

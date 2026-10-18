@@ -1,5 +1,5 @@
 // Game design on top of the real Tibia data: vocation kits, waves, server rates and shop prices.
-import { MONSTERS, type VocationId } from "./tibia/db";
+import { KITS, MONSTERS, type VocationId } from "./tibia/db";
 
 export interface VocationDef {
   id: VocationId;
@@ -8,7 +8,8 @@ export interface VocationDef {
   blurb: string;
   skills: number[]; // fist, club, sword, axe, distance, shielding
   magicLevel: number;
-  equipment: string[]; // starter item names (STARTER_ITEMS in tools/fetch_tibia_data.py)
+  equipment: (string | number)[]; // item ids, or starter item names (STARTER_ITEMS in tools/fetch_tibia_data.py)
+  backpack?: [number, number][]; // [item id, count] that come in the backpack
   ammo?: string;
   supplies: Record<string, number>;
 }
@@ -25,22 +26,21 @@ export const ROOKIE: VocationDef = {
   blurb: "No vocation yet: reach level 8 to choose one.",
 };
 
-/** Vocations, chosen at level 8: their kit replaces the rookie gear; skills and level carry over. */
+/** Vocations, chosen at level 8: their kit replaces the rookie gear; skills and level carry over. The kits
+ *  are Canary's (send_first_items.lua): worn items, and a backpack (the knight's spare sword and mace, the
+ *  paladin's bow and arrows); the potions on top are this game's, for a run that starts in a fight. */
+const kit = (v: keyof typeof KITS) => ({ equipment: KITS[v].items, backpack: KITS[v].container });
 export const VOCATIONS: VocationDef[] = [
-  { id: "knight", name: "Knight", sprite: "knight", skills: [12, 15, 15, 15, 12, 15], magicLevel: 0,
-    equipment: ["sword", "steel shield", "chain armor", "brass helmet", "brass legs", "leather boots"],
+  { id: "knight", name: "Knight", sprite: "knight", skills: [12, 15, 15, 15, 12, 15], magicLevel: 0, ...kit("knight"),
     supplies: { "health potion": 40, "mana potion": 10 },
-    blurb: "Swords, axes and clubs. Exori spells and Wound Cleansing." },
-  { id: "paladin", name: "Paladin", sprite: "paladin", skills: [12, 12, 12, 12, 15, 12], magicLevel: 0,
-    equipment: ["bow", "leather armor", "leather helmet", "leather legs", "leather boots"], ammo: "arrow",
-    supplies: { "health potion": 25, "mana potion": 25, arrow: 300 },
-    blurb: "Bows and arrows. Ethereal Spear, Divine Missile, Divine Caldera." },
-  { id: "sorcerer", name: "Sorcerer", sprite: "sorcerer", skills: [12, 12, 12, 12, 12, 12], magicLevel: 0,
-    equipment: ["wand of vortex", "blue robe", "magician hat", "leather legs", "leather boots"],
+    blurb: "Axes, swords and clubs, with a shield. Exori spells and Wound Cleansing." },
+  { id: "paladin", name: "Paladin", sprite: "paladin", skills: [12, 12, 12, 12, 15, 12], magicLevel: 0, ...kit("paladin"),
+    supplies: { "health potion": 25, "mana potion": 25, spear: 25, arrow: 250 },
+    blurb: "Spears and a shield, or a bow. Ethereal Spear, Divine Missile, Divine Caldera." },
+  { id: "sorcerer", name: "Sorcerer", sprite: "sorcerer", skills: [12, 12, 12, 12, 12, 12], magicLevel: 0, ...kit("sorcerer"),
     supplies: { "health potion": 15, "mana potion": 40 },
     blurb: "Wands; fire, energy and death magic. Great Fireball and Sudden Death runes." },
-  { id: "druid", name: "Druid", sprite: "druid", skills: [12, 12, 12, 12, 12, 12], magicLevel: 0,
-    equipment: ["snakebite rod", "blue robe", "magician hat", "leather legs", "leather boots"],
+  { id: "druid", name: "Druid", sprite: "druid", skills: [12, 12, 12, 12, 12, 12], magicLevel: 0, ...kit("druid"),
     supplies: { "health potion": 15, "mana potion": 40 },
     blurb: "Rods; ice and earth magic, strong healing. Avalanche and Stone Shower runes." },
 ];
