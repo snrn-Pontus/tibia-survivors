@@ -6,22 +6,27 @@ import { stackPattern, type Atlas } from "./atlas";
 import { SLOTS, type Slot } from "./character";
 import { stackable, type Container } from "./container";
 import { tooltipCharacter } from "./tooltip";
-import { zoneAt, ZONES } from "./data";
+import { CHARM_TIERS, describeCharm, describeGrade, describePrey, PREY_SLOTS, spellGrades } from "./picks";
+import { imbuement, TIERS } from "./tibia/imbuements";
+import { MAX_SLOTS } from "./upgrades";
+import { BESTIARY_STAGES, zoneAt, ZONES } from "./data";
 import { evolution } from "./evolutions";
 import { cheb, ELEMENT_COLORS, type Channel, type Game, type LootDest, type Monster, type Targeting } from "./game";
 import type { Renderer } from "./render";
-import { item, POTIONS, PRICES, SPELLS, type Element as DamageType, type SpellData } from "./tibia/db";
+import { item, MONSTERS, POTIONS, PRICES, SPELLS, type Element as DamageType, type SpellData } from "./tibia/db";
 import { FIGHT_MODES, SKILL_NAMES, type FightMode } from "./tibia/rules";
 import { boost, boostRate, formatRate, hasteBonus } from "./upgrades";
 
 const LAYOUT_KEY = "tibia-survivors-ui-v1";
-type WinId = "equipment" | "skills" | "battle" | "backpack" | "supplies";
+type WinId = "equipment" | "skills" | "battle" | "backpack" | "supplies" | "upgrades" | "bestiary";
 const WINDOWS: { id: WinId; title: string; height?: number }[] = [
   { id: "equipment", title: "Equipment" },
   { id: "skills", title: "Skills", height: 230 },
   { id: "battle", title: "Battle", height: 220 },
-  { id: "backpack", title: "Backpack", height: 216 },
+  { id: "backpack", title: "Backpack", height: 238 },
   { id: "supplies", title: "Supplies", height: 110 },
+  { id: "upgrades", title: "Upgrades", height: 200 },
+  { id: "bestiary", title: "Bestiary", height: 240 },
 ];
 interface Layout {
   cols: { a: WinId[]; b: WinId[] };
@@ -34,7 +39,7 @@ interface Layout {
   zoom: number; // minimap pixels per tile
 }
 const DEFAULT_LAYOUT: Layout = {
-  cols: { a: ["equipment", "skills"], b: ["battle", "backpack", "supplies"] },
+  cols: { a: ["equipment", "skills", "upgrades"], b: ["battle", "backpack", "supplies", "bestiary"] },
   min: {}, closed: {}, height: {}, fightMode: "offensive", chase: true, targeting: "closest", zoom: 2,
 };
 
@@ -113,6 +118,8 @@ export class Hud {
   private bpUp = el("button", "", "▲");
   private bpGrid = el("div", "grid box");
   private bpWorth = el("div", "loot-line");
+  private bpSell = el("button", "bp-sell");
+  private bestiaryOpen = new Set<string>(); // creatures whose details are shown
   private open: Container | null = null; // null: the main backpack
   // battle
   private rows = new Map<number, HTMLElement>();
@@ -206,6 +213,13 @@ export class Hud {
     this.placeWindows();
     this.buildEquipment();
     this.buildBackpack();
+    // Bestiary rows open and close on a click.
+    this.wins.get("bestiary")!.body.addEventListener("click", (e) => {
+      const key = (e.target as HTMLElement).closest<HTMLElement>(".be")?.dataset.key;
+      if (!key || !this.g) return;
+      if (!this.bestiaryOpen.delete(key)) this.bestiaryOpen.add(key);
+      this.bestiary(this.g);
+    });
     this.buildBattle();
     for (const c of [this.colA, this.colB]) {
       c.addEventListener("dragover", (e) => this.dragOver(e, c));
@@ -350,6 +364,29 @@ export class Hud {
     this.bpUp.addEventListener("click", () => this.openBox(this.open?.parent ?? null));
     this.bpTitle.after(this.bpUp);
     body.append(this.bpGrid, this.bpWorth);
+    // Selling from the backpack (no trip to the shop): a button for everything, right-click for one stack.
+    this.bpSell.addEventListener("click", () => {
+      const g = this.g;
+      if (!g) return;
+      const n = g.ch.backpackCount, gold = g.ch.sell();
+      if (gold) { g.msg(`You sold ${fmt(n)} items for ${fmt(gold)} gold.`, "#ffd34d"); this.status(`Sold for ${fmt(gold)} gold.`); }
+      this.sig.delete("backpack");
+      this.backpack(g);
+    });
+    this.bpWorth.after(this.bpSell);
+    this.bpGrid.addEventListener("contextmenu", (e) => {
+      e.preventDefault();
+      const g = this.g, i = Number((e.target as HTMLElement).closest<HTMLElement>(".slot")?.dataset.i);
+      const t = this.shownBox()?.items[i];
+      if (!g || !t || t.inner) return;
+      const name = item(t.id)!.name, n = [...g.ch.backpack.all()].filter((x) => x.id === t.id).reduce((a, x) => a + x.n, 0);
+      const gold = g.ch.sell(t.id);
+      if (!gold) { this.status(`No NPC buys ${name}s.`); return; }
+      g.msg(`You sold ${n} ${name}${n > 1 ? "s" : ""} for ${fmt(gold)} gold.`, "#ffd34d");
+      this.status(`Sold ${n} ${name}${n > 1 ? "s" : ""} for ${fmt(gold)} gold.`);
+      this.sig.delete("backpack");
+      this.backpack(g);
+    });
     // Click a container to open it in this window (Tibia's default); click anything else to look at it.
     this.bpGrid.addEventListener("click", (e) => {
       const i = Number((e.target as HTMLElement).closest<HTMLElement>(".slot")?.dataset.i);
@@ -545,6 +582,8 @@ export class Hud {
     this.battle(g);
     this.backpack(g);
     this.supplies(g);
+    this.upgrades(g);
+    this.bestiary(g);
     this.drawMinimap();
   }
 
@@ -793,9 +832,69 @@ export class Hud {
     }
     this.bpGrid.innerHTML = slots.join("");
     this.bpWorth.innerHTML = n ? `${fmt(n)} item${n === 1 ? "" : "s"}, worth <span class="gold">${fmt(worth)}</span> gold` : "Empty. Loot lands here.";
+    this.bpSell.textContent = `Sell all · ${fmt(worth)} gold`;
+    this.bpSell.disabled = !worth;
+    this.bpSell.title = "Sell everything an NPC buys (right-click an item to sell just that)";
     // The backpack in the equipment window.
     this.bpSlot.innerHTML = `<img src="${this.itemUrl(root.id)}" alt="">`;
     this.bpSlot.title = `${title(root.name)}: ${fmt(n)} items, worth ${fmt(worth)} gold. Click to open.`;
+  }
+
+  /** Everything you've picked this run (and the boosts you bought): spell grades, imbuements, charms, prey. */
+  private upgrades(g: Game) {
+    const ch = g.ch;
+    const sec: string[] = [];
+    const list = (title: string, rows: string[]) => { if (rows.length) sec.push(`<div class="up-h">${title}</div>${rows.join("")}`); };
+    const row = (name: string, detail: string, tip = detail) => `<div class="up-r" title="${tip.replace(/"/g, "&quot;")}"><b>${name}</b><i>${detail}</i></div>`;
+    list("Spells", [...ch.known].map((f) => SPELLS.find((s) => s.file === f)!).filter((s) => s.kind === "instant").map((s) => {
+      const gr = ch.grades.get(s.file) ?? 0, max = spellGrades(s).grades.length;
+      return row(`${s.name}${gr ? ` ${CHARM_TIERS[gr]}` : ""}`, gr ? describeGrade(ch.gradeBonus(s)) : `grade 0/${max}`, `${s.words}`);
+    }));
+    list(`Imbuements ${ch.slotsUsed}/${MAX_SLOTS}`, [...ch.imbuements].map(([id, t]) => row(`${TIERS[t - 1]} ${imbuement(id).name}`, imbuement(id).desc(imbuement(id).values[t - 1]))));
+    list("Charms", [...ch.charms].map(([name, t]) => row(`${name} ${CHARM_TIERS[t]}`, describeCharm(name, t))));
+    list(`Prey ${ch.prey.length}/${PREY_SLOTS}`, ch.prey.map((p) => row(`${MONSTERS[p.creature]?.name ?? p.creature} ${"★".repeat(p.stars)}`, describePrey(p))));
+    list("Boosts", [...ch.boosts].map(([id, l]) => row(`${boost(id)!.name} ${l}`, boost(id)!.desc(l))));
+    list("Evolutions", [...ch.evolutions].map((id) => row(evolution(id).name, evolution(id).desc)));
+    const html = sec.join("") || `<div class="empty-note">Level up to pick spell grades, imbuements and prey; bestiary stages give charms.</div>`;
+    if (this.changed("upgrades", html)) this.wins.get("upgrades")!.body.innerHTML = html;
+  }
+
+  /** Tibia's bestiary: every creature you've killed (over all runs), how far its stages are, and what you know
+   *  about it: health and experience from 5 kills, resistances from 25, loot from 100. Click one to open it. */
+  private bestiary(g: Game) {
+    const body = this.wins.get("bestiary")!.body;
+    const kills = Object.entries(g.killTotals).filter(([, n]) => n > 0).sort((a, b) => b[1] - a[1]);
+    const rows = kills.map(([key, total]) => {
+      const m = MONSTERS[key];
+      if (!m) return "";
+      const run = g.bestiary.get(m.name) ?? 0, open = this.bestiaryOpen.has(key);
+      const next = BESTIARY_STAGES.find((s) => run < s);
+      const stage = BESTIARY_STAGES.filter((s) => run >= s).length;
+      let details = "";
+      if (open) {
+        const facts: string[] = [];
+        if (total >= 5) facts.push(`Health ${fmt(m.health)} · Experience ${fmt(m.experience)} · Speed ${m.speed} · Armor ${m.armor}`);
+        else facts.push(`<i>Kill 5 to learn its health and experience.</i>`);
+        if (total >= 25) {
+          const el = Object.entries(m.elements).filter(([, v]) => v).map(([e, v]) => `<span class="${v! > 0 ? "res" : "weak"}">${e} ${v! > 0 ? "-" : "+"}${Math.abs(v!)}%</span>`);
+          facts.push(el.length ? el.join(" ") : "No resistances or weaknesses.");
+        } else facts.push(`<i>Kill 25 to learn its resistances.</i>`);
+        if (total >= 100) facts.push(m.loot.slice().sort((a, b) => b.chance - a.chance).slice(0, 8).map((l) => `${item(l.id)?.name ?? l.id} ${(l.chance / 1000).toFixed(l.chance < 1000 ? 2 : 1)}%`).join(", "));
+        else facts.push(`<i>Kill 100 to learn its loot.</i>`);
+        details = `<div class="be-d">${facts.join("<br>")}</div>`;
+      }
+      return `<div class="be${open ? " open" : ""}" data-key="${key}"><img src="${this.creatureUrl(key)}" alt=""><div class="be-n"><b>${m.name}</b>`
+        + `<i>${fmt(total)} kill${total === 1 ? "" : "s"} · this run ${run}${next ? `/${next}` : ""} ${"◆".repeat(stage)}${"◇".repeat(3 - stage)}</i></div></div>${details}`;
+    });
+    const html = rows.join("") || `<div class="empty-note">No creatures killed yet.</div>`;
+    if (this.changed("bestiary", html)) body.innerHTML = html;
+  }
+
+  private creatureUrl(key: string) {
+    return this.url(`c${key}`, () => {
+      const anim = this.atlas.data.creatures[key];
+      return anim ? this.atlas.icon(anim.idle[2][0], 32) : document.createElement("canvas");
+    });
   }
 
   private supplies(g: Game) {

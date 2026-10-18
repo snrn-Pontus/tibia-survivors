@@ -1,8 +1,9 @@
 // The player's character sheet: level, experience, skills, equipment and supplies, with Tibia's rules.
-import { BACKPACK, Container } from "./container";
+import { BACKPACK, COIN_VALUE, Container } from "./container";
 import { expRate, MAGIC_RATE, SKILL_RATE, START_GOLD, START_LEVEL, type VocationDef } from "./data";
 import { canWear, item, itemId, POTIONS, PRICES, SPELLS, VOCATION_DATA, wornItem, type Element, type ItemData, type SpellData, type VocationData } from "./tibia/db";
 import { IMBUEMENTS, imbuement, type ImbuementKind } from "./tibia/imbuements";
+import { charm, CHARM_LIST, PREY_SLOTS, preyPercent, spellGrades, type GradeBonus, type Prey, type PreyBonus } from "./picks";
 import type { EvolutionId } from "./evolutions";
 import { BOOSTS, boostRate, hasteBonus, MAX_SLOTS, type BoostId } from "./upgrades";
 import { expForLevel, maxHealthAt, maxManaAt, reqMana, reqSkillTries, SKILL, SKILL_NAMES } from "./tibia/rules";
@@ -13,7 +14,10 @@ export type LevelChoice =
   | { kind: "boost"; id: BoostId }
   | { kind: "train"; skill: number | "magic" } // an exercise weapon session
   | { kind: "supply"; id: number; n: number } // a backpack of potions
-  | { kind: "gold"; n: number }; // a pouch of gold for the shop
+  | { kind: "gold"; n: number } // a pouch of gold for the shop
+  | { kind: "grade"; spell: SpellData } // the next Wheel of Destiny grade of a spell you know
+  | { kind: "charm"; name: string } // a bestiary charm, or its next tier
+  | { kind: "prey"; prey: Prey }; // a prey bonus on a creature
 
 export type Slot = "head" | "necklace" | "armor" | "legs" | "feet" | "ring" | "weapon" | "shield" | "ammo";
 export const SLOTS: Slot[] = ["head", "necklace", "weapon", "armor", "shield", "legs", "ring", "feet", "ammo"];
@@ -40,12 +44,17 @@ export class Character {
   evolutions = new Set<EvolutionId>();
   blessings = 0; // Tibia blessings: each one saves you from a death
   // Rookgaard unlocks: experience and skill training multipliers that end with the vocation choice.
+  grades = new Map<string, number>(); // spell file -> Wheel grade (1-3)
+  charms = new Map<string, number>(); // charm name -> tier (1-3)
+  prey: Prey[] = []; // up to PREY_SLOTS
+  preyPool: string[] = []; // creatures of the zone you're in (Game sets it): what prey can be offered on
   rookXp = 1;
   rookTrain = 1;
   rookRegen = 1; // health regeneration (a rookie gets 1 hit point per 12 s)
 
   constructor(public voc: VocationDef) {
     this.vd = VOCATION_DATA[voc.id];
+    if (voc.id !== "none") this.vocationAt = 8;
     this.skills = voc.skills.map((level) => ({ level, tries: 0 }));
     this.magicLevel = voc.magicLevel;
     for (const x of voc.equipment) this.equip(typeof x === "number" ? x : itemId(x));
@@ -56,8 +65,9 @@ export class Character {
     this.mana = this.maxMana;
   }
 
-  get maxHp() { return maxHealthAt(this.vd, this.level); }
-  get maxMana() { return maxManaAt(this.vd, this.level); }
+  vocationAt = Infinity; // the level you chose your vocation at (rookie levels give 5 hp and 5 mana)
+  get maxHp() { return maxHealthAt(this.vd, this.level, this.vocationAt); }
+  get maxMana() { return maxManaAt(this.vd, this.level, this.vocationAt); }
 
   private worn(): ItemData[] {
     return Object.values(this.equipment).map((id) => wornItem(id!)).filter((x): x is ItemData => !!x);
@@ -72,9 +82,11 @@ export class Character {
     const base = this.vd.baseSpeed + (this.level - 1);
     const speed = base + this.bonus("speed") + this.imbued("speed") + hasteBonus(this.boostLevel("haste")) + (this.evolutions.has("draken") ? 60 : 0);
     // Paralyzed: ConditionSpeed takes speedChange/1000 of your base speed (a -700 paralyze leaves 30%).
-    return Math.max(40, Math.round(speed + (base * this.paralyze) / 1000));
+    // Adrenaline Burst: Canary's haste of 2.5 x base speed + 40.
+    return Math.max(40, Math.round(speed + (base * this.paralyze) / 1000 + (this.adrenaline ? 2.5 * base + 40 : 0)));
   }
   paralyze = 0; // speedChange of the paralysis on you (negative), 0 when free; Game times it
+  adrenaline = false; // Adrenaline Burst charm: hasted (Game times it)
 
   boostLevel(id: BoostId) { return this.boosts.get(id) ?? 0; }
   /** Rate multiplier from a boost (x1 when not picked). */
@@ -95,20 +107,51 @@ export class Character {
 
   /** Three level-up choices: a new class spell when one has unlocked, the rest imbuements. */
   rollChoices(): LevelChoice[] {
-    const spells = this.learnable().sort((a, b) => (b.level ?? 0) - (a.level ?? 0));
-    const out: LevelChoice[] = spells.slice(0, 1).map((spell) => ({ kind: "spell", spell }));
+    const shuffle = <T,>(xs: T[]) => xs.sort(() => Math.random() - 0.5);
     // Imbuements use MAX_SLOTS; once full, only the ones you have can be upgraded. (Boosts are bought between runs.)
     const full = this.slotsUsed >= MAX_SLOTS;
-    const ups: LevelChoice[] = this.imbuementOptions().filter((d) => !full || this.imbuements.has(d.id))
-      .map((d) => ({ kind: "imbue", id: d.id }) as LevelChoice).sort(() => Math.random() - 0.5);
-    for (const u of ups) {
-      if (out.length >= 3) break;
-      out.push(u);
-    }
+    const ups: LevelChoice[] = shuffle(this.imbuementOptions().filter((d) => !full || this.imbuements.has(d.id))
+      .map((d) => ({ kind: "imbue", id: d.id }) as LevelChoice));
+    // The next grade of a spell you know.
+    const grades: LevelChoice[] = shuffle([...this.known].map((f) => SPELLS.find((s) => s.file === f)!)
+      .filter((s) => s.kind === "instant" && (this.grades.get(s.file) ?? 0) < spellGrades(s).grades.length)
+      .map((spell) => ({ kind: "grade", spell }) as LevelChoice));
+    // Prey on a creature of this zone you don't prey on yet (a full list replaces the oldest).
+    const free = this.preyPool.filter((k) => !this.prey.some((p) => p.creature === k));
+    const prey: LevelChoice[] = free.length ? [{ kind: "prey", prey: {
+      creature: free[Math.floor(Math.random() * free.length)],
+      bonus: (["damage", "defense", "xp", "loot"] as const)[Math.floor(Math.random() * 4)],
+      stars: 1 + Math.floor(Math.random() * 10),
+    } }] : [];
+    const out = shuffle([...ups.slice(0, 2), ...grades.slice(0, 2), ...prey]).slice(0, 3);
     // Repeatable fillers, so every level has a choice.
     const fillers: LevelChoice[] = ([this.trainChoice(), this.supplyChoice(), { kind: "gold", n: 50 * this.level }] as LevelChoice[]).sort(() => Math.random() - 0.5);
     for (const f of fillers) if (out.length < 3) out.push(f);
     return out;
+  }
+
+  /** A bestiary stage: three charms to get or tier up. */
+  charmChoices(): LevelChoice[] {
+    return CHARM_LIST.filter((c) => (this.charms.get(c.name) ?? 0) < 3).sort(() => Math.random() - 0.5).slice(0, 3)
+      .map((c) => ({ kind: "charm", name: c.name }));
+  }
+
+  /** A charm's value at the tier you have (its chance, or for passive charms its percent), 0 without it. */
+  charmValue(name: string): number {
+    const t = this.charms.get(name) ?? 0;
+    return t ? charm(name).chance[t - 1] : 0;
+  }
+
+  /** The total Wheel bonus of a spell at its grade. */
+  gradeBonus(s: SpellData): GradeBonus {
+    const g = this.grades.get(s.file) ?? 0;
+    return g ? spellGrades(s).grades[g - 1] : {};
+  }
+
+  /** Your prey bonus of a kind against a creature, in percent. */
+  preyBonus(creature: string, bonus: PreyBonus): number {
+    const p = this.prey.find((x) => x.creature === creature && x.bonus === bonus);
+    return p ? preyPercent(p) : 0;
   }
 
   /** Exercise weapon for the vocation's main skill (magic level for mages). */
@@ -138,6 +181,12 @@ export class Character {
       if (c.skill === "magic") this.magicLevel++;
       else this.skills[c.skill].level++;
     } else if (c.kind === "gold") this.gold += c.n;
+    else if (c.kind === "grade") this.grades.set(c.spell.file, (this.grades.get(c.spell.file) ?? 0) + 1);
+    else if (c.kind === "charm") this.charms.set(c.name, (this.charms.get(c.name) ?? 0) + 1);
+    else if (c.kind === "prey") {
+      if (this.prey.length >= PREY_SLOTS) this.prey.shift();
+      this.prey.push(c.prey);
+    }
     else this.supplies.set(c.id, (this.supplies.get(c.id) ?? 0) + c.n);
   }
 
@@ -297,6 +346,7 @@ export class Character {
   setVocation(v: VocationDef) {
     this.voc = v;
     this.vd = VOCATION_DATA[v.id];
+    this.vocationAt = Math.max(8, this.level);
     // You keep what you wear: a whole new kit was free mainland gear (and the rookie gear it replaced sold for
     // gold). Only if you don't hold your vocation's kind of weapon (a wand for a sorcerer, spears for a
     // paladin...) do you get the one from Canary's kit; the old weapon goes in the backpack.
@@ -467,6 +517,23 @@ export class Character {
   /** What NPCs pay for the loot in the backpack. */
   lootValue(): number {
     return this.backpack.worth();
+  }
+
+  /** What an NPC pays for one: coins at face value, anything else at the best NPC price. */
+  sellValue(id: number): number {
+    return COIN_VALUE[id] ?? PRICES[id]?.sell ?? 0;
+  }
+
+  /** Sell every one of an item in the backpack (or, without an id, everything an NPC buys). Returns the gold. */
+  sell(id?: number): number {
+    let gold = 0;
+    const ids = id !== undefined ? [id] : [...new Set([...this.backpack.all()].map((t) => t.id))];
+    for (const i of ids) {
+      const each = this.sellValue(i);
+      if (each) gold += each * this.backpack.takeAll(i);
+    }
+    this.gold += gold;
+    return gold;
   }
 
   stash(id: number, n = 1) {

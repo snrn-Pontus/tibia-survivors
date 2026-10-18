@@ -4,7 +4,7 @@ import { ROOKIE } from "./data";
 import { applyUnlocks } from "./unlocks";
 import { loadSave, writeSave } from "./meta";
 import { autoCombat } from "./autocast";
-import { Game, type LootDest } from "./game";
+import { describeChoice, Game, type LootDest } from "./game";
 import { HOTKEYS, HOTKEYS_ALT, Hud } from "./hud";
 import { Renderer } from "./render";
 import { installTooltips } from "./tooltip";
@@ -135,7 +135,8 @@ async function boot() {
           g.msg(c.kind === "spell" ? `You learned ${c.spell.name} (${c.spell.words}).`
             : c.kind === "imbue" ? `Your equipment is imbued: ${imbuementName(g, c.id)}.`
             : c.kind === "boost" ? `${boost(c.id)!.name} is now level ${g.ch.boostLevel(c.id)}.`
-            : c.kind === "train" ? "You finished a training session." : c.kind === "gold" ? `You received ${c.n} gold.` : "You received a backpack of potions.", "#80c0ff");
+            : c.kind === "train" ? "You finished a training session." : c.kind === "gold" ? `You received ${c.n} gold.`
+            : c.kind === "supply" ? "You received a backpack of potions." : `You picked ${describeChoice(g.ch, c)}.`, "#80c0ff");
           g.pendingChoices--;
           ui.close();
           paused = false;
@@ -158,6 +159,19 @@ async function boot() {
         paused = true;
         ui.chest(g, ev.result, () => { ui.close(); paused = false; });
         break;
+      case "charm": {
+        // A bestiary stage: a charm, or the next tier of one.
+        const choices = g.ch.charmChoices();
+        if (!choices.length) return;
+        paused = true;
+        ui.levelUp(g, choices, (c) => {
+          g.ch.applyChoice(c);
+          g.msg(`Charm: ${describeChoice(g.ch, c)}.`, "#c9a0ff");
+          ui.close();
+          paused = false;
+        }, `Bestiary: ${ev.creature}, stage ${ev.stage}`, () => g.ch.charmChoices());
+        break;
+      }
       case "dead":
         paused = true;
         ui.end(g, bankRun(g), showTitle);

@@ -26,6 +26,9 @@ export interface MonsterAttack {
   duration?: number; // ms
 }
 
+/** A bestiary charm: its chance (or value) per tier 1-3, and for damage charms the percent and element. */
+export interface CharmData { name: string; description: string; chance: number[]; major: boolean; percent?: number; element?: Element }
+
 /** A magic field lying on the ground (items.xml): stepping in starts its ticks, one every `every` ms
  *  (fire: 7 x 20, poison: a shrinking 100, energy: one 25). It lasts `duration` seconds, then turns into
  *  `decayTo` (a fire field cools down twice before it goes out) or disappears. */
@@ -143,6 +146,8 @@ const data = raw as unknown as {
   fields: Record<string, FieldData>;
   kits: Record<"knight" | "paladin" | "sorcerer" | "druid", { items: number[]; container: [number, number][] }>;
   rookShop: Record<string, number>;
+  charms: CharmData[];
+  spellGrades: Record<string, { wheel?: Record<string, number>[]; gem?: Record<string, number> }>;
 };
 
 export const MONSTERS = data.monsters;
@@ -155,6 +160,10 @@ export const FIELDS = data.fields;
 export const KITS = data.kits;
 /** What Rookgaard's NPCs sell, and for how much (Obi, Dixi, Lee'Delle, Al Dee). */
 export const ROOK_SHOP = data.rookShop;
+/** Bestiary charms (bestiary_charms.lua). */
+export const CHARMS = data.charms;
+/** Wheel of Destiny spell bonuses by spell name (see picks.ts). */
+export const SPELL_GRADES = data.spellGrades;
 /** NPC prices: the cheapest an NPC sells for, the most one pays (from Canary's NPC shop lists). */
 export const PRICES = data.prices;
 

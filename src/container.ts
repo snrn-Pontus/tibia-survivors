@@ -5,6 +5,8 @@ import { item, PRICES } from "./tibia/db";
 
 export const STACK_MAX = 100;
 export const BACKPACK = 2854;
+/** Coins count at face value. */
+export const COIN_VALUE: Record<number, number> = { 3031: 1, 3035: 100, 3043: 10000 };
 
 export interface Thing { id: number; n: number; inner?: Container }
 
@@ -74,7 +76,7 @@ export class Container {
   /** What NPCs pay for everything inside. */
   worth() {
     let v = 0;
-    for (const t of this.all()) v += (PRICES[t.id]?.sell ?? 0) * t.n;
+    for (const t of this.all()) v += (COIN_VALUE[t.id] ?? PRICES[t.id]?.sell ?? 0) * t.n;
     return v;
   }
 

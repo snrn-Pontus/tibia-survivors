@@ -68,7 +68,11 @@ export function autoCombat(g: Game) {
 
   // Weapon: every attackSpeed (2000 ms).
   // Weapon Mastery halves it.
-  if (g.time >= g.nextWeapon && g.weaponAttack(target)) {
+  // Your target out of reach (it keeps its distance, or you picked one across the screen)? The weapon hits
+  // whatever is in reach meanwhile; the target stays the target.
+  const swing = dist(target) <= ch.attackRange ? target
+    : g.monstersInRange(ch.attackRange).filter(hurtable).sort((a, b) => dist(a) - dist(b))[0] ?? target;
+  if (g.time >= g.nextWeapon && g.weaponAttack(swing)) {
     g.nextWeapon = g.time + (ch.vd.attackSpeed / 1000) * (ch.evolutions.has("weaponmastery") ? 0.5 : 1);
   }
 

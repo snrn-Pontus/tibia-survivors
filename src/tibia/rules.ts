@@ -10,10 +10,13 @@ export function expForLevel(level: number): number {
   return Math.floor((50 * l * l * l - 150 * l * l + 400 * l) / 3);
 }
 
-/** Max HP / mana: 150 HP and 55 mana at level 1, +5 each per level until 8 (no vocation gains yet),
- *  then the vocation's gain per level (vocations.xml): 185 HP and 90 mana at level 8. */
-export const maxHealthAt = (v: VocationData, level: number) => (level < 8 ? 150 + (level - 1) * 5 : 185 + (level - 8) * v.gainHp);
-export const maxManaAt = (v: VocationData, level: number) => (level < 8 ? 55 + (level - 1) * 5 : 90 + (level - 8) * v.gainMana);
+/** Max HP / mana. A new character has 150 hit points and no mana (Canary's schema.sql defaults); levels without
+ *  a vocation give 5 of each (vocations.xml "None": 185 and 35 at level 8), and the vocation's own gains count
+ *  from the level you chose it at. */
+export const maxHealthAt = (v: VocationData, level: number, vocationAt = 8) =>
+  150 + (Math.min(level, vocationAt) - 1) * 5 + Math.max(0, level - vocationAt) * v.gainHp;
+export const maxManaAt = (v: VocationData, level: number, vocationAt = 8) =>
+  (Math.min(level, vocationAt) - 1) * 5 + Math.max(0, level - vocationAt) * v.gainMana;
 
 const SKILL_BASE = [50, 50, 50, 50, 30, 100, 20]; // Vocation::skillBase
 

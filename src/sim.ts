@@ -92,6 +92,8 @@ export function run(world: World, effectDur: (id: number) => number, voc: number
       g.ch.setVocation(VOCATIONS[voc]);
       g.vocation = VOCATIONS[voc];
     }
+    // Bestiary stages: the bot takes the first charm offered.
+    for (const e of g.events) if (e.type === "charm") { const c = g.ch.charmChoices()[0]; if (c) g.ch.applyChoice(c); }
     g.events.length = 0;
     // A simple build: spells first, then XP, the main training, loot and gold boosts, then whatever.
     for (; g.pendingChoices > 0; g.pendingChoices--) {

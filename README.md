@@ -37,7 +37,11 @@ If Tibia is somewhere else: `python tools/extract.py "D:\path\to\Tibia\packages\
   stackables stacking to 100 with Tibia's count sprites). When it fills up, a new backpack takes its last slot;
   click a backpack to open it, the arrow goes back up. Click gear to put it on (what it replaces goes in the
   backpack; a stack of spears or arrows goes whole), anything else to look at it; click the backpack in the
-  Equipment window to open the window again.
+  Equipment window to open the window again. **Sell all** at the bottom sells everything an NPC buys;
+  right-click an item to sell just that.
+- **Upgrades window**: what you've picked this run (spell grades, imbuements, charms, prey) and your boosts.
+- **Bestiary window**: every creature you've killed, over all runs, with this run's stage progress. Click one to
+  open it: health and experience after 5 kills, resistances after 25, loot after 100 (Tibia's bestiary).
 - **Hover any item** (backpack, equipment, supplies, shop) for its stats, what it needs (red if you don't
   have it), how it compares with what you wear, and what NPCs pay.
 - **Console** under the view: Server Log, Loot and Combat tabs (a tab blinks when it has news).
@@ -67,8 +71,14 @@ If Tibia is somewhere else: `python tools/extract.py "D:\path\to\Tibia\packages\
 - New spells are learned when you reach their level. Auto-combat casts the best attack spell or rune, heals with
   spells or healing runes, and keeps a fleeing target (fleeing monsters run to the edge of the screen and stop).
   Unlooted corpses show their best item floating above them.
-- In-run level-ups offer imbuements (6 slots), exercise weapons, potions and gold; killing 5, 25 and
-  100 of a creature (bestiary stages) and skill advances give choices too. Evolutions come from boss chests.
+- In-run level-ups offer imbuements (6 slots), **spell grades** (the Wheel of Destiny's: two grades from
+  `io_wheel.cpp` and the supreme gem bonus from `wheel_gems.cpp`, e.g. Front Sweep: 5% life leech, +14% damage,
+  then +26% and +18% critical damage), **prey** (a creature of the zone you're in, 1-10 stars: damage, damage
+  reduction, experience or loot, Canary's `ioprey.cpp` values; 3 at a time), exercise weapons, potions and gold.
+  Killing 5, 25 and 100 of a creature in a run (bestiary stages) offers **charms** (Canary's
+  `bestiary_charms.lua`, three tiers: Wound, Enflame... deal 5% of a creature's health; Dodge, Parry, Low Blow,
+  Savage Blow, Cripple, Numb, Adrenaline Burst, Carnage, Vampiric Embrace and more). Evolutions come from
+  boss chests.
 - Monsters leave their real corpse with the loot inside; walk onto or next to it to loot. Bodies rot
   after a minute. The view shows 15 x 11 tiles, like the Tibia client.
 
@@ -81,7 +91,7 @@ If Tibia is somewhere else: `python tools/extract.py "D:\path\to\Tibia\packages\
 | Conditions | poison, burning, electrified... from bites and condition spells: a total split into shrinking ticks (`ConditionDamage::generateDamageList`), a new one only replacing a weaker one, ticks reduced by equipment protection only |
 | Fields | fire, poison and energy fields from monster field spells (`firefield` etc. leave `ITEM_FIREFIELD_PVP_FULL`...): damage, duration and decay from items.xml (a fire field burns 7 x 20, cools to 7 x 10, then goes out), hurt on stepping in, monsters walk around fields they aren't immune to, and so does chase autowalk |
 | Summons | `monster.summon` (necromancers raise ghouls, giant spiders call poison spiders, demons fire elementals...): chance per interval, per-kind counts and `maxSummons` (`Monster::onThinkDefense`); no experience or corpse, and they die with their master |
-| Player | HP/mana per level, regeneration, skill and magic level training (`Vocation::getReqSkillTries`, `getReqMana`) |
+| Player | 150 HP and no mana at level 1, +5 each per level without a vocation, then the vocation's gains (`vocations.xml`); regeneration, skill and magic level training (`Vocation::getReqSkillTries`, `getReqMana`) |
 | Blocking | yours: 2 blocks at most, +1 per second (`Creature::blockHit`): shield defense only stops hits while a block is left, so crowds hurt more; then armor and mitigation (`PlayerWheel::calculateMitigation`). Monsters: armor, element modifiers and their mitigation percent (`Creature::mitigateDamage`), but not their defense value, which Canary still applies (a rat's defense of 5 cancels almost every hit of a new character; real Tibia's creatures only list armor and mitigation) |
 | Damage | melee/distance/wand formulas (`weapons.cpp`), fight modes (`getAttackFactor`, `getDefenseFactor`), defense and armor (`Creature::blockHit`, `Player::getDefense`), equipment absorb |
 | Spells and runes | words, level, mana, cooldowns, group cooldowns, areas (`register_spells.lua`), damage/heal formulas, Magic Shield; classes only get their own spells, runes, weapons and potions; rookies can use anything without a vocation requirement (spears, throwing stars, bows, clubs, swords, axes), thrown weapons breaking at their real `breakchance` |
@@ -89,7 +99,8 @@ If Tibia is somewhere else: `python tools/extract.py "D:\path\to\Tibia\packages\
 | Containers | slots (`containersize`), new items in front and stacks of 100 (Canary's `Container`), which items stack (the `cumulative` flag in Canary's appearances.dat), the count sprites 1, 2, 3, 4, 5+, 10+, 25+, 50+ (otclient's `Item::calculatePatterns`) |
 
 Not real: the boosts, imbuements as level-up rewards, quick-looting corpses, a shop in the pause menu,
-never running out of backpacks, your diagonal steps (and chase autowalk) costing their distance (x1.41) instead of x3, thrown spears coming back to you, fleeing monsters stopping at the screen's
+selling from the backpack anywhere, spells without Wheel data getting a +5/10/15% grade, charms working on every
+creature (in Tibia you assign each to one), never running out of backpacks, your diagonal steps (and chase autowalk) costing their distance (x1.41) instead of x3, thrown spears coming back to you, fleeing monsters stopping at the screen's
 edge, and monsters spawning around you.
 
 ## Code

@@ -4,6 +4,7 @@ import { advance, DIAGONAL_COST, isStepping, newWalker, startStep, stepDuration,
 import { areaOffsets, canWear, FIELDS, item, MONSTERS, POTIONS, PRICES, radiusRows, SPELLS, spellArea, spellFormula, waveRows, type Element, type MonsterAttack, type MonsterData, type Offsets, type SpellData } from "./tibia/db";
 import { blockHit, damageList, distanceDamage, expForLevel, distanceHitChance, FIGHT_MODES, meleeDamage, mitigation, normalRandom, playerDefense, SKILL, uniform, type FightMode } from "./tibia/rules";
 import { imbuement } from "./tibia/imbuements";
+import { charm, CHARM_TIERS, describePrey, type GradeBonus } from "./picks";
 import { boost, MAX_PENDING } from "./upgrades";
 import { EVOLUTIONS, type EvolutionId } from "./evolutions";
 import type { LevelChoice } from "./character";
@@ -24,6 +25,8 @@ export interface Monster extends Walker {
   boss: boolean;
   master?: number; // summoned by this monster: no experience, no corpse, and it dies with its master
   dot?: DamageCondition & { element: Element }; // a field burning it
+  rootedUntil?: number; // Cripple / Numb charms: paralyzed in place until then
+  holdUntil?: number; // Fatal Hold charm: won't flee until then
   summonTimers: number[]; // per monster.summon entry: seconds until its next roll
 }
 /** A magic field on the ground (a fire, poison or energy field item), until it decays. */
@@ -51,7 +54,8 @@ export type Channel = "default" | "loot" | "combat";
 export type Targeting = "closest" | "weakest";
 export interface LogLine { text: string; color: string; t: number; n: number; channel: Channel }
 
-export type GameEvent = { type: "vocation" } | { type: "levelup" } | { type: "dead" } | { type: "chest"; result: ChestResult };
+export type GameEvent = { type: "vocation" } | { type: "levelup" } | { type: "dead" } | { type: "chest"; result: ChestResult }
+  | { type: "charm"; creature: string; stage: number }; // a bestiary stage: pick a charm
 
 /** What a boss chest gave: an evolution, or a handful of upgrades (and maybe a blessing). */
 export interface ChestResult { evolution?: EvolutionId; gains: string[] }
@@ -66,7 +70,10 @@ const ORTHO: [number, number][] = [[0, -1], [1, 0], [0, 1], [-1, 0]];
 const DIAG: [number, number][] = [[1, -1], [1, 1], [-1, 1], [-1, -1]];
 const FLOW_R = 22;
 const PLAYER_DIAGONAL_COST = Math.SQRT2; // a diagonal step for you (see updatePlayer)
-const FLEE_STOP = 7; // tiles: how far a fleeing monster runs (the game view is 15 x 11)
+const FLEE_STOP = 7;
+/** The charms' hit effects by element (bestiary_charms.lua). */
+const CHARM_EFFECT: Partial<Record<Element, number>> = { physical: 10, fire: 16, earth: 9, ice: 44, energy: 12, death: 39, holy: 40 };
+const cap = (s: string) => s[0].toUpperCase() + s.slice(1); // tiles: how far a fleeing monster runs (the game view is 15 x 11)
 const FLOW_W = FLOW_R * 2 + 1;
 export const cheb = (ax: number, ay: number, bx: number, by: number) => Math.max(Math.abs(ax - bx), Math.abs(ay - by));
 export const dirTo = (dx: number, dy: number) => (Math.abs(dx) > Math.abs(dy) ? (dx > 0 ? 1 : 3) : dy > 0 ? 2 : 0);
@@ -84,7 +91,8 @@ export class Game {
   chase = true; // Tibia fight mode: chase opponent (C toggles "stand while fighting")
   targeting: Targeting = "closest"; // which creature auto-targeting picks (T toggles)
   conditions = new Map<Element, DamageCondition>();
-  paralyzedUntil = 0; // a monster's paralyze spell on you (Character.paralyze is how strong) // poison, fire, energy... ticking on you, by damage type
+  paralyzedUntil = 0;
+  adrenalineUntil = 0; // Adrenaline Burst charm: hasted until then // a monster's paralyze spell on you (Character.paralyze is how strong) // poison, fire, energy... ticking on you, by damage type
   fightMode: FightMode = "offensive"; // offensive / balanced / defensive: Tibia's attack and defense factors
   lastAttack = -99; // full attack only drops your defense right after you swing
   logCount = 0;
@@ -208,6 +216,7 @@ export class Game {
     this.updateConditions();
     this.updateFields();
     if (this.ch.paralyze && this.time >= this.paralyzedUntil) this.ch.paralyze = 0;
+    if (this.ch.adrenaline && this.time >= this.adrenalineUntil) this.ch.adrenaline = false;
     this.updateRegen(dt);
     if (this.time - this.lastKill < SOUL_EVERY) this.soulClock += dt; // only while you're killing things
     if (this.soulClock >= SOUL_EVERY) { this.soulClock -= SOUL_EVERY; this.souls++; }
@@ -254,7 +263,9 @@ export class Game {
       // Tibia's "chase opponent" fight mode: walk to the target until it's in weapon range.
       const t = this.monsters.find((m) => m.id === this.targetId && !m.dead);
       if (!t || cheb(t.tx, t.ty, p.tx, p.ty) <= this.ch.attackRange) return;
-      if (t.hp < t.data.runHealth && this.monsters.some((o) => o !== t && !o.dead && cheb(o.tx, o.ty, p.tx, p.ty) <= 1)) return;
+      // Something else on you: fight it first (auto-combat swings at what's in reach); don't drag it along after
+      // a target that runs or keeps its distance.
+      if (this.monsters.some((o) => o !== t && !o.dead && cheb(o.tx, o.ty, p.tx, p.ty) <= 1)) return;
       const step = this.pathStep(t.tx, t.ty);
       if (!step) return;
       [sx, sy] = step;
@@ -421,6 +432,7 @@ export class Game {
     const z = zoneAt(this.player.tx, this.player.ty);
     if (z !== this.zone) {
       this.zone = z;
+      this.ch.preyPool = ZONES[z].pool;
       this.deepest = Math.max(this.deepest, z);
       const info = ZONES[z];
       this.banner = { text: `${info.name} (level ${info.level}+)`, t: 3 };
@@ -531,7 +543,8 @@ export class Game {
 
   private chooseStep(m: Monster, d: number): [number, number] | null {
     const p = this.player;
-    const fleeing = m.hp < m.data.runHealth;
+    if (this.time < (m.rootedUntil ?? 0)) return null; // crippled: stands (it still attacks)
+    const fleeing = m.hp < m.data.runHealth && this.time >= (m.holdUntil ?? 0);
     // A hurt monster runs (runHealth), but only to the edge of your screen: there it stands, so you can still
     // catch it (it used to vanish, bosses too).
     if (fleeing && d >= FLEE_STOP) return null;
@@ -727,7 +740,21 @@ export class Game {
   /** Returns the damage that got through (before the magic shield), so a hit that lands can also poison. */
   private hurtPlayer(dmg: number, el: Element, m: Monster, melee: boolean): number {
     const ch = this.ch, p = this.player;
+    const proc = (name: string) => Math.random() * 100 < ch.charmValue(name);
+    // Dodge charm: the hit misses entirely.
+    if (proc("Dodge")) {
+      this.addEffect(3, p.x, p.y);
+      this.msg("You dodged an attack. (dodge charm)", "#c9a0ff", "combat");
+      return 0;
+    }
+    // Prey: less damage from the creature you prey on.
+    dmg = Math.round(dmg * (1 - ch.preyBonus(m.key, "defense") / 100));
     if (el === "manadrain") {
+      if (proc("Void Inversion")) {
+        ch.mana = Math.min(ch.maxMana, ch.mana + dmg);
+        this.addText(p.x, p.y - 40, `+${dmg}`, ELEMENT_COLORS.manadrain);
+        return 0;
+      }
       const v = Math.min(ch.mana, dmg);
       ch.mana -= v;
       if (v > 0) this.addText(p.x, p.y - 40, String(v), ELEMENT_COLORS.manadrain);
@@ -755,6 +782,22 @@ export class Game {
       return 0;
     }
     this.loseHealth(dmg, el, `due to an attack by ${article(m.data.name)}`);
+    // Defensive charms, after a hit that landed (Canary's IOBestiary::parseCharmCombat).
+    if (proc("Parry")) {
+      this.addEffect(5, m.x, m.y);
+      this.damageMonster(m, dmg, "physical", false, { charm: true });
+      this.msg(`You parried an attack. (parry charm)`, "#c9a0ff", "combat");
+    }
+    if (proc("Numb")) m.rootedUntil = this.time + 10;
+    if (proc("Adrenaline Burst")) {
+      ch.adrenaline = true;
+      this.adrenalineUntil = this.time + 10;
+    }
+    if (proc("Cleanse")) {
+      const bad = [...this.conditions.keys()];
+      if (ch.paralyze) { ch.paralyze = 0; this.paralyzedUntil = 0; }
+      else if (bad.length) this.conditions.delete(bad[Math.floor(Math.random() * bad.length)]);
+    }
     return dmg;
   }
 
@@ -808,14 +851,19 @@ export class Game {
    *  defense isn't used: Canary still applies it (a rat's defense of 5 cancels nearly every hit of a fresh
    *  character), but real Tibia's creatures only show armor and mitigation, and a new character kills rats.
    *  This is Canary with its disableMonsterArmor switch, keeping the armor. */
-  damageMonster(m: Monster, dmg: number, el: Element, useArmor: boolean) {
-    if (m.dead) return;
+  damageMonster(m: Monster, dmg: number, el: Element, useArmor: boolean, from: { spell?: GradeBonus; charm?: boolean } = {}): number {
+    if (m.dead) return 0;
     const ch = this.ch;
-    // Strike imbuement: 10% chance of a critical hit.
+    // Prey: more damage to the creature you prey on.
+    dmg = Math.round(dmg * (1 + ch.preyBonus(m.key, "damage") / 100));
+    // Critical hits: a Strike imbuement makes your attacks critical-capable (10%); Low Blow adds chance,
+    // Savage Blow and spell grades add damage. Charm damage itself never crits.
     const crit = ch.imbued("crit");
     const bloodRage = ch.evolutions.has("bloodrage");
-    const isCrit = (crit > 0 || bloodRage) && Math.random() < (bloodRage ? 0.3 : 0.1);
-    if (isCrit) dmg = Math.round(dmg * (1 + crit / 100));
+    const critChance = from.charm ? 0 : Math.max(bloodRage ? 30 : 0, crit > 0 ? 10 : 0) + (crit > 0 || bloodRage ? ch.charmValue("Low Blow") : 0) + (from.spell?.critChance ?? 0);
+    const critExtra = crit + ch.charmValue("Savage Blow") + (from.spell?.critDamage ?? 0);
+    const isCrit = critChance > 0 && Math.random() * 100 < critChance;
+    if (isCrit) dmg = Math.round(dmg * (1 + critExtra / 100));
     // Monster::blockHit: armor (Creature::blockHit), the element modifier, then mitigation (Creature::mitigateDamage).
     if (useArmor) dmg = blockHit(dmg, 0, m.data.armor, false, true);
     const pct = m.data.elements[el] ?? 0;
@@ -823,18 +871,40 @@ export class Game {
     if (el !== "lifedrain" && el !== "manadrain") dmg = Math.round(dmg * (1 - mitigationOf(m.key) / 100));
     if (dmg <= 0) {
       this.addEffect(pct >= 100 ? 4 : 3, m.x, m.y);
-      return;
+      return 0;
     }
     const dealt = Math.min(dmg, m.hp);
     m.hp -= dmg;
     if (el === "physical") this.addEffect(1, m.x, m.y);
     this.addText(m.x, m.y - 30, isCrit ? `${dealt}!` : String(dealt), isCrit ? "#ffd34d" : ELEMENT_COLORS[el]);
-    // Vampirism / Void imbuements: leech part of the damage dealt.
-    const life = Math.floor((dealt * ch.imbued("lifeLeech")) / 100), mana = Math.floor((dealt * ch.imbued("manaLeech")) / 100);
+    // Leech: Vampirism / Void imbuements, Vampiric Embrace / Void's Call charms, and spell grades.
+    const lifePct = from.charm ? 0 : ch.imbued("lifeLeech") + ch.charmValue("Vampiric Embrace") + (from.spell?.lifeLeech ?? 0);
+    const manaPct = from.charm ? 0 : ch.imbued("manaLeech") + ch.charmValue("Void's Call") + (from.spell?.manaLeech ?? 0);
+    const life = Math.floor((dealt * lifePct) / 100), mana = Math.floor((dealt * manaPct) / 100);
     if (life > 0) ch.hp = Math.min(ch.maxHp, ch.hp + life);
     if (isCrit && bloodRage) ch.hp = Math.min(ch.maxHp, ch.hp + dealt);
     if (mana > 0) ch.mana = Math.min(ch.maxMana, ch.mana + mana);
     if (m.hp <= 0) this.killMonster(m);
+    return dealt;
+  }
+
+  /** Offensive charms, rolled once per hit of yours on a creature (Canary's IOBestiary::parseOffensiveCharmCombat). */
+  private charmProcs(m: Monster) {
+    const ch = this.ch;
+    for (const [name] of ch.charms) {
+      if (m.dead || Math.random() * 100 >= ch.charmValue(name)) continue;
+      const c = charm(name);
+      let dmg = 0, el: Element = "physical";
+      if (c.element && c.percent && name !== "Parry") { dmg = Math.min(ch.level * 2, Math.ceil(m.maxHp * c.percent / 100)); el = c.element; }
+      else if (name === "Overpower") dmg = Math.min(Math.ceil(m.maxHp * 0.08), Math.ceil(ch.maxHp * 0.05));
+      else if (name === "Overflux") dmg = Math.min(Math.ceil(m.maxHp * 0.08), Math.ceil(ch.maxMana * 0.025));
+      else if (name === "Cripple") { m.rootedUntil = this.time + 10; this.msg(`You crippled ${article(m.data.name)}. (cripple charm)`, "#c9a0ff", "combat"); continue; }
+      else if (name === "Fatal Hold") { m.holdUntil = this.time + 30; continue; }
+      else continue;
+      this.addEffect(CHARM_EFFECT[el] ?? 10, m.x, m.y);
+      this.damageMonster(m, dmg, el, false, { charm: true });
+      this.msg(`${cap(article(m.data.name))} loses ${dmg} hitpoints. (${name.toLowerCase()} charm)`, "#c9a0ff", "combat");
+    }
   }
 
   private killMonster(m: Monster) {
@@ -886,12 +956,20 @@ export class Game {
     const stage = BESTIARY_STAGES.indexOf(seen);
     if (stage >= 0) {
       this.msg(`Bestiary: you unlocked stage ${stage + 1} of the ${m.data.name.toLowerCase()} entry.`, "#80c0ff");
-      this.pendingChoices = Math.min(MAX_PENDING, this.pendingChoices + 1);
-      if (!this.events.some((e) => e.type === "levelup")) this.events.push({ type: "levelup" });
+      this.events.push({ type: "charm", creature: m.data.name, stage: stage + 1 });
     }
     this.occupied.delete(key(m.tx, m.ty));
     this.addEffect(3, m.x, m.y);
-    const { gained, amount, learned } = this.ch.addExp(m.data.experience);
+    // Carnage charm: the kill hits the creatures next to it.
+    if (Math.random() * 100 < this.ch.charmValue("Carnage")) {
+      const dmg = Math.min(Math.ceil(m.maxHp * 0.15), this.ch.level * 6);
+      for (const [dx, dy] of ORTHO) {
+        const o = this.monsterAt(m.tx + dx, m.ty + dy);
+        this.addEffect(1, tileCenter(m.tx + dx), tileCenter(m.ty + dy));
+        if (o && !o.dead) this.damageMonster(o, dmg, "physical", false, { charm: true });
+      }
+    }
+    const { gained, amount, learned } = this.ch.addExp(m.data.experience * (1 + this.ch.preyBonus(m.key, "xp") / 100));
     for (const s of learned) this.msg(`You learned ${s.name} (${s.words}).`, "#80c0ff");
     this.addText(this.player.x, this.player.y - 52, String(amount), "#ffffff");
     if (gained) {
@@ -912,7 +990,7 @@ export class Game {
       if (!item(l.id)) continue;
       const coins = l.id === 3031 || l.id === 3035 || l.id === 3043;
       // Loot Boost scales the drop chance; past 100% it drops several times. Gold Boost scales coins.
-      const chance = (l.chance / 100000) * (coins ? 1 : this.ch.rate("loot"));
+      const chance = (l.chance / 100000) * (coins ? 1 : this.ch.rate("loot") * (1 + this.ch.preyBonus(m.key, "loot") / 100));
       const drops = Math.floor(chance) + (Math.random() < chance % 1 ? 1 : 0);
       if (!drops) continue;
       // Each drop is 1..max of the item; many drops are summed rather than rolled one by one.
@@ -1062,6 +1140,7 @@ export class Game {
       }
     }
     if (physical > 0) this.damageMonster(m, physical, "physical", true);
+    this.charmProcs(m);
   }
 
   /** Tiles a spell hits: around the player, in the facing direction, or on/around the target. */
@@ -1076,7 +1155,7 @@ export class Game {
 
   /** Mana a spell costs now (Mastermind halves it). */
   manaCost(s: SpellData) {
-    return Math.ceil((s.mana ?? 0) * (this.ch.evolutions.has("mastermind") ? 0.5 : 1));
+    return Math.max(0, Math.ceil((s.mana ?? 0) * (this.ch.evolutions.has("mastermind") ? 0.5 : 1)) - (this.ch.gradeBonus(s).manaCost ?? 0));
   }
 
   /** A boss chest: evolve an upgrade if a recipe is complete, else 1, 3 or 5 free upgrades (and maybe a blessing). */
@@ -1113,11 +1192,14 @@ export class Game {
   cast(s: SpellData, dir: number, target?: Monster) {
     const ch = this.ch, p = this.player;
     const attack = s.file.includes("ethereal_spear") && s.file !== "strong_ethereal_spear" ? 25 : ch.attackValue;
-    const [lo, hi] = spellFormula(s)(ch.level, ch.ml, ch.skill(ch.weaponSkill), attack);
+    // The spell's Wheel grade: more damage or healing, a shorter cooldown, crits and leech.
+    const grade = ch.gradeBonus(s);
+    const k = 1 + ((s.group === "healing" ? grade.heal : grade.damage) ?? 0) / 100;
+    const [lo, hi] = spellFormula(s)(ch.level, ch.ml, ch.skill(ch.weaponSkill), attack).map((v) => v * k);
     if (s.kind === "rune") ch.supplies.set(s.runeId!, (ch.supplies.get(s.runeId!) ?? 0) - 1);
     else if (s.mana) this.advance(ch.spendMana(this.manaCost(s)));
     const mm = ch.evolutions.has("mastermind") ? 0.7 : 1;
-    this.spellReady.set(s.file, this.time + ((s.cooldown ?? 2000) / 1000) * mm);
+    this.spellReady.set(s.file, this.time + Math.max(1, ((s.cooldown ?? 2000) / 1000) * mm - (grade.cooldown ?? 0)));
     const group = s.group;
     this.groupReady[group] = this.time + (s.groupCooldown ?? 2000) / 1000;
     if (s.words) this.addText(p.x, p.y - 62, s.words, "#f0e060");
@@ -1144,7 +1226,9 @@ export class Game {
     for (const [tx, ty] of this.spellTiles(s, dir, target)) {
       this.addEffect(s.effect, tileCenter(tx), tileCenter(ty));
       const m = this.monsterAt(tx, ty);
-      if (m) this.damageMonster(m, normalRandom(Math.floor(lo), Math.floor(hi)), s.element, s.blockArmor);
+      if (!m) continue;
+      this.damageMonster(m, normalRandom(Math.floor(lo), Math.floor(hi)), s.element, s.blockArmor, { spell: grade });
+      this.charmProcs(m);
     }
   }
 
@@ -1235,5 +1319,8 @@ export function describeChoice(ch: Character, c: LevelChoice): string {
     case "train": return c.skill === "magic" ? "+1 magic level" : "+1 skill";
     case "supply": return `${c.n} ${item(c.id)!.name}s`;
     case "gold": return `${c.n} gold`;
+    case "grade": return `${c.spell.name} grade ${["", "I", "II", "III"][ch.grades.get(c.spell.file) ?? 0]}`;
+    case "charm": return `${c.name} ${CHARM_TIERS[ch.charms.get(c.name) ?? 0]}`;
+    case "prey": return `prey: ${describePrey(c.prey)}`;
   }
 }

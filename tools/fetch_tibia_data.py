@@ -310,6 +310,69 @@ def parse_monster(src, en):
     return m
 
 
+# ---------- charms and spell grades ----------
+
+def parse_charms():
+    """The bestiary charms (data/scripts/systems/bestiary_charms.lua): name, description, chance per tier, and for
+    damage charms the percent and damage type."""
+    src = fetch("data/scripts/systems/bestiary_charms.lua")
+    out = []
+    for e in entries(lua_block(src, r"local charms\s*=\s*\{")):
+        name = re.search(r'name\s*=\s*"([^"]+)"', e)
+        chance = re.search(r"chance\s*=\s*\{([^}]*)\}", e)
+        if not name or not chance:
+            continue
+        desc = re.search(r'description\s*=\s*"((?:[^"\\]|\\.)*)"', e, re.S)
+        f = lua_fields(re.sub(r"\{[^{}]*\}", "", e))
+        c = {"name": name.group(1), "chance": [float(x) for x in re.findall(r"[\d.]+", chance.group(1))],
+             "description": re.sub(r"\\z\s*", "", desc.group(1)) if desc else "",
+             "major": f.get("category") == "CHARM_MAJOR"}
+        if isinstance(f.get("percent"), (int, float)):
+            c["percent"] = f["percent"]
+        if f.get("damageType") in ELEMENT:
+            c["element"] = ELEMENT[f["damageType"]]
+        out.append(c)
+    return out
+
+
+# Wheel of Destiny spell bonuses we can play: other kinds (area, extra target, duration...) are left out.
+GRADE_KEYS = {("increase", "damage"): "damage", ("increase", "heal"): "heal", ("increase", "criticalDamage"): "critDamage",
+              ("increase", "criticalChance"): "critChance", ("decrease", "cooldown"): "cooldown", ("decrease", "manaCost"): "manaCost",
+              ("leech", "life"): "lifeLeech", ("leech", "mana"): "manaLeech"}
+
+
+def grade_value(expr):
+    m = re.search(r"-?[\d.]+", expr)
+    return float(m.group(0)) if m else None
+
+
+def parse_spell_grades():
+    """Spell upgrades from the Wheel of Destiny: the two grades io_wheel.cpp gives some spells, and the supreme
+    gem modifiers in wheel_gems.cpp (their value at gem grade 0; grades 1-3 multiply it by 1.1, 1.2, 1.5)."""
+    out = {}
+    src = fetch("src/io/io_wheel.cpp")
+    names = {(v, i): n for v, i, n in re.findall(r'm_wheelBonusData\.spells\.(\w+)\[(\d)\]\.name = "([^"]+)";', src)}
+    for v, i, g, part, key, expr in re.findall(r"m_wheelBonusData\.spells\.(\w+)\[(\d)\]\.grade\[(\d)\]\.(\w+)\.(\w+) = ([^;]+);", src):
+        k, val = GRADE_KEYS.get((part, key)), grade_value(expr)
+        if not k or val is None:
+            continue
+        grades = out.setdefault(names[(v, i)], {}).setdefault("wheel", {})
+        grades.setdefault(g, {})[k] = round(val)
+    gems = fetch("src/creatures/players/components/wheel/wheel_gems.cpp")
+    for block in re.findall(r"case WheelGemSupremeModifier_t::\w+:(.*?)break;", gems, re.S):
+        spell = re.search(r'GemModifierSpellBonusStrategy>\(m_wheel, "([^"]+)"', block)
+        if not spell:
+            continue
+        for part, key, expr in re.findall(r"bonus\.(\w+)\.(\w+) = ([^;]+);", block):
+            k, val = GRADE_KEYS.get((part, key)), grade_value(expr)
+            if k and val is not None:
+                out.setdefault(spell.group(1), {}).setdefault("gem", {})[k] = val
+    for v in out.values():
+        if "wheel" in v:
+            v["wheel"] = [v["wheel"][g] for g in sorted(v["wheel"])]
+    return out
+
+
 # ---------- starting kits, Rookgaard's shops ----------
 
 ROOK_NPCS = ["obi", "dixi", "lee_delle", "al_dee"]  # Rookgaard's weapon, armor and general traders
@@ -632,6 +695,8 @@ def main():
         "prices": {i: p for i, p in prices.items() if i in items},
         "fields": parse_fields(),
         "kits": kits,
+        "charms": parse_charms(),
+        "spellGrades": {k: v for k, v in parse_spell_grades().items() if any(s["name"] == k for s in spells)},
         "rookShop": {i: p for i, p in rook_shop.items() if i in items},
     }
     os.makedirs(os.path.dirname(OUT), exist_ok=True)

@@ -9,9 +9,17 @@ import { EVOLUTIONS, evolution, evolutionsFor } from "./evolutions";
 import type { ChestResult } from "./game";
 import { canWear, item, itemId, MONSTERS, POTIONS, PRICES, SPELLS, wornItem, type ItemData, type SpellData } from "./tibia/db";
 import { SKILL_NAMES } from "./tibia/rules";
+import { charm, CHARM_TIERS, describeCharm, describeGrade, describePrey, PREY_SLOTS, spellGrades } from "./picks";
 
 /** DOM overlay menus. Every screen is a list of focusable buttons, so keys and gamepads can drive it. */
-type ShopTab = "weapons" | "armor" | "ammo" | "potions" | "runes" | "sell";
+/** Card icons for damage charms, by element (Tibia's hit effects). */
+const CHARM_EFFECTS: Record<string, number> = { physical: 10, fire: 16, earth: 9, ice: 44, energy: 12, death: 39, holy: 40 }; // the charms' own effects
+
+type ShopTab = "weapons" | "shields" | "helmets" | "armor" | "legs" | "boots" | "jewelry" | "ammo" | "potions" | "runes" | "sell";
+/** Which equipment slots each gear tab lists. */
+const GEAR_TABS: Partial<Record<ShopTab, string[]>> = {
+  shields: ["shield"], helmets: ["head"], armor: ["armor"], legs: ["legs"], boots: ["feet"], jewelry: ["necklace", "ring"],
+};
 
 export class UI {
   private shopTab: ShopTab = "weapons";
@@ -142,11 +150,28 @@ export class UI {
     this.setButtons(cards, VOCATIONS.map((v) => () => onPick(v)));
   }
 
-  /** New spells: the vocation's spells whose level requirement has been reached. */
-  /** Level-up: pick a new class spell or an imbuement (new, or the next tier of one you have). */
-  levelUp(g: Game, choices: LevelChoice[], onPick: (c: LevelChoice) => void, title?: string) {
+  /** Level-up (or a bestiary stage, with charms): pick one of the cards. `roll` makes new ones for a reroll. */
+  levelUp(g: Game, choices: LevelChoice[], onPick: (c: LevelChoice) => void, title?: string, roll = () => g.ch.rollChoices()) {
     const ch = g.ch;
     const card = (c: LevelChoice, i: number) => {
+      if (c.kind === "grade") {
+        const s = c.spell, { grades, wheel } = spellGrades(s), g0 = ch.grades.get(s.file) ?? 0;
+        return `<button class="card choice"><div class="ico"></div>
+          <b>${i + 1}. ${s.name} ${CHARM_TIERS[g0 + 1]}</b><em>Spell grade${wheel ? " (Wheel of Destiny)" : ""}</em>
+          <small>${describeGrade(grades[g0])}${g0 ? `<br><i>now: ${describeGrade(grades[g0 - 1])}</i>` : ""}</small></button>`;
+      }
+      if (c.kind === "charm") {
+        const t = (ch.charms.get(c.name) ?? 0) + 1;
+        return `<button class="card choice"><div class="ico"></div>
+          <b>${i + 1}. ${c.name} ${CHARM_TIERS[t]}</b><em>${t === 1 ? "New charm" : `Charm ${CHARM_TIERS[t - 1]} → ${CHARM_TIERS[t]}`}</em>
+          <small>${describeCharm(c.name, t)}.</small></button>`;
+      }
+      if (c.kind === "prey") {
+        const full = ch.prey.length >= PREY_SLOTS ? ch.prey[0] : null;
+        return `<button class="card choice"><div class="ico"></div>
+          <b>${i + 1}. Prey: ${MONSTERS[c.prey.creature]?.name ?? c.prey.creature}</b><em>${"★".repeat(c.prey.stars)}${"☆".repeat(10 - c.prey.stars)}</em>
+          <small>${describePrey(c.prey)}.${full ? `<br><i>Replaces: ${describePrey(full)}</i>` : ""}</small></button>`;
+      }
       if (c.kind === "spell") {
         const s = c.spell;
         return `<button class="card choice"><div class="ico"></div>
@@ -173,6 +198,7 @@ export class UI {
           <b>${i + 1}. ${b.name} ${l}</b><em>${l === 1 ? "New upgrade" : `Level ${l - 1} → ${l}`}</em>
           <small>${b.desc(l)}${evoHint(c.id)}</small></button>`;
       }
+      if (c.kind !== "imbue") return "";
       const d = imbuement(c.id), tier = (ch.imbuements.get(c.id) ?? 0) + 1;
       return `<button class="card choice"><div class="ico"></div>
         <b>${i + 1}. ${TIERS[tier - 1]} ${d.name}</b><em>${tier === 1 ? "New imbuement" : `Upgrade from ${TIERS[tier - 2]}`}</em>
@@ -188,12 +214,17 @@ export class UI {
       const ch = choices[i];
       if (ch.kind === "supply") { c.appendChild(this.icon(ch.id, 2)); return; }
       if (ch.kind === "gold") { c.appendChild(this.icon(3035, 2)); return; }
+      if (ch.kind === "prey") {
+        const anim = this.atlas.data.creatures[ch.prey.creature];
+        if (anim) { c.appendChild(this.atlas.icon(anim.idle[2][0], 32, 2)); return; }
+      }
       if (ch.kind === "boost") { c.appendChild(this.icon(boost(ch.id)!.icon, 2)); return; }
       if (ch.kind === "train") {
         const w = g.ch.weapon;
         if (w) { c.appendChild(this.icon(w.id, 2)); return; }
       }
-      const effect = ch.kind === "spell" ? ch.spell.effect : ch.kind === "imbue" ? imbuement(ch.id).effect : 10;
+      const effect = ch.kind === "spell" || ch.kind === "grade" ? ch.spell.effect : ch.kind === "imbue" ? imbuement(ch.id).effect
+        : ch.kind === "charm" ? CHARM_EFFECTS[charm(ch.name).element ?? ""] ?? 13 : 10;
       const anim = this.atlas.data.effects[effect] ?? this.atlas.data.effects[13];
       c.appendChild(this.atlas.icon(anim.frames[Math.floor(anim.frames.length / 2)], 32, 2));
     });
@@ -201,7 +232,7 @@ export class UI {
     const actions = choices.map((c) => () => onPick(c));
     if (reroll) actions.push(() => {
       g.rerolls--;
-      this.levelUp(g, g.ch.rollChoices(), onPick, title);
+      this.levelUp(g, roll(), onPick, title, roll);
     });
     this.setButtons([...el.querySelectorAll<HTMLElement>(".card"), ...(reroll ? [reroll] : [])], actions);
   }
@@ -290,11 +321,11 @@ export class UI {
           }, w.usable) });
         } else rows.push({ id: w.id, note, packs: [{ n: 1, price: w.price, ok: w.usable && !worn, label: worn ? "equipped" : undefined, buy: equip(w.id, w.price) }] });
       }
-    } else if (tab === "armor") {
-      const order: Record<string, number> = { shield: 0, head: 1, armor: 2, legs: 3, feet: 4, necklace: 5, ring: 6 };
+    } else if (GEAR_TABS[tab]) {
+      const slots = GEAR_TABS[tab]!;
       const list = Object.entries(PRICES).map(([k, pr]) => ({ id: Number(k), price: pr.buy ?? 0, it: item(Number(k)) }))
-        .filter((x) => x.price && x.it && (ch.slotFor(x.it) ?? "") in order && canWear(x.it, ch.voc.id, 9999) && (x.it.level ?? 0) <= ch.level + 40)
-        .sort((a, b) => order[ch.slotFor(a.it!)!] - order[ch.slotFor(b.it!)!] || (a.it!.level ?? 0) - (b.it!.level ?? 0) || a.price - b.price);
+        .filter((x) => x.price && x.it && slots.includes(ch.slotFor(x.it) ?? "") && canWear(x.it, ch.voc.id, 9999) && (x.it.level ?? 0) <= ch.level + 40)
+        .sort((a, b) => slots.indexOf(ch.slotFor(a.it!)!) - slots.indexOf(ch.slotFor(b.it!)!) || (a.it!.level ?? 0) - (b.it!.level ?? 0) || a.price - b.price);
       for (const x of list) {
         const worn = Object.values(ch.equipment).includes(x.id);
         rows.push({ id: x.id, note: [stats(x.id), better(x.id), need(x.it!)].filter(Boolean).join(" "),
@@ -332,13 +363,14 @@ export class UI {
         const each = value(id);
         rows.push({ id, count: n, note: each ? `<small>${gold(each)} gold each</small>` : `<span class="hint">no NPC buys this</span>`,
           packs: [{ n, price: -each * n, ok: each > 0, label: each ? `sell · ${gold(each * n)}` : "sell", buy: () => {
-            ch.gold += each * ch.backpack.takeAll(id);
+            ch.sell(id);
             g.msg(`You sold ${n} ${item(id)!.name}${n > 1 ? "s" : ""} for ${gold(each * n)} gold.`, "#ffd34d");
           } }] });
       }
     }
 
-    const TABS: [ShopTab, string][] = [["weapons", "Weapons"], ["armor", "Armor"], ["ammo", "Ammunition"], ["potions", "Potions"], ["runes", "Runes"], ["sell", "Sell"]];
+    const TABS: [ShopTab, string][] = [["weapons", "Weapons"], ["shields", "Shields"], ["helmets", "Helmets"], ["armor", "Armor"], ["legs", "Legs"],
+      ["boots", "Boots"], ["jewelry", "Jewelry"], ["ammo", "Ammunition"], ["potions", "Potions"], ["runes", "Runes"], ["sell", "Sell"]];
     const loot = ch.lootValue();
     const packBtn = (p: Pack) => `<button class="btn pk" ${!p.ok || ch.gold < p.price ? "disabled" : ""}>${p.label ?? `${p.n > 1 ? `${p.n}× · ` : ""}${gold(p.price)}`}</button>`;
     const rowHtml = (r: Row) => `<div class="srow" data-item="${r.id}" data-n="${r.count ?? 1}"><span class="ico" data-id="${r.id}"></span>
@@ -375,10 +407,9 @@ export class UI {
     if (sellAll) {
       btns.push(sellAll);
       acts.push(() => {
-        if (!loot) return;
-        ch.gold += loot;
-        g.msg(`You sold ${ch.backpackCount} items for ${gold(loot)} gold.`, "#ffd34d");
-        ch.backpack.clear();
+        const n = ch.backpackCount, got = ch.sell();
+        if (!got) return;
+        g.msg(`You sold ${gold(n)} items for ${gold(got)} gold.`, "#ffd34d");
         reopen(btns.indexOf(sellAll));
       });
     }

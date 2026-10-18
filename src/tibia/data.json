@@ -11785,6 +11785,174 @@
   }
  ],
  "areas": {
+  "AREA_WAVE6": [
+   [
+    0,
+    0,
+    0,
+    0,
+    0
+   ],
+   [
+    0,
+    1,
+    3,
+    1,
+    0
+   ],
+   [
+    0,
+    0,
+    0,
+    0,
+    0
+   ]
+  ],
+  "AREA_CIRCLE5X5": [
+   [
+    0,
+    0,
+    0,
+    0,
+    0,
+    1,
+    0,
+    0,
+    0,
+    0,
+    0
+   ],
+   [
+    0,
+    0,
+    0,
+    0,
+    1,
+    1,
+    1,
+    0,
+    0,
+    0,
+    0
+   ],
+   [
+    0,
+    0,
+    0,
+    1,
+    1,
+    1,
+    1,
+    1,
+    0,
+    0,
+    0
+   ],
+   [
+    0,
+    0,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    0,
+    0
+   ],
+   [
+    0,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    0
+   ],
+   [
+    1,
+    1,
+    1,
+    1,
+    1,
+    3,
+    1,
+    1,
+    1,
+    1,
+    1
+   ],
+   [
+    0,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    0
+   ],
+   [
+    0,
+    0,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    0,
+    0
+   ],
+   [
+    0,
+    0,
+    0,
+    1,
+    1,
+    1,
+    1,
+    1,
+    0,
+    0,
+    0
+   ],
+   [
+    0,
+    0,
+    0,
+    0,
+    1,
+    1,
+    1,
+    0,
+    0,
+    0,
+    0
+   ],
+   [
+    0,
+    0,
+    0,
+    0,
+    0,
+    1,
+    0,
+    0,
+    0,
+    0,
+    0
+   ]
+  ],
   "AREA_CIRCLE6X6": [
    [
     0,
@@ -11982,7 +12150,12 @@
     0
    ]
   ],
-  "AREA_SHORTWAVE3": [
+  "AREA_SQUAREWAVE5": [
+   [
+    1,
+    1,
+    1
+   ],
    [
     1,
     1,
@@ -11995,20 +12168,16 @@
    ],
    [
     0,
+    1,
+    0
+   ],
+   [
+    0,
     3,
     0
    ]
   ],
-  "AREA_BEAM8": [
-   [
-    1
-   ],
-   [
-    1
-   ],
-   [
-    1
-   ],
+  "AREA_BEAM5": [
    [
     1
    ],
@@ -12025,46 +12194,20 @@
     3
    ]
   ],
-  "AREA_BEAM6": [
-   [
-    1
-   ],
-   [
-    1
-   ],
-   [
-    1
-   ],
-   [
-    1
-   ],
-   [
-    1
-   ],
-   [
-    3
-   ]
-  ],
-  "AREA_WAVE6": [
+  "AREA_CIRCLE1X1": [
    [
     0,
-    0,
-    0,
-    0,
+    1,
     0
    ],
    [
-    0,
     1,
     3,
-    1,
-    0
+    1
    ],
    [
     0,
-    0,
-    0,
-    0,
+    1,
     0
    ]
   ],
@@ -12098,149 +12241,38 @@
     0
    ]
   ],
-  "AREA_CIRCLE5X5": [
+  "AREA_SHORTWAVE3": [
    [
-    0,
-    0,
-    0,
-    0,
-    0,
     1,
-    0,
-    0,
-    0,
-    0,
-    0
+    1,
+    1
    ],
    [
-    0,
-    0,
-    0,
-    0,
-    1,
-    1,
-    1,
-    0,
-    0,
-    0,
-    0
-   ],
-   [
-    0,
-    0,
-    0,
-    1,
-    1,
-    1,
-    1,
-    1,
-    0,
-    0,
-    0
-   ],
-   [
-    0,
-    0,
-    1,
-    1,
-    1,
-    1,
-    1,
-    1,
-    1,
-    0,
-    0
-   ],
-   [
-    0,
-    1,
-    1,
-    1,
-    1,
-    1,
-    1,
-    1,
-    1,
-    1,
-    0
-   ],
-   [
-    1,
-    1,
-    1,
-    1,
-    1,
-    3,
-    1,
-    1,
     1,
     1,
     1
    ],
    [
     0,
-    1,
-    1,
-    1,
-    1,
-    1,
-    1,
-    1,
-    1,
-    1,
+    3,
     0
+   ]
+  ],
+  "AREA_SQUARE1X1": [
+   [
+    1,
+    1,
+    1
    ],
    [
-    0,
-    0,
     1,
-    1,
-    1,
-    1,
-    1,
-    1,
-    1,
-    0,
-    0
+    3,
+    1
    ],
    [
-    0,
-    0,
-    0,
     1,
     1,
-    1,
-    1,
-    1,
-    0,
-    0,
-    0
-   ],
-   [
-    0,
-    0,
-    0,
-    0,
-    1,
-    1,
-    1,
-    0,
-    0,
-    0,
-    0
-   ],
-   [
-    0,
-    0,
-    0,
-    0,
-    0,
-    1,
-    0,
-    0,
-    0,
-    0,
-    0
+    1
    ]
   ],
   "AREA_CIRCLE3X3": [
@@ -12308,68 +12340,36 @@
     0
    ]
   ],
-  "AREA_SQUARE1X1": [
+  "AREA_BEAM8": [
    [
-    1,
-    1,
     1
    ],
    [
-    1,
-    3,
     1
    ],
    [
-    1,
-    1,
     1
+   ],
+   [
+    1
+   ],
+   [
+    1
+   ],
+   [
+    1
+   ],
+   [
+    1
+   ],
+   [
+    3
    ]
   ],
-  "AREA_CIRCLE1X1": [
+  "AREA_BEAM6": [
    [
-    0,
-    1,
-    0
-   ],
-   [
-    1,
-    3,
     1
    ],
-   [
-    0,
-    1,
-    0
-   ]
-  ],
-  "AREA_SQUAREWAVE5": [
-   [
-    1,
-    1,
-    1
-   ],
-   [
-    1,
-    1,
-    1
-   ],
-   [
-    1,
-    1,
-    1
-   ],
-   [
-    0,
-    1,
-    0
-   ],
-   [
-    0,
-    3,
-    0
-   ]
-  ],
-  "AREA_BEAM5": [
    [
     1
    ],
@@ -19728,6 +19728,485 @@
      10
     ]
    ]
+  }
+ },
+ "charms": [
+  {
+   "name": "Wound",
+   "chance": [
+    5.0,
+    10.0,
+    11.0
+   ],
+   "description": "Triggers on a creature with a certain chance and deals 5% of its initial hit points as physical damage once.",
+   "major": true,
+   "percent": 5,
+   "element": "physical"
+  },
+  {
+   "name": "Enflame",
+   "chance": [
+    5.0,
+    10.0,
+    11.0
+   ],
+   "description": "Triggers on a creature with a certain chance and deals 5% of its initial hit points as fire damage once.",
+   "major": true,
+   "percent": 5,
+   "element": "fire"
+  },
+  {
+   "name": "Poison",
+   "chance": [
+    5.0,
+    10.0,
+    11.0
+   ],
+   "description": "Triggers on a creature with a certain chance and deals 5% of its initial hit points as earth damage once.",
+   "major": true,
+   "percent": 5,
+   "element": "earth"
+  },
+  {
+   "name": "Freeze",
+   "chance": [
+    5.0,
+    10.0,
+    11.0
+   ],
+   "description": "Triggers on a creature with a certain chance and deals 5% of its initial hit points as ice damage once.",
+   "major": true,
+   "percent": 5,
+   "element": "ice"
+  },
+  {
+   "name": "Zap",
+   "chance": [
+    5.0,
+    10.0,
+    11.0
+   ],
+   "description": "Triggers on a creature with a certain chance and deals 5% of its initial hit points as energy damage once.",
+   "major": true,
+   "percent": 5,
+   "element": "energy"
+  },
+  {
+   "name": "Curse",
+   "chance": [
+    5.0,
+    10.0,
+    11.0
+   ],
+   "description": "Triggers on a creature with a certain chance and deals 5% of its initial hit points as death damage once.",
+   "major": true,
+   "percent": 5,
+   "element": "death"
+  },
+  {
+   "name": "Cripple",
+   "chance": [
+    6.0,
+    9.0,
+    12.0
+   ],
+   "description": "Cripples the creature with a certain chance and paralyzes it for 10 seconds.",
+   "major": false
+  },
+  {
+   "name": "Parry",
+   "chance": [
+    5.0,
+    10.0,
+    11.0
+   ],
+   "description": "Any damage taken is reflected to the aggressor with a certain chance.",
+   "major": true,
+   "element": "physical"
+  },
+  {
+   "name": "Dodge",
+   "chance": [
+    5.0,
+    10.0,
+    11.0
+   ],
+   "description": "Dodges an attack with a certain chance without taking any damage at all.",
+   "major": true
+  },
+  {
+   "name": "Adrenaline Burst",
+   "chance": [
+    6.0,
+    9.0,
+    12.0
+   ],
+   "description": "Bursts of adrenaline enhance your reflexes with a certain chance after you get hit and let you move faster for 10 seconds.",
+   "major": false
+  },
+  {
+   "name": "Numb",
+   "chance": [
+    6.0,
+    9.0,
+    12.0
+   ],
+   "description": "Numbs the creature with a certain chance after its attack and paralyzes the creature for 10 seconds.",
+   "major": false
+  },
+  {
+   "name": "Cleanse",
+   "chance": [
+    6.0,
+    9.0,
+    12.0
+   ],
+   "description": "Cleanses you from within with a certain chance after you get hit and removes one random active negative status effect and temporarily makes you immune against it.",
+   "major": false
+  },
+  {
+   "name": "Bless",
+   "chance": [
+    6.0,
+    9.0,
+    12.0
+   ],
+   "description": "Blesses you and reduces skill and xp loss by 10% when killed by the chosen creature.",
+   "major": false,
+   "percent": 10
+  },
+  {
+   "name": "Scavenge",
+   "chance": [
+    60.0,
+    90.0,
+    120.0
+   ],
+   "description": "Enhances your chances to successfully skin/dust a skinnable/dustable creature.",
+   "major": false
+  },
+  {
+   "name": "Gut",
+   "chance": [
+    6.0,
+    9.0,
+    12.0
+   ],
+   "description": "Gutting the creature yields 20% more creature products.",
+   "major": false
+  },
+  {
+   "name": "Low Blow",
+   "chance": [
+    4.0,
+    8.0,
+    9.0
+   ],
+   "description": "Adds 8% critical hit chance to attacks with critical hit weapons.",
+   "major": true
+  },
+  {
+   "name": "Divine Wrath",
+   "chance": [
+    5.0,
+    10.0,
+    11.0
+   ],
+   "description": "Triggers on a creature with a certain chance and deals 5% of its initial hit points as holy damage once.",
+   "major": true,
+   "percent": 5,
+   "element": "holy"
+  },
+  {
+   "name": "Vampiric Embrace",
+   "chance": [
+    1.6,
+    2.4,
+    3.2
+   ],
+   "description": "Adds 4% Life Leech to attacks if wearing equipment that provides life leech.",
+   "major": false
+  },
+  {
+   "name": "Void's Call",
+   "chance": [
+    0.8,
+    1.2,
+    1.6
+   ],
+   "description": "Adds 2% Mana Leech to attacks if wearing equipment that provides mana leech.",
+   "major": false
+  },
+  {
+   "name": "Savage Blow",
+   "chance": [
+    20.0,
+    40.0,
+    44.0
+   ],
+   "description": "Adds critical extra damage to attacks with critical hit weapons.",
+   "major": true
+  },
+  {
+   "name": "Fatal Hold",
+   "chance": [
+    30.0,
+    45.0,
+    60.0
+   ],
+   "description": "Prevents creatures from fleeing due to low health for 30 seconds.",
+   "major": false
+  },
+  {
+   "name": "Void Inversion",
+   "chance": [
+    20.0,
+    30.0,
+    40.0
+   ],
+   "description": "Chance to gain mana instead of losing it when taking Mana Drain damage.",
+   "major": false
+  },
+  {
+   "name": "Carnage",
+   "chance": [
+    10.0,
+    20.0,
+    22.0
+   ],
+   "description": "Killing a monster deals physical damage to others in a small radius.",
+   "major": true,
+   "percent": 15
+  },
+  {
+   "name": "Overpower",
+   "chance": [
+    5.0,
+    10.0,
+    11.0
+   ],
+   "description": "Deals physical damage based on your maximum health.",
+   "major": true,
+   "percent": 5
+  },
+  {
+   "name": "Overflux",
+   "chance": [
+    5.0,
+    10.0,
+    11.0
+   ],
+   "description": "Deals physical damage based on your maximum mana.",
+   "major": true,
+   "percent": 2.5
+  }
+ ],
+ "spellGrades": {
+  "Strong Ice Wave": {
+   "wheel": [
+    {
+     "manaLeech": 3
+    },
+    {
+     "damage": 10
+    }
+   ],
+   "gem": {
+    "damage": 8.0,
+    "critDamage": 15.0
+   }
+  },
+  "Mass Healing": {
+   "wheel": [
+    {
+     "heal": 4
+    }
+   ],
+   "gem": {
+    "heal": 5.0
+   }
+  },
+  "Terra Wave": {
+   "wheel": [
+    {
+     "damage": 6
+    },
+    {
+     "lifeLeech": 5
+    }
+   ],
+   "gem": {
+    "damage": 5.0,
+    "critDamage": 12.0
+   }
+  },
+  "Front Sweep": {
+   "wheel": [
+    {
+     "lifeLeech": 5
+    },
+    {
+     "damage": 14
+    }
+   ],
+   "gem": {
+    "critDamage": 12.0,
+    "damage": 8.0
+   }
+  },
+  "Groundshaker": {
+   "wheel": [
+    {
+     "damage": 12
+    },
+    {
+     "cooldown": 2
+    }
+   ],
+   "gem": {
+    "damage": 6.5,
+    "critDamage": 12.0
+   }
+  },
+  "Intense Wound Cleansing": {
+   "wheel": [
+    {
+     "heal": 125
+    },
+    {
+     "cooldown": 300
+    }
+   ]
+  },
+  "Fierce Berserk": {
+   "wheel": [
+    {
+     "manaCost": 30
+    },
+    {
+     "damage": 10
+    }
+   ],
+   "gem": {
+    "damage": 5.0,
+    "critDamage": 8.0
+   }
+  },
+  "Strong Ethereal Spear": {
+   "wheel": [
+    {
+     "cooldown": 2
+    },
+    {
+     "damage": 380
+    }
+   ],
+   "gem": {
+    "damage": 8.0,
+    "critDamage": 12.0
+   }
+  },
+  "Divine Caldera": {
+   "wheel": [
+    {
+     "manaCost": 20
+    },
+    {
+     "damage": 8
+    }
+   ],
+   "gem": {
+    "damage": 5.0,
+    "critDamage": 12.0
+   }
+  },
+  "Magic Shield": {
+   "wheel": [
+    {
+     "cooldown": 6
+    }
+   ]
+  },
+  "Energy Wave": {
+   "wheel": [
+    {
+     "damage": 5
+    }
+   ],
+   "gem": {
+    "cooldown": 1.0,
+    "damage": 5.0,
+    "critDamage": 12.0
+   }
+  },
+  "Ultimate Healing": {
+   "gem": {
+    "heal": 5.0
+   }
+  },
+  "Berserk": {
+   "gem": {
+    "damage": 5.0,
+    "critDamage": 12.0
+   }
+  },
+  "Annihilation": {
+   "gem": {
+    "critDamage": 15.0,
+    "damage": 12.0
+   }
+  },
+  "Fair Wound Cleansing": {
+   "gem": {
+    "heal": 10.0
+   }
+  },
+  "Divine Missile": {
+   "gem": {
+    "damage": 8.0,
+    "critDamage": 12.0
+   }
+  },
+  "Ethereal Spear": {
+   "gem": {
+    "damage": 10.0,
+    "critDamage": 15.0
+   }
+  },
+  "Salvation": {
+   "gem": {
+    "heal": 6.0
+   }
+  },
+  "Great Death Beam": {
+   "gem": {
+    "damage": 10.0,
+    "critDamage": 15.0
+   }
+  },
+  "Hell's Core": {
+   "gem": {
+    "damage": 8.0,
+    "critDamage": 12.0
+   }
+  },
+  "Rage of the Skies": {
+   "gem": {
+    "damage": 8.0,
+    "critDamage": 12.0
+   }
+  },
+  "Great Energy Beam": {
+   "gem": {
+    "damage": 10.0,
+    "critDamage": 15.0
+   }
+  },
+  "Eternal Winter": {
+   "gem": {
+    "critDamage": 12.0,
+    "damage": 8.0
+   }
   }
  },
  "rookShop": {

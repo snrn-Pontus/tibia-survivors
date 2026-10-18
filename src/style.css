@@ -135,6 +135,31 @@ body:not(.ingame) #side, body:not(.ingame) #hotbar, body:not(.ingame) #console, 
 .slot.bp { cursor: pointer; }
 .grid.box .slot.wear:hover { box-shadow: inset 0 0 0 1px #80c060; }
 
+/* backpack selling */
+.bp-sell { display: block; width: 100%; margin-top: 3px; padding: 2px; font: 10px Verdana, sans-serif; color: #ffd34d; cursor: pointer;
+  border: 1px solid var(--edge); background: linear-gradient(#5a5650 0%, #403c37 50%, #36322e 100%); }
+.bp-sell:disabled { color: #777; cursor: default; }
+
+/* upgrades window */
+.up-h { color: var(--gold); font-weight: bold; margin: 4px 0 1px; }
+.up-h:first-child { margin-top: 0; }
+.up-r { display: flex; flex-direction: column; padding: 1px 0 2px 4px; border-left: 2px solid #3a3733; margin-bottom: 1px; }
+.up-r b { font-weight: normal; color: #eee; }
+.up-r i { font-style: normal; color: #9a968c; font-size: 10px; }
+
+/* bestiary window */
+.be { display: flex; align-items: center; gap: 4px; padding: 1px; cursor: pointer; }
+.be:hover { background: #3a3733; }
+.be img { width: 26px; height: 26px; image-rendering: pixelated; background: var(--well); border: 1px solid var(--edge); flex: none; }
+.be-n { min-width: 0; }
+.be-n b { display: block; font-weight: normal; }
+.be-n i { font-style: normal; color: #9a968c; font-size: 10px; }
+.be.open { background: #2c2a26; }
+.be-d { padding: 2px 4px 4px 32px; font-size: 10px; color: #bbb; line-height: 1.5; }
+.be-d i { color: #777; }
+.be-d .res { color: #70c070; }
+.be-d .weak { color: #ff7060; }
+
 /* item tooltips (tooltip.ts) */
 #tip { position: fixed; left: 0; top: 0; z-index: 20; pointer-events: none; max-width: 260px; padding: 5px 8px;
   font: 11px/1.45 Verdana, sans-serif; color: #ddd; background: rgba(20, 19, 18, 0.96); border: 1px solid #6b5a3a;
