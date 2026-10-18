@@ -2,6 +2,7 @@
 // auto attack every 2 s, cast the best class spell or rune off cooldown, heal, and drink potions.
 // You only steer. Everything goes through Game, so mana, charges, cooldowns and formulas are real.
 import { cheb, type Game, type Monster } from "./game";
+import { SUPPORT } from "./support";
 import { canWear, item, POTIONS, SPELLS, spellFormula, type Element, type SpellData } from "./tibia/db";
 
 const HEAL_AT = 0.6; // heal spells below 60% HP
@@ -21,11 +22,13 @@ export function autoCombat(g: Game) {
 
   // Healing spells and healing runes (healing group, 1 s): the strongest one available.
   if (hpPct < HEAL_AT && g.time >= g.groupReady.healing) {
-    const spells = knownSpells(g, "healing").filter((s) => ready(g, s) && ch.mana >= g.manaCost(s));
+    const spells = knownSpells(g, "healing").filter((s) => !SUPPORT[s.file] && ready(g, s) && ch.mana >= g.manaCost(s));
     const runes = ch.usableRunes().filter((s) => s.group === "healing" && ready(g, s) && (ch.supplies.get(s.runeId!) ?? 0) > 0);
     const heal = [...spells, ...runes].sort((a, b) => expected(g, b) - expected(g, a))[0];
     if (heal) g.cast(heal, p.dir);
   }
+
+  supportSpells(g);
 
   // Magic shield (utamo vita): keep it up.
   if (g.time >= g.groupReady.support) {
@@ -101,6 +104,35 @@ export function autoCombat(g: Game) {
     }
   }
   if (best && best.value >= 1) g.cast(best.s, best.dir, best.target);
+}
+
+/** Support spells, used the way a player would: cure a condition that still has real damage in it, keep
+ *  Recovery and a haste up, and for knights and paladins pick a stance by the fight (Blood Rage in a crowd while
+ *  healthy, Protector when it goes badly, Sharpshooter on a target while healthy). */
+function supportSpells(g: Game) {
+  const ch = g.ch, p = g.player;
+  const known = (file: string) => {
+    const s = SPELLS.find((x) => x.file === file);
+    return s && ch.known.has(file) && ready(g, s) && ch.mana >= g.manaCost(s) && g.time >= g.groupReady[s.group] ? s : undefined;
+  };
+  const cast = (s: SpellData | undefined) => (s ? (g.cast(s, p.dir), true) : false);
+  // Cures (healing group): only when what's left of the condition is worth a spell.
+  for (const [file, el] of [["cure_poison", "earth"], ["cure_burning", "fire"], ["cure_electrification", "energy"], ["cure_bleeding", "physical"]] as const) {
+    const c = g.conditions.get(el);
+    if (c && c.ticks.reduce((a, b) => a + b, 0) >= Math.max(20, ch.maxHp * 0.05) && cast(known(file))) return;
+  }
+  // Recovery: regeneration while you're under 90%.
+  if (!g.recovery && ch.hp < ch.maxHp * 0.9 && cast(known("intense_recovery") ?? known("recovery"))) return;
+  const near = g.monstersInRange(1).length;
+  const reserve = ch.voc.id === "knight" || ch.voc.id === "paladin" ? 0.3 : 0.5; // mana kept for healing
+  // Stances (support group).
+  if (!ch.stance && ch.mana > ch.maxMana * reserve) {
+    if (ch.hp < ch.maxHp * 0.45 && near && cast(known("protector"))) return;
+    if (ch.hp > ch.maxHp * 0.6 && near >= 2 && cast(known("blood_rage"))) return;
+    if (ch.hp > ch.maxHp * 0.6 && g.targetId && cast(known("sharpshooter"))) return;
+  }
+  // Haste: keep one up (not while paralyzed by Sharpshooter's own slow).
+  if (!ch.hasteDelta && !(ch.stance?.name === "Sharpshooter") && ch.mana > ch.maxMana * reserve) cast(known("strong_haste") ?? known("haste"));
 }
 
 function knownSpells(g: Game, group: SpellData["group"]): SpellData[] {

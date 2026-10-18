@@ -44,6 +44,15 @@ export function normalRandom(min: number, max: number): number {
 
 export const uniform = (min: number, max: number) => min + Math.floor(Math.random() * (max - min + 1));
 
+/** ConditionSpeed (Canary's condition.cpp): the new speed is a * (base - 40) + b, rolled between the min and max
+ *  formula; the change is that minus your base speed. A paralysis can't take you below 40. Haste (utani hur) is
+ *  (1.3, 40): +30% of (base - 40). */
+export function speedChange(base: number, mina: number, minb: number, maxa: number, maxb: number, paralyze = false): number {
+  const d = base - 40;
+  const delta = uniform(Math.round(mina * d + minb), Math.round(maxa * d + maxb)) - base;
+  return paralyze ? Math.max(delta, 40 - base) : delta;
+}
+
 /** ConditionDamage::generateDamageList: the ticks of a damage-over-time condition, from `start` down to 1,
  *  each value repeated while the running sum tracks `amount` (a 30 poison: 2 seven times, then 1 sixteen times). */
 export function damageList(amount: number, start: number): number[] {

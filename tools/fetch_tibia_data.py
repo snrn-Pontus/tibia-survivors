@@ -42,8 +42,9 @@ SPELL_FILES = {
     "healing": [
         "light_healing", "intense_healing", "ultimate_healing", "wound_cleansing", "intense_wound_cleansing",
         "fair_wound_cleansing", "divine_healing", "mass_healing", "salvation",
+        "recovery", "intense_recovery", "cure_poison", "cure_burning", "cure_electrification", "cure_bleeding",
     ],
-    "support": ["magic_shield"],
+    "support": ["magic_shield", "haste", "strong_haste", "charge", "blood_rage", "protector", "sharpshooter"],
 }
 RUNE_FILES = [
     "avalanche", "great_fireball", "sudden_death", "thunderstorm", "stone_shower", "explosion", "fireball",
@@ -470,13 +471,16 @@ def parse_spell(src, en):
     get = lambda pat: re.search(pat, src).group(1) if re.search(pat, src) else None
     s["name"] = get(r':name\("([^"]+)"\)')
     s["words"] = get(r':words\("([^"]+)"\)')
-    s["group"] = get(r':group\("([^"]+)"\)')
+    s["group"] = get(r':group\("([^"]+)"')  # the first group (some spells also have "focus")
     for k in ("level", "mana", "range", "magicLevel", "runeId"):
         v = get(r":%s\((\d+)\)" % k)
         if v:
             s[k] = int(v)
     for k in ("cooldown", "groupCooldown"):
         v = get(r":%s\(([^)]+)\)" % k)
+        if v and re.fullmatch(r"[A-Za-z_]\w*", v.strip()):
+            # a local variable (intense_recovery.lua: local cooldown = 60000 -- milis)
+            v = get(r"local %s\s*=\s*([\d*+ ]+)" % re.escape(v.strip()))
         if v:
             expr = v.split(",")[0].replace(" ", "")
             if re.fullmatch(r"[\d*+]+", expr):

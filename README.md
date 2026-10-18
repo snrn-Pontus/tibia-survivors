@@ -70,6 +70,11 @@ If Tibia is somewhere else: `python tools/extract.py "D:\path\to\Tibia\packages\
   run would have them), Rookgaard regeneration (x5 to x20), and Dawnport (start at level 8, once you've reached 8).
 - New spells are learned when you reach their level. Auto-combat casts the best attack spell or rune, heals with
   spells or healing runes, and keeps a fleeing target (fleeing monsters run to the edge of the screen and stop).
+  It also uses **support spells**, with Canary's values: Haste and Strong Haste kept up, Recovery / Intense
+  Recovery under 90% health, the cures (exana pox, flam, vis, kor) when a condition still has real damage in it,
+  and the knight's and paladin's stances: Blood Rage (melee 135%, damage taken 115%, no shield) in a crowd,
+  Protector (shielding 220%, damage dealt 65%, taken 85%) when hurt, Sharpshooter (distance 140%, slowed, no
+  healing spells for 10 s) on a target. Hastes and paralysis use Tibia's speed formula (a x (base - 40) + b).
   Unlooted corpses show their best item floating above them.
 - In-run level-ups offer imbuements (6 slots), **spell grades** (the Wheel of Destiny's: two grades from
   `io_wheel.cpp` and the supreme gem bonus from `wheel_gems.cpp`, e.g. Front Sweep: 5% life leech, +14% damage,

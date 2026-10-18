@@ -2,6 +2,7 @@
 // - spell grades from the Wheel of Destiny (Canary's io_wheel.cpp grades and wheel_gems.cpp supreme mods),
 // - bestiary charms (Canary's bestiary_charms.lua), offered when a bestiary stage unlocks,
 // - prey (Canary's ioprey.cpp): a creature, a bonus and 1-10 stars.
+import { SUPPORT } from "./support";
 import { CHARMS, MONSTERS, SPELL_GRADES, type SpellData } from "./tibia/db";
 
 // ---------- spell grades ----------
@@ -25,6 +26,7 @@ export function spellGrades(s: SpellData): { grades: GradeBonus[]; wheel: boolea
     .filter((g) => Object.keys(g).length);
   const gem = data?.gem;
   if (!wheel.length && !gem) {
+    if (SUPPORT[s.file]) return { grades: [], wheel: false }; // a haste or a cure has nothing to grade
     const key: GradeKey = s.group === "healing" ? "heal" : "damage";
     return { grades: [5, 10, 15].map((v) => ({ [key]: v })), wheel: false };
   }

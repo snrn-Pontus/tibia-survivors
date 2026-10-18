@@ -3,6 +3,7 @@ import { BACKPACK, COIN_VALUE, Container } from "./container";
 import { expRate, MAGIC_RATE, SKILL_RATE, START_GOLD, START_LEVEL, type VocationDef } from "./data";
 import { canWear, item, itemId, POTIONS, PRICES, SPELLS, VOCATION_DATA, wornItem, type Element, type ItemData, type SpellData, type VocationData } from "./tibia/db";
 import { IMBUEMENTS, imbuement, type ImbuementKind } from "./tibia/imbuements";
+import type { Stance } from "./support";
 import { charm, CHARM_LIST, PREY_SLOTS, preyPercent, spellGrades, type GradeBonus, type Prey, type PreyBonus } from "./picks";
 import type { EvolutionId } from "./evolutions";
 import { BOOSTS, boostRate, hasteBonus, MAX_SLOTS, type BoostId } from "./upgrades";
@@ -77,22 +78,27 @@ export class Character {
     return this.worn().reduce((s, it) => s + (Number(it[attr]) || 0), 0);
   }
 
-  /** Base speed 110 + (level - 1), plus boots of haste, time ring... */
+  /** Base speed: 110 + (level - 1). */
+  get baseSpeed() { return this.vd.baseSpeed + (this.level - 1); }
+  /** Base speed, plus boots of haste, time ring..., and a haste or paralysis on you (Game times them). */
   get speed() {
-    const base = this.vd.baseSpeed + (this.level - 1);
-    const speed = base + this.bonus("speed") + this.imbued("speed") + hasteBonus(this.boostLevel("haste")) + (this.evolutions.has("draken") ? 60 : 0);
-    // Paralyzed: ConditionSpeed takes speedChange/1000 of your base speed (a -700 paralyze leaves 30%).
-    // Adrenaline Burst: Canary's haste of 2.5 x base speed + 40.
-    return Math.max(40, Math.round(speed + (base * this.paralyze) / 1000 + (this.adrenaline ? 2.5 * base + 40 : 0)));
+    const speed = this.baseSpeed + this.bonus("speed") + this.imbued("speed") + hasteBonus(this.boostLevel("haste")) + (this.evolutions.has("draken") ? 60 : 0);
+    return Math.max(40, Math.round(speed + this.hasteDelta + this.slowDelta));
   }
-  paralyze = 0; // speedChange of the paralysis on you (negative), 0 when free; Game times it
-  adrenaline = false; // Adrenaline Burst charm: hasted (Game times it)
+  hasteDelta = 0; // utani hur, Adrenaline Burst...: speed added (ConditionSpeed)
+  slowDelta = 0; // a paralysis (monster spells, Sharpshooter): speed taken, negative
+  stance: Stance | null = null; // Blood Rage, Protector, Sharpshooter (Game times it)
 
   boostLevel(id: BoostId) { return this.boosts.get(id) ?? 0; }
   /** Rate multiplier from a boost (x1 when not picked). */
   rate(id: BoostId) { return boostRate(this.boostLevel(id)); }
   get slotsUsed() { return this.imbuements.size; } // boosts are bought between runs and take no slot
-  skill(i: number) { return this.skills[i].level + this.bonus(SKILL_ATTR[i]) + this.imbued("skill", (d) => d.skill === i); }
+  skill(i: number) {
+    const v = this.skills[i].level + this.bonus(SKILL_ATTR[i]) + this.imbued("skill", (d) => d.skill === i);
+    // A stance's skill percent (Blood Rage: melee 135%, Protector: shielding 220%, Sharpshooter: distance 140%).
+    const st = this.stance, pct = !st ? 100 : i === SKILL.shielding ? st.shield ?? 100 : i === SKILL.distance ? st.dist ?? 100 : st.melee ?? 100;
+    return Math.floor((v * pct) / 100);
+  }
   get ml() { return this.magicLevel + this.bonus("magiclevelpoints") + this.imbued("magic"); }
 
   /** Sum of active imbuement values of a kind (optionally filtered). */

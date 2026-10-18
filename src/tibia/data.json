@@ -10472,7 +10472,7 @@
   {
    "name": "Eternal Winter",
    "words": "exevo gran mas frigo",
-   "group": null,
+   "group": "attack",
    "level": 60,
    "mana": 1050,
    "range": 5,
@@ -10625,7 +10625,7 @@
   {
    "name": "Great Energy Beam",
    "words": "exevo gran vis lux",
-   "group": null,
+   "group": "attack",
    "level": 29,
    "mana": 110,
    "cooldown": 6000,
@@ -10675,7 +10675,7 @@
   {
    "name": "Hell's Core",
    "words": "exevo gran mas flam",
-   "group": null,
+   "group": "attack",
    "level": 60,
    "mana": 1100,
    "cooldown": 40000,
@@ -10752,7 +10752,7 @@
   {
    "name": "Rage of the Skies",
    "words": "exevo gran mas vis",
-   "group": null,
+   "group": "attack",
    "level": 55,
    "mana": 600,
    "cooldown": 40000,
@@ -10777,7 +10777,7 @@
   {
    "name": "Strong Energy Strike",
    "words": "exori gran vis",
-   "group": null,
+   "group": "attack",
    "level": 80,
    "mana": 60,
    "range": 3,
@@ -10827,7 +10827,7 @@
   {
    "name": "Strong Flame Strike",
    "words": "exori gran flam",
-   "group": null,
+   "group": "attack",
    "level": 70,
    "mana": 60,
    "range": 3,
@@ -10852,7 +10852,7 @@
   {
    "name": "Strong Ice Strike",
    "words": "exori gran frigo",
-   "group": null,
+   "group": "attack",
    "level": 80,
    "mana": 60,
    "range": 3,
@@ -10902,7 +10902,7 @@
   {
    "name": "Strong Terra Strike",
    "words": "exori gran tera",
-   "group": null,
+   "group": "attack",
    "level": 70,
    "mana": 60,
    "range": 3,
@@ -10979,7 +10979,7 @@
   {
    "name": "Ultimate Energy Strike",
    "words": "exori max vis",
-   "group": null,
+   "group": "attack",
    "level": 100,
    "mana": 100,
    "range": 3,
@@ -11004,7 +11004,7 @@
   {
    "name": "Ultimate Flame Strike",
    "words": "exori max flam",
-   "group": null,
+   "group": "attack",
    "level": 90,
    "mana": 100,
    "range": 3,
@@ -11029,7 +11029,7 @@
   {
    "name": "Ultimate Ice Strike",
    "words": "exori max frigo",
-   "group": null,
+   "group": "attack",
    "level": 100,
    "mana": 100,
    "range": 3,
@@ -11054,7 +11054,7 @@
   {
    "name": "Ultimate Terra Strike",
    "words": "exori max tera",
-   "group": null,
+   "group": "attack",
    "level": 90,
    "mana": 100,
    "range": 3,
@@ -11104,7 +11104,7 @@
   {
    "name": "Wrath of Nature",
    "words": "exevo gran mas tera",
-   "group": null,
+   "group": "attack",
    "level": 55,
    "mana": 700,
    "cooldown": 40000,
@@ -11129,7 +11129,7 @@
   {
    "name": "Great Death Beam",
    "words": "exevo max mort",
-   "group": null,
+   "group": "attack",
    "level": 300,
    "mana": 140,
    "cooldown": 10000,
@@ -11383,6 +11383,152 @@
    "kind": "instant"
   },
   {
+   "name": "Recovery",
+   "words": "utura",
+   "group": "healing",
+   "level": 50,
+   "mana": 75,
+   "cooldown": 60000,
+   "groupCooldown": 1000,
+   "needDirection": false,
+   "needTarget": false,
+   "selfTarget": true,
+   "vocations": [
+    "elite knight",
+    "knight",
+    "paladin",
+    "royal paladin"
+   ],
+   "element": "healing",
+   "effect": 15,
+   "shoot": 0,
+   "blockArmor": false,
+   "file": "recovery",
+   "kind": "instant"
+  },
+  {
+   "name": "Intense Recovery",
+   "words": "utura gran",
+   "group": "healing",
+   "level": 100,
+   "mana": 165,
+   "cooldown": 60000,
+   "groupCooldown": 1000,
+   "needDirection": false,
+   "needTarget": false,
+   "selfTarget": true,
+   "vocations": [
+    "elite knight",
+    "knight",
+    "paladin",
+    "royal paladin"
+   ],
+   "element": "healing",
+   "effect": 15,
+   "shoot": 0,
+   "blockArmor": false,
+   "file": "intense_recovery",
+   "kind": "instant"
+  },
+  {
+   "name": "Cure Poison",
+   "words": "exana pox",
+   "group": "healing",
+   "level": 10,
+   "mana": 30,
+   "cooldown": 6000,
+   "groupCooldown": 1000,
+   "needDirection": false,
+   "needTarget": false,
+   "selfTarget": true,
+   "vocations": [
+    "druid",
+    "elder druid",
+    "elite knight",
+    "exalted monk",
+    "knight",
+    "master sorcerer",
+    "monk",
+    "paladin",
+    "royal paladin",
+    "sorcerer"
+   ],
+   "element": "healing",
+   "effect": 13,
+   "shoot": 0,
+   "blockArmor": false,
+   "file": "cure_poison",
+   "kind": "instant"
+  },
+  {
+   "name": "Cure Burning",
+   "words": "exana flam",
+   "group": "healing",
+   "level": 30,
+   "mana": 30,
+   "cooldown": 6000,
+   "groupCooldown": 1000,
+   "needDirection": false,
+   "needTarget": false,
+   "selfTarget": true,
+   "vocations": [
+    "druid",
+    "elder druid"
+   ],
+   "element": "healing",
+   "effect": 13,
+   "shoot": 0,
+   "blockArmor": false,
+   "file": "cure_burning",
+   "kind": "instant"
+  },
+  {
+   "name": "Cure Electrification",
+   "words": "exana vis",
+   "group": "healing",
+   "level": 22,
+   "mana": 30,
+   "cooldown": 6000,
+   "groupCooldown": 1000,
+   "needDirection": false,
+   "needTarget": false,
+   "selfTarget": true,
+   "vocations": [
+    "druid",
+    "elder druid"
+   ],
+   "element": "healing",
+   "effect": 13,
+   "shoot": 0,
+   "blockArmor": false,
+   "file": "cure_electrification",
+   "kind": "instant"
+  },
+  {
+   "name": "Cure Bleeding",
+   "words": "exana kor",
+   "group": "healing",
+   "level": 45,
+   "mana": 30,
+   "cooldown": 6000,
+   "groupCooldown": 1000,
+   "needDirection": false,
+   "needTarget": false,
+   "selfTarget": true,
+   "vocations": [
+    "druid",
+    "elder druid",
+    "elite knight",
+    "knight"
+   ],
+   "element": "healing",
+   "effect": 13,
+   "shoot": 0,
+   "blockArmor": false,
+   "file": "cure_bleeding",
+   "kind": "instant"
+  },
+  {
    "name": "Magic Shield",
    "words": "utamo vita",
    "group": "support",
@@ -11404,6 +11550,150 @@
    "shoot": 0,
    "blockArmor": false,
    "file": "magic_shield",
+   "kind": "instant"
+  },
+  {
+   "name": "Haste",
+   "words": "utani hur",
+   "group": "support",
+   "level": 14,
+   "mana": 60,
+   "cooldown": 2000,
+   "groupCooldown": 2000,
+   "needDirection": false,
+   "needTarget": false,
+   "selfTarget": true,
+   "vocations": [
+    "druid",
+    "elder druid",
+    "elite knight",
+    "exalted monk",
+    "knight",
+    "master sorcerer",
+    "monk",
+    "paladin",
+    "royal paladin",
+    "sorcerer"
+   ],
+   "element": "physical",
+   "effect": 15,
+   "shoot": 0,
+   "blockArmor": false,
+   "file": "haste",
+   "kind": "instant"
+  },
+  {
+   "name": "Strong Haste",
+   "words": "utani gran hur",
+   "group": "support",
+   "level": 20,
+   "mana": 100,
+   "cooldown": 2000,
+   "groupCooldown": 2000,
+   "needDirection": false,
+   "needTarget": false,
+   "selfTarget": true,
+   "vocations": [
+    "druid",
+    "elder druid",
+    "exalted monk",
+    "master sorcerer",
+    "monk",
+    "sorcerer"
+   ],
+   "element": "physical",
+   "effect": 15,
+   "shoot": 0,
+   "blockArmor": false,
+   "file": "strong_haste",
+   "kind": "instant"
+  },
+  {
+   "name": "Charge",
+   "words": "utani tempo hur",
+   "group": "support",
+   "level": 25,
+   "mana": 100,
+   "cooldown": 2000,
+   "groupCooldown": 2000,
+   "needDirection": false,
+   "needTarget": false,
+   "selfTarget": true,
+   "vocations": [
+    "elite knight",
+    "knight"
+   ],
+   "element": "physical",
+   "effect": 15,
+   "shoot": 0,
+   "blockArmor": false,
+   "file": "charge",
+   "kind": "instant"
+  },
+  {
+   "name": "Blood Rage",
+   "words": "utito tempo",
+   "group": "support",
+   "level": 60,
+   "mana": 290,
+   "cooldown": 2000,
+   "groupCooldown": 2000,
+   "needDirection": false,
+   "needTarget": false,
+   "selfTarget": true,
+   "vocations": [
+    "elite knight",
+    "knight"
+   ],
+   "element": "physical",
+   "effect": 15,
+   "shoot": 0,
+   "blockArmor": false,
+   "file": "blood_rage",
+   "kind": "instant"
+  },
+  {
+   "name": "Protector",
+   "words": "utamo tempo",
+   "group": "support",
+   "level": 55,
+   "mana": 200,
+   "cooldown": 2000,
+   "groupCooldown": 2000,
+   "needDirection": false,
+   "needTarget": false,
+   "selfTarget": true,
+   "vocations": [
+    "elite knight",
+    "knight"
+   ],
+   "element": "physical",
+   "effect": 15,
+   "shoot": 0,
+   "blockArmor": false,
+   "file": "protector",
+   "kind": "instant"
+  },
+  {
+   "name": "Sharpshooter",
+   "words": "utito tempo san",
+   "group": "support",
+   "level": 60,
+   "mana": 450,
+   "cooldown": 10000,
+   "groupCooldown": 2000,
+   "needDirection": false,
+   "needTarget": false,
+   "selfTarget": true,
+   "vocations": [
+    "paladin",
+    "royal paladin"
+   ],
+   "element": "physical",
+   "effect": 15,
+   "shoot": 0,
+   "blockArmor": false,
+   "file": "sharpshooter",
    "kind": "instant"
   },
   {
@@ -11785,26 +12075,169 @@
   }
  ],
  "areas": {
-  "AREA_WAVE6": [
+  "AREA_BEAM5": [
+   [
+    1
+   ],
+   [
+    1
+   ],
+   [
+    1
+   ],
+   [
+    1
+   ],
+   [
+    3
+   ]
+  ],
+  "AREA_WAVE4": [
+   [
+    1,
+    1,
+    1,
+    1,
+    1
+   ],
+   [
+    0,
+    1,
+    1,
+    1,
+    0
+   ],
+   [
+    0,
+    1,
+    1,
+    1,
+    0
+   ],
    [
     0,
     0,
+    3,
     0,
+    0
+   ]
+  ],
+  "AREA_CIRCLE1X1": [
+   [
+    0,
+    1,
+    0
+   ],
+   [
+    1,
+    3,
+    1
+   ],
+   [
+    0,
+    1,
+    0
+   ]
+  ],
+  "AREA_BEAM6": [
+   [
+    1
+   ],
+   [
+    1
+   ],
+   [
+    1
+   ],
+   [
+    1
+   ],
+   [
+    1
+   ],
+   [
+    3
+   ]
+  ],
+  "AREA_CIRCLE3X3": [
+   [
+    0,
+    0,
+    1,
+    1,
+    1,
     0,
     0
    ],
    [
     0,
+    1,
+    1,
+    1,
+    1,
+    1,
+    0
+   ],
+   [
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1
+   ],
+   [
+    1,
+    1,
     1,
     3,
     1,
+    1,
+    1
+   ],
+   [
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1
+   ],
+   [
+    0,
+    1,
+    1,
+    1,
+    1,
+    1,
     0
    ],
    [
     0,
     0,
+    1,
+    1,
+    1,
     0,
+    0
+   ]
+  ],
+  "AREA_SHORTWAVE3": [
+   [
+    1,
+    1,
+    1
+   ],
+   [
+    1,
+    1,
+    1
+   ],
+   [
     0,
+    3,
     0
    ]
   ],
@@ -11951,6 +12384,72 @@
     0,
     0,
     0
+   ]
+  ],
+  "AREA_WAVE6": [
+   [
+    0,
+    0,
+    0,
+    0,
+    0
+   ],
+   [
+    0,
+    1,
+    3,
+    1,
+    0
+   ],
+   [
+    0,
+    0,
+    0,
+    0,
+    0
+   ]
+  ],
+  "AREA_SQUARE1X1": [
+   [
+    1,
+    1,
+    1
+   ],
+   [
+    1,
+    3,
+    1
+   ],
+   [
+    1,
+    1,
+    1
+   ]
+  ],
+  "AREA_BEAM8": [
+   [
+    1
+   ],
+   [
+    1
+   ],
+   [
+    1
+   ],
+   [
+    1
+   ],
+   [
+    1
+   ],
+   [
+    1
+   ],
+   [
+    1
+   ],
+   [
+    3
    ]
   ],
   "AREA_CIRCLE6X6": [
@@ -12175,215 +12674,6 @@
     0,
     3,
     0
-   ]
-  ],
-  "AREA_BEAM5": [
-   [
-    1
-   ],
-   [
-    1
-   ],
-   [
-    1
-   ],
-   [
-    1
-   ],
-   [
-    3
-   ]
-  ],
-  "AREA_CIRCLE1X1": [
-   [
-    0,
-    1,
-    0
-   ],
-   [
-    1,
-    3,
-    1
-   ],
-   [
-    0,
-    1,
-    0
-   ]
-  ],
-  "AREA_WAVE4": [
-   [
-    1,
-    1,
-    1,
-    1,
-    1
-   ],
-   [
-    0,
-    1,
-    1,
-    1,
-    0
-   ],
-   [
-    0,
-    1,
-    1,
-    1,
-    0
-   ],
-   [
-    0,
-    0,
-    3,
-    0,
-    0
-   ]
-  ],
-  "AREA_SHORTWAVE3": [
-   [
-    1,
-    1,
-    1
-   ],
-   [
-    1,
-    1,
-    1
-   ],
-   [
-    0,
-    3,
-    0
-   ]
-  ],
-  "AREA_SQUARE1X1": [
-   [
-    1,
-    1,
-    1
-   ],
-   [
-    1,
-    3,
-    1
-   ],
-   [
-    1,
-    1,
-    1
-   ]
-  ],
-  "AREA_CIRCLE3X3": [
-   [
-    0,
-    0,
-    1,
-    1,
-    1,
-    0,
-    0
-   ],
-   [
-    0,
-    1,
-    1,
-    1,
-    1,
-    1,
-    0
-   ],
-   [
-    1,
-    1,
-    1,
-    1,
-    1,
-    1,
-    1
-   ],
-   [
-    1,
-    1,
-    1,
-    3,
-    1,
-    1,
-    1
-   ],
-   [
-    1,
-    1,
-    1,
-    1,
-    1,
-    1,
-    1
-   ],
-   [
-    0,
-    1,
-    1,
-    1,
-    1,
-    1,
-    0
-   ],
-   [
-    0,
-    0,
-    1,
-    1,
-    1,
-    0,
-    0
-   ]
-  ],
-  "AREA_BEAM8": [
-   [
-    1
-   ],
-   [
-    1
-   ],
-   [
-    1
-   ],
-   [
-    1
-   ],
-   [
-    1
-   ],
-   [
-    1
-   ],
-   [
-    1
-   ],
-   [
-    3
-   ]
-  ],
-  "AREA_BEAM6": [
-   [
-    1
-   ],
-   [
-    1
-   ],
-   [
-    1
-   ],
-   [
-    1
-   ],
-   [
-    1
-   ],
-   [
-    3
    ]
   ]
  },
@@ -20091,6 +20381,13 @@
     "damage": 5.0,
     "critDamage": 8.0
    }
+  },
+  "Sharpshooter": {
+   "wheel": [
+    {
+     "cooldown": 6
+    }
+   ]
   },
   "Strong Ethereal Spear": {
    "wheel": [

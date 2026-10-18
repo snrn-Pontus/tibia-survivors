@@ -2,12 +2,13 @@ import { Character } from "./character";
 import { achievement, mitigationOf, BESTIARY_STAGES, BOSS_KILLS, SOUL_EVERY, SOULS_PER_ZONE, soulsFor, spawnEvery, VOCATION_LEVEL, zoneAt, ZONES, type VocationDef } from "./data";
 import { advance, DIAGONAL_COST, isStepping, newWalker, startStep, stepDuration, TILE, tileCenter, type Walker } from "./movement";
 import { areaOffsets, canWear, FIELDS, item, MONSTERS, POTIONS, PRICES, radiusRows, SPELLS, spellArea, spellFormula, waveRows, type Element, type MonsterAttack, type MonsterData, type Offsets, type SpellData } from "./tibia/db";
-import { blockHit, damageList, distanceDamage, expForLevel, distanceHitChance, FIGHT_MODES, meleeDamage, mitigation, normalRandom, playerDefense, SKILL, uniform, type FightMode } from "./tibia/rules";
+import { blockHit, damageList, distanceDamage, expForLevel, speedChange, distanceHitChance, FIGHT_MODES, meleeDamage, mitigation, normalRandom, playerDefense, SKILL, uniform, type FightMode } from "./tibia/rules";
 import { imbuement } from "./tibia/imbuements";
 import { charm, CHARM_TIERS, describePrey, type GradeBonus } from "./picks";
 import { boost, MAX_PENDING } from "./upgrades";
 import { EVOLUTIONS, type EvolutionId } from "./evolutions";
 import type { LevelChoice } from "./character";
+import { SUPPORT, type Support } from "./support";
 import { imbuement as imbuementDef, TIERS } from "./tibia/imbuements";
 import type { World } from "./world";
 
@@ -71,6 +72,8 @@ const DIAG: [number, number][] = [[1, -1], [1, 1], [-1, 1], [-1, -1]];
 const FLOW_R = 22;
 const PLAYER_DIAGONAL_COST = Math.SQRT2; // a diagonal step for you (see updatePlayer)
 const FLEE_STOP = 7;
+
+
 /** The charms' hit effects by element (bestiary_charms.lua). */
 const CHARM_EFFECT: Partial<Record<Element, number>> = { physical: 10, fire: 16, earth: 9, ice: 44, energy: 12, death: 39, holy: 40 };
 const cap = (s: string) => s[0].toUpperCase() + s.slice(1); // tiles: how far a fleeing monster runs (the game view is 15 x 11)
@@ -90,9 +93,11 @@ export class Game {
   private nextSkillPick = 0;
   chase = true; // Tibia fight mode: chase opponent (C toggles "stand while fighting")
   targeting: Targeting = "closest"; // which creature auto-targeting picks (T toggles)
-  conditions = new Map<Element, DamageCondition>();
-  paralyzedUntil = 0;
-  adrenalineUntil = 0; // Adrenaline Burst charm: hasted until then // a monster's paralyze spell on you (Character.paralyze is how strong) // poison, fire, energy... ticking on you, by damage type
+  conditions = new Map<Element, DamageCondition>(); // poison, fire, energy... ticking on you, by damage type
+  paralyzedUntil = 0; // a paralysis on you (Character.slowDelta is how strong)
+  hasteUntil = 0; // a haste on you (Character.hasteDelta)
+  stanceUntil = 0; // Blood Rage / Protector / Sharpshooter (Character.stance)
+  recovery: { hp: number; every: number; next: number; until: number } | null = null; // Recovery / Intense Recovery
   fightMode: FightMode = "offensive"; // offensive / balanced / defensive: Tibia's attack and defense factors
   lastAttack = -99; // full attack only drops your defense right after you swing
   logCount = 0;
@@ -215,8 +220,7 @@ export class Game {
     this.updateMonsters(dt);
     this.updateConditions();
     this.updateFields();
-    if (this.ch.paralyze && this.time >= this.paralyzedUntil) this.ch.paralyze = 0;
-    if (this.ch.adrenaline && this.time >= this.adrenalineUntil) this.ch.adrenaline = false;
+    this.updateBuffs();
     this.updateRegen(dt);
     if (this.time - this.lastKill < SOUL_EVERY) this.soulClock += dt; // only while you're killing things
     if (this.soulClock >= SOUL_EVERY) { this.soulClock -= SOUL_EVERY; this.souls++; }
@@ -631,10 +635,11 @@ export class Game {
       const hits = !tiles || tiles.some(([ox, oy]) => cx + ox === p.tx && cy + oy === p.ty);
       if (!tiles) this.addEffect(a.effect ?? 0, p.x, p.y);
       else for (const [ox, oy] of tiles) this.addEffect(a.effect ?? 0, tileCenter(cx + ox), tileCenter(cy + oy));
-      if (hits && (this.time >= this.paralyzedUntil || a.speedChange! <= this.ch.paralyze)) {
-        this.ch.paralyze = a.speedChange!;
-        this.paralyzedUntil = this.time + (a.duration ?? 10000) / 1000;
-        this.msg(`You are paralyzed by ${article(m.data.name)}.`, "#ff9c30", "combat");
+      if (hits) {
+        // Monsters::deserializeSpell: setFormulaVars(m / 2, 40, m, 40) with m = 1 + speedChange / 1000.
+        const k = 1 + a.speedChange! / 1000;
+        if (this.paralyze(speedChange(this.ch.baseSpeed, k / 2, 40, k, 40, true), (a.duration ?? 10000) / 1000))
+          this.msg(`You are paralyzed by ${article(m.data.name)}.`, "#ff9c30", "combat");
       }
       return;
     }
@@ -672,6 +677,72 @@ export class Game {
     this.events.unshift({ type: "vocation" });
     this.events.push({ type: "levelup" });
     this.msg("You arrive on Dawnport, ready to choose a vocation.", "#ffd34d");
+  }
+
+  // ---------- support spells, hastes and paralysis ----------
+
+  /** A haste on you: replaces a weaker one and cures a paralysis (they cancel in Tibia). */
+  haste(delta: number, seconds: number) {
+    const ch = this.ch;
+    if (this.time < this.hasteUntil && ch.hasteDelta > delta) return;
+    ch.hasteDelta = delta;
+    this.hasteUntil = this.time + seconds;
+    ch.slowDelta = 0;
+    this.paralyzedUntil = 0;
+  }
+
+  /** A paralysis on you: replaces a weaker one and ends a haste. Returns false if a stronger one holds. */
+  paralyze(delta: number, seconds: number): boolean {
+    const ch = this.ch;
+    if (this.time < this.paralyzedUntil && ch.slowDelta < delta) return false;
+    ch.slowDelta = delta;
+    this.paralyzedUntil = this.time + seconds;
+    ch.hasteDelta = 0;
+    this.hasteUntil = 0;
+    return true;
+  }
+
+  /** Hastes, paralysis, stances and Recovery wearing off; Recovery's ticks. */
+  private updateBuffs() {
+    const ch = this.ch;
+    if (ch.slowDelta && this.time >= this.paralyzedUntil) ch.slowDelta = 0;
+    if (ch.hasteDelta && this.time >= this.hasteUntil) ch.hasteDelta = 0;
+    if (ch.stance && this.time >= this.stanceUntil) ch.stance = null;
+    const r = this.recovery;
+    if (r) {
+      while (this.time >= r.next && r.next <= r.until) {
+        r.next += r.every;
+        const healed = Math.min(r.hp, ch.maxHp - ch.hp);
+        ch.hp += healed;
+        if (healed > 0) this.addText(this.player.x, this.player.y - 44, String(healed), ELEMENT_COLORS.healing);
+      }
+      if (this.time > r.until) this.recovery = null;
+    }
+  }
+
+  /** Cast a support spell (SUPPORT has its Canary values). */
+  private support(s: SpellData, sup: Support) {
+    const ch = this.ch, p = this.player;
+    this.addEffect(s.effect || 15, p.x, p.y);
+    switch (sup.kind) {
+      case "haste":
+        this.haste(speedChange(ch.baseSpeed, sup.a, sup.b, sup.a, sup.b), sup.seconds);
+        break;
+      case "stance":
+        // Blood Rage and Protector share a slot (AttrSubId_BloodRageProtector): the new one replaces the old.
+        ch.stance = { name: s.name, ...sup.stance };
+        this.stanceUntil = this.time + sup.seconds;
+        if (sup.slow) this.paralyze(speedChange(ch.baseSpeed, sup.slow[0], sup.slow[1], sup.slow[0], sup.slow[1], true), sup.seconds);
+        if (sup.healLock) this.groupReady.healing = Math.max(this.groupReady.healing, this.time + sup.seconds);
+        break;
+      case "regen":
+        this.recovery = { hp: sup.hp, every: sup.every, next: this.time + sup.every, until: this.time + sup.seconds };
+        break;
+      case "cure":
+        if (sup.element === "paralyze") { ch.slowDelta = 0; this.paralyzedUntil = 0; }
+        else this.conditions.delete(sup.element);
+        break;
+    }
   }
 
   // ---------- magic fields ----------
@@ -747,8 +818,8 @@ export class Game {
       this.msg("You dodged an attack. (dodge charm)", "#c9a0ff", "combat");
       return 0;
     }
-    // Prey: less damage from the creature you prey on.
-    dmg = Math.round(dmg * (1 - ch.preyBonus(m.key, "defense") / 100));
+    // Prey: less damage from the creature you prey on; a stance's damage received.
+    dmg = Math.round(dmg * (1 - ch.preyBonus(m.key, "defense") / 100) * (ch.stance?.received ?? 100) / 100);
     if (el === "manadrain") {
       if (proc("Void Inversion")) {
         ch.mana = Math.min(ch.maxMana, ch.mana + dmg);
@@ -768,7 +839,8 @@ export class Game {
     if (el === "physical") {
       const hasBlock = this.blockCount > 0;
       if (hasBlock) this.blockCount--;
-      const defValue = sh ? (sh.defense ?? 0) + (w?.extradef ?? 0) : (w?.defense ?? 0) + (w?.extradef ?? 0);
+      // Blood Rage and Sharpshooter switch your shield defense off (CONDITION_PARAM_DISABLE_DEFENSE).
+      const defValue = ch.stance?.noDefense ? 0 : sh ? (sh.defense ?? 0) + (w?.extradef ?? 0) : (w?.defense ?? 0) + (w?.extradef ?? 0);
       const defSkill = sh ? ch.skill(SKILL.shielding) : ch.skill(ch.weaponSkill);
       dmg = blockHit(dmg, playerDefense(defSkill, defValue, !!sh, ch.vd, this.defenseFactor()), ch.armor, melee && hasBlock, true);
       // Shielding trains when you defend with a shield (or a spellbook).
@@ -789,13 +861,10 @@ export class Game {
       this.msg(`You parried an attack. (parry charm)`, "#c9a0ff", "combat");
     }
     if (proc("Numb")) m.rootedUntil = this.time + 10;
-    if (proc("Adrenaline Burst")) {
-      ch.adrenaline = true;
-      this.adrenalineUntil = this.time + 10;
-    }
+    if (proc("Adrenaline Burst")) this.haste(speedChange(ch.baseSpeed, 2.5, 40, 2.5, 40), 10); // IOBestiary: (2.5, 40) for 10 s
     if (proc("Cleanse")) {
       const bad = [...this.conditions.keys()];
-      if (ch.paralyze) { ch.paralyze = 0; this.paralyzedUntil = 0; }
+      if (ch.slowDelta) { ch.slowDelta = 0; this.paralyzedUntil = 0; }
       else if (bad.length) this.conditions.delete(bad[Math.floor(Math.random() * bad.length)]);
     }
     return dmg;
@@ -854,8 +923,8 @@ export class Game {
   damageMonster(m: Monster, dmg: number, el: Element, useArmor: boolean, from: { spell?: GradeBonus; charm?: boolean } = {}): number {
     if (m.dead) return 0;
     const ch = this.ch;
-    // Prey: more damage to the creature you prey on.
-    dmg = Math.round(dmg * (1 + ch.preyBonus(m.key, "damage") / 100));
+    // Prey: more damage to the creature you prey on; a stance's damage dealt (Protector: 65%).
+    dmg = Math.round(dmg * (1 + ch.preyBonus(m.key, "damage") / 100) * (from.charm ? 100 : ch.stance?.dealt ?? 100) / 100);
     // Critical hits: a Strike imbuement makes your attacks critical-capable (10%); Low Blow adds chance,
     // Savage Blow and spell grades add damage. Charm damage itself never crits.
     const crit = ch.imbued("crit");
@@ -1204,6 +1273,11 @@ export class Game {
     this.groupReady[group] = this.time + (s.groupCooldown ?? 2000) / 1000;
     if (s.words) this.addText(p.x, p.y - 62, s.words, "#f0e060");
 
+    const sup = SUPPORT[s.file];
+    if (sup) {
+      this.support(s, sup);
+      return;
+    }
     if (s.file === "magic_shield") {
       // Canary: 300 + 7.6 * level + 7 * magic level, at most max mana, for 180 s.
       this.manaShield = this.manaShieldMax = Math.floor(Math.min(ch.maxMana, 300 + 7.6 * ch.level + 7 * ch.ml));
