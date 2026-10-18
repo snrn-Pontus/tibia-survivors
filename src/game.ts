@@ -1,5 +1,5 @@
 import { Character } from "./character";
-import { achievement, BESTIARY_STAGES, BOSS_KILLS, SOUL_EVERY, SOULS_PER_ZONE, soulsFor, spawnEvery, VOCATION_LEVEL, zoneAt, ZONES, type VocationDef } from "./data";
+import { achievement, mitigationOf, BESTIARY_STAGES, BOSS_KILLS, SOUL_EVERY, SOULS_PER_ZONE, soulsFor, spawnEvery, VOCATION_LEVEL, zoneAt, ZONES, type VocationDef } from "./data";
 import { advance, DIAGONAL_COST, isStepping, newWalker, startStep, stepDuration, TILE, tileCenter, type Walker } from "./movement";
 import { areaOffsets, canWear, FIELDS, item, MONSTERS, POTIONS, PRICES, radiusRows, SPELLS, spellArea, spellFormula, waveRows, type Element, type MonsterAttack, type MonsterData, type Offsets, type SpellData } from "./tibia/db";
 import { blockHit, damageList, distanceDamage, expForLevel, distanceHitChance, FIGHT_MODES, meleeDamage, mitigation, normalRandom, playerDefense, SKILL, uniform, type FightMode } from "./tibia/rules";
@@ -23,6 +23,7 @@ export interface Monster extends Walker {
   dead: boolean;
   boss: boolean;
   master?: number; // summoned by this monster: no experience, no corpse, and it dies with its master
+  dot?: DamageCondition & { element: Element }; // a field burning it
   summonTimers: number[]; // per monster.summon entry: seconds until its next roll
 }
 /** A magic field on the ground (a fire, poison or energy field item), until it decays. */
@@ -126,6 +127,7 @@ export class Game {
   killTotals: Record<string, number> = {}; // kills per creature over all runs (from the save), for achievements
   discovered = new Set<number>(); // zones you've made a kill in, ever (from the save): each pays souls once
   private soulClock = 0;
+  private lastKill = -999; // time of your last kill (survival souls need one in the last SOUL_EVERY seconds)
   private zoneBossesDone: number[] = [];
   private occupied = new Map<number, Monster>();
   private flow = new Int32Array(FLOW_W * FLOW_W);
@@ -207,7 +209,7 @@ export class Game {
     this.updateFields();
     if (this.ch.paralyze && this.time >= this.paralyzedUntil) this.ch.paralyze = 0;
     this.updateRegen(dt);
-    this.soulClock += dt;
+    if (this.time - this.lastKill < SOUL_EVERY) this.soulClock += dt; // only while you're killing things
     if (this.soulClock >= SOUL_EVERY) { this.soulClock -= SOUL_EVERY; this.souls++; }
     this.updateCorpses();
 
@@ -252,6 +254,7 @@ export class Game {
       // Tibia's "chase opponent" fight mode: walk to the target until it's in weapon range.
       const t = this.monsters.find((m) => m.id === this.targetId && !m.dead);
       if (!t || cheb(t.tx, t.ty, p.tx, p.ty) <= this.ch.attackRange) return;
+      if (t.hp < t.data.runHealth && this.monsters.some((o) => o !== t && !o.dead && cheb(o.tx, o.ty, p.tx, p.ty) <= 1)) return;
       const step = this.pathStep(t.tx, t.ty);
       if (!step) return;
       [sx, sy] = step;
@@ -478,6 +481,15 @@ export class Game {
     const ms = stepDuration(m.data.speed) * (dx && dy ? DIAGONAL_COST : 1);
     startStep(m, dx, dy, ms / 1000);
     this.occupied.set(key(m.tx, m.ty), m);
+    this.monsterIntoField(m);
+  }
+
+  /** A monster in a field it isn't immune to burns like you would (its first tick at once). */
+  private monsterIntoField(m: Monster) {
+    const f = this.fields.get(key(m.tx, m.ty));
+    if (!f || !this.fieldHurts(m.tx, m.ty, m)) return;
+    const fd = FIELDS[f.id];
+    m.dot = { element: fd.element, ticks: [...fd.ticks], every: fd.every / 1000, next: this.time };
   }
 
   private updateMonsters(dt: number) {
@@ -493,6 +505,11 @@ export class Game {
         this.addEffect(3, m.x, m.y);
         continue;
       }
+      while (m.dot && m.dot.ticks.length && this.time >= m.dot.next) {
+        m.dot.next += m.dot.every;
+        this.damageMonster(m, m.dot.ticks.shift()!, m.dot.element, false);
+      }
+      if (m.dead) continue;
       this.monsterAttacks(m, dt, d);
       this.monsterSummons(m, dt, d);
       if (m.dead || advance(m, dt) < 0) continue;
@@ -648,8 +665,10 @@ export class Game {
 
   private placeField(tx: number, ty: number, id: number) {
     this.fields.set(key(tx, ty), { tx, ty, id, until: this.time + FIELDS[id].duration });
-    // Landing on you counts as stepping in.
+    // Landing on you (or a monster) counts as stepping in.
     if (tx === this.player.tx && ty === this.player.ty) this.stepIntoField(tx, ty);
+    const m = this.monsterAt(tx, ty);
+    if (m) this.monsterIntoField(m);
   }
 
   /** Would this tile's field hurt you (or monster m)? Spent fire fields and immune monsters are safe. */
@@ -801,7 +820,7 @@ export class Game {
     if (useArmor) dmg = blockHit(dmg, 0, m.data.armor, false, true);
     const pct = m.data.elements[el] ?? 0;
     dmg = Math.round((dmg * (100 - pct)) / 100);
-    if (el !== "lifedrain" && el !== "manadrain") dmg = Math.round(dmg * (1 - (m.data.mitigation ?? 0) / 100));
+    if (el !== "lifedrain" && el !== "manadrain") dmg = Math.round(dmg * (1 - mitigationOf(m.key) / 100));
     if (dmg <= 0) {
       this.addEffect(pct >= 100 ? 4 : 3, m.x, m.y);
       return;
@@ -836,6 +855,7 @@ export class Game {
       return;
     }
     this.kills++;
+    this.lastKill = this.time;
     // Souls for the meta progression, and kill counts per zone for its bosses.
     const soul = soulsFor(m.data.experience, m.boss);
     this.souls += soul;
@@ -1214,5 +1234,6 @@ export function describeChoice(ch: Character, c: LevelChoice): string {
     case "imbue": return `${TIERS[(ch.imbuements.get(c.id) ?? 1) - 1]} ${imbuementDef(c.id).name}`;
     case "train": return c.skill === "magic" ? "+1 magic level" : "+1 skill";
     case "supply": return `${c.n} ${item(c.id)!.name}s`;
+    case "gold": return `${c.n} gold`;
   }
 }

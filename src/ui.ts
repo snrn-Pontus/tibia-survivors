@@ -4,7 +4,7 @@ import type { LevelChoice } from "./character";
 import type { Game } from "./game";
 import { imbuement, TIERS } from "./tibia/imbuements";
 import { boost, BOOSTS, MAX_BOOST, MAX_SLOTS } from "./upgrades";
-import { BLESSING_COST, boostCost, buyBlessing, buyBoost, buyTier, loadSave, tier, trackTier, TRACKS, type Save } from "./meta";
+import { BLESSING_COST, boostCost, buyBlessing, buyBoost, buyTier, loadSave, tier, trackTier, TRACKS, writeSave, type Save } from "./meta";
 import { EVOLUTIONS, evolution, evolutionsFor } from "./evolutions";
 import type { ChestResult } from "./game";
 import { canWear, item, itemId, MONSTERS, POTIONS, PRICES, SPELLS, wornItem, type ItemData, type SpellData } from "./tibia/db";
@@ -45,7 +45,11 @@ export class UI {
     this.buttons.forEach((b, j) => b.classList.toggle("focus", j === this.focus));
   }
 
-  nav(d: number) { if (this.open) this.setFocus(this.focus + d); }
+  nav(d: number) {
+    if (!this.open) return;
+    this.setFocus(this.focus + d);
+    this.buttons[this.focus]?.scrollIntoView({ block: "nearest" });
+  }
   activate() { if (this.open) this.buttons[this.focus]?.click(); }
   pick(i: number) { if (this.open && i < this.buttons.length) this.buttons[i].click(); }
 
@@ -98,10 +102,14 @@ export class UI {
     });
     boosts.push({ icon: 3061, label: `Blessing (${save.blessings}/5)`, sub: "Survive one death in your next run.",
       cost: save.blessings >= 5 ? null : BLESSING_COST, buy: () => buyBlessing(save) });
+    // A one-time notice after the starting-gear refund (meta.ts migrate).
+    const refunded = save.refunded ?? 0;
+    if (refunded) { save.refunded = 0; writeSave(save); }
     const best = save.best ? ` · best: ${ZONES[save.best.zone].name}, level ${save.best.level}` : "";
     const el = this.screen("title prepare", `
       <h1>Tibia <span>Survivors</span></h1>
       <p class="sub"><span class="souls">${save.souls.toLocaleString("en-US")} souls</span>${save.runs ? ` · ${save.runs} run${save.runs === 1 ? "" : "s"}` : ""}${best}</p>
+      ${refunded ? `<p class="refund">Starting gear is now what Rookgaard's NPCs sell: the <span class="souls">${refunded.toLocaleString("en-US")} souls</span> you spent on the old gear are back.</p>` : ""}
       <div class="cards"><button class="card voc start"><canvas width="192" height="168"></canvas>
         <b>Enter Rookgaard</b><small>Real Tibia: level 1, ${trackTier(save, TRACKS[0]).label} in hand. Choose a vocation at level 8.
         Walk further out for harder zones. Every kill earns souls, kept when you die.</small></button></div>
@@ -124,7 +132,7 @@ export class UI {
   chooseVocation(onPick: (v: VocationDef) => void) {
     const el = this.screen("title", `
       <h2>You have reached level 8!</h2>
-      <p class="sub">Choose your vocation. Your level, skills, gold and upgrades carry over; you get the vocation's gear and spells.</p>
+      <p class="sub">Choose your vocation. Your level, skills, gear, gold and upgrades carry over; you get its spells, and its weapon if you don't hold one of its kind.</p>
       <div class="cards">${VOCATIONS.map((v, i) => `
         <button class="card voc"><canvas width="192" height="168"></canvas>
           <b>${i + 1}. ${v.name}</b><small>${v.blurb}</small></button>`).join("")}
@@ -151,6 +159,10 @@ export class UI {
         return `<button class="card choice"><div class="ico"></div>
           <b>${i + 1}. Exercise ${weapon}</b><em>Training session</em><small>+1 ${name}.</small></button>`;
       }
+      if (c.kind === "gold") {
+        return `<button class="card choice"><div class="ico"></div>
+          <b>${i + 1}. ${c.n.toLocaleString("en-US")} gold</b><em>Gold pouch</em><small>For the shop: supplies, runes and gear.</small></button>`;
+      }
       if (c.kind === "supply") {
         return `<button class="card choice"><div class="ico"></div>
           <b>${i + 1}. ${c.n} ${item(c.id)!.name}s</b><em>Supplies</em><small>A backpack of potions.</small></button>`;
@@ -175,6 +187,7 @@ export class UI {
     el.querySelectorAll(".ico").forEach((c, i) => {
       const ch = choices[i];
       if (ch.kind === "supply") { c.appendChild(this.icon(ch.id, 2)); return; }
+      if (ch.kind === "gold") { c.appendChild(this.icon(3035, 2)); return; }
       if (ch.kind === "boost") { c.appendChild(this.icon(boost(ch.id)!.icon, 2)); return; }
       if (ch.kind === "train") {
         const w = g.ch.weapon;

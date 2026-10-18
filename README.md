@@ -46,7 +46,9 @@ If Tibia is somewhere else: `python tools/extract.py "D:\path\to\Tibia\packages\
   without a vocation requirement, as in Tibia (a paladin with spears and a shield); your vocation's own kind
   of weapon is listed first and is what it equips by itself.
 - **Inside a run, everything is real Tibia** (x1 rates). Every run starts in Rookgaard at level 1 with a club and a
-  coat and no gold; at level 8 you choose a vocation (level, skills and gear carry over).
+  coat and no gold; at level 8 you choose a vocation. Level, skills and everything you wear carry over; you
+  only get the vocation's weapon from Canary's kit (`send_first_items.lua`), and only if you don't hold one of
+  its kind (a sorcerer's wand, a paladin's spears, a knight's axe).
 - **The world is zones**, rings around where you start (Rookgaard Fields, Troll Woods, Orc Fortress, Cyclopolis,
   Dragon Lairs, ... Pits of Inferno). It doesn't follow your level: walk further out for tougher monsters.
   Each zone's real Tibia bosses appear after you've killed enough there, and drop treasure chests.
@@ -54,17 +56,18 @@ If Tibia is somewhere else: `python tools/extract.py "D:\path\to\Tibia\packages\
 - **Souls** (the meta currency, like Project Ebonhold's Soul Ashes) come from kills (a tenth of the experience,
   a fifth for bosses), from your first kill ever in each zone of a creature that lives there (once per
   account, 10 x the zone number + 1), from **achievements** (killing 10, 100 and 1,000 of a creature over all
-  your runs, or 1, 5 and 25 of a boss; listed on the title screen) and from surviving. They are all kept when you die and spent
-  between runs on permanent unlocks: better **starting gear** (real items, tier by tier), starting gold and
-  potions, rerolls for level-up choices, blessings, and the rate **boosts** (XP, Loot, Gold, Haste, skill
-  training: x3, x6, x10 ... x256 per level).
+  your runs, or 1, 5 and 25 of a boss; listed on the title screen) and from surviving while you fight (one
+  every 30 s with a kill in them). They are all kept when you die and spent between runs on permanent unlocks:
+  **starting gear** (what Rookgaard's NPCs sell: rapier, sabre, spears, wooden and studded shields, leather
+  armor, helmets and legs), starting gold and potions, rerolls for level-up choices, blessings, and the rate
+  **boosts** (XP, Loot, Gold, Haste, skill training: x2, x3, x5 ... x50 per level).
 - **Rookgaard unlocks** make levels 1-8 faster and stop working when you choose a vocation, so the mainland
   stays as it is: Rookgaard experience and training (x5 to x50; training keeps your skills at 8 where a slower
   run would have them), Rookgaard regeneration (x5 to x20), and Dawnport (start at level 8, once you've reached 8).
 - New spells are learned when you reach their level. Auto-combat casts the best attack spell or rune, heals with
   spells or healing runes, and keeps a fleeing target (fleeing monsters run to the edge of the screen and stop).
   Unlooted corpses show their best item floating above them.
-- In-run level-ups offer imbuements (6 slots), exercise weapons and potions; killing 5, 25 and
+- In-run level-ups offer imbuements (6 slots), exercise weapons, potions and gold; killing 5, 25 and
   100 of a creature (bestiary stages) and skill advances give choices too. Evolutions come from boss chests.
 - Monsters leave their real corpse with the loot inside; walk onto or next to it to loot. Bodies rot
   after a minute. The view shows 15 x 11 tiles, like the Tibia client.
@@ -74,7 +77,7 @@ If Tibia is somewhere else: `python tools/extract.py "D:\path\to\Tibia\packages\
 | | Source |
 |---|---|
 | Movement | step time from speed (`110 + level - 1`) and ground speed; diagonal ×3 for monsters (you: ×1.41, see below); one creature per tile; trees and bushes block (the client's `unpass` flag) |
-| Monsters | health, experience, speed, armor, defense, melee, spells (targeted, waves, bursts), element resistances, `targetDistance`, `runHealth`, loot tables (Canary monster files) |
+| Monsters | health, experience, speed, armor, mitigation, melee, spells (targeted, waves, bursts, paralyze), element resistances, `targetDistance`, `runHealth`, loot tables (Canary monster files, pinned to one Canary commit) |
 | Conditions | poison, burning, electrified... from bites and condition spells: a total split into shrinking ticks (`ConditionDamage::generateDamageList`), a new one only replacing a weaker one, ticks reduced by equipment protection only |
 | Fields | fire, poison and energy fields from monster field spells (`firefield` etc. leave `ITEM_FIREFIELD_PVP_FULL`...): damage, duration and decay from items.xml (a fire field burns 7 x 20, cools to 7 x 10, then goes out), hurt on stepping in, monsters walk around fields they aren't immune to, and so does chase autowalk |
 | Summons | `monster.summon` (necromancers raise ghouls, giant spiders call poison spiders, demons fire elementals...): chance per interval, per-kind counts and `maxSummons` (`Monster::onThinkDefense`); no experience or corpse, and they die with their master |

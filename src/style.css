@@ -250,6 +250,7 @@ td:first-child { color: #999; }
 .tag.up { color: #70e070; border-color: #3a6a3a; }
 .tag.on { color: #9cc8ff; border-color: #3a5a7a; }
 .prepare h3 small { font-weight: normal; }
+.refund { margin: -8px auto 14px; max-width: 640px; padding: 6px 10px; border: 1px solid #6b5a3a; background: #2c2716; color: #e8dcc0; }
 .achs { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 3px; text-align: left; font-size: 12px; }
 .ach { padding: 3px 6px; background: #1d1c1a; border: 1px solid #2c2a26; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .ach .stars { color: #ffd34d; letter-spacing: -1px; }

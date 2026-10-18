@@ -28,7 +28,8 @@ for (let k = 1; k <= runs; k++) {
       .map((x) => ({ cost: x.next!.cost, buy: () => buyTier(save, x.t) }));
     const boosts = wants.filter((id) => (save.boosts[id] ?? 0) < MAX_BOOST).map((id) => ({ cost: boostCost(id, save.boosts[id] ?? 0), buy: () => buyBoost(save, id) }))
       .filter((o) => o.cost <= save.souls);
-    const opts = [...gear, ...boosts].sort((a, b) => a.cost - b.cost);
+    // Rookgaard unlocks and starting gear first (they're what gets a new account out of Rookgaard), then boosts.
+    const opts = gear.length ? gear.sort((a, b) => a.cost - b.cost) : boosts.sort((a, b) => a.cost - b.cost);
     if (!opts.length) break;
     opts[0].buy();
   }

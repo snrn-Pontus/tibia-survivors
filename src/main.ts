@@ -135,7 +135,7 @@ async function boot() {
           g.msg(c.kind === "spell" ? `You learned ${c.spell.name} (${c.spell.words}).`
             : c.kind === "imbue" ? `Your equipment is imbued: ${imbuementName(g, c.id)}.`
             : c.kind === "boost" ? `${boost(c.id)!.name} is now level ${g.ch.boostLevel(c.id)}.`
-            : c.kind === "train" ? "You finished a training session." : "You received a backpack of potions.", "#80c0ff");
+            : c.kind === "train" ? "You finished a training session." : c.kind === "gold" ? `You received ${c.n} gold.` : "You received a backpack of potions.", "#80c0ff");
           g.pendingChoices--;
           ui.close();
           paused = false;

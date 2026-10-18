@@ -26,9 +26,9 @@ export const ROOKIE: VocationDef = {
   blurb: "No vocation yet: reach level 8 to choose one.",
 };
 
-/** Vocations, chosen at level 8: their kit replaces the rookie gear; skills and level carry over. The kits
- *  are Canary's (send_first_items.lua): worn items, and a backpack (the knight's spare sword and mace, the
- *  paladin's bow and arrows); the potions on top are this game's, for a run that starts in a fight. */
+/** Vocations, chosen at level 8: level, skills and everything you wear carry over. Of Canary's kits
+ *  (send_first_items.lua) you only get the weapon, and only if you don't hold your vocation's kind of weapon
+ *  already (Character.setVocation); the potions are this game's, for a run that's in the middle of a fight. */
 const kit = (v: keyof typeof KITS) => ({ equipment: KITS[v].items, backpack: KITS[v].container });
 export const VOCATIONS: VocationDef[] = [
   { id: "knight", name: "Knight", sprite: "knight", skills: [12, 15, 15, 15, 12, 15], magicLevel: 0, ...kit("knight"),
@@ -62,7 +62,7 @@ export const BOSS_KILLS = 20;
 export const ZONES: Zone[] = [
   // Mostly plain rats, like the fields outside Rookgaard's village; the odd cave rat, bat, snake or spider.
   { name: "Rookgaard Fields", level: 1, pool: ["rat", "cave rat", "bat", "snake", "spider"], weights: [16, 2, 1, 1, 1], bosses: ["munster"], maxAlive: 3, spawnEvery: 3 },
-  { name: "Rookgaard Wilds", level: 4, pool: ["cave rat", "wolf", "bug", "troll", "rotworm"], bosses: ["teleskor", "apprentice sheng"], maxAlive: 4, spawnEvery: 2.2 },
+  { name: "Rookgaard Wilds", level: 6, pool: ["cave rat", "wolf", "bug", "troll", "rotworm"], bosses: ["teleskor", "apprentice sheng"], maxAlive: 4, spawnEvery: 2.2 },
   { name: "Troll Woods", level: 10, pool: ["troll", "orc", "rotworm", "poison spider", "orc spearman"], bosses: ["rotworm queen", "the snapper"], maxAlive: 6 },
   { name: "Orc Fortress", level: 15, pool: ["orc", "orc spearman", "orc warrior", "skeleton", "amazon", "minotaur"], bosses: ["the horned fox"], maxAlive: 7 },
   { name: "Minotaur Hills", level: 22, pool: ["orc warrior", "orc shaman", "minotaur", "ghoul", "dwarf soldier", "scorpion", "valkyrie"], bosses: ["dharalion", "general murius"], maxAlive: 8 },
@@ -89,6 +89,16 @@ export const SOULS_PER_ZONE = 10;
 export const SOUL_EVERY = 30; // seconds alive per soul
 /** Souls (the meta currency) for a kill: a tenth of the experience, a fifth for bosses. At least 1. */
 export const soulsFor = (exp: number, boss: boolean) => Math.max(1, Math.round(exp / (boss ? 5 : 10)));
+/** A creature's mitigation (percent). Canary leaves bosses' as ???, so a boss takes the highest of its
+ *  zone's creatures, times 1.5. */
+export function mitigationOf(key: string): number {
+  const m = MONSTERS[key];
+  if (!m) return 0;
+  if (m.mitigation) return m.mitigation;
+  const zone = ZONES.find((z) => z.bosses.includes(key));
+  return zone ? 1.5 * Math.max(0, ...zone.pool.map((k) => MONSTERS[k]?.mitigation ?? 0)) : 0;
+}
+
 /** Achievements: kill a creature this many times over all your runs. Each milestone pays souls, from a
  *  tenth of its experience times 1, 5 and 25 (at least 5, 10 and 15); bosses count 1, 5 and 25 kills and pay
  *  twice that. */

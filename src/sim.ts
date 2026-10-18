@@ -21,6 +21,15 @@ export function trade(g: Game) {
     if (old) ch.stash(old);
     ch.equip(e.id);
   }
+  // Thrown weapons: keep a stack of 20.
+  const thrown = ch.thrown;
+  if (thrown) {
+    const price = PRICES[thrown]?.buy ?? 0;
+    while ((ch.supplies.get(thrown) ?? 0) < 20 && price && ch.gold >= price * 10) {
+      ch.gold -= price * 10;
+      ch.supplies.set(thrown, (ch.supplies.get(thrown) ?? 0) + 10);
+    }
+  }
   const strong = ch.level >= 50;
   const plan: [string, number][] = ch.voc.id === "knight"
     ? [[ch.level >= 80 ? "great health potion" : strong ? "strong health potion" : "health potion", 40], ["mana potion", 15]]
@@ -53,8 +62,14 @@ export function run(world: World, effectDur: (id: number) => number, voc: number
     const near = g.monsters.filter((m) => !m.dead).sort((a, b) => cheb(a.tx, a.ty, p.tx, p.ty) - cheb(b.tx, b.ty, p.tx, p.ty))[0];
     const ranged = g.ch.attackRange > 1;
     const dist = near ? cheb(near.tx, near.ty, p.tx, p.ty) : 99;
-    // Back off when hurt; ranged vocations also kite anything that gets within two tiles.
-    if (near && (g.ch.hp / g.ch.maxHp < 0.3 || (ranged && dist <= 1))) { mx = Math.sign(p.tx - near.tx) || 1; my = Math.sign(p.ty - near.ty); }
+    // Back off when hurt; ranged vocations also kite anything that gets within two tiles. Out of its depth
+    // (a zone above its level) it backs off toward the start, not further out.
+    if (near && (g.ch.hp / g.ch.maxHp < 0.3 || (ranged && dist <= 1))) {
+      mx = Math.sign(p.tx - near.tx) || 1;
+      my = Math.sign(p.ty - near.ty);
+      const z = zoneAt(p.tx, p.ty);
+      if (z > 0 && ZONES[z].level > g.ch.level) { mx = -Math.sign(p.tx); my = -Math.sign(p.ty); }
+    }
     else if (dist > 3) {
       // Nothing close: go loot the nearest unlooted corpse.
       const c = [...g.chests, ...g.corpses.filter((c) => !c.looted && c.loot.length)].filter((c) => cheb(c.tx, c.ty, p.tx, p.ty) <= 7)

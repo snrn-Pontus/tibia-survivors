@@ -13,20 +13,42 @@ export interface Save {
   maxLevel: number; // highest level reached in any run (Dawnport needs 8)
   zones: number[]; // zones with a kill in them, ever: their exploration souls are paid
   kills: Record<string, number>; // per creature over all runs, for achievements
+  version?: number; // 3: Rookgaard starting gear (see migrate)
+  refunded?: number; // souls given back by the last migration, shown once on the title screen
 }
 
 const KEY = "tibia-survivors-save-v2";
-const fresh = (): Save => ({ souls: 0, unlocks: {}, boosts: {}, blessings: 0, runs: 0, best: null, maxLevel: 0, zones: [], kills: {} });
+const fresh = (): Save => ({ souls: 0, unlocks: {}, boosts: {}, blessings: 0, runs: 0, best: null, maxLevel: 0, zones: [], kills: {}, version: 3 });
 let memory: Save | null = null; // when there is no usable localStorage (the headless simulator)
 const noStorage = () => typeof localStorage === "undefined" || typeof localStorage?.setItem !== "function";
 
 export function loadSave(): Save {
   if (noStorage()) return (memory ??= fresh());
   try {
-    return { ...fresh(), ...JSON.parse(localStorage.getItem(KEY) ?? "{}") };
+    return migrate({ ...fresh(), ...JSON.parse(localStorage.getItem(KEY) ?? "{}") });
   } catch {
     return fresh();
   }
+}
+
+/** Starting gear used to go up to mainland items (spike sword, plate armor) that you kept after Rookgaard.
+ *  It's Rookgaard's own shop now: every soul spent on the old gear tiers comes back, once. */
+const OLD_GEAR_COSTS: Record<string, number[]> = {
+  weapon: [15, 40, 150, 300, 1500], shield: [10, 25, 50, 100, 250, 600], armor: [10, 25, 60, 120, 250, 600],
+  helmet: [5, 15, 40, 120, 300], legs: [5, 15, 35, 100, 300], boots: [5],
+};
+function migrate(s: Save): Save {
+  if ((s.version ?? 2) >= 3) return s;
+  let refund = 0;
+  for (const [track, costs] of Object.entries(OLD_GEAR_COSTS)) {
+    refund += costs.slice(0, s.unlocks[track] ?? 0).reduce((a, b) => a + b, 0);
+    delete s.unlocks[track];
+  }
+  s.souls += refund;
+  s.refunded = refund;
+  s.version = 3;
+  writeSave(s);
+  return s;
 }
 
 export function writeSave(s: Save) {
@@ -46,23 +68,16 @@ export interface Track {
 
 const it = (label: string, item: number, cost: number): Tier => ({ label, item, cost });
 
+// Starting gear is what Rookgaard's NPCs sell (Obi, Dixi, Lee'Delle): it helps levels 1-8 and is no better
+// than what you'd find there, so the mainland stays as hard as it is. (No boots: nobody on Rookgaard sells any.)
 export const TRACKS: Track[] = [
-  { id: "weapon", name: "Starting weapon", tiers: [
-    it("club", 3270, 0), it("sword", 3264, 15), it("mace", 3286, 40), it("battle hammer", 3305, 150),
-    it("morning star", 3282, 300), it("spike sword", 3271, 1500)] },
-  { id: "shield", name: "Starting shield", tiers: [
-    { label: "none", cost: 0 }, it("wooden shield", 3412, 10), it("studded shield", 3426, 25), it("brass shield", 3411, 50),
-    it("plate shield", 3410, 100), it("steel shield", 3409, 250), it("dwarven shield", 3425, 600)] },
-  { id: "armor", name: "Starting armor", tiers: [
-    it("coat", 3562, 0), it("leather armor", 3361, 10), it("studded armor", 3378, 25), it("chain armor", 3358, 60),
-    it("scale armor", 3377, 120), it("brass armor", 3359, 250), it("plate armor", 3357, 600)] },
-  { id: "helmet", name: "Starting helmet", tiers: [
-    { label: "none", cost: 0 }, it("leather helmet", 3355, 5), it("studded helmet", 3376, 15), it("brass helmet", 3354, 40),
-    it("iron helmet", 3353, 120), it("steel helmet", 3351, 300)] },
-  { id: "legs", name: "Starting legs", tiers: [
-    { label: "none", cost: 0 }, it("leather legs", 3559, 5), it("studded legs", 3362, 15), it("chain legs", 3558, 35),
-    it("brass legs", 3372, 100), it("plate legs", 3557, 300)] },
-  { id: "boots", name: "Starting boots", tiers: [{ label: "none", cost: 0 }, it("leather boots", 3552, 5)] },
+  { id: "weapon", name: "Starting weapon", tiers: [it("club", 3270, 0), it("rapier", 3272, 10), it("sabre", 3273, 25)] },
+  { id: "spears", name: "Starting spears", tiers: [
+    { label: "none", cost: 0 }, { label: "10 spears", item: 3277, count: 10, cost: 15 }, { label: "25 spears", item: 3277, count: 25, cost: 40 }] },
+  { id: "shield", name: "Starting shield", tiers: [{ label: "none", cost: 0 }, it("wooden shield", 3412, 10), it("studded shield", 3426, 25)] },
+  { id: "armor", name: "Starting armor", tiers: [it("coat", 3562, 0), it("doublet", 3379, 5), it("leather armor", 3361, 15)] },
+  { id: "helmet", name: "Starting helmet", tiers: [{ label: "none", cost: 0 }, it("leather helmet", 3355, 5), it("studded helmet", 3376, 15)] },
+  { id: "legs", name: "Starting legs", tiers: [{ label: "none", cost: 0 }, it("leather legs", 3559, 5)] },
   { id: "potions", name: "Starting health potions", tiers: [
     { label: "none", cost: 0 }, { label: "5 potions", count: 5, cost: 20 }, { label: "15 potions", count: 15, cost: 60 },
     { label: "30 potions", count: 30, cost: 150 }] },

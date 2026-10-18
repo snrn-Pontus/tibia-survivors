@@ -5,7 +5,7 @@ import { SKILL } from "./tibia/rules";
 
 export const MAX_SLOTS = 6; // distinct boosts + imbuements you can pick in a run
 /** Rate multiplier per boost level: front-loaded so the first purchases matter, still wild at the top. */
-export const RATE_TABLE = [1, 3, 6, 10, 16, 25, 40, 64, 100, 160, 256];
+export const RATE_TABLE = [1, 2, 3, 5, 7, 10, 14, 19, 25, 35, 50];
 /** Speed added per Haste level. */
 export const HASTE_TABLE = [0, 30, 55, 75, 90, 105, 120, 135, 150, 165, 180];
 export const MAX_BOOST = 10; // x1024 at the top

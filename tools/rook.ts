@@ -24,22 +24,21 @@ const CAP = 45 * 60; // give up on reaching 8 after this
 // Unlock tiers per setup (track id -> tier index); the soul cost is summed from meta.ts.
 const SETUPS: { name: string; unlocks: Record<string, number> }[] = [
   { name: "nothing", unlocks: {} },
-  { name: "sword", unlocks: { weapon: 1 } },
-  { name: "sword, rook 1", unlocks: { weapon: 1, rook_xp: 1, rook_train: 1, rook_regen: 1 } },
-  { name: "sword, xp 2 only", unlocks: { weapon: 1, rook_xp: 2 } },
-  { name: "gear 2, rook 1", unlocks: { weapon: 2, shield: 2, armor: 2, helmet: 2, legs: 2, rook_xp: 1, rook_train: 1, rook_regen: 1 } },
-  { name: "sword, rook 2", unlocks: { weapon: 1, rook_xp: 2, rook_train: 2, rook_regen: 2 } },
-  { name: "sword, rook 3", unlocks: { weapon: 1, rook_xp: 3, rook_train: 3, rook_regen: 3 } },
-  { name: "sword, rook max", unlocks: { weapon: 1, rook_xp: 4, rook_train: 4, rook_regen: 3 } },
-  { name: "rook max, x1 train", unlocks: { weapon: 1, rook_xp: 4, rook_regen: 3 } },
-  { name: "sword, dawnport", unlocks: { weapon: 1, dawnport: 1 } },
+  { name: "rapier", unlocks: { weapon: 1 } },
+  { name: "10 spears", unlocks: { spears: 1 } },
+  { name: "rapier, rook 1", unlocks: { weapon: 1, rook_xp: 1, rook_train: 1, rook_regen: 1 } },
+  { name: "all gear, rook 1", unlocks: { weapon: 2, spears: 2, shield: 2, armor: 2, helmet: 2, legs: 1, rook_xp: 1, rook_train: 1, rook_regen: 1 } },
+  { name: "rapier, rook 2", unlocks: { weapon: 1, rook_xp: 2, rook_train: 2, rook_regen: 2 } },
+  { name: "rapier, rook 3", unlocks: { weapon: 1, rook_xp: 3, rook_train: 3, rook_regen: 3 } },
+  { name: "rapier, rook max", unlocks: { weapon: 1, rook_xp: 4, rook_train: 4, rook_regen: 3 } },
+  { name: "rapier, dawnport", unlocks: { weapon: 1, dawnport: 1 } },
 ];
 
 const cost = (u: Record<string, number>) => Object.entries(u).reduce((sum, [id, t]) => {
   const tr = TRACKS.find((x) => x.id === id)!;
   return sum + tr.tiers.slice(1, t + 1).reduce((a, b) => a + b.cost, 0);
 }, 0);
-const mmss = (t: number) => `${Math.floor(t / 60)}:${String(Math.round(t % 60)).padStart(2, "0")}`;
+const mmss = (t: number) => { const s = Math.round(t); return `${Math.floor(s / 60)}:${String(s % 60).padStart(2, "0")}`; };
 const avg = (xs: number[]) => (xs.length ? xs.reduce((a, b) => a + b, 0) / xs.length : NaN);
 
 console.log(`${VOCATIONS[voc].name}, ${runs} runs per setup; "after" is ${AFTER / 60} minutes past level 8\n`);

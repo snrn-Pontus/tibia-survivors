@@ -12,7 +12,8 @@ export type LevelChoice =
   | { kind: "imbue"; id: string }
   | { kind: "boost"; id: BoostId }
   | { kind: "train"; skill: number | "magic" } // an exercise weapon session
-  | { kind: "supply"; id: number; n: number }; // a backpack of potions
+  | { kind: "supply"; id: number; n: number } // a backpack of potions
+  | { kind: "gold"; n: number }; // a pouch of gold for the shop
 
 export type Slot = "head" | "necklace" | "armor" | "legs" | "feet" | "ring" | "weapon" | "shield" | "ammo";
 export const SLOTS: Slot[] = ["head", "necklace", "weapon", "armor", "shield", "legs", "ring", "feet", "ammo"];
@@ -105,7 +106,7 @@ export class Character {
       out.push(u);
     }
     // Repeatable fillers, so every level has a choice.
-    const fillers: LevelChoice[] = [this.trainChoice(), this.supplyChoice()];
+    const fillers: LevelChoice[] = ([this.trainChoice(), this.supplyChoice(), { kind: "gold", n: 50 * this.level }] as LevelChoice[]).sort(() => Math.random() - 0.5);
     for (const f of fillers) if (out.length < 3) out.push(f);
     return out;
   }
@@ -136,7 +137,8 @@ export class Character {
     else if (c.kind === "train") {
       if (c.skill === "magic") this.magicLevel++;
       else this.skills[c.skill].level++;
-    } else this.supplies.set(c.id, (this.supplies.get(c.id) ?? 0) + c.n);
+    } else if (c.kind === "gold") this.gold += c.n;
+    else this.supplies.set(c.id, (this.supplies.get(c.id) ?? 0) + c.n);
   }
 
   /** Imbuements that can be added or upgraded right now. */
@@ -295,17 +297,18 @@ export class Character {
   setVocation(v: VocationDef) {
     this.voc = v;
     this.vd = VOCATION_DATA[v.id];
-    const old = Object.values(this.equipment).filter((id): id is number => !!id);
-    this.equipment = {};
-    for (const x of v.equipment) this.equip(typeof x === "number" ? x : itemId(x));
-    // The kit's backpack: potions and ammunition to supplies, gear to the backpack (rope and shovel stay home).
-    for (const [id, n] of v.backpack ?? []) {
-      const it = item(id);
-      if (POTIONS[id] || it?.ammotype) this.supplies.set(id, (this.supplies.get(id) ?? 0) + n);
-      else if (it && this.slotFor(it)) this.stash(id, n);
+    // You keep what you wear: a whole new kit was free mainland gear (and the rookie gear it replaced sold for
+    // gold). Only if you don't hold your vocation's kind of weapon (a wand for a sorcerer, spears for a
+    // paladin...) do you get the one from Canary's kit; the old weapon goes in the backpack.
+    const w = this.weapon;
+    if (!w || !this.prefers(w) || !canWear(w, v.id, this.level)) {
+      const kitWeapon = v.equipment.map((x) => (typeof x === "number" ? x : itemId(x))).find((id) => this.slotFor(item(id)!) === "weapon");
+      if (kitWeapon) {
+        if (w && this.equipment.weapon !== this.thrown) this.stash(this.equipment.weapon!);
+        delete this.equipment.weapon;
+        this.equip(kitWeapon);
+      }
     }
-    // Keep rookie gear that beats the vocation's kit (unlocked starting gear, loot); the rest goes in the bag.
-    for (const id of old) if (!this.offer(id)) this.stash(id);
     if (v.ammo) this.equipment.ammo = itemId(v.ammo);
     for (const [name, n] of Object.entries(v.supplies)) {
       const id = itemId(name);
