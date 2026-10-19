@@ -55,22 +55,25 @@ export function run(world: World, effectDur: (id: number) => number, voc: number
   g.viewH = 448;
   const rows: Record<string, unknown>[] = [];
   const dt = 0.05;
-  let lastTrade = 0, nextRow = 60;
+  let lastTrade = 0, nextRow = 60, resting = false;
   while (!g.over && g.time < seconds) {
     let mx = 0, my = 0;
     const p = g.player;
     const near = g.monsters.filter((m) => !m.dead).sort((a, b) => cheb(a.tx, a.ty, p.tx, p.ty) - cheb(b.tx, b.ty, p.tx, p.ty))[0];
     const ranged = g.ch.attackRange > 1;
     const dist = near ? cheb(near.tx, near.ty, p.tx, p.ty) : 99;
-    // Back off when hurt; ranged vocations also kite anything that gets within two tiles. Out of its depth
-    // (a zone above its level) it backs off toward the start, not further out.
-    if (near && (g.ch.hp / g.ch.maxHp < 0.3 || (ranged && dist <= 1))) {
-      mx = Math.sign(p.tx - near.tx) || 1;
-      my = Math.sign(p.ty - near.ty);
-      const z = zoneAt(p.tx, p.ty);
-      if (z > 0 && ZONES[z].level > g.ch.level) { mx = -Math.sign(p.tx); my = -Math.sign(p.ty); }
-    }
-    else if (dist > 3) {
+    const hp = g.ch.hp / g.ch.maxHp;
+    // Hurt: back off until mostly healed (not just back over the line, which walked it straight into the pack
+    // again). Ranged vocations also kite anything that gets next to them, and melee ones step out of a crowd
+    // instead of trading blows with three at once.
+    if (hp < 0.3) resting = true;
+    else if (hp > 0.75) resting = false;
+    const adjacent = g.monstersInRange(1).length;
+    const threat = (resting && dist <= 4) || (ranged && dist <= 1) || (!ranged && adjacent >= 2 && hp < 0.8);
+    // Chase mode would walk it back to its target while it rests.
+    g.chase = !resting;
+    if (near && threat) [mx, my] = escape(g);
+    else if (dist > 3 && !resting) {
       // Nothing close: go loot the nearest unlooted corpse.
       const c = [...g.chests, ...g.corpses.filter((c) => !c.looted && c.loot.length)].filter((c) => cheb(c.tx, c.ty, p.tx, p.ty) <= 7)
         .sort((a, b) => cheb(a.tx, a.ty, p.tx, p.ty) - cheb(b.tx, b.ty, p.tx, p.ty))[0];
@@ -115,4 +118,23 @@ export function run(world: World, effectDur: (id: number) => number, voc: number
     }
   }
   return rows;
+}
+
+/** The free neighbouring tile farthest from the monsters around (closest ones count most), leaning back toward
+ *  the start when this zone is above your level. Picking from walkable tiles keeps it from running into a tree. */
+function escape(g: Game): [number, number] {
+  const p = g.player;
+  const around = g.monsters.filter((m) => !m.dead && cheb(m.tx, m.ty, p.tx, p.ty) <= 6);
+  const z = zoneAt(p.tx, p.ty);
+  const inward = z > 0 && ZONES[z].level > g.ch.level;
+  let best: [number, number] = [0, 0], bestScore = -Infinity;
+  for (const [dx, dy] of [[0, -1], [1, 0], [0, 1], [-1, 0], [1, -1], [1, 1], [-1, 1], [-1, -1]]) {
+    const tx = p.tx + dx, ty = p.ty + dy;
+    if (!g.walkable(tx, ty)) continue;
+    let score = 0;
+    for (const m of around) score -= 1 / Math.max(0.5, Math.hypot(m.tx - tx, m.ty - ty)) ** 2;
+    if (inward) score -= Math.hypot(tx, ty) * 0.3;
+    if (score > bestScore) { bestScore = score; best = [dx, dy]; }
+  }
+  return best;
 }
