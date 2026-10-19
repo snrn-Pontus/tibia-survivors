@@ -71,12 +71,11 @@ const ORTHO: [number, number][] = [[0, -1], [1, 0], [0, 1], [-1, 0]];
 const DIAG: [number, number][] = [[1, -1], [1, 1], [-1, 1], [-1, -1]];
 const FLOW_R = 22;
 const PLAYER_DIAGONAL_COST = Math.SQRT2; // a diagonal step for you (see updatePlayer)
-const FLEE_STOP = 7;
 
 
 /** The charms' hit effects by element (bestiary_charms.lua). */
 const CHARM_EFFECT: Partial<Record<Element, number>> = { physical: 10, fire: 16, earth: 9, ice: 44, energy: 12, death: 39, holy: 40 };
-const cap = (s: string) => s[0].toUpperCase() + s.slice(1); // tiles: how far a fleeing monster runs (the game view is 15 x 11)
+const cap = (s: string) => s[0].toUpperCase() + s.slice(1);
 const FLOW_W = FLOW_R * 2 + 1;
 export const cheb = (ax: number, ay: number, bx: number, by: number) => Math.max(Math.abs(ax - bx), Math.abs(ay - by));
 export const dirTo = (dx: number, dy: number) => (Math.abs(dx) > Math.abs(dy) ? (dx > 0 ? 1 : 3) : dy > 0 ? 2 : 0);
@@ -202,9 +201,16 @@ export class Game {
     return !this.world.blocked(tx, ty) && !this.occupied.has(key(tx, ty)) && !(tx === this.player.tx && ty === this.player.ty);
   }
 
+  /** On your screen (15 x 11 tiles: 7 to either side, but only 5 up or down). What you can target and hit. */
+  onScreen(tx: number, ty: number) {
+    const p = this.player;
+    return Math.abs(tx - p.tx) <= Math.floor(this.viewW / TILE / 2) && Math.abs(ty - p.ty) <= Math.floor(this.viewH / TILE / 2);
+  }
+
+  /** Creatures within range that you can see (a range of 7 reaches past the top and bottom of the screen). */
   monstersInRange(range: number): Monster[] {
     const p = this.player;
-    return this.monsters.filter((m) => !m.dead && cheb(m.tx, m.ty, p.tx, p.ty) <= range);
+    return this.monsters.filter((m) => !m.dead && cheb(m.tx, m.ty, p.tx, p.ty) <= range && this.onScreen(m.tx, m.ty));
   }
 
   // ---------- main update ----------
@@ -266,7 +272,7 @@ export class Game {
     if (!sx && !sy && this.chase) {
       // Tibia's "chase opponent" fight mode: walk to the target until it's in weapon range.
       const t = this.monsters.find((m) => m.id === this.targetId && !m.dead);
-      if (!t || cheb(t.tx, t.ty, p.tx, p.ty) <= this.ch.attackRange) return;
+      if (!t || !this.onScreen(t.tx, t.ty) || cheb(t.tx, t.ty, p.tx, p.ty) <= this.ch.attackRange) return;
       // Something else on you: fight it first (auto-combat swings at what's in reach); don't drag it along after
       // a target that runs or keeps its distance.
       if (this.monsters.some((o) => o !== t && !o.dead && cheb(o.tx, o.ty, p.tx, p.ty) <= 1)) return;
@@ -549,15 +555,18 @@ export class Game {
     const p = this.player;
     if (this.time < (m.rootedUntil ?? 0)) return null; // crippled: stands (it still attacks)
     const fleeing = m.hp < m.data.runHealth && this.time >= (m.holdUntil ?? 0);
-    // A hurt monster runs (runHealth), but only to the edge of your screen: there it stands, so you can still
-    // catch it (it used to vanish, bosses too).
-    if (fleeing && d >= FLEE_STOP) return null;
     const want = fleeing ? 99 : Math.max(1, m.data.targetDistance);
     // Monsters don't walk into fields that would hurt them (they do if they're immune: a demon in fire).
     const free = (s: [number, number]) => this.walkable(m.tx + s[0], m.ty + s[1]) && !this.fieldHurts(m.tx + s[0], m.ty + s[1], m);
     if (d < want) {
-      // Ranged monsters keep their distance; hurt ones run.
-      const away = ORTHO.filter((s) => free(s) && cheb(m.tx + s[0], m.ty + s[1], p.tx, p.ty) > d);
+      // Ranged monsters keep their distance; hurt ones run (runHealth), but only to the edge of your screen: there
+      // they stand, so you can still catch them (they used to vanish, bosses too). With the way straight back
+      // blocked (a tree, or the top of the screen), they slide sideways, toward a corner.
+      const open = ORTHO.filter((s) => free(s) && this.onScreen(m.tx + s[0], m.ty + s[1]));
+      const dist = (s: [number, number]) => cheb(m.tx + s[0], m.ty + s[1], p.tx, p.ty);
+      const manhattan = (s: [number, number]) => Math.abs(m.tx + s[0] - p.tx) + Math.abs(m.ty + s[1] - p.ty);
+      let away = open.filter((s) => dist(s) > d);
+      if (!away.length) away = open.filter((s) => dist(s) === d && manhattan(s) > Math.abs(m.tx - p.tx) + Math.abs(m.ty - p.ty));
       return away.length ? away[Math.floor(Math.random() * away.length)] : null;
     }
     if (d === want) return null;

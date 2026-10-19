@@ -42,12 +42,12 @@ export function autoCombat(g: Game) {
   const weaponEl = ch.weapon?.weapontype === "wand" ? (ch.weapon.wandtype as Element) ?? "energy" : "physical";
   const hurtable = (m: Monster) => (m.data.elements[weaponEl] ?? 0) < 100;
   // A target you picked yourself stays until it dies or leaves the screen.
-  const picked = g.manualTarget ? g.monsters.find((m) => m.id === g.targetId && !m.dead && cheb(m.tx, m.ty, p.tx, p.ty) <= 10) : undefined;
+  const picked = g.manualTarget ? g.monsters.find((m) => m.id === g.targetId && !m.dead && g.onScreen(m.tx, m.ty)) : undefined;
   if (!picked) g.manualTarget = false;
   const dist = (m: Monster) => cheb(m.tx, m.ty, p.tx, p.ty);
   // A monster you're fighting that runs away stays your target while it's on screen and nothing else is in
   // reach (chase mode follows it); with something on you, you fight that and go back for it after.
-  const current = g.monsters.find((m) => m.id === g.targetId && !m.dead && hurtable(m) && dist(m) <= 7);
+  const current = g.monsters.find((m) => m.id === g.targetId && !m.dead && hurtable(m) && g.onScreen(m.tx, m.ty));
   const busy = g.monstersInRange(ch.attackRange).some((m) => m !== current && hurtable(m));
   let target = picked ?? (current && current.hp < current.data.runHealth && !busy ? current : undefined);
   if (!target && g.targeting === "weakest") {
