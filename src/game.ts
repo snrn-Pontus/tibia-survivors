@@ -1108,7 +1108,7 @@ export class Game {
     const got: string[] = [];
     const gold0 = ch.gold;
     const cx = tileCenter(c.tx), cy = tileCenter(c.ty);
-    c.loot.forEach(({ id: lid, n }, i) => {
+    c.loot.filter((l) => !ch.isJunk(l.id)).forEach(({ id: lid, n }, i) => {
       const l = { id: lid };
       const it = item(lid)!;
       got.push(n > 1 ? `${n} ${it.name}s` : `${/^[aeiou]/.test(it.name) ? "an" : "a"} ${it.name}`);

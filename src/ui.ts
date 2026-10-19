@@ -363,7 +363,8 @@ export class UI {
       for (const [id, n] of [...have].sort((a, b) => value(b[0]) * b[1] - value(a[0]) * a[1])) {
         const each = value(id);
         rows.push({ id, count: n, note: each ? `<small>${gold(each)} gold each</small>` : `<span class="hint">no NPC buys this</span>`,
-          packs: [{ n, price: -each * n, ok: each > 0, label: each ? `sell · ${gold(each * n)}` : "sell", buy: () => {
+          packs: [{ n, price: -each * n, ok: true, label: each ? `sell · ${gold(each * n)}` : "throw away", buy: () => {
+            if (!each) { ch.discard(id); return; }
             ch.sell(id);
             g.msg(`You sold ${n} ${item(id)!.name}${n > 1 ? "s" : ""} for ${gold(each * n)} gold.`, "#ffd34d");
           } }] });

@@ -544,16 +544,29 @@ export class Character {
     return COIN_VALUE[id] ?? PRICES[id]?.sell ?? 0;
   }
 
-  /** Sell every one of an item in the backpack (or, without an id, everything an NPC buys). Returns the gold. */
+  /** Sell every one of an item in the backpack (or, without an id, everything an NPC buys, and the junk goes
+   *  in the bin). Returns the gold. */
   sell(id?: number): number {
     let gold = 0;
     const ids = id !== undefined ? [id] : [...new Set([...this.backpack.all()].map((t) => t.id))];
     for (const i of ids) {
       const each = this.sellValue(i);
       if (each) gold += each * this.backpack.takeAll(i);
+      else if (id === undefined && this.isJunk(i)) this.backpack.takeAll(i);
     }
     this.gold += gold;
     return gold;
+  }
+
+  /** Nothing an NPC buys and nothing you can wear (worms, cookies, bones...): quick loot leaves it in the body. */
+  isJunk(id: number): boolean {
+    const it = item(id);
+    return !this.sellValue(id) && !!it && it.slot !== "backpack" && !this.slotFor(it);
+  }
+
+  /** Throw away every one of an item in the backpack. Returns how many. */
+  discard(id: number): number {
+    return this.backpack.takeAll(id);
   }
 
   stash(id: number, n = 1) {

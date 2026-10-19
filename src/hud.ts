@@ -381,9 +381,14 @@ export class Hud {
       if (!g || !t || t.inner) return;
       const name = item(t.id)!.name, n = [...g.ch.backpack.all()].filter((x) => x.id === t.id).reduce((a, x) => a + x.n, 0);
       const gold = g.ch.sell(t.id);
-      if (!gold) { this.status(`No NPC buys ${name}s.`); return; }
-      g.msg(`You sold ${n} ${name}${n > 1 ? "s" : ""} for ${fmt(gold)} gold.`, "#ffd34d");
-      this.status(`Sold ${n} ${name}${n > 1 ? "s" : ""} for ${fmt(gold)} gold.`);
+      if (!gold) {
+        // Nobody buys it: right-click throws it away instead.
+        g.ch.discard(t.id);
+        this.status(`You throw away ${n} ${name}${n > 1 ? "s" : ""}.`);
+      } else {
+        g.msg(`You sold ${n} ${name}${n > 1 ? "s" : ""} for ${fmt(gold)} gold.`, "#ffd34d");
+        this.status(`Sold ${n} ${name}${n > 1 ? "s" : ""} for ${fmt(gold)} gold.`);
+      }
       this.sig.delete("backpack");
       this.backpack(g);
     });
@@ -837,7 +842,7 @@ export class Hud {
     this.bpWorth.innerHTML = n ? `${fmt(n)} item${n === 1 ? "" : "s"}, worth <span class="gold">${fmt(worth)}</span> gold` : "Empty. Loot lands here.";
     this.bpSell.textContent = `Sell all · ${fmt(worth)} gold`;
     this.bpSell.disabled = !worth;
-    this.bpSell.title = "Sell everything an NPC buys (right-click an item to sell just that)";
+    this.bpSell.title = "Sell everything an NPC buys and throw away the junk (right-click an item to sell or throw away just that)";
     // The backpack in the equipment window.
     this.bpSlot.innerHTML = `<img src="${this.itemUrl(root.id)}" alt="">`;
     this.bpSlot.title = `${title(root.name)}: ${fmt(n)} items, worth ${fmt(worth)} gold. Click to open.`;
