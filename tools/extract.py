@@ -75,6 +75,32 @@ class Packer:
         return atlas
 
 
+def outfit_color(c):
+    """One of Tibia's 133 outfit colours (19 hues x 7 saturation/intensity steps) as RGB, like the client's
+    Outfit::getColor."""
+    if c >= 19 * 7:
+        c = 0
+    if c % 19 == 0:
+        v = round((1 - c / 19 / 7) * 255)
+        return (v, v, v)
+    h = (c % 19) / 18
+    s, i = [(0.25, 1.0), (0.25, 0.75), (0.5, 0.75), (0.667, 0.75), (1.0, 1.0), (1.0, 0.75), (1.0, 0.5)][c // 19]
+    lo = i * (1 - s)
+    if h < 1 / 6:
+        r, g, b = i, lo + (i - lo) * 6 * h, lo
+    elif h < 2 / 6:
+        r, g, b = i - (i - lo) * (6 * h - 1), i, lo
+    elif h < 3 / 6:
+        r, g, b = lo, i, lo + (i - lo) * (6 * h - 2)
+    elif h < 4 / 6:
+        r, g, b = lo, i - (i - lo) * (6 * h - 3), i
+    elif h < 5 / 6:
+        r, g, b = lo + (i - lo) * (6 * h - 4), lo, i
+    else:
+        r, g, b = i, lo, i - (i - lo) * (6 * h - 5)
+    return (round(r * 255), round(g * 255), round(b * 255))
+
+
 def colorize(base, mask, colors):
     base = base.copy()
     bp, mp = base.load(), mask.load()
@@ -167,7 +193,9 @@ def main():
         data["creatures"][name] = export_creature(a, p, looktype, colors)
     for name, m in game["monsters"].items():
         if m["lookType"] in a.outfits:
-            data["creatures"][name] = export_creature(a, p, m["lookType"])
+            look = m.get("lookColors")
+            colors = [outfit_color(c) for c in look] if look and any(look) else None
+            data["creatures"][name] = export_creature(a, p, m["lookType"], colors)
         else:
             print("no outfit for", name)
     print("creatures", len(data["creatures"]))

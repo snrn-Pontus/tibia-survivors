@@ -22,12 +22,23 @@ MONSTERS = [
     "hunter", "amazon", "valkyrie", "orc berserker", "cyclops", "mummy", "ghost", "demon skeleton", "giant spider",
     "vampire", "necromancer", "bonelord", "dragon", "banshee", "hero", "lich", "behemoth", "hydra", "dragon lord",
     "demon", "juggernaut", "demodras", "orshabaal", "ferumbras",
+    # more of Tibia's classic hunting grounds, chosen for the armor they drop
+    "goblin", "swamp troll", "elf", "dwarf", "smuggler", "wild warrior", "bandit", "gladiator", "barbarian headsplitter",
+    "dwarf guard", "lizard sentinel", "barbarian bloodwalker", "orc leader", "orc rider", "lizard templar",
+    "pirate cutthroat", "pirate buccaneer", "crypt shambler", "gargoyle", "assassin", "ancient scarab", "pirate corsair",
+    "quara constrictor", "ice golem", "nightstalker", "crystal spider", "bog raider", "quara hydromancer",
+    "lizard legionnaire", "nightmare scion", "frost dragon", "wyrm", "black knight", "quara pincher", "lizard high guard",
+    "nightmare", "destroyer", "sea serpent", "lizard zaogun", "draken warmaster", "elder wyrm", "serpent spawn",
+    "draken spellweaver", "lizard chosen", "warlock", "medusa", "hellspawn", "draken elite", "ghastly dragon",
+    "draken abomination", "hellhound", "hand of cursed fate", "undead dragon", "grim reaper", "blightwalker",
+    "plaguesmith", "dark torturer", "hellfire fighter", "fury",
     # bosses
     "munster", "teleskor", "apprentice sheng", "rotworm queen", "the horned fox", "warlord ruzad", "the evil eye",
     "general murius", "necropharus", "dharalion", "the frog prince", "zevelon duskbringer", "the old widow",
     "the snapper", "the many", "the plasmother", "dracola", "ghazbaran", "morgaroth", "gaz'haragoth",
     # only ever summoned (monster.summon in the files above)
     "hyaena", "minotaur archer", "minotaur guard", "minotaur mage", "fire elemental", "bonebeast", "defiler", "deathslicer",
+    "larva", "stone golem", "death blob",
 ]
 
 SPELL_FILES = {
@@ -208,8 +219,12 @@ def parse_monster(src, en):
         "experience": num(r"monster\.experience\s*=\s*(\d+)"),
         "speed": num(r"monster\.speed\s*=\s*(\d+)"),
         "lookType": num(r"lookType\s*=\s*(\d+)"),
+        # Outfit colours (Tibia's 133-colour palette): human outfits like the black knight's are dyed with these.
+        "lookColors": [num(rf"look{k}\s*=\s*(\d+)") for k in ("Head", "Body", "Legs", "Feet")],
         "corpse": num(r"monster\.corpse\s*=\s*(\d+)"),
     }
+    if not any(m["lookColors"]):
+        del m["lookColors"]
     flags = lua_fields(lua_block(src, r"monster\.flags\s*=\s*\{"))
     m["targetDistance"] = int(flags.get("targetDistance", 1) or 1)
     m["runHealth"] = int(flags.get("runHealth", 0) or 0)
@@ -694,7 +709,7 @@ def main():
     used_areas = {s["area"] for s in spells if "area" in s}
     data = {
         "source": f"opentibiabr/canary@{CANARY_COMMIT}",
-        "monsters": monsters, "spells": spells, "areas": {k: AREAS[k] for k in used_areas if k in AREAS},
+        "monsters": monsters, "spells": spells, "areas": {k: AREAS[k] for k in sorted(used_areas) if k in AREAS},
         "items": items, "starter": starter, "vocations": vocations, "potions": potions,
         "prices": {i: p for i, p in prices.items() if i in items},
         "fields": parse_fields(),

@@ -60,20 +60,21 @@ export interface Zone {
 export const ZONE_WIDTH = 30; // tiles per ring
 export const BOSS_KILLS = 20;
 export const ZONES: Zone[] = [
+  // Mainland zones also have the creatures of Tibia's hunting grounds at their experience, for the armor they drop.
   // Mostly plain rats, like the fields outside Rookgaard's village; the odd cave rat, bat, snake or spider.
   { name: "Rookgaard Fields", level: 1, pool: ["rat", "cave rat", "bat", "snake", "spider"], weights: [16, 2, 1, 1, 1], bosses: ["munster"], maxAlive: 3, spawnEvery: 3 },
   { name: "Rookgaard Wilds", level: 6, pool: ["cave rat", "wolf", "bug", "troll", "rotworm"], bosses: ["teleskor", "apprentice sheng"], maxAlive: 4, spawnEvery: 2.2 },
-  { name: "Troll Woods", level: 10, pool: ["troll", "orc", "rotworm", "poison spider", "orc spearman"], bosses: ["rotworm queen", "the snapper"], maxAlive: 6 },
-  { name: "Orc Fortress", level: 15, pool: ["orc", "orc spearman", "orc warrior", "skeleton", "amazon", "minotaur"], bosses: ["the horned fox"], maxAlive: 7 },
-  { name: "Minotaur Hills", level: 22, pool: ["orc warrior", "orc shaman", "minotaur", "ghoul", "dwarf soldier", "scorpion", "valkyrie"], bosses: ["dharalion", "general murius"], maxAlive: 8 },
-  { name: "Cyclopolis", level: 30, pool: ["valkyrie", "hunter", "slime", "cyclops", "orc berserker", "mummy", "bonelord"], bosses: ["necropharus"], maxAlive: 8 },
-  { name: "Ancient Tombs", level: 40, pool: ["cyclops", "mummy", "bonelord", "demon skeleton", "vampire", "necromancer", "dragon"], bosses: ["the evil eye"], maxAlive: 9 },
-  { name: "Vampire Crypts", level: 55, pool: ["dragon", "vampire", "necromancer", "giant spider", "banshee"], bosses: ["warlord ruzad", "zevelon duskbringer"], maxAlive: 9 },
-  { name: "Dragon Lairs", level: 70, pool: ["dragon", "giant spider", "banshee", "lich", "hero"], bosses: ["the old widow"], maxAlive: 10 },
-  { name: "Hero Cave", level: 90, pool: ["hero", "lich", "dragon lord", "behemoth"], bosses: ["the many"], maxAlive: 10 },
-  { name: "Dragon Lord Peaks", level: 110, pool: ["dragon lord", "behemoth", "hydra"], bosses: ["demodras"], maxAlive: 10 },
-  { name: "Hydra Swamps", level: 130, pool: ["dragon lord", "hydra", "behemoth", "demon"], bosses: ["the plasmother", "dracola"], maxAlive: 11 },
-  { name: "Pits of Inferno", level: 200, pool: ["demon", "behemoth", "hydra", "juggernaut"], bosses: ["orshabaal", "ghazbaran", "morgaroth", "ferumbras", "gaz'haragoth"], maxAlive: 12 },
+  { name: "Troll Woods", level: 10, pool: ["troll", "orc", "rotworm", "poison spider", "orc spearman", "goblin", "swamp troll", "elf", "dwarf", "smuggler"], bosses: ["rotworm queen", "the snapper"], maxAlive: 6 },
+  { name: "Orc Fortress", level: 15, pool: ["orc", "orc spearman", "orc warrior", "skeleton", "amazon", "minotaur", "wild warrior", "bandit", "barbarian headsplitter", "gladiator"], bosses: ["the horned fox"], maxAlive: 7 },
+  { name: "Minotaur Hills", level: 22, pool: ["orc warrior", "orc shaman", "minotaur", "ghoul", "dwarf soldier", "scorpion", "valkyrie", "assassin", "orc rider", "lizard sentinel", "dwarf guard", "barbarian bloodwalker", "orc leader"], bosses: ["dharalion", "general murius"], maxAlive: 8 },
+  { name: "Cyclopolis", level: 30, pool: ["valkyrie", "hunter", "slime", "cyclops", "orc berserker", "mummy", "bonelord", "gargoyle", "lizard templar", "pirate cutthroat", "crypt shambler", "pirate buccaneer"], bosses: ["necropharus"], maxAlive: 8 },
+  { name: "Ancient Tombs", level: 40, pool: ["cyclops", "mummy", "bonelord", "demon skeleton", "vampire", "necromancer", "dragon", "ice golem", "pirate corsair", "quara constrictor", "nightstalker", "ancient scarab"], bosses: ["the evil eye"], maxAlive: 9 },
+  { name: "Vampire Crypts", level: 55, pool: ["dragon", "vampire", "necromancer", "giant spider", "banshee", "bog raider", "crystal spider", "quara hydromancer", "lizard legionnaire", "nightmare scion"], bosses: ["warlord ruzad", "zevelon duskbringer"], maxAlive: 9 },
+  { name: "Dragon Lairs", level: 70, pool: ["dragon", "giant spider", "banshee", "lich", "hero", "lizard high guard", "quara pincher", "wyrm", "black knight", "frost dragon"], bosses: ["the old widow"], maxAlive: 10 },
+  { name: "Hero Cave", level: 90, pool: ["hero", "lich", "dragon lord", "behemoth", "lizard zaogun", "nightmare", "sea serpent", "draken warmaster", "destroyer", "elder wyrm"], bosses: ["the many"], maxAlive: 10 },
+  { name: "Dragon Lord Peaks", level: 110, pool: ["dragon lord", "behemoth", "hydra", "lizard chosen", "hellspawn", "serpent spawn", "draken spellweaver", "warlock"], bosses: ["demodras"], maxAlive: 10 },
+  { name: "Hydra Swamps", level: 130, pool: ["dragon lord", "hydra", "behemoth", "demon", "medusa", "draken abomination", "ghastly dragon", "draken elite", "hand of cursed fate"], bosses: ["the plasmother", "dracola"], maxAlive: 11 },
+  { name: "Pits of Inferno", level: 200, pool: ["demon", "behemoth", "hydra", "juggernaut", "fury", "plaguesmith", "hellfire fighter", "dark torturer", "hellhound", "grim reaper", "blightwalker", "undead dragon"], bosses: ["orshabaal", "ghazbaran", "morgaroth", "ferumbras", "gaz'haragoth"], maxAlive: 12 },
 ].map((z, i) => ({ ...z, from: i * ZONE_WIDTH }));
 
 /** Which zone a tile is in: rings around the start. */
