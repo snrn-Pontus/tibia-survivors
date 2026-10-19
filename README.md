@@ -39,6 +39,9 @@ If Tibia is somewhere else: `python tools/extract.py "D:\path\to\Tibia\packages\
   backpack; a stack of spears or arrows goes whole), anything else to look at it; click the backpack in the
   Equipment window to open the window again. **Sell all** at the bottom sells everything an NPC buys;
   right-click an item to sell just that.
+- **Supplies window**: click a rune to turn its auto-use on or off (remembered between runs; the hotbar still
+  fires it by hand), and click arrows or bolts to use those. Runes share the attack (2 s) or healing (1 s)
+  group cooldown with spells, as in Tibia.
 - **Upgrades window**: what you've picked this run (spell grades, imbuements, charms, prey) and your boosts.
 - **Bestiary window**: every creature you've killed, over all runs, with this run's stage progress. Click one to
   open it: health and experience after 5 kills, resistances after 25, loot after 100 (Tibia's bestiary).

@@ -135,6 +135,13 @@ body:not(.ingame) #side, body:not(.ingame) #hotbar, body:not(.ingame) #console, 
 .slot.bp { cursor: pointer; }
 .grid.box .slot.wear:hover { box-shadow: inset 0 0 0 1px #80c060; }
 
+/* supplies: runes toggle auto-use, ammunition is picked */
+.slot.pick { cursor: pointer; }
+.slot.pick:hover { box-shadow: inset 0 0 0 1px #8a8478; }
+.slot.off img { filter: grayscale(1) brightness(0.5); }
+.slot.off::after { content: "off"; position: absolute; left: 1px; top: 0; font-size: 8px; color: #ff7060; text-shadow: var(--shadow); }
+.slot.inuse { box-shadow: inset 0 0 0 1px #9cc8ff; }
+
 /* backpack selling */
 .bp-sell { display: block; width: 100%; margin-top: 3px; padding: 2px; font: 10px Verdana, sans-serif; color: #ffd34d; cursor: pointer;
   border: 1px solid var(--edge); background: linear-gradient(#5a5650 0%, #403c37 50%, #36322e 100%); }

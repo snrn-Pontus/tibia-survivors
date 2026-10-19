@@ -37,10 +37,11 @@ interface Layout {
   chase: boolean;
   targeting: Targeting;
   zoom: number; // minimap pixels per tile
+  runesOff: number[]; // runes auto-combat doesn't use (remembered between runs)
 }
 const DEFAULT_LAYOUT: Layout = {
   cols: { a: ["equipment", "skills", "upgrades"], b: ["battle", "backpack", "supplies", "bestiary"] },
-  min: {}, closed: {}, height: {}, fightMode: "offensive", chase: true, targeting: "closest", zoom: 2,
+  min: {}, closed: {}, height: {}, fightMode: "offensive", chase: true, targeting: "closest", zoom: 2, runesOff: [],
 };
 
 function loadLayout(): Layout {
@@ -213,6 +214,10 @@ export class Hud {
     this.placeWindows();
     this.buildEquipment();
     this.buildBackpack();
+    this.wins.get("supplies")!.body.addEventListener("click", (e) => {
+      const id = Number((e.target as HTMLElement).closest<HTMLElement>(".slot[data-item]")?.dataset.item);
+      if (id) this.pickSupply(id);
+    });
     // Bestiary rows open and close on a click.
     this.wins.get("bestiary")!.body.addEventListener("click", (e) => {
       const key = (e.target as HTMLElement).closest<HTMLElement>(".be")?.dataset.key;
@@ -565,6 +570,7 @@ export class Hud {
       g.fightMode = this.layout.fightMode;
       g.chase = this.layout.chase;
       g.targeting = this.layout.targeting;
+      g.ch.runesOff = new Set(this.layout.runesOff);
     }
     this.syncModes();
   }
@@ -909,10 +915,36 @@ export class Hud {
   private supplies(g: Game) {
     const ch = g.ch;
     const sup = [...ch.supplies.entries()].filter(([id, n]) => n > 0 && (POTIONS[id] || SPELLS.some((s) => s.runeId === id) || !!item(id)?.ammotype || id === ch.thrown));
-    const sig = sup.map(([id, n]) => `${id}:${n}`).join();
+    const sig = `${sup.map(([id, n]) => `${id}:${n}`).join()}|${ch.equipment.ammo}|${[...ch.runesOff]}`;
     if (!this.changed("supplies", sig)) return;
-    this.wins.get("supplies")!.body.innerHTML = `<div class="grid">${sup.map(([id, n]) =>
-      `<div class="slot" data-item="${id}" data-n="${n}"><img src="${this.itemUrl(id, n)}" alt=""><span class="count">${n}</span></div>`).join("")}</div>`;
+    this.wins.get("supplies")!.body.innerHTML = `<div class="grid">${sup.map(([id, n]) => {
+      const rune = SPELLS.some((s) => s.runeId === id), ammo = !!item(id)?.ammotype;
+      const cls = rune && ch.runesOff.has(id) ? " off" : ammo && ch.equipment.ammo === id ? " inuse" : "";
+      const hint = rune ? (ch.runesOff.has(id) ? "Auto-use off: click to turn it on" : "Click to stop auto-using it")
+        : ammo ? (ch.equipment.ammo === id ? "In use" : "Click to use it") : "";
+      return `<div class="slot${rune || ammo ? " pick" : ""}${cls}" data-item="${id}" data-n="${n}" data-hint="${hint}"><img src="${this.itemUrl(id, n)}" alt=""><span class="count">${n}</span></div>`;
+    }).join("")}</div>`;
+  }
+
+  /** Supplies window clicks: a rune toggles auto-use, arrows or bolts become your ammunition. */
+  private pickSupply(id: number) {
+    const g = this.g;
+    if (!g) return;
+    const ch = g.ch, it = item(id)!;
+    if (SPELLS.some((s) => s.runeId === id)) {
+      if (!ch.runesOff.delete(id)) ch.runesOff.add(id);
+      this.layout.runesOff = [...ch.runesOff];
+      this.save();
+      this.status(ch.runesOff.has(id) ? `Auto-combat won't use ${it.name}s.` : `Auto-combat uses ${it.name}s.`);
+    } else if (it.ammotype) {
+      const fires = ch.weapon?.ammotype;
+      if (fires && fires !== it.ammotype) { this.status(`Your ${ch.weapon!.name} fires ${fires}s.`); return; }
+      ch.equipment.ammo = id;
+      this.status(`Using ${it.name}s.`);
+    } else return;
+    this.sig.delete("supplies");
+    this.supplies(g);
+    this.equipment(g);
   }
 
   // ---------- hotbar ----------

@@ -121,7 +121,7 @@ export function installTooltips() {
     if (el === over) return;
     over = el;
     if (!el) { tip.hidden = true; return; }
-    tip.innerHTML = describeItem(Number(el.dataset.item), Number(el.dataset.n ?? 1));
+    tip.innerHTML = describeItem(Number(el.dataset.item), Number(el.dataset.n ?? 1)) + (el.dataset.hint ? `<br><small>${el.dataset.hint}</small>` : "");
     tip.hidden = !tip.innerHTML;
     place(e);
   });
@@ -129,6 +129,6 @@ export function installTooltips() {
   // Contents can change under the mouse (an item equipped from the backpack): refresh or hide.
   addEventListener("click", () => setTimeout(() => {
     if (over && !over.isConnected) { over = null; tip.hidden = true; }
-    else if (over) tip.innerHTML = describeItem(Number(over.dataset.item), Number(over.dataset.n ?? 1));
+    else if (over) tip.innerHTML = describeItem(Number(over.dataset.item), Number(over.dataset.n ?? 1)) + (over.dataset.hint ? `<br><small>${over.dataset.hint}</small>` : "");
   }));
 }

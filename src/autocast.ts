@@ -23,7 +23,7 @@ export function autoCombat(g: Game) {
   // Healing spells and healing runes (healing group, 1 s): the strongest one available.
   if (hpPct < HEAL_AT && g.time >= g.groupReady.healing) {
     const spells = knownSpells(g, "healing").filter((s) => !SUPPORT[s.file] && ready(g, s) && ch.mana >= g.manaCost(s));
-    const runes = ch.usableRunes().filter((s) => s.group === "healing" && ready(g, s) && (ch.supplies.get(s.runeId!) ?? 0) > 0);
+    const runes = ch.usableRunes().filter((s) => s.group === "healing" && !ch.runesOff.has(s.runeId!) && ready(g, s) && (ch.supplies.get(s.runeId!) ?? 0) > 0);
     const heal = [...spells, ...runes].sort((a, b) => expected(g, b) - expected(g, a))[0];
     if (heal) g.cast(heal, p.dir);
   }
@@ -83,7 +83,7 @@ export function autoCombat(g: Game) {
   if (g.time < g.groupReady.attack) return;
   const reserve = Math.min(ch.maxMana * 0.25, 2 * Math.max(0, ...knownSpells(g, "healing").map((s) => s.mana ?? 0)));
   let best: { s: SpellData; dir: number; target?: Monster; value: number } | null = null;
-  for (const s of [...knownSpells(g, "attack"), ...ch.usableRunes().filter((r) => r.group === "attack")]) {
+  for (const s of [...knownSpells(g, "attack"), ...ch.usableRunes().filter((r) => r.group === "attack" && !ch.runesOff.has(r.runeId!))]) {
     if (!ready(g, s)) continue;
     if (s.kind === "rune" ? (ch.supplies.get(s.runeId!) ?? 0) <= 0 : ch.mana - g.manaCost(s) < (ch.voc.id === "knight" ? 0 : reserve)) continue;
     const per = expected(g, s);

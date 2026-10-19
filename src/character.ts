@@ -90,6 +90,7 @@ export class Character {
   hasteDelta = 0; // utani hur, Adrenaline Burst...: speed added (ConditionSpeed)
   slowDelta = 0; // a paralysis (monster spells, Sharpshooter): speed taken, negative
   stance: Stance | null = null; // Blood Rage, Protector, Sharpshooter (Game times it)
+  runesOff = new Set<number>(); // rune item ids auto-combat leaves alone (the Supplies window toggles them)
 
   boostLevel(id: BoostId) { return this.boosts.get(id) ?? 0; }
   /** Rate multiplier from a boost (x1 when not picked). */
