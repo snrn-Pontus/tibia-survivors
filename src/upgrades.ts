@@ -42,5 +42,20 @@ export const BOOSTS: BoostDef[] = [
 ];
 
 export const boost = (id: string) => BOOSTS.find((b) => b.id === id);
+
+/** Run bonuses: level-up picks that only last this run (the boosts above are bought with souls and stay).
+ *  Each pick adds RUN_BONUS_STEP percent, up to RUN_BONUS_MAX picks, on top of the boost. */
+export type RunBonusId = "xp" | "gold" | "loot" | "skill" | "magic";
+export const RUN_BONUS_STEP = 20;
+export const RUN_BONUS_MAX = 5;
+export interface RunBonusDef { id: RunBonusId; name: string; icon: number; what: string; for: (voc: VocationId) => boolean }
+export const RUN_BONUSES: RunBonusDef[] = [
+  { id: "xp", name: "Experience", icon: 3061, what: "experience", for: () => true },
+  { id: "gold", name: "Gold", icon: 3035, what: "gold dropped", for: () => true },
+  { id: "loot", name: "Loot", icon: 2854, what: "item drop chances", for: () => true },
+  { id: "skill", name: "Skill training", icon: 3264, what: "skill training (weapons, shielding)", for: (v) => !mage(v) },
+  { id: "magic", name: "Magic training", icon: 3059, what: "magic level training", for: (v) => mage(v) || v === "paladin" },
+];
+export const runBonus = (id: string) => RUN_BONUSES.find((b) => b.id === id)!;
 export const boostRate = (level: number) => rate(level);
 export const formatRate = fmt;

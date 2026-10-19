@@ -79,7 +79,9 @@ If Tibia is somewhere else: `python tools/extract.py "D:\path\to\Tibia\packages\
 - In-run level-ups offer imbuements (6 slots), **spell grades** (the Wheel of Destiny's: two grades from
   `io_wheel.cpp` and the supreme gem bonus from `wheel_gems.cpp`, e.g. Front Sweep: 5% life leech, +14% damage,
   then +26% and +18% critical damage), **prey** (a creature of the zone you're in, 1-10 stars: damage, damage
-  reduction, experience or loot, Canary's `ioprey.cpp` values; 3 at a time), exercise weapons, potions and gold.
+  reduction, experience or loot, Canary's `ioprey.cpp` values; 3 at a time), **run bonuses** (+20% experience,
+  gold, loot, skill training or magic level training per pick, up to +100%, this run only, on top of the boosts),
+  exercise weapons, potions and gold.
   Killing 5, 25 and 100 of a creature in a run (bestiary stages) offers **charms** (Canary's
   `bestiary_charms.lua`, three tiers: Wound, Enflame... deal 5% of a creature's health; Dodge, Parry, Low Blow,
   Savage Blow, Cripple, Numb, Adrenaline Burst, Carnage, Vampiric Embrace and more). Evolutions come from

@@ -6,13 +6,14 @@ import { IMBUEMENTS, imbuement, type ImbuementKind } from "./tibia/imbuements";
 import type { Stance } from "./support";
 import { charm, CHARM_LIST, PREY_SLOTS, preyPercent, spellGrades, type GradeBonus, type Prey, type PreyBonus } from "./picks";
 import type { EvolutionId } from "./evolutions";
-import { BOOSTS, boostRate, hasteBonus, MAX_SLOTS, type BoostId } from "./upgrades";
+import { BOOSTS, boostRate, hasteBonus, MAX_SLOTS, RUN_BONUS_MAX, RUN_BONUS_STEP, RUN_BONUSES, type BoostId, type RunBonusId } from "./upgrades";
 import { expForLevel, maxHealthAt, maxManaAt, reqMana, reqSkillTries, SKILL, SKILL_NAMES } from "./tibia/rules";
 
 export type LevelChoice =
   | { kind: "spell"; spell: SpellData }
   | { kind: "imbue"; id: string }
   | { kind: "boost"; id: BoostId }
+  | { kind: "bonus"; id: RunBonusId } // +20% to a rate, this run only
   | { kind: "train"; skill: number | "magic" } // an exercise weapon session
   | { kind: "supply"; id: number; n: number } // a backpack of potions
   | { kind: "gold"; n: number } // a pouch of gold for the shop
@@ -42,6 +43,7 @@ export class Character {
   backpack = new Container(BACKPACK); // the backpack slot: loot we can't use, nested backpacks and all
   imbuements = new Map<string, number>(); // id -> tier (1 Basic, 2 Intricate, 3 Powerful)
   boosts = new Map<BoostId, number>(); // id -> level
+  runBonuses = new Map<RunBonusId, number>(); // id -> picks this run
   evolutions = new Set<EvolutionId>();
   blessings = 0; // Tibia blessings: each one saves you from a death
   // Rookgaard unlocks: experience and skill training multipliers that end with the vocation choice.
@@ -92,6 +94,8 @@ export class Character {
   boostLevel(id: BoostId) { return this.boosts.get(id) ?? 0; }
   /** Rate multiplier from a boost (x1 when not picked). */
   rate(id: BoostId) { return boostRate(this.boostLevel(id)); }
+  /** Multiplier from this run's bonus picks (x1 without). */
+  runRate(id: RunBonusId) { return 1 + ((this.runBonuses.get(id) ?? 0) * RUN_BONUS_STEP) / 100; }
   get slotsUsed() { return this.imbuements.size; } // boosts are bought between runs and take no slot
   skill(i: number) {
     const v = this.skills[i].level + this.bonus(SKILL_ATTR[i]) + this.imbued("skill", (d) => d.skill === i);
@@ -129,7 +133,10 @@ export class Character {
       bonus: (["damage", "defense", "xp", "loot"] as const)[Math.floor(Math.random() * 4)],
       stars: 1 + Math.floor(Math.random() * 10),
     } }] : [];
-    const out = shuffle([...ups.slice(0, 2), ...grades.slice(0, 2), ...prey]).slice(0, 3);
+    // Run bonuses: +20% experience, gold, loot or training for the rest of this run.
+    const bonuses: LevelChoice[] = shuffle(RUN_BONUSES.filter((b) => b.for(this.voc.id) && (this.runBonuses.get(b.id) ?? 0) < RUN_BONUS_MAX)
+      .map((b) => ({ kind: "bonus", id: b.id }) as LevelChoice));
+    const out = shuffle([...ups.slice(0, 2), ...grades.slice(0, 2), ...prey, ...bonuses.slice(0, 2)]).slice(0, 3);
     // Repeatable fillers, so every level has a choice.
     const fillers: LevelChoice[] = ([this.trainChoice(), this.supplyChoice(), { kind: "gold", n: 50 * this.level }] as LevelChoice[]).sort(() => Math.random() - 0.5);
     for (const f of fillers) if (out.length < 3) out.push(f);
@@ -183,6 +190,7 @@ export class Character {
     if (c.kind === "spell") this.known.add(c.spell.file);
     else if (c.kind === "imbue") this.imbuements.set(c.id, (this.imbuements.get(c.id) ?? 0) + 1);
     else if (c.kind === "boost") this.boosts.set(c.id, this.boostLevel(c.id) + 1);
+    else if (c.kind === "bonus") this.runBonuses.set(c.id, (this.runBonuses.get(c.id) ?? 0) + 1);
     else if (c.kind === "train") {
       if (c.skill === "magic") this.magicLevel++;
       else this.skills[c.skill].level++;
@@ -279,7 +287,7 @@ export class Character {
   /** Returns the levels gained. */
   addExp(raw: number): { gained: number; amount: number; learned: SpellData[] } {
     const rook = this.voc.id === "none" ? this.rookXp : 1;
-    const amount = Math.round(raw * expRate(this.level) * this.rate("xp") * rook * (this.evolutions.has("stamina") ? 4 : 1));
+    const amount = Math.round(raw * expRate(this.level) * this.rate("xp") * this.runRate("xp") * rook * (this.evolutions.has("stamina") ? 4 : 1));
     this.exp += amount;
     let gained = 0;
     while (this.exp >= expForLevel(this.level + 1)) {
@@ -300,7 +308,7 @@ export class Character {
     const msgs: string[] = [];
     const s = this.skills[skill];
     const b = BOOSTS.find((d) => d.skill === skill);
-    s.tries += tries * SKILL_RATE * (b ? this.rate(b.id) : 1) * (this.voc.id === "none" ? this.rookTrain : 1);
+    s.tries += tries * SKILL_RATE * (b ? this.rate(b.id) : 1) * this.runRate("skill") * (this.voc.id === "none" ? this.rookTrain : 1);
     while (s.tries >= this.reqTries(skill, s.level)) {
       s.tries -= this.reqTries(skill, s.level);
       s.level++;
@@ -312,7 +320,7 @@ export class Character {
   spendMana(n: number): string[] {
     const msgs: string[] = [];
     this.mana -= n;
-    this.manaSpent += n * MAGIC_RATE * this.rate("train_magic");
+    this.manaSpent += n * MAGIC_RATE * this.rate("train_magic") * this.runRate("magic");
     while (this.manaSpent >= reqMana(this.vd, this.magicLevel)) {
       this.manaSpent -= reqMana(this.vd, this.magicLevel);
       this.magicLevel++;

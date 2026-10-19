@@ -15,7 +15,7 @@ import { cheb, ELEMENT_COLORS, type Channel, type Game, type LootDest, type Mons
 import type { Renderer } from "./render";
 import { item, MONSTERS, POTIONS, PRICES, SPELLS, type Element as DamageType, type SpellData } from "./tibia/db";
 import { FIGHT_MODES, SKILL_NAMES, type FightMode } from "./tibia/rules";
-import { boost, boostRate, formatRate, hasteBonus } from "./upgrades";
+import { boost, boostRate, formatRate, hasteBonus, RUN_BONUS_STEP, runBonus } from "./upgrades";
 
 const LAYOUT_KEY = "tibia-survivors-ui-v1";
 type WinId = "equipment" | "skills" | "battle" | "backpack" | "supplies" | "upgrades" | "bestiary";
@@ -861,6 +861,7 @@ export class Hud {
     list(`Imbuements ${ch.slotsUsed}/${MAX_SLOTS}`, [...ch.imbuements].map(([id, t]) => row(`${TIERS[t - 1]} ${imbuement(id).name}`, imbuement(id).desc(imbuement(id).values[t - 1]))));
     list("Charms", [...ch.charms].map(([name, t]) => row(`${name} ${CHARM_TIERS[t]}`, describeCharm(name, t))));
     list(`Prey ${ch.prey.length}/${PREY_SLOTS}`, ch.prey.map((p) => row(`${MONSTERS[p.creature]?.name ?? p.creature} ${"★".repeat(p.stars)}`, describePrey(p))));
+    list("Run bonuses", [...ch.runBonuses].map(([id, n]) => row(`${runBonus(id).name} +${n * RUN_BONUS_STEP}%`, `${runBonus(id).what}, this run only`)));
     list("Boosts", [...ch.boosts].map(([id, l]) => row(`${boost(id)!.name} ${l}`, boost(id)!.desc(l))));
     list("Evolutions", [...ch.evolutions].map((id) => row(evolution(id).name, evolution(id).desc)));
     const html = sec.join("") || `<div class="empty-note">Level up to pick spell grades, imbuements and prey; bestiary stages give charms.</div>`;

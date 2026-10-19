@@ -3,7 +3,7 @@ import { achievement, BOSS_MILESTONES, KILL_MILESTONES, ROOKIE, SHOP, VOCATIONS,
 import type { LevelChoice } from "./character";
 import type { Game } from "./game";
 import { imbuement, TIERS } from "./tibia/imbuements";
-import { boost, BOOSTS, MAX_BOOST, MAX_SLOTS } from "./upgrades";
+import { boost, BOOSTS, MAX_BOOST, MAX_SLOTS, RUN_BONUS_MAX, RUN_BONUS_STEP, runBonus } from "./upgrades";
 import { BLESSING_COST, boostCost, buyBlessing, buyBoost, buyTier, loadSave, tier, trackTier, TRACKS, writeSave, type Save } from "./meta";
 import { EVOLUTIONS, evolution, evolutionsFor } from "./evolutions";
 import type { ChestResult } from "./game";
@@ -198,6 +198,12 @@ export class UI {
           <b>${i + 1}. ${b.name} ${l}</b><em>${l === 1 ? "New upgrade" : `Level ${l - 1} → ${l}`}</em>
           <small>${b.desc(l)}${evoHint(c.id)}</small></button>`;
       }
+      if (c.kind === "bonus") {
+        const b = runBonus(c.id), n = (ch.runBonuses.get(c.id) ?? 0) + 1;
+        return `<button class="card choice"><div class="ico"></div>
+          <b>${i + 1}. ${b.name} +${RUN_BONUS_STEP}%</b><em>Run bonus ${n}/${RUN_BONUS_MAX}</em>
+          <small>${b.what[0].toUpperCase() + b.what.slice(1)} +${n * RUN_BONUS_STEP}% for the rest of this run.</small></button>`;
+      }
       if (c.kind !== "imbue") return "";
       const d = imbuement(c.id), tier = (ch.imbuements.get(c.id) ?? 0) + 1;
       return `<button class="card choice"><div class="ico"></div>
@@ -219,6 +225,7 @@ export class UI {
         if (anim) { c.appendChild(this.atlas.icon(anim.idle[2][0], 32, 2)); return; }
       }
       if (ch.kind === "boost") { c.appendChild(this.icon(boost(ch.id)!.icon, 2)); return; }
+      if (ch.kind === "bonus") { c.appendChild(this.icon(runBonus(ch.id).icon, 2)); return; }
       if (ch.kind === "train") {
         const w = g.ch.weapon;
         if (w) { c.appendChild(this.icon(w.id, 2)); return; }

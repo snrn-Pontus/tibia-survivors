@@ -5,7 +5,7 @@ import { areaOffsets, canWear, FIELDS, item, MONSTERS, POTIONS, PRICES, radiusRo
 import { blockHit, damageList, distanceDamage, expForLevel, speedChange, distanceHitChance, FIGHT_MODES, meleeDamage, mitigation, normalRandom, playerDefense, SKILL, uniform, type FightMode } from "./tibia/rules";
 import { imbuement } from "./tibia/imbuements";
 import { charm, CHARM_TIERS, describePrey, type GradeBonus } from "./picks";
-import { boost, MAX_PENDING } from "./upgrades";
+import { boost, MAX_PENDING, RUN_BONUS_STEP, runBonus } from "./upgrades";
 import { EVOLUTIONS, type EvolutionId } from "./evolutions";
 import type { LevelChoice } from "./character";
 import { SUPPORT, type Support } from "./support";
@@ -1068,13 +1068,13 @@ export class Game {
       if (!item(l.id)) continue;
       const coins = l.id === 3031 || l.id === 3035 || l.id === 3043;
       // Loot Boost scales the drop chance; past 100% it drops several times. Gold Boost scales coins.
-      const chance = (l.chance / 100000) * (coins ? 1 : this.ch.rate("loot") * (1 + this.ch.preyBonus(m.key, "loot") / 100));
+      const chance = (l.chance / 100000) * (coins ? 1 : this.ch.rate("loot") * this.ch.runRate("loot") * (1 + this.ch.preyBonus(m.key, "loot") / 100));
       const drops = Math.floor(chance) + (Math.random() < chance % 1 ? 1 : 0);
       if (!drops) continue;
       // Each drop is 1..max of the item; many drops are summed rather than rolled one by one.
       let n = drops <= 20 ? Array.from({ length: drops }, () => (l.max > 1 ? uniform(1, l.max) : 1)).reduce((a, b) => a + b, 0)
         : Math.round((drops * (1 + l.max)) / 2);
-      if (coins) n = Math.max(1, Math.round(n * this.ch.rate("gold")));
+      if (coins) n = Math.max(1, Math.round(n * this.ch.rate("gold") * this.ch.runRate("gold")));
       loot.push({ id: l.id, n });
     }
     this.corpses.push({ tx: m.tx, ty: m.ty, item: m.data.corpse, name: m.data.name, loot, looted: false, until: this.time + CORPSE_SECONDS });
@@ -1398,6 +1398,7 @@ export function describeChoice(ch: Character, c: LevelChoice): string {
   switch (c.kind) {
     case "spell": return `${c.spell.name} (${c.spell.words})`;
     case "boost": return `${boost(c.id)!.name} ${ch.boostLevel(c.id)}`;
+    case "bonus": return `${runBonus(c.id).name} +${(ch.runBonuses.get(c.id) ?? 0) * RUN_BONUS_STEP}% this run`;
     case "imbue": return `${TIERS[(ch.imbuements.get(c.id) ?? 1) - 1]} ${imbuementDef(c.id).name}`;
     case "train": return c.skill === "magic" ? "+1 magic level" : "+1 skill";
     case "supply": return `${c.n} ${item(c.id)!.name}s`;

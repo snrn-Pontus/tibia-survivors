@@ -101,7 +101,7 @@ export function run(world: World, effectDur: (id: number) => number, voc: number
     // A simple build: spells first, then XP, the main training, loot and gold boosts, then whatever.
     for (; g.pendingChoices > 0; g.pendingChoices--) {
       const cs = g.ch.rollChoices();
-      const rank = (c: (typeof cs)[number]) => c.kind === "spell" ? 0 : c.kind === "boost"
+      const rank = (c: (typeof cs)[number]) => c.kind === "spell" ? 0 : c.kind === "bonus" ? ({ xp: 1, skill: 2, magic: 2, loot: 3, gold: 3 } as Record<string, number>)[c.id] : c.kind === "boost"
         ? ({ xp: 1, train_magic: 2, train_distance: 2, train_sword: 2, loot: 3, gold: 3, haste: 4 } as Record<string, number>)[c.id] ?? 5 : 6;
       const c = cs.sort((a, b) => rank(a) - rank(b))[0];
       if (c) g.ch.applyChoice(c);
