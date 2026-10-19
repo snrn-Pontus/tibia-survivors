@@ -132,5 +132,5 @@ export const SHOP: { name: string; count: number }[] = [
   { name: "stone shower rune", count: 20 }, { name: "thunderstorm rune", count: 20 },
   { name: "great fireball rune", count: 20 }, { name: "avalanche rune", count: 20 },
   { name: "sudden death rune", count: 20 }, { name: "intense healing rune", count: 10 },
-  { name: "ultimate healing rune", count: 10 },
+  { name: "ultimate healing rune", count: 10 }, { name: "blank rune", count: 10 },
 ];

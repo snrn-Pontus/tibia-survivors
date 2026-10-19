@@ -353,6 +353,11 @@ export class Character {
     return SPELLS.filter((s) => s.kind === "instant" && s.vocations.includes(this.voc.id) && (s.level ?? 0) <= this.level && !this.known.has(s.file));
   }
 
+  /** Runes your vocation can conjure at your level (conjuring/*.lua). */
+  conjurable(): SpellData[] {
+    return SPELLS.filter((s) => s.kind === "rune" && s.conjure && s.vocations.includes(this.voc.id) && (s.conjureLevel ?? 0) <= this.level);
+  }
+
   /** Runes this vocation conjures (and so may use here), with enough level and magic level. */
   usableRunes(): SpellData[] {
     // Anyone may use a rune with the level and magic level for it (a knight's ultimate healing rune, a

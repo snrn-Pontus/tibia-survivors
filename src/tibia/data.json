@@ -21559,7 +21559,14 @@
    "formula": "const min = (level / 5) + (maglevel * 1.2) + 7;\nconst max = (level / 5) + (maglevel * 2.8) + 17;\nreturn [-min, -max];",
    "file": "avalanche",
    "kind": "rune",
-   "conjureLevel": 30
+   "conjureLevel": 30,
+   "conjure": {
+    "words": "adori mas frigo",
+    "mana": 530,
+    "soul": 3,
+    "reagent": 3147,
+    "count": 4
+   }
   },
   {
    "name": "great fireball rune",
@@ -21586,7 +21593,14 @@
    "formula": "const min = (level / 5) + (maglevel * 1.2) + 7;\nconst max = (level / 5) + (maglevel * 2.8) + 17;\nreturn [-min, -max];",
    "file": "great_fireball",
    "kind": "rune",
-   "conjureLevel": 30
+   "conjureLevel": 30,
+   "conjure": {
+    "words": "adori mas flam",
+    "mana": 530,
+    "soul": 3,
+    "reagent": 3147,
+    "count": 4
+   }
   },
   {
    "name": "sudden death rune",
@@ -21612,7 +21626,14 @@
    "formula": "const min = (level / 5) + (maglevel * 4.605) + 28;\nconst max = (level / 5) + (maglevel * 7.395) + 46;\nreturn [-min, -max];",
    "file": "sudden_death",
    "kind": "rune",
-   "conjureLevel": 45
+   "conjureLevel": 45,
+   "conjure": {
+    "words": "adori gran mort",
+    "mana": 985,
+    "soul": 5,
+    "reagent": 3147,
+    "count": 3
+   }
   },
   {
    "name": "thunderstorm rune",
@@ -21639,7 +21660,14 @@
    "formula": "const min = (level / 5) + (magicLevel * 1) + 6;\nconst max = (level / 5) + (magicLevel * 2.6) + 16;\nreturn [-min, -max];",
    "file": "thunderstorm",
    "kind": "rune",
-   "conjureLevel": 28
+   "conjureLevel": 28,
+   "conjure": {
+    "words": "adori mas vis",
+    "mana": 430,
+    "soul": 3,
+    "reagent": 3147,
+    "count": 4
+   }
   },
   {
    "name": "stone shower rune",
@@ -21666,7 +21694,14 @@
    "formula": "const min = (level / 5) + (magicLevel * 1) + 6;\nconst max = (level / 5) + (magicLevel * 2.6) + 16;\nreturn [-min, -max];",
    "file": "stone_shower",
    "kind": "rune",
-   "conjureLevel": 28
+   "conjureLevel": 28,
+   "conjure": {
+    "words": "adori mas tera",
+    "mana": 430,
+    "soul": 3,
+    "reagent": 3147,
+    "count": 4
+   }
   },
   {
    "name": "explosion rune",
@@ -21695,7 +21730,14 @@
    "formula": "const min = 0;\nconst max = (level / 5) + (maglevel * 4.8);\nreturn [-min, -max];",
    "file": "explosion",
    "kind": "rune",
-   "conjureLevel": 31
+   "conjureLevel": 31,
+   "conjure": {
+    "words": "adevo mas hur",
+    "mana": 570,
+    "soul": 4,
+    "reagent": 3147,
+    "count": 6
+   }
   },
   {
    "name": "fireball rune",
@@ -21721,7 +21763,14 @@
    "formula": "const min = (level / 5) + (maglevel * 1.81) + 10;\nconst max = (level / 5) + (maglevel * 3) + 18;\nreturn [-min, -max];",
    "file": "fireball",
    "kind": "rune",
-   "conjureLevel": 27
+   "conjureLevel": 27,
+   "conjure": {
+    "words": "adori flam",
+    "mana": 460,
+    "soul": 3,
+    "reagent": 3147,
+    "count": 5
+   }
   },
   {
    "name": "heavy magic missile rune",
@@ -21749,7 +21798,14 @@
    "formula": "const min = (level / 5) + (maglevel * 0.4) + 2;\nconst max = (level / 5) + (maglevel * 1.59) + 10;\nreturn [-min, -max];",
    "file": "heavy_magic_missile",
    "kind": "rune",
-   "conjureLevel": 25
+   "conjureLevel": 25,
+   "conjure": {
+    "words": "adori vis",
+    "mana": 350,
+    "soul": 2,
+    "reagent": 3147,
+    "count": 10
+   }
   },
   {
    "name": "holy missile rune",
@@ -21775,7 +21831,14 @@
    "formula": "const min = (level / 5) + (maglevel * 1.79) + 11;\nconst max = (level / 5) + (maglevel * 3.75) + 24;\nreturn [-min, -max];",
    "file": "holy_missile",
    "kind": "rune",
-   "conjureLevel": 27
+   "conjureLevel": 27,
+   "conjure": {
+    "words": "adori san",
+    "mana": 300,
+    "soul": 3,
+    "reagent": 3147,
+    "count": 5
+   }
   },
   {
    "name": "icicle rune",
@@ -21801,7 +21864,14 @@
    "formula": "const min = (level / 5) + (maglevel * 1.81) + 10;\nconst max = (level / 5) + (maglevel * 3) + 18;\nreturn [-min, -max];",
    "file": "icicle",
    "kind": "rune",
-   "conjureLevel": 28
+   "conjureLevel": 28,
+   "conjure": {
+    "words": "adori frigo",
+    "mana": 460,
+    "soul": 3,
+    "reagent": 3147,
+    "count": 5
+   }
   },
   {
    "name": "stalagmite rune",
@@ -21829,7 +21899,14 @@
    "formula": "const min = (level / 5) + (maglevel * 0.4) + 2;\nconst max = (level / 5) + (maglevel * 1.59) + 10;\nreturn [-min, -max];",
    "file": "stalagmite",
    "kind": "rune",
-   "conjureLevel": 24
+   "conjureLevel": 24,
+   "conjure": {
+    "words": "adori tera",
+    "mana": 350,
+    "soul": 2,
+    "reagent": 3147,
+    "count": 10
+   }
   },
   {
    "name": "light magic missile rune",
@@ -21857,7 +21934,14 @@
    "formula": "const min = (level / 5) + (maglevel * 0.4) + 2;\nconst max = (level / 5) + (maglevel * 0.81) + 4;\nreturn [-min, -max];",
    "file": "light_magic_missile",
    "kind": "rune",
-   "conjureLevel": 15
+   "conjureLevel": 15,
+   "conjure": {
+    "words": "adori min vis",
+    "mana": 120,
+    "soul": 1,
+    "reagent": 3147,
+    "count": 10
+   }
   },
   {
    "name": "intense healing rune",
@@ -21883,7 +21967,14 @@
    "formula": "const min = (level / 5) + (maglevel * 3.2) + 20;\nconst max = (level / 5) + (maglevel * 5.4) + 40;\nreturn [min, max];",
    "file": "intense_healing_rune",
    "kind": "rune",
-   "conjureLevel": 15
+   "conjureLevel": 15,
+   "conjure": {
+    "words": "adura gran",
+    "mana": 120,
+    "soul": 2,
+    "reagent": 3147,
+    "count": 1
+   }
   },
   {
    "name": "ultimate healing rune",
@@ -21909,7 +22000,14 @@
    "formula": "const min = (level / 5) + (maglevel * 7.3) + 42;\nconst max = (level / 5) + (maglevel * 12.4) + 90;\nreturn [min, max];",
    "file": "ultimate_healing_rune",
    "kind": "rune",
-   "conjureLevel": 24
+   "conjureLevel": 24,
+   "conjure": {
+    "words": "adura vita",
+    "mana": 400,
+    "soul": 3,
+    "reagent": 3147,
+    "count": 1
+   }
   }
  ],
  "areas": {
@@ -30304,7 +30402,8 @@
   "stalagmite rune": 3179,
   "light magic missile rune": 3174,
   "intense healing rune": 3152,
-  "ultimate healing rune": 3160
+  "ultimate healing rune": 3160,
+  "blank rune": 3147
  },
  "vocations": {
   "none": {

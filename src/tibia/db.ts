@@ -66,6 +66,10 @@ export interface SpellData {
   range?: number;
   magicLevel?: number;
   runeId?: number;
+  /** A rune's conjuring spell: a blank rune (reagent) and mana make `count` runes (conjuring/*.lua; the soul
+   *  cost is in the data but not used). */
+  conjure?: { words: string; mana: number; soul: number; reagent: number; count: number };
+  conjureLevel?: number;
   cooldown?: number;
   groupCooldown?: number;
   needDirection: boolean;

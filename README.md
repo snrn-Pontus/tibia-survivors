@@ -42,6 +42,10 @@ If Tibia is somewhere else: `python tools/extract.py "D:\path\to\Tibia\packages\
 - **Supplies window**: click a rune to turn its auto-use on or off (remembered between runs; the hotbar still
   fires it by hand), and click arrows or bolts to use those. Runes share the attack (2 s) or healing (1 s)
   group cooldown with spells, as in Tibia.
+  Right-click a rune your vocation can make to **conjure** it: a blank rune (10 gold, in the Runes tab) and the
+  spell's mana make a stack (adori min vis: 120 mana for 10 light magic missiles; adori gran mort: 985 for 3
+  sudden deaths, from Canary's conjuring scripts). Auto-combat conjures the runes you use when they run low.
+  Tibia's soul points are left out: they exist to stop people making runes while away from the keyboard.
 - **Upgrades window**: what you've picked this run (spell grades, imbuements, charms, prey) and your boosts.
 - **Bestiary window**: every creature you've killed, over all runs, with this run's stage progress. Click one to
   open it: health and experience after 5 kills, resistances after 25, loot after 100 (Tibia's bestiary).

@@ -386,7 +386,7 @@ export class UI {
       }
     } else if (tab === "potions" || tab === "runes") {
       for (const s of SHOP) {
-        const id = itemId(s.name), isRune = SPELLS.some((r) => r.runeId === id);
+        const id = itemId(s.name), isRune = SPELLS.some((r) => r.runeId === id) || id === 3147; // blank runes too
         if (isRune !== (tab === "runes") || !PRICES[id]?.buy || item(id)?.ammotype) continue;
         const pot = POTIONS[id], rune = SPELLS.find((r) => r.runeId === id);
         if (pot?.voc && !pot.voc.includes(ch.voc.id)) continue; // potions are vocation-bound in Tibia

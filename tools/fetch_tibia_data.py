@@ -83,7 +83,7 @@ STARTER_ITEMS = [
     # runes (sold in the shop)
     "great fireball rune", "sudden death rune", "thunderstorm rune", "avalanche rune", "stone shower rune",
     "icicle rune", "fireball rune", "holy missile rune", "explosion rune", "heavy magic missile rune",
-    "stalagmite rune", "light magic missile rune", "intense healing rune", "ultimate healing rune",
+    "stalagmite rune", "light magic missile rune", "intense healing rune", "ultimate healing rune", "blank rune",
 ]
 
 
@@ -487,7 +487,7 @@ def parse_spell(src, en):
     s["name"] = get(r':name\("([^"]+)"\)')
     s["words"] = get(r':words\("([^"]+)"\)')
     s["group"] = get(r':group\("([^"]+)"')  # the first group (some spells also have "focus")
-    for k in ("level", "mana", "range", "magicLevel", "runeId"):
+    for k in ("level", "mana", "range", "magicLevel", "runeId", "soul"):
         v = get(r":%s\((\d+)\)" % k)
         if v:
             s[k] = int(v)
@@ -620,9 +620,15 @@ def main():
         s = parse_spell(fetch(f"data/scripts/runes/{f}.lua"), en)
         s["file"] = f
         s["kind"] = "rune"
-        conj = parse_spell(fetch(f"data/scripts/spells/conjuring/{CONJURE_FILES[f]}.lua"), en)
+        conj_src = fetch(f"data/scripts/spells/conjuring/{CONJURE_FILES[f]}.lua")
+        conj = parse_spell(conj_src, en)
         s["vocations"] = conj["vocations"]
         s["conjureLevel"] = conj.get("level", 0)
+        # creature:conjureItem(reagent, rune, count): a blank rune, the spell's mana and soul -> `count` runes.
+        made = re.search(r"conjureItem\((\d+),\s*(\d+),\s*(\d+)\)", conj_src)
+        if made:
+            s["conjure"] = {"words": conj.get("words"), "mana": conj.get("mana", 0), "soul": conj.get("soul", 0),
+                            "reagent": int(made.group(1)), "count": int(made.group(3))}
         spells.append(s)
 
     # NPC shops: the cheapest price an NPC sells an item for, and the best price one pays for it.

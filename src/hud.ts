@@ -215,6 +215,14 @@ export class Hud {
     this.placeWindows();
     this.buildEquipment();
     this.buildBackpack();
+    // Right-click a rune you can conjure: conjure it.
+    this.wins.get("supplies")!.body.addEventListener("contextmenu", (e) => {
+      e.preventDefault();
+      const id = Number((e.target as HTMLElement).closest<HTMLElement>(".slot[data-item]")?.dataset.item);
+      const rune = SPELLS.find((s) => s.runeId === id && s.conjure);
+      if (!this.g || !rune) return;
+      this.status(this.g.conjure(rune) ?? `You conjure ${rune.conjure!.count} ${rune.name}s.`);
+    });
     this.wins.get("supplies")!.body.addEventListener("click", (e) => {
       const id = Number((e.target as HTMLElement).closest<HTMLElement>(".slot[data-item]")?.dataset.item);
       if (id) this.pickSupply(id);
@@ -926,13 +934,15 @@ export class Hud {
 
   private supplies(g: Game) {
     const ch = g.ch;
-    const sup = [...ch.supplies.entries()].filter(([id, n]) => n > 0 && (POTIONS[id] || SPELLS.some((s) => s.runeId === id) || !!item(id)?.ammotype || id === ch.thrown));
+    const sup = [...ch.supplies.entries()].filter(([id, n]) => n > 0 && (POTIONS[id] || SPELLS.some((s) => s.runeId === id) || !!item(id)?.ammotype || id === ch.thrown || id === 3147));
     const sig = `${sup.map(([id, n]) => `${id}:${n}`).join()}|${ch.equipment.ammo}|${[...ch.runesOff]}`;
     if (!this.changed("supplies", sig)) return;
     this.wins.get("supplies")!.body.innerHTML = `<div class="grid">${sup.map(([id, n]) => {
       const rune = SPELLS.some((s) => s.runeId === id), ammo = !!item(id)?.ammotype;
       const cls = rune && ch.runesOff.has(id) ? " off" : ammo && ch.equipment.ammo === id ? " inuse" : "";
-      const hint = rune ? (ch.runesOff.has(id) ? "Auto-use off: click to turn it on" : "Click to stop auto-using it")
+      const spell = SPELLS.find((s) => s.runeId === id), conj = spell?.conjure && ch.conjurable().includes(spell)
+        ? ` · right-click to conjure ${spell.conjure.count} (${spell.conjure.words}: ${spell.conjure.mana} mana and a blank rune)` : "";
+      const hint = rune ? (ch.runesOff.has(id) ? "Auto-use off: click to turn it on" : "Click to stop auto-using it") + conj
         : ammo ? (ch.equipment.ammo === id ? "In use" : "Click to use it") : "";
       return `<div class="slot${rune || ammo ? " pick" : ""}${cls}" data-item="${id}" data-n="${n}" data-hint="${hint}"><img src="${this.itemUrl(id, n)}" alt=""><span class="count">${n}</span></div>`;
     }).join("")}</div>`;

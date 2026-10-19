@@ -231,6 +231,7 @@ export class Game {
   // ---------- main update ----------
 
   private dtLast = 0;
+
   update(dt: number, mx: number, my: number) {
     if (this.over) return;
     this.dtLast = dt;
@@ -244,6 +245,7 @@ export class Game {
     this.updateConditions();
     this.updateFields();
     this.updateBuffs();
+
     this.updateRegen(dt);
     if (this.time - this.lastKill < SOUL_EVERY) this.soulClock += dt; // only while you're killing things
     if (this.soulClock >= SOUL_EVERY) { this.soulClock -= SOUL_EVERY; this.addSouls(1, "fighting"); }
@@ -789,6 +791,25 @@ export class Game {
     }
   }
 
+  /** Conjure a rune: a blank rune and the spell's mana make a stack (adori gran mort: 3 sudden deaths for 985
+   *  mana). Tibia's soul points are left out: they're there to stop people making runes while away from the
+   *  keyboard, which isn't a thing here. Returns why not, if it can't. */
+  conjure(rune: SpellData): string | null {
+    const ch = this.ch, c = rune.conjure;
+    if (!c || !ch.conjurable().includes(rune)) return "You can't conjure that rune.";
+    if (this.time < this.groupReady.support) return "You are exhausted.";
+    if ((ch.supplies.get(c.reagent) ?? 0) <= 0) return "You need a blank rune.";
+    if (ch.mana < c.mana) return "You do not have enough mana.";
+    ch.supplies.set(c.reagent, ch.supplies.get(c.reagent)! - 1);
+    this.advance(ch.spendMana(c.mana));
+    ch.supplies.set(rune.runeId!, (ch.supplies.get(rune.runeId!) ?? 0) + c.count);
+    this.groupReady.support = this.time + 2;
+    this.addText(this.player.x, this.player.y - 62, c.words, "#f0e060");
+    this.addEffect(13, this.player.x, this.player.y);
+    this.msg(`You conjure ${c.count} ${rune.name}${c.count > 1 ? "s" : ""}.`, "#80c0ff");
+    return null;
+  }
+
   // ---------- magic fields ----------
 
   private placeField(tx: number, ty: number, id: number) {
@@ -1048,6 +1069,7 @@ export class Game {
     }
     this.kills++;
     this.lastKill = this.time;
+
     // Souls for the meta progression, and kill counts per zone for its bosses.
     this.addSouls(soulsFor(m.data.experience, m.boss), "kills");
     const mz = zoneAt(m.tx, m.ty);
