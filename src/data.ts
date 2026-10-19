@@ -53,8 +53,12 @@ export const MAGIC_RATE = 1;
 /** The world: zones by distance from where you start, like Tibia's hunting grounds. The world doesn't
  *  follow your level; you choose how far out to push. Each zone's bosses show up, one at a time, after you've
  *  killed enough there (`bossAt` kills for the first, then every `bossAt` more). */
+/** Rookgaard in daylight, the mainland at dusk, then deeper and darker: crypts, lairs, the Pits of Inferno. */
+const ZONE_LIGHT = [255, 240, 210, 185, 160, 140, 115, 95, 80, 65, 55, 45, 40];
+
 export interface Zone {
   name: string; level: number; from: number; pool: string[]; bosses: string[]; maxAlive: number; spawnEvery?: number;
+  ambient: number; // world light, 0-255 like Tibia's (255 a sunny day, 40 a deep cave): darker further out
   weights?: number[]; // how often each of `pool` spawns, relative (default: all the same)
 }
 export const ZONE_WIDTH = 30; // tiles per ring
@@ -75,7 +79,7 @@ export const ZONES: Zone[] = [
   { name: "Dragon Lord Peaks", level: 110, pool: ["dragon lord", "behemoth", "hydra", "lizard chosen", "hellspawn", "serpent spawn", "draken spellweaver", "warlock"], bosses: ["demodras"], maxAlive: 10 },
   { name: "Hydra Swamps", level: 130, pool: ["dragon lord", "hydra", "behemoth", "demon", "medusa", "draken abomination", "ghastly dragon", "draken elite", "hand of cursed fate"], bosses: ["the plasmother", "dracola"], maxAlive: 11 },
   { name: "Pits of Inferno", level: 200, pool: ["demon", "behemoth", "hydra", "juggernaut", "fury", "plaguesmith", "hellfire fighter", "dark torturer", "hellhound", "grim reaper", "blightwalker", "undead dragon"], bosses: ["orshabaal", "ghazbaran", "morgaroth", "ferumbras", "gaz'haragoth"], maxAlive: 12 },
-].map((z, i) => ({ ...z, from: i * ZONE_WIDTH }));
+].map((z, i) => ({ ...z, from: i * ZONE_WIDTH, ambient: ZONE_LIGHT[Math.min(i, ZONE_LIGHT.length - 1)] }));
 
 /** Which zone a tile is in: rings around the start. */
 export function zoneAt(tx: number, ty: number): number {

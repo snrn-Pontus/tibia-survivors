@@ -187,7 +187,8 @@ def main():
     with open(GAME_DATA, encoding="utf-8") as fh:
         game = json.load(fh)
     p = Packer()
-    data = {"creatures": {}, "effects": {}, "missiles": {}, "items": {}, "ground": [], "decor": {}}
+    data = {"creatures": {}, "effects": {}, "missiles": {}, "items": {}, "ground": [], "decor": {},
+            "light": {"creatures": {}, "effects": {}, "missiles": {}, "items": {}}}  # what glows: [brightness, color]
 
     for name, (looktype, colors) in PLAYERS.items():
         data["creatures"][name] = export_creature(a, p, looktype, colors)
@@ -196,15 +197,21 @@ def main():
             look = m.get("lookColors")
             colors = [outfit_color(c) for c in look] if look and any(look) else None
             data["creatures"][name] = export_creature(a, p, m["lookType"], colors)
+            if a.outfits[m["lookType"]].light:
+                data["light"]["creatures"][name] = a.outfits[m["lookType"]].light
         else:
             print("no outfit for", name)
     print("creatures", len(data["creatures"]))
     for eid, app in a.effects.items():
         if app.frame_groups and app.frame_groups[0].sprite_ids:
             data["effects"][eid] = export_simple(a, p, app)
+            if app.light:
+                data["light"]["effects"][eid] = app.light
     for mid, app in a.missiles.items():
         if app.frame_groups and app.frame_groups[0].sprite_ids:
             data["missiles"][mid] = export_missile(a, p, app)
+            if app.light:
+                data["light"]["missiles"][mid] = app.light
     for iid in game["items"]:
         app = a.objects.get(int(iid))
         if app and app.frame_groups and app.frame_groups[0].sprite_ids:
@@ -213,6 +220,10 @@ def main():
         app = a.objects.get(int(iid))
         if app and app.frame_groups and app.frame_groups[0].sprite_ids:
             data["items"][iid] = export_item(a, p, app)
+    for iid in data["items"]:
+        app = a.objects.get(int(iid))
+        if app and app.light:
+            data["light"]["items"][iid] = app.light
     print("effects", len(data["effects"]), "missiles", len(data["missiles"]), "items", len(data["items"]))
     data["ground"] = [p.add(a.sprite(a.objects[g].frame_groups[0].sprite_ids[0])) for g in GROUND]
     for kind, ids in DECOR.items():

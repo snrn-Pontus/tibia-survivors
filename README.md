@@ -64,6 +64,10 @@ If Tibia is somewhere else: `python tools/extract.py "D:\path\to\Tibia\packages\
   coat and no gold; at level 8 you choose a vocation. Level, skills and everything you wear carry over; you
   only get the vocation's weapon from Canary's kit (`send_first_items.lua`), and only if you don't hold one of
   its kind (a sorcerer's wand, a paladin's spears, a knight's axe).
+- **Light and darkness**: Rookgaard is in daylight and each zone further out is darker (down to a deep cave's
+  light). You see by your light: Light, Great Light and Ultimate Light (utevo lux; their Canary levels and
+  durations, fading as they run out; auto-combat keeps one up in the dark) or something glowing you wear, and
+  creatures, fields, effects and missiles light up the dark in their own color (the client's light flag).
 - **The world is zones**, rings around where you start (Rookgaard Fields, Troll Woods, Orc Fortress, Cyclopolis,
   Dragon Lairs, ... Pits of Inferno). It doesn't follow your level: walk further out for tougher monsters.
   Each zone's real Tibia bosses appear after you've killed enough there, and drop treasure chests.

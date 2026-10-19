@@ -55,7 +55,8 @@ SPELL_FILES = {
         "fair_wound_cleansing", "divine_healing", "mass_healing", "salvation",
         "recovery", "intense_recovery", "cure_poison", "cure_burning", "cure_electrification", "cure_bleeding",
     ],
-    "support": ["magic_shield", "haste", "strong_haste", "charge", "blood_rage", "protector", "sharpshooter"],
+    "support": ["magic_shield", "haste", "strong_haste", "charge", "blood_rage", "protector", "sharpshooter",
+                "light", "great_light", "ultimate_light"],
 }
 RUNE_FILES = [
     "avalanche", "great_fireball", "sudden_death", "thunderstorm", "stone_shower", "explosion", "fireball",

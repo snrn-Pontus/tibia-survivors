@@ -102,6 +102,8 @@ class Appearance:
         self.name = name.decode("utf-8", "replace") if name else ""
         flags = parse_message(_first(f, 3, b""))
         self.unpass = bool(_first(flags, 13, 0))  # AppearanceFlags.unpass: blocks movement
+        light = parse_message(_first(flags, 23, b""))  # AppearanceFlags.light: brightness (tiles), 8-bit color
+        self.light = [_first(light, 1, 0), _first(light, 2, 215)] if _first(light, 1, 0) else None
 
 
 class Assets:

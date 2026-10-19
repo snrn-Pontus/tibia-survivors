@@ -103,6 +103,19 @@ export class Game {
   paralyzedUntil = 0; // a paralysis on you (Character.slowDelta is how strong)
   hasteUntil = 0; // a haste on you (Character.hasteDelta)
   stanceUntil = 0; // Blood Rage / Protector / Sharpshooter (Character.stance)
+  lightSpell: { level: number; from: number; until: number } | null = null; // utevo lux and the like
+
+  /** Your light level: a light spell's, fading as it runs out (Canary's ConditionLight), or what glows on you. */
+  playerLight(glow: (id: number) => number): number {
+    const s = this.lightSpell;
+    const spell = s && this.time < s.until ? Math.ceil((s.level * (s.until - this.time)) / (s.until - s.from)) : 0;
+    let worn = 0;
+    for (const id of Object.values(this.ch.equipment)) if (id) worn = Math.max(worn, glow(id));
+    return Math.max(spell, worn);
+  }
+
+  /** The world's light where you stand (255 day, 40 a deep cave), easing between zones. */
+  ambient = 255;
   recovery: { hp: number; every: number; next: number; until: number } | null = null; // Recovery / Intense Recovery
   fightMode: FightMode = "offensive"; // offensive / balanced / defensive: Tibia's attack and defense factors
   lastAttack = -99; // full attack only drops your defense right after you swing
@@ -245,6 +258,7 @@ export class Game {
     this.updateConditions();
     this.updateFields();
     this.updateBuffs();
+    this.ambient += (ZONES[Math.max(0, zoneAt(this.player.tx, this.player.ty))].ambient - this.ambient) * Math.min(1, dt * 1.5);
 
     this.updateRegen(dt);
     if (this.time - this.lastKill < SOUL_EVERY) this.soulClock += dt; // only while you're killing things
@@ -783,6 +797,9 @@ export class Game {
         break;
       case "regen":
         this.recovery = { hp: sup.hp, every: sup.every, next: this.time + sup.every, until: this.time + sup.seconds };
+        break;
+      case "light":
+        this.lightSpell = { level: sup.level, from: this.time, until: this.time + sup.seconds };
         break;
       case "cure":
         if (sup.element === "paralyze") { ch.slowDelta = 0; this.paralyzedUntil = 0; }

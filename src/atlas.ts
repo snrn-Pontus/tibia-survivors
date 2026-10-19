@@ -21,6 +21,8 @@ export interface AtlasData {
   items: Record<string, SimpleAnim & { stack?: number[] }>; // stack: the 8 count sprites of stackables
   ground: number[];
   decor: Record<string, [number, boolean][]>; // [frame, blocks movement]
+  /** What gives off light (the client's appearance flag): [brightness in tiles, Tibia's 8-bit color]. */
+  light?: Record<"creatures" | "effects" | "missiles" | "items", Record<string, [number, number]>>;
 }
 
 /** Which of a stackable's 8 sprites a count shows (otclient's Item::calculatePatterns): x + 4 y. */

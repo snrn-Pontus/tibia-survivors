@@ -10,7 +10,8 @@ export type Support =
   | { kind: "haste"; seconds: number; a: number; b: number }
   | { kind: "stance"; seconds: number; stance: Omit<Stance, "name">; slow?: [number, number]; healLock?: boolean }
   | { kind: "regen"; seconds: number; hp: number; every: number }
-  | { kind: "cure"; element: Element | "paralyze" };
+  | { kind: "cure"; element: Element | "paralyze" }
+  | { kind: "light"; level: number; seconds: number };
 export const SUPPORT: Record<string, Support> = {
   haste: { kind: "haste", seconds: 30, a: 1.3, b: 40 }, // utani hur
   strong_haste: { kind: "haste", seconds: 22, a: 1.7, b: 40 }, // utani gran hur
@@ -25,4 +26,8 @@ export const SUPPORT: Record<string, Support> = {
   cure_burning: { kind: "cure", element: "fire" }, // exana flam
   cure_electrification: { kind: "cure", element: "energy" }, // exana vis
   cure_bleeding: { kind: "cure", element: "physical" }, // exana kor
+  // CONDITION_LIGHT: a light level that fades over its duration.
+  light: { kind: "light", level: 6, seconds: 6 * 60 + 10 }, // utevo lux
+  great_light: { kind: "light", level: 8, seconds: 11 * 60 + 35 }, // utevo gran lux
+  ultimate_light: { kind: "light", level: 8, seconds: 33 * 60 + 10 }, // utevo vis lux
 };

@@ -150,6 +150,8 @@ export class Renderer {
       if (anim) atlas.draw(ctx, atlas.animFrame(anim, e.t, false), e.x, e.y);
     }
 
+    this.drawLight(g, ox, oy, S, W, H);
+
     // ---- screen space: floating text (names and bars are HTML, see hud.ts) ----
     ctx.setTransform(1, 0, 0, 1, 0, 0);
     const scr = (x: number, y: number) => [ox + x * S, oy + y * S] as const;
@@ -175,6 +177,58 @@ export class Renderer {
 
     this.view = { ox, oy, S, left, top: topY, gw, gh };
   }
+
+  /** Tibia's light: the world gets darker with the zone (Zone.ambient), and every light source cuts a soft
+   *  circle out of the dark, its radius the brightness in tiles, tinted with its color: you (a light spell or
+   *  something glowing you wear), creatures, fields, effects and missiles that glow in the client's data. */
+  private drawLight(g: Game, ox: number, oy: number, S: number, W: number, H: number) {
+    const dark = Math.min(0.9, (1 - g.ambient / 255) * 1.05);
+    if (dark < 0.02) return;
+    const L = this.atlas.data.light;
+    const glow = (kind: "creatures" | "effects" | "missiles" | "items", key: string | number) => L?.[kind]?.[String(key)];
+    const sources: [number, number, number, number][] = []; // world x, y, brightness, color
+    const p = g.player;
+    const own = g.playerLight((id) => glow("items", id)?.[0] ?? 0);
+    sources.push([p.x, p.y, Math.max(1.5, own), 215]); // you always see a little around you
+    for (const m of g.monsters) { const l = !m.dead && glow("creatures", m.key); if (l) sources.push([m.x, m.y, l[0], l[1]]); }
+    for (const f of g.fields.values()) { const l = glow("items", f.id); if (l) sources.push([tileCenter(f.tx), tileCenter(f.ty), l[0], l[1]]); }
+    for (const e of g.effects) { const l = glow("effects", e.id); if (l) sources.push([e.x, e.y, l[0] * (1 - e.t / e.dur), l[1]]); }
+    for (const m of g.missiles) { const l = glow("missiles", m.id); if (l) { const k = m.t / m.dur; sources.push([m.fx + (m.tx - m.fx) * k, m.fy + (m.ty - m.fy) * k, l[0], l[1]]); } }
+    const c = (this.lightCanvas ??= document.createElement("canvas"));
+    if (c.width !== W || c.height !== H) { c.width = W; c.height = H; }
+    const lc = c.getContext("2d")!;
+    lc.globalCompositeOperation = "source-over";
+    lc.clearRect(0, 0, W, H);
+    lc.fillStyle = `rgba(0, 0, 0, ${dark})`;
+    lc.fillRect(0, 0, W, H);
+    lc.globalCompositeOperation = "destination-out";
+    for (const [x, y, b] of sources) {
+      const sx = ox + x * S, sy = oy + y * S, r = (b + 0.5) * TILE * S;
+      const grad = lc.createRadialGradient(sx, sy, 0, sx, sy, r);
+      grad.addColorStop(0, "rgba(0,0,0,1)");
+      grad.addColorStop(0.6, "rgba(0,0,0,0.75)");
+      grad.addColorStop(1, "rgba(0,0,0,0)");
+      lc.fillStyle = grad;
+      lc.fillRect(sx - r, sy - r, r * 2, r * 2);
+    }
+    const ctx = this.ctx;
+    ctx.setTransform(1, 0, 0, 1, 0, 0);
+    ctx.drawImage(c, 0, 0);
+    // A faint tint in each light's color (Tibia's 6x6x6 palette: color = 36 r + 6 g + b).
+    ctx.globalCompositeOperation = "lighter";
+    for (const [x, y, b, col] of sources) {
+      if (col === 215) continue; // plain warm light: no tint
+      const sx = ox + x * S, sy = oy + y * S, r = (b + 0.5) * TILE * S;
+      const rgb = `${Math.floor(col / 36) * 51}, ${(Math.floor(col / 6) % 6) * 51}, ${(col % 6) * 51}`;
+      const grad = ctx.createRadialGradient(sx, sy, 0, sx, sy, r);
+      grad.addColorStop(0, `rgba(${rgb}, ${0.22 * dark})`);
+      grad.addColorStop(1, `rgba(${rgb}, 0)`);
+      ctx.fillStyle = grad;
+      ctx.fillRect(sx - r, sy - r, r * 2, r * 2);
+    }
+    ctx.globalCompositeOperation = "source-over";
+  }
+  private lightCanvas?: HTMLCanvasElement;
 
   /** The monster under a screen point (for right-click targeting), if any. */
   monsterAtScreen(g: Game, sx: number, sy: number) {

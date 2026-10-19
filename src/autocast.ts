@@ -142,6 +142,8 @@ function supportSpells(g: Game) {
     }).sort((a, b) => Number(b.group === "attack") - Number(a.group === "attack") || expected(g, b) * b.conjure!.count - expected(g, a) * a.conjure!.count)[0];
     if (rune && !g.conjure(rune)) return;
   }
+  // Light: in the dark (and a light spell is cheap), keep one up.
+  if (g.ambient < 170 && (!g.lightSpell || g.time > g.lightSpell.until - 20) && cast(known("ultimate_light") ?? known("great_light") ?? known("light"))) return;
   // Haste: keep one up (not while paralyzed by Sharpshooter's own slow).
   if (!ch.hasteDelta && !(ch.stance?.name === "Sharpshooter") && ch.mana > ch.maxMana * reserve) cast(known("strong_haste") ?? known("haste"));
 }
