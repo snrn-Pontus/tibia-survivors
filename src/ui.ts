@@ -472,19 +472,67 @@ export class UI {
     el.querySelector(".pk.focus, .stab.focus")?.scrollIntoView({ block: "nearest" });
   }
 
-  end(g: Game, souls: number, onMenu: () => void) {
-    const el = this.screen("dead", `
-      <h2>You are dead.</h2>
-      <p>Your soul returns to Rookgaard.</p>
-      <table>
-        <tr><td>Vocation</td><td>${g.vocation.name}</td></tr>
-        <tr><td>Level</td><td>${g.ch.level}</td></tr>
-        <tr><td>Deepest zone</td><td>${ZONES[g.deepest].name}</td></tr>
-        <tr><td>Time</td><td>${fmt(g.time)}</td></tr>
-        <tr><td>Kills</td><td>${g.kills}</td></tr>
-        <tr><td>Souls banked</td><td class="banked souls">0</td></tr>
-      </table>
+  /** The end of a run (a death, or quitting): what killed you, the run in numbers, and the souls banked. */
+  end(g: Game, souls: number, onMenu: () => void, died = true) {
+    const st = g.stats, n = (v: number) => Math.round(v).toLocaleString("en-US");
+    const last = st.lastHits.slice().reverse();
+    const killer = died && last[0] ? last[0].source : "";
+    const hurt = [...st.taken].sort((a, b) => b[1] - a[1]).slice(0, 4);
+    const takenTotal = [...st.taken.values()].reduce((a, b) => a + b, 0);
+    // Every creature killed, most first, for the parade; and what was picked this run.
+    const keyOf = (name: string) => Object.keys(MONSTERS).find((k) => MONSTERS[k].name === name) ?? name;
+    const kills = [...g.bestiary].sort((a, b) => b[1] - a[1]).map(([name, k]) => ({ key: keyOf(name), name, k }));
+    const step = Math.min(70, 1400 / Math.max(1, kills.length)); // the whole parade in about 1.5 s
+    const ch = g.ch;
+    const picks: [string, string][] = [
+      ...[...ch.grades].map(([f, t]) => ["grade", `${SPELLS.find((s) => s.file === f)?.name} ${CHARM_TIERS[t]}`] as [string, string]),
+      ...[...ch.imbuements].map(([id, t]) => ["imbue", `${TIERS[t - 1]} ${imbuement(id).name}`] as [string, string]),
+      ...[...ch.charms].map(([name, t]) => ["charm", `${name} ${CHARM_TIERS[t]}`] as [string, string]),
+      ...ch.prey.map((p) => ["prey", `Prey: ${MONSTERS[p.creature]?.name ?? p.creature} ${"★".repeat(p.stars)}`] as [string, string]),
+      ...[...ch.boosts].map(([id, l]) => ["boost", `${boost(id)!.name} ${l}`] as [string, string]),
+      ...[...ch.evolutions].map((id) => ["evo", evolution(id).name] as [string, string]),
+    ];
+    const pickStart = kills.length * step + 250;
+    const soulRows = ([["kills", "Kills"], ["zones", "New zones"], ["achievements", "Achievements"], ["fighting", "Time fighting"]] as const)
+      .filter(([k]) => st.souls[k]).map(([k, label]) => `<tr><td>${label}</td><td class="souls">${n(st.souls[k])}</td></tr>`).join("");
+    const el = this.screen("dead summary", `
+      <h2>${died ? "You are dead." : "Run over."}</h2>
+      <p>${killer ? `Killed by <b>${article(killer)}</b> after ${fmt(g.time)}.` : `You left after ${fmt(g.time)}.`} Your soul returns to Rookgaard.</p>
+      <div class="cols">
+        <div><h4>The run</h4><table>
+          <tr><td>Vocation</td><td>${g.vocation.name}, level ${g.ch.level}</td></tr>
+          <tr><td>Deepest zone</td><td>${ZONES[g.deepest].name}</td></tr>
+          <tr><td>Kills</td><td>${n(g.kills)}</td></tr>
+          <tr><td>Damage dealt</td><td>${n(st.dealt)}</td></tr>
+          <tr><td>Damage taken</td><td>${n(takenTotal)}</td></tr>
+          <tr><td>Healed</td><td>${n(st.healed)}</td></tr>
+          ${st.bestLoot ? `<tr><td>Best loot</td><td>${st.bestLoot.n > 1 ? `${st.bestLoot.n} ` : ""}${item(st.bestLoot.id)?.name} <span class="gold">(${n(st.bestLoot.value)} gold)</span></td></tr>` : ""}
+        </table></div>
+        <div><h4>Who hurt you</h4><table>${hurt.map(([who, d]) => `<tr><td>${cap(who)}</td><td>${n(d)} <i>(${Math.round((100 * d) / Math.max(1, takenTotal))}%)</i></td></tr>`).join("") || "<tr><td>Nobody</td></tr>"}</table>
+          ${died && last.length ? `<h4>Last hits</h4><table>${last.slice(0, 5).map((h) => `<tr><td>${cap(h.source)}</td><td>${n(h.dmg)} ${h.el} <i>${(g.time - h.t).toFixed(1)} s before</i></td></tr>`).join("")}</table>` : ""}</div>
+        <div><h4>Souls</h4><table>${soulRows}<tr><td><b>Banked</b></td><td class="banked souls">0</td></tr></table></div>
+      </div>
       <div class="row"><button class="btn">Spend souls and go again</button></div>`);
+    // The parade: kills pop in one by one above the numbers, then the picks.
+    const parade = document.createElement("div");
+    parade.className = "parade";
+    parade.innerHTML = `<h4>Killed <span class="kill-total">0</span></h4><div class="kills">${kills.map((x, i) =>
+      `<div class="kill" style="animation-delay:${Math.round(i * step)}ms" title="${x.name}: ${x.k}"><span class="spr" data-key="${x.key}"></span><b>${x.k}</b></div>`).join("") || `<i>Nothing</i>`}</div>`
+      + (picks.length ? `<h4>Picked</h4><div class="picks">${picks.map(([kind, label], i) =>
+        `<span class="pick ${kind}" style="animation-delay:${Math.round(pickStart + i * 50)}ms">${label}</span>`).join("")}</div>` : "");
+    el.querySelector(".cols")!.before(parade);
+    parade.querySelectorAll<HTMLElement>(".spr").forEach((s) => {
+      const anim = this.atlas.data.creatures[s.dataset.key!];
+      if (anim) s.appendChild(this.atlas.icon(anim.idle[2][0], 32, 1));
+    });
+    // The kill counter runs with the parade.
+    const totalEl = parade.querySelector<HTMLElement>(".kill-total")!, total = g.kills, t1 = performance.now(), paradeMs = kills.length * step + 200;
+    const count = (now: number) => {
+      const k = Math.min(1, (now - t1) / paradeMs);
+      totalEl.textContent = Math.round(total * k).toLocaleString("en-US");
+      if (k < 1 && totalEl.isConnected) requestAnimationFrame(count);
+    };
+    requestAnimationFrame(count);
     this.setButtons([...el.querySelectorAll<HTMLElement>(".btn")], [onMenu]);
     // Count the souls up.
     const cell = el.querySelector<HTMLElement>(".banked")!;
@@ -507,6 +555,9 @@ const RANDOM_NAMES = ["Eremo", "Bozo", "Rowenna", "Asima", "Tibianus", "Kazzan",
 
 /** Can this character use a shop item at all (class potions, class runes, its ammo)? */
 /** Short stat line for an item, like Tibia's look text: (Atk:24 Def:21) (Arm:12). */
+const cap = (s: string) => s[0].toUpperCase() + s.slice(1);
+const article = (s: string) => (/^[A-Z]/.test(s) ? s : `${/^[aeiou]/i.test(s) ? "an" : "a"} ${s}`);
+
 /** Achievements on the title screen: every creature you've killed, its milestones reached (stars), and
  *  how far the next one is and what it pays. */
 function achievementsHtml(save: Save): string {

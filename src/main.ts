@@ -126,7 +126,7 @@ async function boot() {
     if (paused && ui.open) { ui.close(); paused = false; return; }
     if (ui.open) return; // a level-up choice is pending
     paused = true;
-    ui.pause(game, () => { ui.close(); paused = false; }, () => { bankRun(game!); showTitle(); });
+    ui.pause(game, () => { ui.close(); paused = false; }, () => { const g = game!; ui.end(g, bankRun(g), showTitle, false); });
   };
 
   const handleEvents = (g: Game) => {

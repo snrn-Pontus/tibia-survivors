@@ -71,6 +71,8 @@ const ORTHO: [number, number][] = [[0, -1], [1, 0], [0, 1], [-1, 0]];
 const DIAG: [number, number][] = [[1, -1], [1, 1], [-1, 1], [-1, -1]];
 const FLOW_R = 22;
 const PLAYER_DIAGONAL_COST = Math.SQRT2; // a diagonal step for you (see updatePlayer)
+/** What a damage-over-time tick is called in the summary. */
+const CONDITION_NAMES: Partial<Record<Element, string>> = { earth: "poison", fire: "burning", energy: "electrification", physical: "bleeding", drown: "drowning", ice: "freezing", holy: "dazzling", death: "curse" };
 
 
 /** The charms' hit effects by element (bestiary_charms.lua). */
@@ -139,6 +141,14 @@ export class Game {
   killTotals: Record<string, number> = {}; // kills per creature over all runs (from the save), for achievements
   discovered = new Set<number>(); // zones you've made a kill in, ever (from the save): each pays souls once
   private soulClock = 0;
+  /** The run in numbers, for the summary when it ends. */
+  stats = {
+    dealt: 0, healed: 0,
+    taken: new Map<string, number>(), // by who (or what condition) hurt you
+    lastHits: [] as { t: number; source: string; dmg: number; el: Element }[],
+    bestLoot: null as { id: number; n: number; value: number } | null,
+    souls: { kills: 0, zones: 0, achievements: 0, fighting: 0 } as Record<"kills" | "zones" | "achievements" | "fighting", number>,
+  };
   private lastKill = -999; // time of your last kill (survival souls need one in the last SOUL_EVERY seconds)
   private zoneBossesDone: number[] = [];
   private occupied = new Map<number, Monster>();
@@ -229,7 +239,7 @@ export class Game {
     this.updateBuffs();
     this.updateRegen(dt);
     if (this.time - this.lastKill < SOUL_EVERY) this.soulClock += dt; // only while you're killing things
-    if (this.soulClock >= SOUL_EVERY) { this.soulClock -= SOUL_EVERY; this.souls++; }
+    if (this.soulClock >= SOUL_EVERY) { this.soulClock -= SOUL_EVERY; this.addSouls(1, "fighting"); }
     this.updateCorpses();
 
     for (const e of this.effects) e.t += dt;
@@ -674,6 +684,11 @@ export class Game {
     if (dealt > 0 && a.condition) this.applyCondition(a.condition);
   }
 
+  addSouls(n: number, from: keyof Game["stats"]["souls"]) {
+    this.souls += n;
+    this.stats.souls[from] += n;
+  }
+
   /** The Dawnport unlock: skip Rookgaard. You start at level 8 with the level-up choices a rookie would have
    *  earned, and choose a vocation right away; skills stay where a new character's are. */
   dawnport() {
@@ -722,6 +737,7 @@ export class Game {
       while (this.time >= r.next && r.next <= r.until) {
         r.next += r.every;
         const healed = Math.min(r.hp, ch.maxHp - ch.hp);
+        this.stats.healed += healed;
         ch.hp += healed;
         if (healed > 0) this.addText(this.player.x, this.player.y - 44, String(healed), ELEMENT_COLORS.healing);
       }
@@ -862,7 +878,7 @@ export class Game {
       this.addEffect(melee ? 4 : 3, p.x, p.y); // blocked
       return 0;
     }
-    this.loseHealth(dmg, el, `due to an attack by ${article(m.data.name)}`);
+    this.loseHealth(dmg, el, `due to an attack by ${article(m.data.name)}`, m.data.name);
     // Defensive charms, after a hit that landed (Canary's IOBestiary::parseCharmCombat).
     if (proc("Parry")) {
       this.addEffect(5, m.x, m.y);
@@ -880,8 +896,11 @@ export class Game {
   }
 
   /** Damage that got past blocking: the magic shield takes what it can, the rest comes off your health. */
-  private loseHealth(dmg: number, el: Element, why: string) {
+  private loseHealth(dmg: number, el: Element, why: string, source: string) {
     const ch = this.ch, p = this.player;
+    this.stats.taken.set(source, (this.stats.taken.get(source) ?? 0) + dmg);
+    this.stats.lastHits.push({ t: this.time, source, dmg, el });
+    if (this.stats.lastHits.length > 6) this.stats.lastHits.shift();
     if (this.manaShield > 0 && this.time < this.manaShieldUntil) {
       const v = Math.min(dmg, ch.mana, this.manaShield);
       ch.mana -= v;
@@ -917,7 +936,7 @@ export class Game {
         c.next += c.every;
         // Ticks go through equipment protection only: no defense, armor or mitigation (combatBlockHit without them).
         const dmg = Math.round((c.ticks.shift()! * (100 - this.ch.absorb(el))) / 100);
-        if (dmg > 0) this.loseHealth(dmg, el, "");
+        if (dmg > 0) this.loseHealth(dmg, el, "", CONDITION_NAMES[el] ?? el);
       }
       if (!c.ticks.length) this.conditions.delete(el);
     }
@@ -952,6 +971,7 @@ export class Game {
       return 0;
     }
     const dealt = Math.min(dmg, m.hp);
+    this.stats.dealt += dealt;
     m.hp -= dmg;
     if (el === "physical") this.addEffect(1, m.x, m.y);
     this.addText(m.x, m.y - 30, isCrit ? `${dealt}!` : String(dealt), isCrit ? "#ffd34d" : ELEMENT_COLORS[el]);
@@ -1005,8 +1025,7 @@ export class Game {
     this.kills++;
     this.lastKill = this.time;
     // Souls for the meta progression, and kill counts per zone for its bosses.
-    const soul = soulsFor(m.data.experience, m.boss);
-    this.souls += soul;
+    this.addSouls(soulsFor(m.data.experience, m.boss), "kills");
     const mz = zoneAt(m.tx, m.ty);
     this.zoneKills[mz] = (this.zoneKills[mz] ?? 0) + 1;
     // The first kill ever in a zone, of a creature that lives there, pays its exploration souls (once per
@@ -1015,7 +1034,7 @@ export class Game {
     if (mz > 0 && native && !this.discovered.has(mz)) {
       this.discovered.add(mz);
       const found = SOULS_PER_ZONE * (mz + 1);
-      this.souls += found;
+      this.addSouls(found, "zones");
       this.banner = { text: `${ZONES[mz].name} discovered! +${found} souls`, t: 3 };
       this.msg(`Your first kill in ${ZONES[mz].name}: +${found} souls.`, "#c9a0ff");
     }
@@ -1024,7 +1043,7 @@ export class Game {
     this.killTotals[m.key] = total;
     const ach = achievement(m.key, total);
     if (ach) {
-      this.souls += ach.souls;
+      this.addSouls(ach.souls, "achievements");
       this.banner = { text: `Achievement: ${ach.title}! +${ach.souls} souls`, t: 3.5 };
       this.msg(`Achievement unlocked: ${ach.title} (${ach.count} ${m.data.name} kills). +${ach.souls} souls.`, "#c9a0ff");
     }
@@ -1131,6 +1150,8 @@ export class Game {
       } else ch.stash(l.id, n);
       // Flair: every item hops out of the body and flies to where it went; rare ones get a fanfare.
       const rare = !coins && (equipped || (PRICES[l.id]?.sell ?? 0) >= RARE_VALUE);
+      const value = (PRICES[l.id]?.sell ?? 0) * n;
+      if (!coins && value > (this.stats.bestLoot?.value ?? 0)) this.stats.bestLoot = { id: l.id, n, value };
       this.lootFx.push({ id: l.id, n, x: cx, y: cy, t: 0, delay: i * 0.08, to, rare });
       if (rare) {
         this.banner = { text: equipped ? `Upgrade! ${it.name}` : `Rare drop: ${it.name}!`, t: 3 };
@@ -1296,6 +1317,7 @@ export class Game {
     }
     if (s.group === "healing") {
       const healed = Math.min(normalRandom(Math.floor(lo), Math.floor(hi)), ch.maxHp - ch.hp);
+      this.stats.healed += healed;
       ch.hp += healed;
       this.addEffect(s.effect || 13, p.x, p.y);
       if (healed > 0) this.addText(p.x, p.y - 44, String(healed), ELEMENT_COLORS.healing);
@@ -1354,6 +1376,7 @@ export class Game {
     this.potionReady = this.time + 1;
     if (pot.health) {
       const v = Math.min(uniform(pot.health[0], pot.health[1]), ch.maxHp - ch.hp);
+      this.stats.healed += v;
       ch.hp += v;
       if (v > 0) this.addText(p.x, p.y - 44, String(v), ELEMENT_COLORS.healing);
     }
