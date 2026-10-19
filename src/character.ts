@@ -1,7 +1,7 @@
 // The player's character sheet: level, experience, skills, equipment and supplies, with Tibia's rules.
 import { BACKPACK, COIN_VALUE, Container } from "./container";
 import { expRate, MAGIC_RATE, SKILL_RATE, START_GOLD, START_LEVEL, type VocationDef } from "./data";
-import { canWear, item, itemId, POTIONS, PRICES, SPELLS, VOCATION_DATA, wornItem, type Element, type ItemData, type SpellData, type VocationData } from "./tibia/db";
+import { canWear, item, itemId, POTIONS, PRICES, SHOP_PRICES, SPELLS, VOCATION_DATA, wornItem, type Element, type ItemData, type SpellData, type VocationData } from "./tibia/db";
 import { IMBUEMENTS, imbuement, type ImbuementKind } from "./tibia/imbuements";
 import type { Stance } from "./support";
 import { charm, CHARM_LIST, PREY_SLOTS, preyPercent, spellGrades, type GradeBonus, type Prey, type PreyBonus } from "./picks";
@@ -495,19 +495,19 @@ export class Character {
   /** Class weapons NPCs sell, from what you could wield soon to what you can now, cheapest first. */
   shopWeapons(): { id: number; price: number; usable: boolean }[] {
     const out: { id: number; price: number; usable: boolean }[] = [];
-    for (const [k, pr] of Object.entries(PRICES)) {
+    for (const [k, price] of Object.entries(SHOP_PRICES)) {
       const id = Number(k), it = item(id);
-      if (!pr.buy || !it || this.slotFor(it) !== "weapon" || !canWear(it, this.voc.id, 9999)) continue;
+      if (!it || this.slotFor(it) !== "weapon" || !canWear(it, this.voc.id, 9999)) continue;
       if ((it.level ?? 0) > this.level + 40) continue;
-      out.push({ id, price: pr.buy, usable: canWear(it, this.voc.id, this.level) });
+      out.push({ id, price, usable: canWear(it, this.voc.id, this.level) });
     }
     return out.sort((a, b) => (item(a.id)!.level ?? 0) - (item(b.id)!.level ?? 0) || a.price - b.price);
   }
 
   /** Arrows and bolts NPCs sell (all of them, whatever you hold). */
   shopAmmo(): { id: number; price: number; usable: boolean }[] {
-    return Object.entries(PRICES)
-      .map(([k, pr]) => ({ id: Number(k), price: pr.buy ?? 0, it: item(Number(k)) }))
+    return Object.entries(SHOP_PRICES)
+      .map(([k, price]) => ({ id: Number(k), price, it: item(Number(k)) }))
       .filter((x) => x.price && x.it && x.it.ammotype && x.it.weapontype !== "distance")
       .map((x) => ({ id: x.id, price: x.price, usable: canWear(x.it!, this.voc.id, this.level) }))
       .sort((a, b) => (item(a.id)!.attack ?? 0) - (item(b.id)!.attack ?? 0));
@@ -530,14 +530,14 @@ export class Character {
 
   shopUpgrades(): { id: number; slot: Slot; price: number }[] {
     const out: { id: number; slot: Slot; price: number }[] = [];
-    for (const [k, pr] of Object.entries(PRICES)) {
+    for (const [k, price] of Object.entries(SHOP_PRICES)) {
       const id = Number(k), it = item(id);
-      if (!pr.buy || !it || !canWear(it, this.voc.id, this.level) || !this.prefers(it)) continue;
+      if (!it || !canWear(it, this.voc.id, this.level) || !this.prefers(it)) continue;
       const slot = this.slotFor(it);
       if (!slot || slot === "ammo" || (slot === "shield" && this.weapon?.slottype === "two-handed")) continue;
       const cur = this.equipment[slot];
       if (cur && this.score(item(cur)!, slot) >= this.score(it, slot)) continue;
-      out.push({ id, slot, price: pr.buy });
+      out.push({ id, slot, price });
     }
     return out.sort((a, b) => a.price - b.price);
   }

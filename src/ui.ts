@@ -7,7 +7,7 @@ import { boost, BOOSTS, MAX_BOOST, MAX_SLOTS, RUN_BONUS_MAX, RUN_BONUS_STEP, run
 import { BLESSING_COST, boostCost, buyBlessing, buyBoost, buyTier, loadSave, tier, trackTier, TRACKS, writeSave, type Save } from "./meta";
 import { EVOLUTIONS, evolution, evolutionsFor } from "./evolutions";
 import type { ChestResult } from "./game";
-import { canWear, item, itemId, MONSTERS, POTIONS, PRICES, SPELLS, wornItem, type ItemData, type SpellData } from "./tibia/db";
+import { buyPrice, canWear, item, itemId, MONSTERS, POTIONS, PRICES, SHOP_PRICES, SPELLS, wornItem, type ItemData, type SpellData } from "./tibia/db";
 import { SKILL_NAMES } from "./tibia/rules";
 import { charm, CHARM_TIERS, describeCharm, describeGrade, describePrey, PREY_SLOTS, spellGrades } from "./picks";
 
@@ -301,7 +301,7 @@ export class UI {
       g.msg(`You bought ${n} ${item(id)!.name}${n > 1 ? "s" : ""}.`, "#80ff80");
     };
     const packs = (id: number, sizes: number[], then?: () => void, ok = true): Pack[] => {
-      const each = PRICES[id]?.buy ?? 0;
+      const each = buyPrice(id);
       return sizes.map((n) => ({ n, price: each * n, ok, buy: stock(id, n, each * n, then) }));
     };
     const better = (id: number) => {
@@ -331,7 +331,7 @@ export class UI {
       }
     } else if (GEAR_TABS[tab]) {
       const slots = GEAR_TABS[tab]!;
-      const list = Object.entries(PRICES).map(([k, pr]) => ({ id: Number(k), price: pr.buy ?? 0, it: item(Number(k)) }))
+      const list = Object.entries(SHOP_PRICES).map(([k, price]) => ({ id: Number(k), price, it: item(Number(k)) }))
         .filter((x) => x.price && x.it && slots.includes(ch.slotFor(x.it) ?? "") && canWear(x.it, ch.voc.id, 9999) && (x.it.level ?? 0) <= ch.level + 40)
         .sort((a, b) => slots.indexOf(ch.slotFor(a.it!)!) - slots.indexOf(ch.slotFor(b.it!)!) || (a.it!.level ?? 0) - (b.it!.level ?? 0) || a.price - b.price);
       for (const x of list) {

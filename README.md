@@ -46,7 +46,9 @@ If Tibia is somewhere else: `python tools/extract.py "D:\path\to\Tibia\packages\
   have it), how it compares with what you wear, and what NPCs pay.
 - **Console** under the view: Server Log, Loot and Combat tabs (a tab blinks when it has news).
 - **P / Esc** pauses: character sheet, and NPC trade in tabs: weapons, armor, ammunition, potions, runes (bought
-  in packs: potions by 1, 5, 10 or 25), and selling, item by item or everything. Anyone can buy and use gear
+  in packs: potions by 1, 5, 10 or 25), and selling, item by item or everything. Gear only monsters drop is
+  sold too, at three times what an NPC pays for it (treasures no NPC buys: 2,000 gold per required level, at
+  least 100,000). Anyone can buy and use gear
   without a vocation requirement, as in Tibia (a paladin with spears and a shield); your vocation's own kind
   of weapon is listed first and is what it equips by itself.
 - **Inside a run, everything is real Tibia** (x1 rates). Every run starts in Rookgaard at level 1 with a club and a

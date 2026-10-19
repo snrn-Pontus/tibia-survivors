@@ -5,7 +5,7 @@
 import { autoCombat } from "./autocast";
 import { ROOKIE, VOCATIONS, zoneAt, ZONES } from "./data";
 import { cheb, Game } from "./game";
-import { itemId, PRICES } from "./tibia/db";
+import { buyPrice, itemId, PRICES } from "./tibia/db";
 import type { World } from "./world";
 
 export function trade(g: Game) {
@@ -24,7 +24,7 @@ export function trade(g: Game) {
   // Thrown weapons: keep a stack of 20.
   const thrown = ch.thrown;
   if (thrown) {
-    const price = PRICES[thrown]?.buy ?? 0;
+    const price = buyPrice(thrown);
     while ((ch.supplies.get(thrown) ?? 0) < 20 && price && ch.gold >= price * 10) {
       ch.gold -= price * 10;
       ch.supplies.set(thrown, (ch.supplies.get(thrown) ?? 0) + 10);

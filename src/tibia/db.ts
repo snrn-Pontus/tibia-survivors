@@ -180,6 +180,25 @@ export function wornItem(id: number): ItemData | undefined {
   return it?.transformequipto ? item(it.transformequipto) ?? it : it;
 }
 
+/** What the shop charges for an item (0: not sold). NPC wares at their NPC price; equipment only monsters drop
+ *  at three times what an NPC pays for it (so selling it back returns a third), or, for treasures no NPC buys
+ *  (umbral weapons, golden boots...), 2,000 gold per level they need and at least 100,000. */
+export const SHOP_PRICES: Record<number, number> = (() => {
+  const out: Record<number, number> = {};
+  for (const [k, p] of Object.entries(PRICES)) if (p.buy) out[Number(k)] = p.buy;
+  const gear = (it: ItemData) => it.weapontype || ["head", "armor", "legs", "feet", "ring", "necklace", "shield", "hand", "two-handed", "ammo"].includes(it.slot ?? "");
+  for (const m of Object.values(MONSTERS)) {
+    for (const l of m.loot) {
+      const it = item(l.id);
+      if (!it || out[l.id] || !gear(it)) continue;
+      const sell = PRICES[l.id]?.sell ?? 0;
+      out[l.id] = sell ? sell * 3 : Math.max(100000, 2000 * (it.level ?? 0));
+    }
+  }
+  return out;
+})();
+export const buyPrice = (id: number) => SHOP_PRICES[id] ?? 0;
+
 export function canWear(it: ItemData, voc: VocationId, level: number): boolean {
   if (it.level && level < it.level) return false;
   if (typeof it.vocation === "string") {
