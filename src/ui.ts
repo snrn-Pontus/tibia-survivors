@@ -7,6 +7,7 @@ import { boost, BOOSTS, MAX_BOOST, MAX_SLOTS, RUN_BONUS_MAX, RUN_BONUS_STEP, run
 import { BLESSING_COST, boostCost, buyBlessing, buyBoost, buyTier, characters, createCharacter, currentCharacter, deleteCharacter, loadSave, selectCharacter, tier, trackTier, TRACKS, writeSave, type CharacterSave, type Save } from "./meta";
 import { EVOLUTIONS, evolution, evolutionsFor } from "./evolutions";
 import type { ChestResult } from "./game";
+import { PROMOTED, PROMOTION_PRICE } from "./tibia/db";
 import { buyPrice, canWear, item, itemId, MONSTERS, POTIONS, PRICES, SHOP_PRICES, SPELLS, wornItem, type ItemData, type SpellData } from "./tibia/db";
 import { SKILL_NAMES } from "./tibia/rules";
 import { charm, CHARM_TIERS, describeCharm, describeGrade, describePrey, PREY_SLOTS, spellGrades } from "./picks";
@@ -428,7 +429,7 @@ export class UI {
     const el = this.screen("pause", `
       <h2>Paused</h2>
       <div class="cols">
-        <div class="sheet"><h3>${ch.voc.name}, level ${ch.level}</h3>
+        <div class="sheet"><h3>${ch.vocName}, level ${ch.level}</h3>
           <table><tr><td>Magic Level</td><td>${ch.ml}</td></tr>${skills}
           <tr><td>Speed</td><td>${ch.speed}</td></tr><tr><td>Armor</td><td>${ch.armor}</td></tr></table>
           <h4>Upgrades ${ch.slotsUsed}/${MAX_SLOTS}</h4>
@@ -440,6 +441,7 @@ export class UI {
           <h4>Spells</h4>
           <p class="spells">${[...ch.known].map((f) => SPELLS.find((s) => s.file === f)!).map((s) => `${s.name} <i>${s.words}</i>`).join("<br>") || "None yet"}</p></div>
         <div class="trade"><h3>NPC trade <span class="gold">${gold(ch.gold)} gold</span></h3>
+          ${PROMOTED[ch.voc.id] && !ch.promoted ? `<button class="btn promo" ${ch.promotionBlocked() ? "disabled" : ""}>Promotion to ${cap(PROMOTED[ch.voc.id]!).replace(/ (\w)/, (m) => m.toUpperCase())}: faster health and mana regeneration · ${gold(PROMOTION_PRICE)} gold${ch.promotionBlocked() ? ` <small>(${ch.promotionBlocked()})</small>` : ""}</button>` : ""}
           <div class="stabs">${TABS.map(([t, name]) => `<button class="btn stab${t === tab ? " on" : ""}">${name}</button>`).join("")}</div>
           ${tab === "sell" ? `<button class="btn sell" ${loot ? "" : "disabled"}>Sell everything: ${gold(ch.backpackCount)} items for ${gold(loot)} gold</button>` : ""}
           <div class="slist">${rows.map(rowHtml).join("") || `<p class="hint">${tab === "sell" ? "Your backpack is empty." : "Nothing for sale here."}</p>`}</div>
@@ -450,6 +452,16 @@ export class UI {
     // Buttons in page order: resume, quit, the tabs, sell everything, then every pack button.
     const btns = [...el.querySelectorAll<HTMLElement>(".row .btn"), ...el.querySelectorAll<HTMLElement>(".stab")];
     const acts: (() => void)[] = [onResume, onQuit, ...TABS.map(([t]) => () => reopen(2 + TABS.findIndex(([x]) => x === t), t))];
+    const promo = el.querySelector<HTMLElement>(".promo");
+    if (promo) {
+      btns.push(promo);
+      acts.push(() => {
+        if (!ch.promote()) return;
+        g.msg(`You are now ${/^[aeiou]/i.test(ch.vocName) ? "an" : "a"} ${ch.vocName}!`, "#ffd34d");
+        g.banner = { text: `Promoted: ${ch.vocName}`, t: 3 };
+        reopen(0);
+      });
+    }
     const sellAll = el.querySelector<HTMLElement>(".sell");
     if (sellAll) {
       btns.push(sellAll);

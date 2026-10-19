@@ -58,6 +58,8 @@ If Tibia is somewhere else: `python tools/extract.py "D:\path\to\Tibia\packages\
   least 100,000). Anyone can buy and use gear
   without a vocation requirement, as in Tibia (a paladin with spears and a shield); your vocation's own kind
   of weapon is listed first and is what it equips by itself.
+- **Promotion**: from level 20, 20,000 gold in NPC trade makes you an Elite Knight, Royal Paladin, Master Sorcerer
+  or Elder Druid for the rest of the run, with their faster health and mana regeneration (vocations.xml).
 - **Inside a run, everything is real Tibia** (x1 rates). Every run starts in Rookgaard at level 1 with a club and a
   coat and no gold; at level 8 you choose a vocation. Level, skills and everything you wear carry over; you
   only get the vocation's weapon from Canary's kit (`send_first_items.lua`), and only if you don't hold one of

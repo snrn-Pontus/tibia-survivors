@@ -4,6 +4,7 @@ import { BACKPACK, COIN_VALUE, Container } from "./container";
 /** An item's weight in oz (items.xml keeps hundredths). */
 export const weightOf = (id: number) => (item(id)?.weight ?? 0) / 100;
 import { expRate, MAGIC_RATE, SKILL_RATE, START_GOLD, START_LEVEL, type VocationDef } from "./data";
+import { PROMOTED, PROMOTION_LEVEL, PROMOTION_PRICE, type VocationId } from "./tibia/db";
 import { canWear, item, itemId, POTIONS, PRICES, SHOP_PRICES, SPELLS, VOCATION_DATA, wornItem, type Element, type ItemData, type SpellData, type VocationData } from "./tibia/db";
 import { IMBUEMENTS, imbuement, type ImbuementKind } from "./tibia/imbuements";
 import type { Stance } from "./support";
@@ -93,7 +94,32 @@ export class Character {
   hasteDelta = 0; // utani hur, Adrenaline Burst...: speed added (ConditionSpeed)
   slowDelta = 0; // a paralysis (monster spells, Sharpshooter): speed taken, negative
   stance: Stance | null = null; // Blood Rage, Protector, Sharpshooter (Game times it)
-  runesOff = new Set<number>(); // rune item ids auto-combat leaves alone (the Supplies window toggles them)
+  runesOff = new Set<number>();
+  promoted = false; // King Tibianus' promotion: the promoted vocation's regeneration (see promote)
+
+  /** Your vocation's name, promoted or not ("Elite Knight"). */
+  get vocName() {
+    const p = this.promoted && PROMOTED[this.voc.id];
+    return p ? p.replace(/\b\w/g, (c) => c.toUpperCase()) : this.voc.name;
+  }
+
+  /** Why you can't be promoted yet, or null if you can. */
+  promotionBlocked(): string | null {
+    if (this.promoted) return "Already promoted.";
+    if (!PROMOTED[this.voc.id]) return "Choose a vocation first.";
+    if (this.level < PROMOTION_LEVEL) return `Needs level ${PROMOTION_LEVEL}.`;
+    if (this.gold < PROMOTION_PRICE) return `Costs ${PROMOTION_PRICE.toLocaleString("en-US")} gold.`;
+    return null;
+  }
+
+  /** Buy the promotion: the promoted vocation's data (vocations.xml), so faster health and mana regeneration. */
+  promote(): boolean {
+    if (this.promotionBlocked()) return false;
+    this.gold -= PROMOTION_PRICE;
+    this.promoted = true;
+    this.vd = VOCATION_DATA[PROMOTED[this.voc.id] as VocationId];
+    return true;
+  } // rune item ids auto-combat leaves alone (the Supplies window toggles them)
 
   boostLevel(id: BoostId) { return this.boosts.get(id) ?? 0; }
   /** Rate multiplier from a boost (x1 when not picked). */

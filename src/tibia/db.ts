@@ -162,6 +162,10 @@ const data = raw as unknown as {
 export const MONSTERS = data.monsters;
 export const SPELLS = data.spells;
 export const VOCATION_DATA = data.vocations;
+/** Promotions (King Tibianus, level 20, 20,000 gold): their vocations.xml entries regenerate faster. */
+export const PROMOTED: Partial<Record<VocationId, string>> = { knight: "elite knight", paladin: "royal paladin", sorcerer: "master sorcerer", druid: "elder druid" };
+export const PROMOTION_LEVEL = 20;
+export const PROMOTION_PRICE = 20000;
 export const POTIONS = data.potions;
 export const STARTER = data.starter;
 export const FIELDS = data.fields;

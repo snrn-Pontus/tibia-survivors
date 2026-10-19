@@ -780,7 +780,7 @@ export class Hud {
     };
     row("Level", String(ch.level), ch.levelPercent());
     row("Experience", fmt(ch.exp));
-    row("Vocation", ch.voc.name);
+    row("Vocation", ch.vocName);
     row("Speed", String(ch.speed));
     row("Magic level", String(ch.ml), ch.mlPercent());
     rows.push(`<div class="sep"></div>`);

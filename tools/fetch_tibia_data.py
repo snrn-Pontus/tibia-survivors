@@ -687,7 +687,8 @@ def main():
     for v in re.findall(r"<vocation [^>]*>.*?</vocation>", voc_src, re.S):
         a = dict(re.findall(r'(\w+)="([^"]*)"', v.split(">")[0]))
         name = a["name"].lower()
-        if name not in ("none", "knight", "paladin", "sorcerer", "druid"):
+        # The four vocations and their promotions (King Tibianus, level 20): faster regeneration and more.
+        if name not in ("none", "knight", "paladin", "sorcerer", "druid", "elite knight", "royal paladin", "master sorcerer", "elder druid"):
             continue
         f = dict(re.findall(r'(\w+)="([^"]*)"', re.search(r"<formula[^>]*>", v).group(0)))
         mit = dict(re.findall(r'(\w+)="([^"]*)"', re.search(r"<mitigation[^>]*>", v).group(0)))
