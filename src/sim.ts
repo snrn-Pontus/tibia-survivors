@@ -120,7 +120,7 @@ export function run(world: World, effectDur: (id: number) => number, voc: number
 }
 
 /** The free neighbouring tile farthest from the monsters around (closest ones count most), leaning back toward
- *  the start when this zone is above your level. Picking from walkable tiles keeps it from running into a tree. */
+ *  the start when this zone is above your level, and never into a harder zone than it can take. Picking from walkable tiles keeps it from running into a tree. */
 function escape(g: Game): [number, number] {
   const p = g.player;
   const around = g.monsters.filter((m) => !m.dead && cheb(m.tx, m.ty, p.tx, p.ty) <= 6);
@@ -133,6 +133,9 @@ function escape(g: Game): [number, number] {
     let score = 0;
     for (const m of around) score -= 1 / Math.max(0.5, Math.hypot(m.tx - tx, m.ty - ty)) ** 2;
     if (inward) score -= Math.hypot(tx, ty) * 0.3;
+    // Don't flee into a zone above its level (zones aren't rings now: the next one can be a few steps away).
+    const tz = zoneAt(tx, ty);
+    if (tz > z && ZONES[tz].level > g.ch.level) score -= 5;
     if (score > bestScore) { bestScore = score; best = [dx, dy]; }
   }
   return best;

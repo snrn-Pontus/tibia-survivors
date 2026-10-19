@@ -136,6 +136,28 @@ def creature_frame(a, info, direction, phase, colors=None):
     return out
 
 
+def border_piece(img):
+    """Which border piece a sprite is, from how much of each 8-pixel band along the tile's sides it covers."""
+    al = img.getchannel("A").load()
+    w, h = img.size
+    x0, y0 = w - 32, h - 32  # the tile is the bottom-right 32 x 32
+    def cov(xa, ya, xb, yb):
+        n = sum(1 for y in range(ya, yb) for x in range(xa, xb) if al[x0 + x, y0 + y] > 0)
+        return n / ((xb - xa) * (yb - ya))
+    t, b, l, r = cov(0, 0, 32, 8), cov(0, 24, 32, 32), cov(0, 0, 8, 32), cov(24, 0, 32, 32)
+    corners = {"nw": cov(0, 0, 10, 10), "ne": cov(22, 0, 32, 10), "sw": cov(0, 22, 10, 32), "se": cov(22, 22, 32, 32)}
+    high = [v > 0.5 for v in (t, b, l, r)]
+    if sum(high) >= 2:
+        # A big corner covers all but the far corner.
+        far = min(corners, key=corners.get)
+        return {"se": "NW", "sw": "NE", "ne": "SW", "nw": "SE"}[far]
+    if high[0]: return "N"
+    if high[1]: return "S"
+    if high[2]: return "W"
+    if high[3]: return "E"
+    return max(corners, key=corners.get)
+
+
 def export_creature(a, p, looktype, colors=None):
     app = a.outfits[looktype]
     groups = app.frame_groups
@@ -233,6 +255,25 @@ def main():
                     print(f"{section} {kind} {i}: the client says unpass={o.unpass}, terrain.json disagrees")
                 frames.append(p.add(a.sprite(o.frame_groups[0].sprite_ids[0])))
             data["terrain"][section][kind] = frames
+    # Ground borders: each piece goes where its pixels are (edges N E S W, small corners nw ne sw se for a
+    # diagonal neighbour, big corners NW NE SW SE for two sides), whatever order the set lists them in.
+    data["terrain"]["border"] = {}
+    for kind, spec in terrain["ground"].items():
+        if "border" not in spec:
+            continue
+        pieces = {}
+        for i in spec["border"]:
+            spr = a.sprite(a.objects[i].frame_groups[0].sprite_ids[0])
+            key = border_piece(spr)
+            if key in pieces:
+                print(f"border {kind}: {i} is a second {key}")
+            pieces[key] = p.add(spr)
+        if len(pieces) != 12:
+            print(f"border {kind}: {len(pieces)} of 12 pieces", sorted(pieces))
+        data["terrain"]["border"][kind] = pieces
+    data["terrain"]["walls"] = {}
+    for name, parts in terrain["walls"].items():
+        data["terrain"]["walls"][name] = {k: p.add(a.sprite(a.objects[i].frame_groups[0].sprite_ids[0])) for k, i in parts.items()}
 
     atlas = p.pack()
     data["frames"] = p.frames

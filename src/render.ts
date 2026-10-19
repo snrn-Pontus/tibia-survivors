@@ -60,6 +60,7 @@ export class Renderer {
       for (let tx = tx0; tx <= tx1; tx++) {
         const cx = tileCenter(tx), cy = tileCenter(ty);
         atlas.draw(ctx, g.world.groundFrame(tx, ty), cx, cy);
+        for (const b of g.world.bordersAt(tx, ty)) atlas.draw(ctx, b, cx, cy);
         const d = g.world.decorAt(tx, ty);
         if (!d) continue;
         if (d.tall) tall.push({ x: cx, y: cy, frame: d.frame });

@@ -32,13 +32,19 @@ MONSTERS = [
     "draken spellweaver", "lizard chosen", "warlock", "medusa", "hellspawn", "draken elite", "ghastly dragon",
     "draken abomination", "hellhound", "hand of cursed fate", "undead dragon", "grim reaper", "blightwalker",
     "plaguesmith", "dark torturer", "hellfire fighter", "fury",
+    # the hunting grounds' own creatures (map.ts HUNTS)
+    "elf scout", "elf arcanist", "dwarf miner", "dwarf geomancer", "witch", "barbarian skullhunter", "barbarian brutetamer",
+    "lizard snakecharmer", "cyclops drone", "cyclops smith", "pirate marauder", "green djinn", "efreet", "blue djinn", "marid",
+    "elder bonelord", "vampire bride", "vampire viscount", "priestess", "tarantula", "phantasm", "dragon hatchling",
+    "dragon lord hatchling", "frost giant", "kongra", "sibang", "merlkin", "carniphila", "quara mantassin", "quara predator",
+    "fire devil", "diabolic imp", "carrion worm", "wyvern", "terror bird", "betrayed wraith", "blood priest", "mutated rat",
     # bosses
     "munster", "teleskor", "apprentice sheng", "rotworm queen", "the horned fox", "warlord ruzad", "the evil eye",
     "general murius", "necropharus", "dharalion", "the frog prince", "zevelon duskbringer", "the old widow",
     "the snapper", "the many", "the plasmother", "dracola", "ghazbaran", "morgaroth", "gaz'haragoth",
     # only ever summoned (monster.summon in the files above)
     "hyaena", "minotaur archer", "minotaur guard", "minotaur mage", "fire elemental", "bonebeast", "defiler", "deathslicer",
-    "larva", "stone golem", "death blob",
+    "larva", "stone golem", "death blob", "war wolf", "cobra", "gazer", "phantasm summon",
 ]
 
 SPELL_FILES = {

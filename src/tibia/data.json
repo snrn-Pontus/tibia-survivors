@@ -15574,6 +15574,5144 @@
     }
    ]
   },
+  "elf scout": {
+   "name": "Elf Scout",
+   "health": 160,
+   "experience": 75,
+   "speed": 110,
+   "lookType": 64,
+   "corpse": 6012,
+   "targetDistance": 4,
+   "runHealth": 0,
+   "attacks": [
+    {
+     "name": "melee",
+     "interval": 2000,
+     "chance": 100,
+     "min": 0,
+     "max": 30
+    },
+    {
+     "name": "combat",
+     "interval": 2000,
+     "chance": 15,
+     "min": 0,
+     "max": 80,
+     "element": "physical",
+     "range": 7,
+     "target": false,
+     "shoot": 3,
+     "effect": 0
+    }
+   ],
+   "maxSummons": 0,
+   "summons": [],
+   "defense": 10,
+   "armor": 7,
+   "mitigation": 0.46,
+   "heals": [],
+   "elements": {
+    "holy": 20,
+    "death": -10
+   },
+   "loot": [
+    {
+     "name": "waterskin",
+     "chance": 1350,
+     "max": 1,
+     "id": 2901
+    },
+    {
+     "name": "gold coin",
+     "chance": 75000,
+     "max": 25,
+     "id": 3031
+    },
+    {
+     "name": "bow",
+     "chance": 4000,
+     "max": 1,
+     "id": 3350
+    },
+    {
+     "name": "arrow",
+     "chance": 30710,
+     "max": 12,
+     "id": 3447
+    },
+    {
+     "name": "poison arrow",
+     "chance": 15400,
+     "max": 4,
+     "id": 3448
+    },
+    {
+     "name": "sandals",
+     "chance": 1180,
+     "max": 1,
+     "id": 3551
+    },
+    {
+     "name": "grapes",
+     "chance": 17750,
+     "max": 1,
+     "id": 3592
+    },
+    {
+     "id": 5921,
+     "chance": 1130,
+     "max": 1
+    },
+    {
+     "name": "elvish bow",
+     "chance": 140,
+     "max": 1,
+     "id": 7438
+    },
+    {
+     "name": "elvish talisman",
+     "chance": 5200,
+     "max": 1,
+     "id": 9635
+    },
+    {
+     "name": "elven scouting glass",
+     "chance": 9750,
+     "max": 1,
+     "id": 11464
+    }
+   ]
+  },
+  "elf arcanist": {
+   "name": "Elf Arcanist",
+   "health": 220,
+   "experience": 175,
+   "speed": 110,
+   "lookType": 63,
+   "corpse": 6011,
+   "targetDistance": 4,
+   "runHealth": 0,
+   "attacks": [
+    {
+     "name": "melee",
+     "interval": 2000,
+     "chance": 100,
+     "min": 0,
+     "max": 35
+    },
+    {
+     "name": "combat",
+     "interval": 2000,
+     "chance": 10,
+     "min": 0,
+     "max": 70,
+     "element": "physical",
+     "range": 7,
+     "target": false,
+     "shoot": 3,
+     "effect": 0
+    },
+    {
+     "name": "combat",
+     "interval": 2000,
+     "chance": 10,
+     "min": 30,
+     "max": 50,
+     "element": "energy",
+     "range": 7,
+     "target": false,
+     "shoot": 5,
+     "effect": 12
+    },
+    {
+     "name": "combat",
+     "interval": 2000,
+     "chance": 10,
+     "min": 70,
+     "max": 85,
+     "element": "death",
+     "range": 7,
+     "target": false,
+     "shoot": 32,
+     "effect": 18
+    }
+   ],
+   "maxSummons": 0,
+   "summons": [],
+   "defense": 15,
+   "armor": 15,
+   "mitigation": 0.51,
+   "heals": [
+    {
+     "interval": 2000,
+     "chance": 15,
+     "min": 40,
+     "max": 60
+    }
+   ],
+   "elements": {
+    "energy": 20,
+    "fire": 50,
+    "holy": -10,
+    "death": 20
+   },
+   "loot": [
+    {
+     "id": 2815,
+     "chance": 31000,
+     "max": 1
+    },
+    {
+     "name": "candlestick",
+     "chance": 2100,
+     "max": 1,
+     "id": 2917
+    },
+    {
+     "name": "gold coin",
+     "chance": 37000,
+     "max": 47,
+     "id": 3031
+    },
+    {
+     "name": "yellow gem",
+     "chance": 50,
+     "max": 1,
+     "id": 3037
+    },
+    {
+     "name": "life crystal",
+     "chance": 970,
+     "max": 1,
+     "id": 3061
+    },
+    {
+     "name": "wand of cosmic energy",
+     "chance": 1160,
+     "max": 1,
+     "id": 3073
+    },
+    {
+     "name": "elven amulet",
+     "chance": 1999,
+     "max": 1,
+     "id": 3082
+    },
+    {
+     "name": "blank rune",
+     "chance": 18000,
+     "max": 1,
+     "id": 3147
+    },
+    {
+     "name": "arrow",
+     "chance": 6000,
+     "max": 3,
+     "id": 3447
+    },
+    {
+     "id": 3509,
+     "chance": 1000,
+     "max": 1
+    },
+    {
+     "name": "sandals",
+     "chance": 950,
+     "max": 1,
+     "id": 3551
+    },
+    {
+     "name": "green tunic",
+     "chance": 7000,
+     "max": 1,
+     "id": 3563
+    },
+    {
+     "name": "melon",
+     "chance": 22000,
+     "max": 1,
+     "id": 3593
+    },
+    {
+     "name": "bread",
+     "chance": 14000,
+     "max": 1,
+     "id": 3600
+    },
+    {
+     "name": "grave flower",
+     "chance": 880,
+     "max": 1,
+     "id": 3661
+    },
+    {
+     "name": "sling herb",
+     "chance": 5000,
+     "max": 1,
+     "id": 3738
+    },
+    {
+     "name": "holy orchid",
+     "chance": 2100,
+     "max": 1,
+     "id": 5922
+    },
+    {
+     "name": "strong mana potion",
+     "chance": 3000,
+     "max": 1,
+     "id": 237
+    },
+    {
+     "name": "health potion",
+     "chance": 4000,
+     "max": 1,
+     "id": 266
+    },
+    {
+     "name": "elvish talisman",
+     "chance": 10000,
+     "max": 1,
+     "id": 9635
+    },
+    {
+     "name": "elven astral observer",
+     "chance": 7710,
+     "max": 1,
+     "id": 11465
+    }
+   ]
+  },
+  "dwarf miner": {
+   "name": "Dwarf Miner",
+   "health": 120,
+   "experience": 60,
+   "speed": 85,
+   "lookType": 160,
+   "lookColors": [
+    77,
+    101,
+    97,
+    115
+   ],
+   "corpse": 6007,
+   "targetDistance": 1,
+   "runHealth": 0,
+   "attacks": [
+    {
+     "name": "melee",
+     "interval": 2000,
+     "chance": 100,
+     "min": 0,
+     "max": 35
+    }
+   ],
+   "maxSummons": 0,
+   "summons": [],
+   "defense": 10,
+   "armor": 7,
+   "mitigation": 0.51,
+   "heals": [],
+   "elements": {},
+   "loot": [
+    {
+     "name": "gold coin",
+     "chance": 33333,
+     "max": 10,
+     "id": 3031
+    },
+    {
+     "id": 3097,
+     "chance": 793,
+     "max": 1
+    },
+    {
+     "name": "axe",
+     "chance": 14285,
+     "max": 1,
+     "id": 3274
+    },
+    {
+     "name": "studded armor",
+     "chance": 6666,
+     "max": 1,
+     "id": 3378
+    },
+    {
+     "id": 3456,
+     "chance": 11111,
+     "max": 1
+    },
+    {
+     "name": "leather legs",
+     "chance": 9090,
+     "max": 1,
+     "id": 3559
+    },
+    {
+     "name": "meat",
+     "chance": 3846,
+     "max": 1,
+     "id": 3577
+    },
+    {
+     "name": "iron ore",
+     "chance": 793,
+     "max": 1,
+     "id": 5880
+    }
+   ]
+  },
+  "dwarf geomancer": {
+   "name": "Dwarf Geomancer",
+   "health": 380,
+   "experience": 265,
+   "speed": 100,
+   "lookType": 66,
+   "corpse": 6015,
+   "targetDistance": 4,
+   "runHealth": 110,
+   "attacks": [
+    {
+     "name": "combat",
+     "interval": 2000,
+     "chance": 20,
+     "min": 50,
+     "max": 110,
+     "element": "earth",
+     "range": 7,
+     "target": false,
+     "shoot": 39,
+     "effect": 9
+    },
+    {
+     "name": "combat",
+     "interval": 2000,
+     "chance": 10,
+     "min": 50,
+     "max": 80,
+     "element": "manadrain",
+     "range": 7,
+     "target": false,
+     "shoot": 0,
+     "effect": 0
+    }
+   ],
+   "maxSummons": 0,
+   "summons": [],
+   "defense": 15,
+   "armor": 15,
+   "mitigation": 0.91,
+   "heals": [
+    {
+     "interval": 2000,
+     "chance": 40,
+     "min": 75,
+     "max": 125
+    }
+   ],
+   "elements": {
+    "energy": 10,
+    "earth": 20,
+    "fire": 60,
+    "ice": -5,
+    "holy": 10,
+    "death": -10
+   },
+   "loot": [
+    {
+     "name": "small sapphire",
+     "chance": 710,
+     "max": 1,
+     "id": 3029
+    },
+    {
+     "name": "gold coin",
+     "chance": 50000,
+     "max": 35,
+     "id": 3031
+    },
+    {
+     "id": 3046,
+     "chance": 14000,
+     "max": 1
+    },
+    {
+     "id": 3059,
+     "chance": 360,
+     "max": 1
+    },
+    {
+     "id": 3097,
+     "chance": 530,
+     "max": 1
+    },
+    {
+     "name": "blank rune",
+     "chance": 33000,
+     "max": 1,
+     "id": 3147
+    },
+    {
+     "name": "clerical mace",
+     "chance": 1120,
+     "max": 1,
+     "id": 3311
+    },
+    {
+     "name": "pear",
+     "chance": 25000,
+     "max": 1,
+     "id": 3584
+    },
+    {
+     "name": "white mushroom",
+     "chance": 60000,
+     "max": 2,
+     "id": 3723
+    },
+    {
+     "name": "iron ore",
+     "chance": 120,
+     "max": 1,
+     "id": 5880
+    },
+    {
+     "name": "terra boots",
+     "chance": 470,
+     "max": 1,
+     "id": 813
+    },
+    {
+     "name": "geomancer's robe",
+     "chance": 8000,
+     "max": 1,
+     "id": 11458
+    },
+    {
+     "name": "geomancer's staff",
+     "chance": 7000,
+     "max": 1,
+     "id": 11463
+    }
+   ]
+  },
+  "witch": {
+   "name": "Witch",
+   "health": 300,
+   "experience": 120,
+   "speed": 102,
+   "lookType": 54,
+   "corpse": 18254,
+   "targetDistance": 4,
+   "runHealth": 30,
+   "attacks": [
+    {
+     "name": "melee",
+     "interval": 2000,
+     "chance": 100,
+     "min": 0,
+     "max": 20
+    },
+    {
+     "name": "combat",
+     "interval": 2000,
+     "chance": 20,
+     "min": 30,
+     "max": 75,
+     "element": "fire",
+     "range": 7,
+     "target": false,
+     "shoot": 4,
+     "effect": 16
+    },
+    {
+     "name": "field",
+     "interval": 2000,
+     "chance": 10,
+     "min": 0,
+     "max": 0,
+     "field": 2118,
+     "target": true,
+     "shoot": 4,
+     "effect": 0,
+     "range": 7,
+     "radius": 1
+    }
+   ],
+   "maxSummons": 0,
+   "summons": [],
+   "defense": 15,
+   "armor": 8,
+   "mitigation": 0.3,
+   "heals": [],
+   "elements": {
+    "physical": -5,
+    "energy": 100,
+    "earth": 20,
+    "death": -5
+   },
+   "loot": [
+    {
+     "id": 3012,
+     "chance": 10120,
+     "max": 1
+    },
+    {
+     "name": "gold coin",
+     "chance": 64000,
+     "max": 40,
+     "id": 3031
+    },
+    {
+     "name": "necrotic rod",
+     "chance": 1140,
+     "max": 1,
+     "id": 3069
+    },
+    {
+     "name": "garlic necklace",
+     "chance": 1000,
+     "max": 1,
+     "id": 3083
+    },
+    {
+     "name": "silver dagger",
+     "chance": 500,
+     "max": 1,
+     "id": 3290
+    },
+    {
+     "name": "sickle",
+     "chance": 3910,
+     "max": 1,
+     "id": 3293
+    },
+    {
+     "name": "leather boots",
+     "chance": 4950,
+     "max": 1,
+     "id": 3552
+    },
+    {
+     "name": "coat",
+     "chance": 2010,
+     "max": 1,
+     "id": 3562
+    },
+    {
+     "name": "cape",
+     "chance": 4870,
+     "max": 1,
+     "id": 3565
+    },
+    {
+     "name": "cookie",
+     "chance": 29750,
+     "max": 8,
+     "id": 3598
+    },
+    {
+     "name": "star herb",
+     "chance": 8950,
+     "max": 1,
+     "id": 3736
+    },
+    {
+     "name": "witch broom",
+     "chance": 10000,
+     "max": 1,
+     "id": 9652
+    },
+    {
+     "name": "witch hat",
+     "chance": 80,
+     "max": 1,
+     "id": 9653
+    },
+    {
+     "name": "stuffed toad",
+     "chance": 10,
+     "max": 1,
+     "id": 10294
+    },
+    {
+     "name": "bag of apple slices",
+     "chance": 920,
+     "max": 1,
+     "id": 12548
+    }
+   ]
+  },
+  "barbarian skullhunter": {
+   "name": "Barbarian Skullhunter",
+   "health": 135,
+   "experience": 85,
+   "speed": 84,
+   "lookType": 254,
+   "lookColors": [
+    0,
+    77,
+    96,
+    114
+   ],
+   "corpse": 18066,
+   "targetDistance": 1,
+   "runHealth": 0,
+   "attacks": [
+    {
+     "name": "melee",
+     "interval": 2000,
+     "chance": 100,
+     "min": 0,
+     "max": 60
+    }
+   ],
+   "maxSummons": 0,
+   "summons": [],
+   "defense": 0,
+   "armor": 8,
+   "mitigation": 0.33,
+   "heals": [],
+   "elements": {
+    "physical": 10,
+    "energy": 20,
+    "earth": -10,
+    "ice": 50,
+    "holy": 10,
+    "death": -5
+   },
+   "loot": [
+    {
+     "id": 2920,
+     "chance": 6680,
+     "max": 1
+    },
+    {
+     "name": "gold coin",
+     "chance": 8240,
+     "max": 30,
+     "id": 3031
+    },
+    {
+     "id": 3052,
+     "chance": 300,
+     "max": 1
+    },
+    {
+     "id": 3114,
+     "chance": 3000,
+     "max": 1
+    },
+    {
+     "name": "knife",
+     "chance": 1067,
+     "max": 1,
+     "id": 3291
+    },
+    {
+     "name": "brass helmet",
+     "chance": 2200,
+     "max": 1,
+     "id": 3354
+    },
+    {
+     "name": "viking helmet",
+     "chance": 860,
+     "max": 1,
+     "id": 3367
+    },
+    {
+     "name": "scale armor",
+     "chance": 440,
+     "max": 1,
+     "id": 3377
+    },
+    {
+     "name": "brown piece of cloth",
+     "chance": 500,
+     "max": 1,
+     "id": 5913
+    },
+    {
+     "name": "crystal sword",
+     "chance": 100,
+     "max": 1,
+     "id": 7449
+    },
+    {
+     "name": "fur boots",
+     "chance": 100,
+     "max": 1,
+     "id": 7457
+    },
+    {
+     "name": "ragnir helmet",
+     "chance": 100,
+     "max": 1,
+     "id": 7462
+    },
+    {
+     "name": "health potion",
+     "chance": 100,
+     "max": 1,
+     "id": 266
+    }
+   ]
+  },
+  "barbarian brutetamer": {
+   "name": "Barbarian Brutetamer",
+   "health": 145,
+   "experience": 90,
+   "speed": 89,
+   "lookType": 264,
+   "lookColors": [
+    78,
+    97,
+    95,
+    121
+   ],
+   "corpse": 18058,
+   "targetDistance": 4,
+   "runHealth": 10,
+   "attacks": [
+    {
+     "name": "melee",
+     "interval": 2000,
+     "chance": 100,
+     "min": 0,
+     "max": 20
+    },
+    {
+     "name": "combat",
+     "interval": 2000,
+     "chance": 20,
+     "min": 0,
+     "max": 34,
+     "element": "physical",
+     "range": 7,
+     "radius": 1,
+     "target": true,
+     "shoot": 13,
+     "effect": 0
+    }
+   ],
+   "maxSummons": 2,
+   "summons": [
+    {
+     "name": "war wolf",
+     "interval": 2000,
+     "chance": 10,
+     "count": 2
+    }
+   ],
+   "defense": 0,
+   "armor": 8,
+   "mitigation": 0.36,
+   "heals": [
+    {
+     "interval": 2000,
+     "chance": 40,
+     "min": 50,
+     "max": 80
+    }
+   ],
+   "elements": {
+    "physical": -10,
+    "energy": 20,
+    "lifedrain": 100,
+    "ice": 50,
+    "holy": 10,
+    "death": -5
+   },
+   "loot": [
+    {
+     "name": "gold coin",
+     "chance": 90230,
+     "max": 15,
+     "id": 3031
+    },
+    {
+     "id": 3289,
+     "chance": 6550,
+     "max": 1
+    },
+    {
+     "name": "chain armor",
+     "chance": 9300,
+     "max": 1,
+     "id": 3358
+    },
+    {
+     "name": "corncob",
+     "chance": 10940,
+     "max": 2,
+     "id": 3597
+    },
+    {
+     "name": "hunting spear",
+     "chance": 5200,
+     "max": 1,
+     "id": 3347
+    },
+    {
+     "name": "fur bag",
+     "chance": 7590,
+     "max": 1,
+     "id": 7343
+    },
+    {
+     "name": "brutetamer's staff",
+     "chance": 340,
+     "max": 1,
+     "id": 7379
+    },
+    {
+     "name": "fur boots",
+     "chance": 170,
+     "max": 1,
+     "id": 7457
+    },
+    {
+     "name": "mammoth fur cape",
+     "chance": 150,
+     "max": 1,
+     "id": 7463
+    },
+    {
+     "name": "mammoth fur shorts",
+     "chance": 90,
+     "max": 1,
+     "id": 7464
+    },
+    {
+     "name": "mana potion",
+     "chance": 580,
+     "max": 1,
+     "id": 268
+    }
+   ]
+  },
+  "lizard snakecharmer": {
+   "name": "Lizard Snakecharmer",
+   "health": 325,
+   "experience": 210,
+   "speed": 172,
+   "lookType": 115,
+   "corpse": 6041,
+   "targetDistance": 4,
+   "runHealth": 15,
+   "attacks": [
+    {
+     "name": "melee",
+     "interval": 2000,
+     "chance": 100,
+     "min": 0,
+     "max": 30
+    },
+    {
+     "name": "condition",
+     "interval": 2000,
+     "chance": 15,
+     "min": 0,
+     "max": 0,
+     "condition": {
+      "element": "earth",
+      "min": 100,
+      "max": 200,
+      "tick": 2000
+     },
+     "element": "earth",
+     "range": 7,
+     "target": false,
+     "shoot": 15,
+     "effect": 0
+    },
+    {
+     "name": "combat",
+     "interval": 2000,
+     "chance": 15,
+     "min": 50,
+     "max": 110,
+     "element": "earth",
+     "range": 7,
+     "radius": 1,
+     "target": true,
+     "shoot": 15,
+     "effect": 9
+    }
+   ],
+   "maxSummons": 6,
+   "summons": [
+    {
+     "name": "cobra",
+     "interval": 2000,
+     "chance": 20,
+     "count": 6
+    }
+   ],
+   "defense": 15,
+   "armor": 22,
+   "mitigation": 0.38,
+   "heals": [
+    {
+     "interval": 2000,
+     "chance": 50,
+     "min": 50,
+     "max": 100
+    }
+   ],
+   "elements": {
+    "physical": -10,
+    "energy": 20,
+    "earth": 100,
+    "fire": -10,
+    "ice": 20
+   },
+   "loot": [
+    {
+     "name": "gold coin",
+     "chance": 83740,
+     "max": 55,
+     "id": 3031
+    },
+    {
+     "name": "small amethyst",
+     "chance": 520,
+     "max": 1,
+     "id": 3033
+    },
+    {
+     "name": "yellow gem",
+     "chance": 150,
+     "max": 1,
+     "id": 3037
+    },
+    {
+     "id": 3052,
+     "chance": 340,
+     "max": 1
+    },
+    {
+     "name": "life crystal",
+     "chance": 1430,
+     "max": 1,
+     "id": 3061
+    },
+    {
+     "name": "terra rod",
+     "chance": 920,
+     "max": 1,
+     "id": 3065
+    },
+    {
+     "name": "snakebite rod",
+     "chance": 230,
+     "max": 1,
+     "id": 3066
+    },
+    {
+     "name": "cape",
+     "chance": 8640,
+     "max": 1,
+     "id": 3565
+    },
+    {
+     "name": "charmer's tiara",
+     "chance": 230,
+     "max": 1,
+     "id": 3407
+    },
+    {
+     "name": "lizard leather",
+     "chance": 1320,
+     "max": 1,
+     "id": 5876
+    },
+    {
+     "name": "lizard scale",
+     "chance": 860,
+     "max": 1,
+     "id": 5881
+    },
+    {
+     "name": "mana potion",
+     "chance": 860,
+     "max": 1,
+     "id": 268
+    }
+   ]
+  },
+  "cyclops drone": {
+   "name": "Cyclops Drone",
+   "health": 325,
+   "experience": 200,
+   "speed": 99,
+   "lookType": 280,
+   "corpse": 771,
+   "targetDistance": 1,
+   "runHealth": 0,
+   "attacks": [
+    {
+     "name": "melee",
+     "interval": 2000,
+     "chance": 100,
+     "min": 0,
+     "max": 105
+    },
+    {
+     "name": "combat",
+     "interval": 2000,
+     "chance": 35,
+     "min": 0,
+     "max": 80,
+     "element": "physical",
+     "range": 7,
+     "target": false,
+     "shoot": 12,
+     "effect": 0
+    }
+   ],
+   "maxSummons": 0,
+   "summons": [],
+   "defense": 20,
+   "armor": 25,
+   "mitigation": 0.72,
+   "heals": [],
+   "elements": {
+    "energy": 10,
+    "earth": -10,
+    "ice": 20,
+    "holy": 20,
+    "death": -5
+   },
+   "loot": [
+    {
+     "name": "gold coin",
+     "chance": 82000,
+     "max": 30,
+     "id": 3031
+    },
+    {
+     "id": 3093,
+     "chance": 90,
+     "max": 1
+    },
+    {
+     "name": "halberd",
+     "chance": 680,
+     "max": 1,
+     "id": 3269
+    },
+    {
+     "name": "short sword",
+     "chance": 8000,
+     "max": 1,
+     "id": 3294
+    },
+    {
+     "name": "dark helmet",
+     "chance": 190,
+     "max": 1,
+     "id": 3384
+    },
+    {
+     "name": "plate shield",
+     "chance": 2000,
+     "max": 1,
+     "id": 3410
+    },
+    {
+     "name": "battle shield",
+     "chance": 1600,
+     "max": 1,
+     "id": 3413
+    },
+    {
+     "name": "meat",
+     "chance": 50430,
+     "max": 2,
+     "id": 3577
+    },
+    {
+     "id": 7398,
+     "chance": 120,
+     "max": 1
+    },
+    {
+     "name": "strong health potion",
+     "chance": 520,
+     "max": 1,
+     "id": 236
+    },
+    {
+     "name": "cyclops toe",
+     "chance": 6750,
+     "max": 1,
+     "id": 9657
+    }
+   ]
+  },
+  "cyclops smith": {
+   "name": "Cyclops Smith",
+   "health": 435,
+   "experience": 255,
+   "speed": 102,
+   "lookType": 277,
+   "corpse": 656,
+   "targetDistance": 1,
+   "runHealth": 0,
+   "attacks": [
+    {
+     "name": "melee",
+     "interval": 2000,
+     "chance": 100,
+     "min": 0,
+     "max": 150
+    },
+    {
+     "name": "combat",
+     "interval": 2000,
+     "chance": 10,
+     "min": 0,
+     "max": 70,
+     "element": "physical",
+     "range": 7,
+     "target": false,
+     "shoot": 27,
+     "effect": 0
+    }
+   ],
+   "maxSummons": 0,
+   "summons": [],
+   "defense": 25,
+   "armor": 28,
+   "mitigation": 0.96,
+   "heals": [],
+   "elements": {
+    "energy": 20,
+    "earth": -10,
+    "fire": 10,
+    "holy": 20,
+    "death": -5
+   },
+   "loot": [
+    {
+     "name": "gold coin",
+     "chance": 82920,
+     "max": 70,
+     "id": 3031
+    },
+    {
+     "id": 3093,
+     "chance": 90,
+     "max": 1
+    },
+    {
+     "name": "battle axe",
+     "chance": 5450,
+     "max": 1,
+     "id": 3266
+    },
+    {
+     "name": "double axe",
+     "chance": 880,
+     "max": 1,
+     "id": 3275
+    },
+    {
+     "name": "battle hammer",
+     "chance": 5200,
+     "max": 1,
+     "id": 3305
+    },
+    {
+     "name": "heavy machete",
+     "chance": 2000,
+     "max": 1,
+     "id": 3330
+    },
+    {
+     "name": "dark helmet",
+     "chance": 200,
+     "max": 1,
+     "id": 3384
+    },
+    {
+     "name": "plate shield",
+     "chance": 2000,
+     "max": 1,
+     "id": 3410
+    },
+    {
+     "name": "battle shield",
+     "chance": 6190,
+     "max": 1,
+     "id": 3413
+    },
+    {
+     "name": "meat",
+     "chance": 49950,
+     "max": 1,
+     "id": 3577
+    },
+    {
+     "id": 7398,
+     "chance": 140,
+     "max": 1
+    },
+    {
+     "name": "spiked squelcher",
+     "chance": 150,
+     "max": 1,
+     "id": 7452
+    },
+    {
+     "name": "strong health potion",
+     "chance": 390,
+     "max": 1,
+     "id": 236
+    },
+    {
+     "name": "cyclops toe",
+     "chance": 10280,
+     "max": 1,
+     "id": 9657
+    }
+   ]
+  },
+  "pirate marauder": {
+   "name": "Pirate Marauder",
+   "health": 210,
+   "experience": 125,
+   "speed": 105,
+   "lookType": 93,
+   "corpse": 18202,
+   "targetDistance": 1,
+   "runHealth": 20,
+   "attacks": [
+    {
+     "name": "melee",
+     "interval": 2000,
+     "chance": 100,
+     "min": 0,
+     "max": 140
+    },
+    {
+     "name": "combat",
+     "interval": 2000,
+     "chance": 15,
+     "min": 0,
+     "max": 40,
+     "element": "physical",
+     "range": 7,
+     "target": false,
+     "shoot": 1,
+     "effect": 0
+    }
+   ],
+   "maxSummons": 0,
+   "summons": [],
+   "defense": 15,
+   "armor": 8,
+   "mitigation": 0.56,
+   "heals": [],
+   "elements": {
+    "energy": -3,
+    "earth": 10,
+    "fire": -10,
+    "holy": 20,
+    "death": -5
+   },
+   "loot": [
+    {
+     "id": 2920,
+     "chance": 9880,
+     "max": 1
+    },
+    {
+     "name": "gold coin",
+     "chance": 77670,
+     "max": 40,
+     "id": 3031
+    },
+    {
+     "name": "spear",
+     "chance": 5140,
+     "max": 2,
+     "id": 3277
+    },
+    {
+     "name": "chain armor",
+     "chance": 3000,
+     "max": 1,
+     "id": 3358
+    },
+    {
+     "name": "plate shield",
+     "chance": 5000,
+     "max": 1,
+     "id": 3410
+    },
+    {
+     "id": 5090,
+     "chance": 910,
+     "max": 1
+    },
+    {
+     "name": "rum flask",
+     "chance": 110,
+     "max": 1,
+     "id": 5552
+    },
+    {
+     "name": "bandana",
+     "chance": 880,
+     "max": 1,
+     "id": 5917
+    },
+    {
+     "name": "pirate bag",
+     "chance": 430,
+     "max": 1,
+     "id": 5927
+    },
+    {
+     "name": "empty goldfish bowl",
+     "chance": 80,
+     "max": 1,
+     "id": 5928
+    },
+    {
+     "name": "hook",
+     "chance": 520,
+     "max": 1,
+     "id": 6097
+    },
+    {
+     "name": "eye patch",
+     "chance": 530,
+     "max": 1,
+     "id": 6098
+    },
+    {
+     "name": "peg leg",
+     "chance": 520,
+     "max": 1,
+     "id": 6126
+    },
+    {
+     "name": "compass",
+     "chance": 9720,
+     "max": 1,
+     "id": 10302
+    }
+   ]
+  },
+  "green djinn": {
+   "name": "Green Djinn",
+   "health": 330,
+   "experience": 215,
+   "speed": 110,
+   "lookType": 51,
+   "corpse": 6016,
+   "targetDistance": 1,
+   "runHealth": 0,
+   "attacks": [
+    {
+     "name": "melee",
+     "interval": 2000,
+     "chance": 100,
+     "min": 0,
+     "max": 110
+    },
+    {
+     "name": "combat",
+     "interval": 2000,
+     "chance": 15,
+     "min": 45,
+     "max": 80,
+     "element": "fire",
+     "range": 7,
+     "target": false,
+     "shoot": 4,
+     "effect": 0
+    },
+    {
+     "name": "combat",
+     "interval": 2000,
+     "chance": 10,
+     "min": 50,
+     "max": 105,
+     "element": "death",
+     "range": 7,
+     "radius": 1,
+     "target": true,
+     "shoot": 32,
+     "effect": 39
+    }
+   ],
+   "maxSummons": 0,
+   "summons": [],
+   "defense": 15,
+   "armor": 15,
+   "mitigation": 0.0,
+   "heals": [],
+   "elements": {
+    "physical": 20,
+    "energy": 50,
+    "fire": 80,
+    "ice": -10,
+    "holy": -13,
+    "death": 20
+   },
+   "loot": [
+    {
+     "name": "gold coin",
+     "chance": 41000,
+     "max": 70,
+     "id": 3031
+    },
+    {
+     "name": "gold coin",
+     "chance": 51000,
+     "max": 45,
+     "id": 3031
+    },
+    {
+     "name": "small emerald",
+     "chance": 2960,
+     "max": 4,
+     "id": 3032
+    },
+    {
+     "name": "mystic turban",
+     "chance": 140,
+     "max": 1,
+     "id": 3574
+    },
+    {
+     "id": 3607,
+     "chance": 23500,
+     "max": 1
+    },
+    {
+     "name": "grave flower",
+     "chance": 1000,
+     "max": 1,
+     "id": 3661
+    },
+    {
+     "name": "green piece of cloth",
+     "chance": 2000,
+     "max": 1,
+     "id": 5910
+    },
+    {
+     "name": "royal spear",
+     "chance": 4870,
+     "max": 2,
+     "id": 7378
+    },
+    {
+     "name": "mana potion",
+     "chance": 490,
+     "max": 1,
+     "id": 268
+    },
+    {
+     "name": "dirty turban",
+     "chance": 2210,
+     "max": 1,
+     "id": 11456
+    }
+   ]
+  },
+  "efreet": {
+   "name": "Efreet",
+   "health": 550,
+   "experience": 410,
+   "speed": 117,
+   "lookType": 103,
+   "corpse": 6032,
+   "targetDistance": 1,
+   "runHealth": 0,
+   "attacks": [
+    {
+     "name": "melee",
+     "interval": 2000,
+     "chance": 100,
+     "min": 0,
+     "max": 110
+    },
+    {
+     "name": "combat",
+     "interval": 2000,
+     "chance": 15,
+     "min": 40,
+     "max": 110,
+     "element": "fire",
+     "range": 7,
+     "target": false,
+     "shoot": 4,
+     "effect": 0
+    },
+    {
+     "name": "combat",
+     "interval": 2000,
+     "chance": 10,
+     "min": 30,
+     "max": 90,
+     "element": "energy",
+     "radius": 3,
+     "target": false,
+     "shoot": 0,
+     "effect": 12
+    },
+    {
+     "name": "combat",
+     "interval": 2000,
+     "chance": 15,
+     "min": 65,
+     "max": 120,
+     "element": "energy",
+     "range": 7,
+     "target": false,
+     "shoot": 5,
+     "effect": 12
+    },
+    {
+     "name": "paralyze",
+     "interval": 2000,
+     "chance": 15,
+     "min": 0,
+     "max": 0,
+     "speedChange": -650,
+     "duration": 15000,
+     "target": false,
+     "shoot": 0,
+     "effect": 14,
+     "range": 7
+    }
+   ],
+   "maxSummons": 2,
+   "summons": [
+    {
+     "name": "green djinn",
+     "interval": 2000,
+     "chance": 10,
+     "count": 2
+    }
+   ],
+   "defense": 20,
+   "armor": 24,
+   "mitigation": 0.91,
+   "heals": [
+    {
+     "interval": 2000,
+     "chance": 15,
+     "min": 50,
+     "max": 80
+    }
+   ],
+   "elements": {
+    "energy": 60,
+    "earth": 10,
+    "fire": 90,
+    "ice": -5,
+    "holy": -8,
+    "death": 20
+   },
+   "loot": [
+    {
+     "id": 2647,
+     "chance": 2200,
+     "max": 1
+    },
+    {
+     "name": "small oil lamp",
+     "chance": 160,
+     "max": 1,
+     "id": 2933
+    },
+    {
+     "name": "gold coin",
+     "chance": 50000,
+     "max": 75,
+     "id": 3031
+    },
+    {
+     "name": "gold coin",
+     "chance": 60000,
+     "max": 50,
+     "id": 3031
+    },
+    {
+     "name": "small emerald",
+     "chance": 7000,
+     "max": 1,
+     "id": 3032
+    },
+    {
+     "name": "green gem",
+     "chance": 200,
+     "max": 1,
+     "id": 3038
+    },
+    {
+     "name": "wand of inferno",
+     "chance": 390,
+     "max": 1,
+     "id": 3071
+    },
+    {
+     "name": "heavy machete",
+     "chance": 5000,
+     "max": 1,
+     "id": 3330
+    },
+    {
+     "name": "mystic turban",
+     "chance": 160,
+     "max": 1,
+     "id": 3574
+    },
+    {
+     "name": "pear",
+     "chance": 9390,
+     "max": 5,
+     "id": 3584
+    },
+    {
+     "name": "green piece of cloth",
+     "chance": 3000,
+     "max": 1,
+     "id": 5910
+    },
+    {
+     "name": "royal spear",
+     "chance": 15570,
+     "max": 3,
+     "id": 7378
+    },
+    {
+     "name": "strong mana potion",
+     "chance": 3500,
+     "max": 1,
+     "id": 237
+    },
+    {
+     "name": "magma monocle",
+     "chance": 360,
+     "max": 1,
+     "id": 827
+    },
+    {
+     "name": "jewelled belt",
+     "chance": 8540,
+     "max": 1,
+     "id": 11470
+    },
+    {
+     "name": "noble turban",
+     "chance": 1130,
+     "max": 1,
+     "id": 11486
+    }
+   ]
+  },
+  "blue djinn": {
+   "name": "Blue Djinn",
+   "health": 330,
+   "experience": 215,
+   "speed": 110,
+   "lookType": 80,
+   "corpse": 6020,
+   "targetDistance": 1,
+   "runHealth": 0,
+   "attacks": [
+    {
+     "name": "melee",
+     "interval": 2000,
+     "chance": 100,
+     "min": 0,
+     "max": 110
+    },
+    {
+     "name": "combat",
+     "interval": 2000,
+     "chance": 15,
+     "min": 45,
+     "max": 80,
+     "element": "fire",
+     "range": 7,
+     "target": false,
+     "shoot": 4,
+     "effect": 0
+    },
+    {
+     "name": "combat",
+     "interval": 2000,
+     "chance": 10,
+     "min": 60,
+     "max": 105,
+     "element": "death",
+     "range": 7,
+     "radius": 1,
+     "target": true,
+     "shoot": 32,
+     "effect": 39
+    }
+   ],
+   "maxSummons": 0,
+   "summons": [],
+   "defense": 15,
+   "armor": 20,
+   "mitigation": 0.78,
+   "heals": [],
+   "elements": {
+    "energy": 50,
+    "fire": 80,
+    "ice": -10,
+    "holy": 20,
+    "death": -13
+   },
+   "loot": [
+    {
+     "name": "small oil lamp",
+     "chance": 690,
+     "max": 1,
+     "id": 2933
+    },
+    {
+     "name": "small sapphire",
+     "chance": 2560,
+     "max": 4,
+     "id": 3029
+    },
+    {
+     "name": "gold coin",
+     "chance": 60000,
+     "max": 70,
+     "id": 3031
+    },
+    {
+     "name": "gold coin",
+     "chance": 70000,
+     "max": 45,
+     "id": 3031
+    },
+    {
+     "name": "mystic turban",
+     "chance": 70,
+     "max": 1,
+     "id": 3574
+    },
+    {
+     "id": 3595,
+     "chance": 23480,
+     "max": 1
+    },
+    {
+     "name": "blue rose",
+     "chance": 440,
+     "max": 1,
+     "id": 3659
+    },
+    {
+     "name": "blue piece of cloth",
+     "chance": 1920,
+     "max": 1,
+     "id": 5912
+    },
+    {
+     "name": "royal spear",
+     "chance": 4500,
+     "max": 2,
+     "id": 7378
+    },
+    {
+     "name": "mana potion",
+     "chance": 860,
+     "max": 1,
+     "id": 268
+    },
+    {
+     "name": "dirty turban",
+     "chance": 1890,
+     "max": 1,
+     "id": 11456
+    }
+   ]
+  },
+  "marid": {
+   "name": "Marid",
+   "health": 550,
+   "experience": 410,
+   "speed": 117,
+   "lookType": 104,
+   "corpse": 6033,
+   "targetDistance": 1,
+   "runHealth": 0,
+   "attacks": [
+    {
+     "name": "melee",
+     "interval": 2000,
+     "chance": 100,
+     "min": 0,
+     "max": 90
+    },
+    {
+     "name": "combat",
+     "interval": 2000,
+     "chance": 10,
+     "min": 100,
+     "max": 250,
+     "element": "energy",
+     "range": 7,
+     "target": false,
+     "shoot": 36,
+     "effect": 0
+    },
+    {
+     "name": "combat",
+     "interval": 2000,
+     "chance": 15,
+     "min": 30,
+     "max": 90,
+     "element": "lifedrain",
+     "range": 7,
+     "target": false,
+     "shoot": 0,
+     "effect": 14
+    },
+    {
+     "name": "paralyze",
+     "interval": 2000,
+     "chance": 15,
+     "min": 0,
+     "max": 0,
+     "speedChange": -650,
+     "duration": 1500,
+     "target": false,
+     "shoot": 0,
+     "effect": 14,
+     "range": 7
+    },
+    {
+     "name": "combat",
+     "interval": 2000,
+     "chance": 15,
+     "min": 30,
+     "max": 90,
+     "element": "energy",
+     "radius": 3,
+     "target": false,
+     "shoot": 0,
+     "effect": 12
+    }
+   ],
+   "maxSummons": 2,
+   "summons": [
+    {
+     "name": "blue djinn",
+     "interval": 2000,
+     "chance": 10,
+     "count": 2
+    }
+   ],
+   "defense": 20,
+   "armor": 24,
+   "mitigation": 0.91,
+   "heals": [
+    {
+     "interval": 2000,
+     "chance": 15,
+     "min": 50,
+     "max": 80
+    }
+   ],
+   "elements": {
+    "energy": 60,
+    "earth": 10,
+    "fire": 90,
+    "ice": -5,
+    "holy": 20,
+    "death": -8
+   },
+   "loot": [
+    {
+     "id": 2659,
+     "chance": 2560,
+     "max": 1
+    },
+    {
+     "name": "small oil lamp",
+     "chance": 110,
+     "max": 1,
+     "id": 2933
+    },
+    {
+     "name": "small sapphire",
+     "chance": 6200,
+     "max": 1,
+     "id": 3029
+    },
+    {
+     "name": "gold coin",
+     "chance": 60000,
+     "max": 70,
+     "id": 3031
+    },
+    {
+     "name": "gold coin",
+     "chance": 60000,
+     "max": 30,
+     "id": 3031
+    },
+    {
+     "name": "blue gem",
+     "chance": 110,
+     "max": 1,
+     "id": 3041
+    },
+    {
+     "name": "hailstorm rod",
+     "chance": 770,
+     "max": 1,
+     "id": 3067
+    },
+    {
+     "id": 2948,
+     "chance": 5000,
+     "max": 1
+    },
+    {
+     "name": "heavy machete",
+     "chance": 4530,
+     "max": 1,
+     "id": 3330
+    },
+    {
+     "name": "mystic turban",
+     "chance": 290,
+     "max": 1,
+     "id": 3574
+    },
+    {
+     "name": "blueberry",
+     "chance": 65000,
+     "max": 29,
+     "id": 3588
+    },
+    {
+     "name": "blue piece of cloth",
+     "chance": 3750,
+     "max": 1,
+     "id": 5912
+    },
+    {
+     "name": "royal spear",
+     "chance": 15500,
+     "max": 3,
+     "id": 7378
+    },
+    {
+     "name": "strong mana potion",
+     "chance": 9800,
+     "max": 1,
+     "id": 237
+    },
+    {
+     "name": "seeds",
+     "chance": 2400,
+     "max": 1,
+     "id": 647
+    },
+    {
+     "name": "magma monocle",
+     "chance": 320,
+     "max": 1,
+     "id": 827
+    },
+    {
+     "name": "jewelled belt",
+     "chance": 7880,
+     "max": 1,
+     "id": 11470
+    },
+    {
+     "name": "noble turban",
+     "chance": 530,
+     "max": 1,
+     "id": 11486
+    }
+   ]
+  },
+  "elder bonelord": {
+   "name": "Elder Bonelord",
+   "health": 500,
+   "experience": 280,
+   "speed": 85,
+   "lookType": 108,
+   "corpse": 6037,
+   "targetDistance": 4,
+   "runHealth": 0,
+   "attacks": [
+    {
+     "name": "melee",
+     "interval": 2000,
+     "chance": 100,
+     "min": 0,
+     "max": 55
+    },
+    {
+     "name": "combat",
+     "interval": 2000,
+     "chance": 5,
+     "min": 45,
+     "max": 60,
+     "element": "energy",
+     "range": 7,
+     "target": false,
+     "shoot": 5,
+     "effect": 0
+    },
+    {
+     "name": "combat",
+     "interval": 2000,
+     "chance": 5,
+     "min": 40,
+     "max": 80,
+     "element": "fire",
+     "range": 7,
+     "target": false,
+     "shoot": 4,
+     "effect": 0
+    },
+    {
+     "name": "combat",
+     "interval": 2000,
+     "chance": 10,
+     "min": 45,
+     "max": 90,
+     "element": "death",
+     "range": 7,
+     "target": false,
+     "shoot": 32,
+     "effect": 39
+    },
+    {
+     "name": "combat",
+     "interval": 2000,
+     "chance": 10,
+     "min": 20,
+     "max": 40,
+     "element": "earth",
+     "range": 7,
+     "target": false,
+     "shoot": 15,
+     "effect": 0
+    },
+    {
+     "name": "combat",
+     "interval": 2000,
+     "chance": 5,
+     "min": 45,
+     "max": 85,
+     "element": "lifedrain",
+     "range": 7,
+     "target": false,
+     "shoot": 0,
+     "effect": 14
+    },
+    {
+     "name": "combat",
+     "interval": 2000,
+     "chance": 5,
+     "min": 0,
+     "max": 40,
+     "element": "manadrain",
+     "range": 7,
+     "target": false,
+     "shoot": 0,
+     "effect": 0
+    },
+    {
+     "name": "paralyze",
+     "interval": 2000,
+     "chance": 10,
+     "min": 0,
+     "max": 0,
+     "speedChange": -600,
+     "duration": 20000,
+     "target": false,
+     "shoot": 0,
+     "effect": 14,
+     "range": 7
+    }
+   ],
+   "maxSummons": 6,
+   "summons": [
+    {
+     "name": "gazer",
+     "interval": 2000,
+     "chance": 10,
+     "count": 6
+    },
+    {
+     "name": "crypt shambler",
+     "interval": 2000,
+     "chance": 15,
+     "count": 6
+    }
+   ],
+   "defense": 13,
+   "armor": 13,
+   "mitigation": 0.67,
+   "heals": [],
+   "elements": {
+    "energy": 20,
+    "earth": 100,
+    "fire": -10,
+    "lifedrain": 100,
+    "ice": 30,
+    "death": 30
+   },
+   "loot": [
+    {
+     "name": "gold coin",
+     "chance": 99290,
+     "max": 86,
+     "id": 3031
+    },
+    {
+     "name": "elder bonelord tentacle",
+     "chance": 20040,
+     "max": 1,
+     "id": 10276
+    },
+    {
+     "name": "small flask of eyedrops",
+     "chance": 9720,
+     "max": 1,
+     "id": 11512
+    },
+    {
+     "name": "sniper arrow",
+     "chance": 8780,
+     "max": 5,
+     "id": 7364
+    },
+    {
+     "name": "two handed sword",
+     "chance": 2980,
+     "max": 1,
+     "id": 3265
+    },
+    {
+     "name": "steel shield",
+     "chance": 2040,
+     "max": 1,
+     "id": 3409
+    },
+    {
+     "id": 3059,
+     "chance": 1030,
+     "max": 1
+    },
+    {
+     "name": "strong mana potion",
+     "chance": 830,
+     "max": 1,
+     "id": 237
+    },
+    {
+     "name": "giant eye",
+     "chance": 460,
+     "max": 1,
+     "id": 10280
+    },
+    {
+     "name": "bonelord shield",
+     "chance": 90,
+     "max": 1,
+     "id": 3418
+    },
+    {
+     "name": "bonelord helmet",
+     "chance": 90,
+     "max": 1,
+     "id": 3408
+    },
+    {
+     "name": "bonelord eye",
+     "chance": 1920,
+     "max": 1,
+     "id": 5898
+    }
+   ]
+  },
+  "vampire bride": {
+   "name": "Vampire Bride",
+   "health": 1200,
+   "experience": 1050,
+   "speed": 100,
+   "lookType": 312,
+   "corpse": 8744,
+   "targetDistance": 1,
+   "runHealth": 0,
+   "attacks": [
+    {
+     "name": "melee",
+     "interval": 2000,
+     "chance": 100,
+     "min": 0,
+     "max": 190
+    },
+    {
+     "name": "combat",
+     "interval": 3000,
+     "chance": 15,
+     "min": 60,
+     "max": 130,
+     "element": "lifedrain",
+     "range": 1,
+     "target": true,
+     "shoot": 0,
+     "effect": 14
+    },
+    {
+     "name": "combat",
+     "interval": 2000,
+     "chance": 10,
+     "min": 60,
+     "max": 150,
+     "element": "death",
+     "range": 7,
+     "target": true,
+     "shoot": 32,
+     "effect": 18
+    },
+    {
+     "name": "combat",
+     "interval": 4000,
+     "chance": 5,
+     "min": 60,
+     "max": 150,
+     "element": "death",
+     "range": 7,
+     "target": true,
+     "shoot": 32,
+     "effect": 36
+    },
+    {
+     "name": "combat",
+     "interval": 2000,
+     "chance": 15,
+     "min": 60,
+     "max": 150,
+     "element": "energy",
+     "range": 7,
+     "target": true,
+     "shoot": 5,
+     "effect": 0
+    }
+   ],
+   "maxSummons": 0,
+   "summons": [],
+   "defense": 20,
+   "armor": 55,
+   "mitigation": 1.18,
+   "heals": [
+    {
+     "interval": 2000,
+     "chance": 15,
+     "min": 40,
+     "max": 80
+    }
+   ],
+   "elements": {
+    "energy": 10,
+    "earth": 20,
+    "fire": -10,
+    "drown": 10,
+    "ice": 20,
+    "holy": -10,
+    "death": 100
+   },
+   "loot": [
+    {
+     "name": "emerald bangle",
+     "chance": 1100,
+     "max": 1,
+     "id": 3010
+    },
+    {
+     "name": "small diamond",
+     "chance": 1020,
+     "max": 2,
+     "id": 3028
+    },
+    {
+     "name": "gold coin",
+     "chance": 90000,
+     "max": 149,
+     "id": 3031
+    },
+    {
+     "name": "platinum coin",
+     "chance": 9910,
+     "max": 1,
+     "id": 3035
+    },
+    {
+     "name": "moonlight rod",
+     "chance": 5500,
+     "max": 1,
+     "id": 3070
+    },
+    {
+     "name": "boots of haste",
+     "chance": 220,
+     "max": 1,
+     "id": 3079
+    },
+    {
+     "name": "strong health potion",
+     "chance": 5000,
+     "max": 1,
+     "id": 236
+    },
+    {
+     "name": "strong mana potion",
+     "chance": 10210,
+     "max": 1,
+     "id": 237
+    },
+    {
+     "id": 649,
+     "chance": 200,
+     "max": 1
+    },
+    {
+     "name": "hibiscus dress",
+     "chance": 1030,
+     "max": 1,
+     "id": 8045
+    },
+    {
+     "name": "blood goblet",
+     "chance": 60,
+     "max": 1,
+     "id": 8531
+    },
+    {
+     "id": 8895,
+     "chance": 1010,
+     "max": 1
+    },
+    {
+     "id": 8923,
+     "chance": 970,
+     "max": 1
+    },
+    {
+     "name": "vampire teeth",
+     "chance": 10000,
+     "max": 1,
+     "id": 9685
+    },
+    {
+     "name": "blood preservation",
+     "chance": 4950,
+     "max": 1,
+     "id": 11449
+    },
+    {
+     "name": "leather whip",
+     "chance": 20,
+     "max": 1,
+     "id": 12306
+    }
+   ]
+  },
+  "vampire viscount": {
+   "name": "Vampire Viscount",
+   "health": 1200,
+   "experience": 800,
+   "speed": 110,
+   "lookType": 555,
+   "corpse": 18961,
+   "targetDistance": 1,
+   "runHealth": 0,
+   "attacks": [
+    {
+     "name": "melee",
+     "interval": 2000,
+     "chance": 100,
+     "min": 0,
+     "max": 150
+    },
+    {
+     "name": "combat",
+     "interval": 2000,
+     "chance": 15,
+     "min": 50,
+     "max": 100,
+     "element": "death",
+     "range": 6,
+     "radius": 3,
+     "target": true,
+     "shoot": 11,
+     "effect": 18
+    },
+    {
+     "name": "condition",
+     "interval": 2000,
+     "chance": 10,
+     "min": 0,
+     "max": 0,
+     "condition": {
+      "element": "physical",
+      "min": 320,
+      "max": 560,
+      "tick": 2000
+     },
+     "element": "physical",
+     "radius": 6,
+     "target": false,
+     "shoot": 0,
+     "effect": 67
+    }
+   ],
+   "maxSummons": 0,
+   "summons": [],
+   "defense": 35,
+   "armor": 42,
+   "mitigation": 1.18,
+   "heals": [],
+   "elements": {
+    "physical": 10,
+    "earth": 100,
+    "fire": -5,
+    "ice": 10,
+    "holy": -25,
+    "death": 100
+   },
+   "loot": [
+    {
+     "name": "black pearl",
+     "chance": 2500,
+     "max": 1,
+     "id": 3027
+    },
+    {
+     "name": "small ruby",
+     "chance": 3040,
+     "max": 2,
+     "id": 3030
+    },
+    {
+     "name": "gold coin",
+     "chance": 83000,
+     "max": 50,
+     "id": 3031
+    },
+    {
+     "id": 3039,
+     "chance": 540,
+     "max": 1
+    },
+    {
+     "name": "ice rapier",
+     "chance": 810,
+     "max": 1,
+     "id": 3284
+    },
+    {
+     "name": "vampire shield",
+     "chance": 200,
+     "max": 1,
+     "id": 3434
+    },
+    {
+     "name": "red piece of cloth",
+     "chance": 70,
+     "max": 1,
+     "id": 5911
+    },
+    {
+     "name": "strong health potion",
+     "chance": 7100,
+     "max": 1,
+     "id": 236
+    },
+    {
+     "name": "strong mana potion",
+     "chance": 8180,
+     "max": 1,
+     "id": 237
+    },
+    {
+     "name": "vampire teeth",
+     "chance": 7200,
+     "max": 1,
+     "id": 9685
+    },
+    {
+     "name": "blood preservation",
+     "chance": 2910,
+     "max": 1,
+     "id": 11449
+    },
+    {
+     "name": "tooth file",
+     "chance": 6560,
+     "max": 1,
+     "id": 18924
+    },
+    {
+     "name": "vampire's cape chain",
+     "chance": 4460,
+     "max": 1,
+     "id": 18927
+    }
+   ]
+  },
+  "priestess": {
+   "name": "Priestess",
+   "health": 390,
+   "experience": 420,
+   "speed": 85,
+   "lookType": 58,
+   "corpse": 18210,
+   "targetDistance": 4,
+   "runHealth": 0,
+   "attacks": [
+    {
+     "name": "melee",
+     "interval": 2000,
+     "chance": 100,
+     "min": 0,
+     "max": 75
+    },
+    {
+     "name": "combat",
+     "interval": 2000,
+     "chance": 20,
+     "min": 55,
+     "max": 120,
+     "element": "death",
+     "range": 7,
+     "target": false,
+     "shoot": 32,
+     "effect": 18
+    },
+    {
+     "name": "combat",
+     "interval": 2000,
+     "chance": 15,
+     "min": 2,
+     "max": 170,
+     "element": "manadrain",
+     "range": 7,
+     "target": false,
+     "shoot": 0,
+     "effect": 0
+    }
+   ],
+   "maxSummons": 2,
+   "summons": [
+    {
+     "name": "ghoul",
+     "interval": 2000,
+     "chance": 10,
+     "count": 2
+    }
+   ],
+   "defense": 15,
+   "armor": 30,
+   "mitigation": 1.32,
+   "heals": [
+    {
+     "interval": 2000,
+     "chance": 15,
+     "min": 50,
+     "max": 80
+    }
+   ],
+   "elements": {
+    "physical": -10,
+    "earth": 70,
+    "fire": 40,
+    "holy": -10,
+    "death": 10
+   },
+   "loot": [
+    {
+     "id": 2948,
+     "chance": 1410,
+     "max": 1
+    },
+    {
+     "name": "piggy bank",
+     "chance": 90,
+     "max": 1,
+     "id": 2995
+    },
+    {
+     "name": "crystal necklace",
+     "chance": 640,
+     "max": 1,
+     "id": 3008
+    },
+    {
+     "name": "talon",
+     "chance": 750,
+     "max": 1,
+     "id": 3034
+    },
+    {
+     "name": "hailstorm rod",
+     "chance": 1100,
+     "max": 1,
+     "id": 3067
+    },
+    {
+     "id": 3076,
+     "chance": 1250,
+     "max": 1
+    },
+    {
+     "id": 2948,
+     "chance": 1400,
+     "max": 1
+    },
+    {
+     "name": "clerical mace",
+     "chance": 1500,
+     "max": 1,
+     "id": 3311
+    },
+    {
+     "name": "black shield",
+     "chance": 210,
+     "max": 1,
+     "id": 3429
+    },
+    {
+     "name": "red apple",
+     "chance": 7500,
+     "max": 2,
+     "id": 3585
+    },
+    {
+     "name": "goat grass",
+     "chance": 11720,
+     "max": 1,
+     "id": 3674
+    },
+    {
+     "name": "wood mushroom",
+     "chance": 3240,
+     "max": 1,
+     "id": 3727
+    },
+    {
+     "name": "sling herb",
+     "chance": 13200,
+     "max": 1,
+     "id": 3738
+    },
+    {
+     "name": "powder herb",
+     "chance": 5900,
+     "max": 1,
+     "id": 3739
+    },
+    {
+     "name": "mana potion",
+     "chance": 850,
+     "max": 1,
+     "id": 268
+    },
+    {
+     "name": "cultish robe",
+     "chance": 1800,
+     "max": 1,
+     "id": 9639
+    },
+    {
+     "name": "black hood",
+     "chance": 5230,
+     "max": 1,
+     "id": 9645
+    },
+    {
+     "name": "dark rosary",
+     "chance": 9840,
+     "max": 1,
+     "id": 10303
+    }
+   ]
+  },
+  "tarantula": {
+   "name": "Tarantula",
+   "health": 225,
+   "experience": 120,
+   "speed": 107,
+   "lookType": 219,
+   "corpse": 6060,
+   "targetDistance": 1,
+   "runHealth": 0,
+   "attacks": [
+    {
+     "name": "melee",
+     "interval": 2000,
+     "chance": 100,
+     "min": 0,
+     "max": 90,
+     "condition": {
+      "element": "earth",
+      "min": 40,
+      "max": 40,
+      "tick": 4000
+     }
+    }
+   ],
+   "maxSummons": 0,
+   "summons": [],
+   "defense": 10,
+   "armor": 20,
+   "mitigation": 0.51,
+   "heals": [],
+   "elements": {
+    "energy": 10,
+    "earth": 100,
+    "fire": -15,
+    "ice": -10
+   },
+   "loot": [
+    {
+     "name": "gold coin",
+     "chance": 79000,
+     "max": 40,
+     "id": 3031
+    },
+    {
+     "id": 3053,
+     "chance": 120,
+     "max": 1
+    },
+    {
+     "name": "steel helmet",
+     "chance": 990,
+     "max": 1,
+     "id": 3351
+    },
+    {
+     "name": "brass legs",
+     "chance": 3050,
+     "max": 1,
+     "id": 3372
+    },
+    {
+     "name": "plate shield",
+     "chance": 2000,
+     "max": 1,
+     "id": 3410
+    },
+    {
+     "name": "spider fangs",
+     "chance": 4820,
+     "max": 1,
+     "id": 8031
+    },
+    {
+     "name": "tarantula egg",
+     "chance": 10000,
+     "max": 1,
+     "id": 10281
+    }
+   ]
+  },
+  "phantasm": {
+   "name": "Phantasm",
+   "health": 3950,
+   "experience": 4400,
+   "speed": 170,
+   "lookType": 241,
+   "corpse": 6343,
+   "targetDistance": 1,
+   "runHealth": 350,
+   "attacks": [
+    {
+     "name": "melee",
+     "interval": 2000,
+     "chance": 100,
+     "min": 0,
+     "max": 475
+    },
+    {
+     "name": "combat",
+     "interval": 2000,
+     "chance": 10,
+     "min": 250,
+     "max": 610,
+     "element": "death",
+     "range": 7,
+     "target": false,
+     "shoot": 32,
+     "effect": 39
+    },
+    {
+     "name": "combat",
+     "interval": 2000,
+     "chance": 20,
+     "min": 5,
+     "max": 80,
+     "element": "manadrain",
+     "radius": 3,
+     "target": false,
+     "shoot": 0,
+     "effect": 8
+    }
+   ],
+   "maxSummons": 4,
+   "summons": [
+    {
+     "name": "phantasm summon",
+     "interval": 2000,
+     "chance": 35,
+     "count": 4
+    }
+   ],
+   "defense": 0,
+   "armor": 80,
+   "mitigation": 1.1,
+   "heals": [
+    {
+     "interval": 2000,
+     "chance": 30,
+     "min": 228,
+     "max": 449
+    }
+   ],
+   "elements": {
+    "physical": 100,
+    "energy": -10,
+    "earth": 20,
+    "fire": -10,
+    "lifedrain": 100,
+    "ice": 20,
+    "holy": -10,
+    "death": 100
+   },
+   "loot": [
+    {
+     "name": "small ruby",
+     "chance": 12160,
+     "max": 3,
+     "id": 3030
+    },
+    {
+     "name": "gold coin",
+     "chance": 30000,
+     "max": 100,
+     "id": 3031
+    },
+    {
+     "name": "gold coin",
+     "chance": 30000,
+     "max": 100,
+     "id": 3031
+    },
+    {
+     "name": "gold coin",
+     "chance": 28000,
+     "max": 33,
+     "id": 3031
+    },
+    {
+     "name": "small emerald",
+     "chance": 10190,
+     "max": 3,
+     "id": 3032
+    },
+    {
+     "name": "small amethyst",
+     "chance": 14570,
+     "max": 3,
+     "id": 3033
+    },
+    {
+     "name": "platinum coin",
+     "chance": 87730,
+     "max": 4,
+     "id": 3035
+    },
+    {
+     "id": 3049,
+     "chance": 550,
+     "max": 1
+    },
+    {
+     "name": "blank rune",
+     "chance": 22500,
+     "max": 2,
+     "id": 3147
+    },
+    {
+     "name": "crown armor",
+     "chance": 660,
+     "max": 1,
+     "id": 3381
+    },
+    {
+     "name": "shadow herb",
+     "chance": 26930,
+     "max": 2,
+     "id": 3740
+    },
+    {
+     "id": 6299,
+     "chance": 330,
+     "max": 1
+    },
+    {
+     "name": "demonic essence",
+     "chance": 16320,
+     "max": 1,
+     "id": 6499
+    },
+    {
+     "name": "abyss hammer",
+     "chance": 110,
+     "max": 1,
+     "id": 7414
+    },
+    {
+     "name": "shadow sceptre",
+     "chance": 550,
+     "max": 1,
+     "id": 7451
+    },
+    {
+     "name": "great mana potion",
+     "chance": 32750,
+     "max": 2,
+     "id": 238
+    },
+    {
+     "name": "ultimate health potion",
+     "chance": 14680,
+     "max": 1,
+     "id": 7643
+    },
+    {
+     "name": "small topaz",
+     "chance": 12810,
+     "max": 3,
+     "id": 9057
+    }
+   ]
+  },
+  "dragon hatchling": {
+   "name": "Dragon Hatchling",
+   "health": 380,
+   "experience": 185,
+   "speed": 73,
+   "lookType": 271,
+   "corpse": 269,
+   "targetDistance": 1,
+   "runHealth": 20,
+   "attacks": [
+    {
+     "name": "melee",
+     "interval": 2000,
+     "chance": 100,
+     "min": 0,
+     "max": 55
+    },
+    {
+     "name": "combat",
+     "interval": 2000,
+     "chance": 10,
+     "min": 60,
+     "max": 90,
+     "element": "fire",
+     "length": 5,
+     "spread": 2,
+     "target": false,
+     "shoot": 0,
+     "effect": 7
+    },
+    {
+     "name": "combat",
+     "interval": 2000,
+     "chance": 15,
+     "min": 30,
+     "max": 55,
+     "element": "fire",
+     "range": 7,
+     "radius": 4,
+     "target": true,
+     "shoot": 4,
+     "effect": 7
+    }
+   ],
+   "maxSummons": 0,
+   "summons": [],
+   "defense": 10,
+   "armor": 15,
+   "mitigation": 0.78,
+   "heals": [
+    {
+     "interval": 2000,
+     "chance": 15,
+     "min": 8,
+     "max": 33
+    }
+   ],
+   "elements": {
+    "energy": -5,
+    "earth": 75,
+    "fire": 100,
+    "ice": -10
+   },
+   "loot": [
+    {
+     "name": "gold coin",
+     "chance": 95540,
+     "max": 50,
+     "id": 3031
+    },
+    {
+     "name": "dragon ham",
+     "chance": 83040,
+     "max": 1,
+     "id": 3583
+    },
+    {
+     "name": "dragon's tail",
+     "chance": 3570,
+     "max": 1,
+     "id": 11457
+    },
+    {
+     "name": "health potion",
+     "chance": 470,
+     "max": 1,
+     "id": 266
+    }
+   ]
+  },
+  "dragon lord hatchling": {
+   "name": "Dragon Lord Hatchling",
+   "health": 750,
+   "experience": 645,
+   "speed": 84,
+   "lookType": 272,
+   "corpse": 270,
+   "targetDistance": 1,
+   "runHealth": 30,
+   "attacks": [
+    {
+     "name": "melee",
+     "interval": 2000,
+     "chance": 100,
+     "min": 0,
+     "max": 90
+    },
+    {
+     "name": "combat",
+     "interval": 2000,
+     "chance": 10,
+     "min": 90,
+     "max": 125,
+     "element": "fire",
+     "length": 5,
+     "spread": 2,
+     "target": false,
+     "shoot": 0,
+     "effect": 7
+    },
+    {
+     "name": "combat",
+     "interval": 2000,
+     "chance": 15,
+     "min": 55,
+     "max": 105,
+     "element": "fire",
+     "range": 7,
+     "radius": 4,
+     "target": true,
+     "shoot": 4,
+     "effect": 7
+    },
+    {
+     "name": "field",
+     "interval": 2000,
+     "chance": 10,
+     "min": 0,
+     "max": 0,
+     "field": 2118,
+     "target": true,
+     "shoot": 4,
+     "effect": 0,
+     "range": 7,
+     "radius": 3
+    }
+   ],
+   "maxSummons": 0,
+   "summons": [],
+   "defense": 20,
+   "armor": 20,
+   "mitigation": 0.0,
+   "heals": [
+    {
+     "interval": 2000,
+     "chance": 15,
+     "min": 26,
+     "max": 48
+    }
+   ],
+   "elements": {
+    "energy": -5,
+    "earth": 75,
+    "fire": 100,
+    "ice": -10
+   },
+   "loot": [
+    {
+     "name": "dragon ham",
+     "chance": 77910,
+     "max": 1,
+     "id": 3583
+    },
+    {
+     "name": "gold coin",
+     "chance": 72690,
+     "max": 121,
+     "id": 3031
+    },
+    {
+     "name": "mana potion",
+     "chance": 1200,
+     "max": 1,
+     "id": 268
+    },
+    {
+     "name": "green mushroom",
+     "chance": 490,
+     "max": 1,
+     "id": 3732
+    },
+    {
+     "name": "magma boots",
+     "chance": 100,
+     "max": 1,
+     "id": 818
+    }
+   ]
+  },
+  "frost giant": {
+   "name": "Frost Giant",
+   "health": 270,
+   "experience": 150,
+   "speed": 95,
+   "lookType": 257,
+   "corpse": 7330,
+   "targetDistance": 1,
+   "runHealth": 0,
+   "attacks": [
+    {
+     "name": "melee",
+     "interval": 2000,
+     "chance": 100,
+     "min": 0,
+     "max": 110
+    },
+    {
+     "name": "combat",
+     "interval": 2000,
+     "chance": 15,
+     "min": 0,
+     "max": 90,
+     "element": "physical",
+     "range": 7,
+     "target": false,
+     "shoot": 12,
+     "effect": 0
+    }
+   ],
+   "maxSummons": 0,
+   "summons": [],
+   "defense": 20,
+   "armor": 22,
+   "mitigation": 0.46,
+   "heals": [],
+   "elements": {
+    "ice": 100
+   },
+   "loot": [
+    {
+     "name": "gold coin",
+     "chance": 82000,
+     "max": 40,
+     "id": 3031
+    },
+    {
+     "id": 3093,
+     "chance": 130,
+     "max": 1
+    },
+    {
+     "name": "halberd",
+     "chance": 560,
+     "max": 1,
+     "id": 3269
+    },
+    {
+     "name": "short sword",
+     "chance": 8140,
+     "max": 1,
+     "id": 3294
+    },
+    {
+     "name": "dark helmet",
+     "chance": 180,
+     "max": 1,
+     "id": 3384
+    },
+    {
+     "name": "battle shield",
+     "chance": 1350,
+     "max": 1,
+     "id": 3413
+    },
+    {
+     "name": "meat",
+     "chance": 4970,
+     "max": 2,
+     "id": 3577
+    },
+    {
+     "name": "shard",
+     "chance": 60,
+     "max": 1,
+     "id": 7290
+    },
+    {
+     "id": 7441,
+     "chance": 2180,
+     "max": 1
+    },
+    {
+     "name": "norse shield",
+     "chance": 250,
+     "max": 1,
+     "id": 7460
+    },
+    {
+     "name": "health potion",
+     "chance": 819,
+     "max": 1,
+     "id": 266
+    },
+    {
+     "name": "frost giant pelt",
+     "chance": 5000,
+     "max": 1,
+     "id": 9658
+    }
+   ]
+  },
+  "kongra": {
+   "name": "Kongra",
+   "health": 340,
+   "experience": 115,
+   "speed": 92,
+   "lookType": 116,
+   "corpse": 6043,
+   "targetDistance": 1,
+   "runHealth": 10,
+   "attacks": [
+    {
+     "name": "melee",
+     "interval": 2000,
+     "chance": 100,
+     "min": 0,
+     "max": 60
+    }
+   ],
+   "maxSummons": 0,
+   "summons": [],
+   "defense": 20,
+   "armor": 18,
+   "mitigation": 0.36,
+   "heals": [],
+   "elements": {
+    "energy": 5,
+    "earth": 10,
+    "fire": 20,
+    "ice": -15,
+    "death": -5
+   },
+   "loot": [
+    {
+     "name": "gold coin",
+     "chance": 69000,
+     "max": 40,
+     "id": 3031
+    },
+    {
+     "id": 3050,
+     "chance": 300,
+     "max": 1
+    },
+    {
+     "name": "protection amulet",
+     "chance": 990,
+     "max": 1,
+     "id": 3084
+    },
+    {
+     "id": 3093,
+     "chance": 230,
+     "max": 1
+    },
+    {
+     "name": "plate armor",
+     "chance": 950,
+     "max": 1,
+     "id": 3357
+    },
+    {
+     "name": "banana",
+     "chance": 30000,
+     "max": 12,
+     "id": 3587
+    },
+    {
+     "name": "ape fur",
+     "chance": 980,
+     "max": 1,
+     "id": 5883
+    },
+    {
+     "name": "health potion",
+     "chance": 570,
+     "max": 1,
+     "id": 266
+    },
+    {
+     "name": "kongra's shoulderpad",
+     "chance": 4900,
+     "max": 1,
+     "id": 11471
+    }
+   ]
+  },
+  "sibang": {
+   "name": "Sibang",
+   "health": 225,
+   "experience": 105,
+   "speed": 107,
+   "lookType": 118,
+   "corpse": 6045,
+   "targetDistance": 4,
+   "runHealth": 0,
+   "attacks": [
+    {
+     "name": "melee",
+     "interval": 2000,
+     "chance": 100,
+     "min": 0,
+     "max": 40
+    },
+    {
+     "name": "combat",
+     "interval": 2000,
+     "chance": 35,
+     "min": 0,
+     "max": 55,
+     "element": "physical",
+     "range": 7,
+     "target": false,
+     "shoot": 10,
+     "effect": 0
+    }
+   ],
+   "maxSummons": 0,
+   "summons": [],
+   "defense": 15,
+   "armor": 15,
+   "mitigation": 0.83,
+   "heals": [],
+   "elements": {
+    "fire": 25,
+    "ice": -15,
+    "holy": 10,
+    "death": -5
+   },
+   "loot": [
+    {
+     "name": "small stone",
+     "chance": 30060,
+     "max": 3,
+     "id": 1781
+    },
+    {
+     "name": "gold coin",
+     "chance": 56000,
+     "max": 35,
+     "id": 3031
+    },
+    {
+     "name": "orange",
+     "chance": 19840,
+     "max": 5,
+     "id": 3586
+    },
+    {
+     "name": "banana",
+     "chance": 30000,
+     "max": 12,
+     "id": 3587
+    },
+    {
+     "name": "coconut",
+     "chance": 1960,
+     "max": 3,
+     "id": 3589
+    },
+    {
+     "name": "melon",
+     "chance": 1000,
+     "max": 1,
+     "id": 3593
+    },
+    {
+     "name": "ape fur",
+     "chance": 1000,
+     "max": 1,
+     "id": 5883
+    },
+    {
+     "name": "banana sash",
+     "chance": 5000,
+     "max": 1,
+     "id": 11511
+    }
+   ]
+  },
+  "merlkin": {
+   "name": "Merlkin",
+   "health": 235,
+   "experience": 145,
+   "speed": 97,
+   "lookType": 117,
+   "corpse": 6044,
+   "targetDistance": 4,
+   "runHealth": 0,
+   "attacks": [
+    {
+     "name": "melee",
+     "interval": 2000,
+     "chance": 100,
+     "min": 0,
+     "max": 30
+    },
+    {
+     "name": "combat",
+     "interval": 2000,
+     "chance": 15,
+     "min": 60,
+     "max": 90,
+     "element": "fire",
+     "range": 7,
+     "target": false,
+     "shoot": 4,
+     "effect": 16
+    },
+    {
+     "name": "combat",
+     "interval": 2000,
+     "chance": 20,
+     "min": 15,
+     "max": 45,
+     "element": "energy",
+     "range": 7,
+     "target": false,
+     "shoot": 5,
+     "effect": 12
+    },
+    {
+     "name": "field",
+     "interval": 2000,
+     "chance": 15,
+     "min": 0,
+     "max": 0,
+     "field": 105,
+     "target": true,
+     "shoot": 15,
+     "effect": 0,
+     "range": 7,
+     "radius": 1
+    }
+   ],
+   "maxSummons": 0,
+   "summons": [],
+   "defense": 15,
+   "armor": 16,
+   "mitigation": 1.04,
+   "heals": [
+    {
+     "interval": 2000,
+     "chance": 25,
+     "min": 30,
+     "max": 40
+    }
+   ],
+   "elements": {
+    "energy": 10,
+    "fire": 20,
+    "ice": -15,
+    "holy": 10,
+    "death": -5
+   },
+   "loot": [
+    {
+     "name": "gold coin",
+     "chance": 69500,
+     "max": 45,
+     "id": 3031
+    },
+    {
+     "name": "small amethyst",
+     "chance": 260,
+     "max": 1,
+     "id": 3033
+    },
+    {
+     "id": 3046,
+     "chance": 3000,
+     "max": 1
+    },
+    {
+     "name": "wand of decay",
+     "chance": 1050,
+     "max": 1,
+     "id": 3072
+    },
+    {
+     "name": "orange",
+     "chance": 1000,
+     "max": 5,
+     "id": 3586
+    },
+    {
+     "name": "banana",
+     "chance": 30350,
+     "max": 12,
+     "id": 3587
+    },
+    {
+     "name": "banana staff",
+     "chance": 100,
+     "max": 1,
+     "id": 3348
+    },
+    {
+     "name": "ape fur",
+     "chance": 1000,
+     "max": 1,
+     "id": 5883
+    },
+    {
+     "name": "mana potion",
+     "chance": 660,
+     "max": 1,
+     "id": 268
+    },
+    {
+     "name": "banana sash",
+     "chance": 1800,
+     "max": 1,
+     "id": 11511
+    }
+   ]
+  },
+  "carniphila": {
+   "name": "Carniphila",
+   "health": 255,
+   "experience": 150,
+   "speed": 55,
+   "lookType": 120,
+   "corpse": 6047,
+   "targetDistance": 1,
+   "runHealth": 0,
+   "attacks": [
+    {
+     "name": "melee",
+     "interval": 2000,
+     "chance": 100,
+     "min": 0,
+     "max": 100,
+     "condition": {
+      "element": "earth",
+      "min": 100,
+      "max": 100,
+      "tick": 4000
+     }
+    },
+    {
+     "name": "combat",
+     "interval": 2000,
+     "chance": 15,
+     "min": 60,
+     "max": 95,
+     "element": "earth",
+     "range": 7,
+     "target": false,
+     "shoot": 15,
+     "effect": 9
+    },
+    {
+     "name": "paralyze",
+     "interval": 2000,
+     "chance": 15,
+     "min": 0,
+     "max": 0,
+     "speedChange": -800,
+     "duration": 30000,
+     "target": false,
+     "shoot": 15,
+     "effect": 9,
+     "range": 7
+    },
+    {
+     "name": "combat",
+     "interval": 2000,
+     "chance": 10,
+     "min": 40,
+     "max": 130,
+     "element": "earth",
+     "radius": 3,
+     "target": false,
+     "shoot": 0,
+     "effect": 21
+    }
+   ],
+   "maxSummons": 0,
+   "summons": [],
+   "defense": 15,
+   "armor": 22,
+   "mitigation": 0.51,
+   "heals": [],
+   "elements": {
+    "energy": 10,
+    "earth": 100,
+    "fire": -20,
+    "ice": 20
+   },
+   "loot": [
+    {
+     "name": "gold coin",
+     "chance": 90000,
+     "max": 40,
+     "id": 3031
+    },
+    {
+     "name": "corncob",
+     "chance": 890,
+     "max": 1,
+     "id": 3597
+    },
+    {
+     "name": "dark mushroom",
+     "chance": 7692,
+     "max": 1,
+     "id": 3728
+    },
+    {
+     "name": "sling herb",
+     "chance": 446,
+     "max": 2,
+     "id": 3738
+    },
+    {
+     "name": "shadow herb",
+     "chance": 880,
+     "max": 1,
+     "id": 3740
+    },
+    {
+     "name": "seeds",
+     "chance": 490,
+     "max": 1,
+     "id": 647
+    },
+    {
+     "name": "carniphila seeds",
+     "chance": 4166,
+     "max": 1,
+     "id": 10300
+    },
+    {
+     "name": "carrot on a stick",
+     "chance": 170,
+     "max": 1,
+     "id": 12311
+    }
+   ]
+  },
+  "quara mantassin": {
+   "name": "Quara Mantassin",
+   "health": 800,
+   "experience": 600,
+   "speed": 295,
+   "lookType": 72,
+   "corpse": 6064,
+   "targetDistance": 1,
+   "runHealth": 40,
+   "attacks": [
+    {
+     "name": "melee",
+     "interval": 2000,
+     "chance": 100,
+     "min": 0,
+     "max": 138
+    }
+   ],
+   "maxSummons": 0,
+   "summons": [],
+   "defense": 15,
+   "armor": 16,
+   "mitigation": 0.7,
+   "heals": [],
+   "elements": {
+    "energy": -25,
+    "earth": -10,
+    "fire": 100,
+    "lifedrain": 100,
+    "drown": 100,
+    "ice": 100
+   },
+   "loot": [
+    {
+     "name": "gold coin",
+     "chance": 5000,
+     "max": 100,
+     "id": 3031
+    },
+    {
+     "name": "gold coin",
+     "chance": 29000,
+     "max": 29,
+     "id": 3031
+    },
+    {
+     "name": "mantassin tail",
+     "chance": 12600,
+     "max": 1,
+     "id": 11489
+    },
+    {
+     "name": "shrimp",
+     "chance": 5170,
+     "max": 5,
+     "id": 3581
+    },
+    {
+     "name": "halberd",
+     "chance": 4970,
+     "max": 1,
+     "id": 3269
+    },
+    {
+     "name": "small sapphire",
+     "chance": 1130,
+     "max": 1,
+     "id": 3029
+    },
+    {
+     "name": "cape",
+     "chance": 1090,
+     "max": 1,
+     "id": 3565
+    },
+    {
+     "id": 3049,
+     "chance": 1050,
+     "max": 1
+    },
+    {
+     "name": "two handed sword",
+     "chance": 990,
+     "max": 1,
+     "id": 3265
+    },
+    {
+     "name": "fish fin",
+     "chance": 610,
+     "max": 1,
+     "id": 5895
+    },
+    {
+     "name": "strange helmet",
+     "chance": 100,
+     "max": 1,
+     "id": 3373
+    },
+    {
+     "name": "blue robe",
+     "chance": 60,
+     "max": 1,
+     "id": 3567
+    }
+   ]
+  },
+  "quara predator": {
+   "name": "Quara Predator",
+   "health": 2200,
+   "experience": 1850,
+   "speed": 225,
+   "lookType": 20,
+   "corpse": 6067,
+   "targetDistance": 1,
+   "runHealth": 0,
+   "attacks": [
+    {
+     "name": "melee",
+     "interval": 2000,
+     "chance": 100,
+     "min": 0,
+     "max": 473
+    }
+   ],
+   "maxSummons": 0,
+   "summons": [],
+   "defense": 45,
+   "armor": 40,
+   "mitigation": 1.46,
+   "heals": [
+    {
+     "interval": 2000,
+     "chance": 10,
+     "min": 25,
+     "max": 75
+    }
+   ],
+   "elements": {
+    "energy": -25,
+    "earth": -10,
+    "fire": 100,
+    "lifedrain": 100,
+    "drown": 100,
+    "ice": 100
+   },
+   "loot": [
+    {
+     "name": "gold coin",
+     "chance": 28000,
+     "max": 100,
+     "id": 3031
+    },
+    {
+     "name": "gold coin",
+     "chance": 50000,
+     "max": 54,
+     "id": 3031
+    },
+    {
+     "name": "quara bone",
+     "chance": 9860,
+     "max": 1,
+     "id": 11491
+    },
+    {
+     "name": "royal spear",
+     "chance": 9240,
+     "max": 7,
+     "id": 7378
+    },
+    {
+     "name": "small diamond",
+     "chance": 5300,
+     "max": 2,
+     "id": 3028
+    },
+    {
+     "name": "shrimp",
+     "chance": 4980,
+     "max": 5,
+     "id": 3581
+    },
+    {
+     "name": "double axe",
+     "chance": 3011,
+     "max": 1,
+     "id": 3275
+    },
+    {
+     "name": "fish fin",
+     "chance": 1920,
+     "max": 1,
+     "id": 5895
+    },
+    {
+     "name": "great health potion",
+     "chance": 1040,
+     "max": 1,
+     "id": 239
+    },
+    {
+     "name": "relic sword",
+     "chance": 670,
+     "max": 1,
+     "id": 7383
+    },
+    {
+     "name": "assassin star",
+     "chance": 530,
+     "max": 1,
+     "id": 7368
+    },
+    {
+     "name": "glacier robe",
+     "chance": 440,
+     "max": 1,
+     "id": 824
+    },
+    {
+     "name": "skull helmet",
+     "chance": 390,
+     "max": 1,
+     "id": 5741
+    },
+    {
+     "name": "giant shrimp",
+     "chance": 10,
+     "max": 1,
+     "id": 12318
+    }
+   ]
+  },
+  "fire devil": {
+   "name": "Fire Devil",
+   "health": 200,
+   "experience": 145,
+   "speed": 90,
+   "lookType": 40,
+   "corpse": 5985,
+   "targetDistance": 4,
+   "runHealth": 0,
+   "attacks": [
+    {
+     "name": "melee",
+     "interval": 2000,
+     "chance": 100,
+     "min": 0,
+     "max": 35
+    },
+    {
+     "name": "combat",
+     "interval": 2000,
+     "chance": 20,
+     "min": 60,
+     "max": 90,
+     "element": "fire",
+     "range": 7,
+     "radius": 4,
+     "target": true,
+     "shoot": 4,
+     "effect": 7
+    },
+    {
+     "name": "combat",
+     "interval": 2000,
+     "chance": 15,
+     "min": 20,
+     "max": 50,
+     "element": "fire",
+     "range": 7,
+     "radius": 2,
+     "target": true,
+     "shoot": 4,
+     "effect": 7
+    }
+   ],
+   "maxSummons": 0,
+   "summons": [],
+   "defense": 10,
+   "armor": 13,
+   "mitigation": 0.38,
+   "heals": [],
+   "elements": {
+    "physical": 10,
+    "energy": 30,
+    "earth": 20,
+    "fire": 100,
+    "ice": -20,
+    "holy": -10,
+    "death": 20
+   },
+   "loot": [
+    {
+     "id": 2920,
+     "chance": 10000,
+     "max": 1
+    },
+    {
+     "id": 2920,
+     "chance": 1420,
+     "max": 2
+    },
+    {
+     "name": "small amethyst",
+     "chance": 300,
+     "max": 1,
+     "id": 3033
+    },
+    {
+     "name": "necrotic rod",
+     "chance": 460,
+     "max": 1,
+     "id": 3069
+    },
+    {
+     "name": "blank rune",
+     "chance": 10950,
+     "max": 1,
+     "id": 3147
+    },
+    {
+     "name": "double axe",
+     "chance": 1500,
+     "max": 1,
+     "id": 3275
+    },
+    {
+     "id": 3307,
+     "chance": 3000,
+     "max": 1
+    },
+    {
+     "name": "guardian shield",
+     "chance": 210,
+     "max": 1,
+     "id": 3415
+    },
+    {
+     "name": "cleaver",
+     "chance": 1100,
+     "max": 1,
+     "id": 3471
+    },
+    {
+     "name": "small pitchfork",
+     "chance": 19770,
+     "max": 1,
+     "id": 11513
+    }
+   ]
+  },
+  "diabolic imp": {
+   "name": "Diabolic Imp",
+   "health": 1950,
+   "experience": 2900,
+   "speed": 105,
+   "lookType": 237,
+   "corpse": 6363,
+   "targetDistance": 4,
+   "runHealth": 400,
+   "attacks": [
+    {
+     "name": "melee",
+     "interval": 2000,
+     "chance": 100,
+     "min": 0,
+     "max": 240,
+     "condition": {
+      "element": "earth",
+      "min": 160,
+      "max": 160,
+      "tick": 4000
+     }
+    },
+    {
+     "name": "combat",
+     "interval": 2000,
+     "chance": 20,
+     "min": 100,
+     "max": 240,
+     "element": "fire",
+     "range": 7,
+     "radius": 4,
+     "target": true,
+     "shoot": 4,
+     "effect": 7
+    },
+    {
+     "name": "combat",
+     "interval": 2000,
+     "chance": 10,
+     "min": 300,
+     "max": 430,
+     "element": "fire",
+     "range": 7,
+     "radius": 2,
+     "target": true,
+     "shoot": 4,
+     "effect": 37
+    }
+   ],
+   "maxSummons": 0,
+   "summons": [],
+   "defense": 25,
+   "armor": 29,
+   "mitigation": 1.46,
+   "heals": [
+    {
+     "interval": 2000,
+     "chance": 10,
+     "min": 650,
+     "max": 800
+    }
+   ],
+   "elements": {
+    "earth": 50,
+    "fire": 100,
+    "lifedrain": 100,
+    "ice": -10,
+    "holy": -5,
+    "death": 10
+   },
+   "loot": [
+    {
+     "name": "gold coin",
+     "chance": 50000,
+     "max": 100,
+     "id": 3031
+    },
+    {
+     "name": "gold coin",
+     "chance": 40000,
+     "max": 97,
+     "id": 3031
+    },
+    {
+     "name": "gold coin",
+     "chance": 3390,
+     "max": 7,
+     "id": 3031
+    },
+    {
+     "name": "small amethyst",
+     "chance": 2250,
+     "max": 3,
+     "id": 3033
+    },
+    {
+     "id": 3049,
+     "chance": 2702,
+     "max": 1
+    },
+    {
+     "name": "necrotic rod",
+     "chance": 830,
+     "max": 1,
+     "id": 3069
+    },
+    {
+     "name": "blank rune",
+     "chance": 16666,
+     "max": 2,
+     "id": 3147
+    },
+    {
+     "name": "double axe",
+     "chance": 1994,
+     "max": 1,
+     "id": 3275
+    },
+    {
+     "id": 3307,
+     "chance": 5660,
+     "max": 1
+    },
+    {
+     "name": "guardian shield",
+     "chance": 8130,
+     "max": 1,
+     "id": 3415
+    },
+    {
+     "name": "pitchfork",
+     "chance": 50000,
+     "max": 1,
+     "id": 3451
+    },
+    {
+     "name": "cleaver",
+     "chance": 8830,
+     "max": 1,
+     "id": 3471
+    },
+    {
+     "name": "soul orb",
+     "chance": 7230,
+     "max": 1,
+     "id": 5944
+    },
+    {
+     "id": 6299,
+     "chance": 120,
+     "max": 1
+    },
+    {
+     "name": "demonic essence",
+     "chance": 8000,
+     "max": 1,
+     "id": 6499
+    },
+    {
+     "name": "flask of demonic blood",
+     "chance": 25000,
+     "max": 2,
+     "id": 6558
+    },
+    {
+     "name": "magma coat",
+     "chance": 250,
+     "max": 1,
+     "id": 826
+    },
+    {
+     "name": "magma monocle",
+     "chance": 430,
+     "max": 1,
+     "id": 827
+    }
+   ]
+  },
+  "carrion worm": {
+   "name": "Carrion Worm",
+   "health": 145,
+   "experience": 70,
+   "speed": 65,
+   "lookType": 192,
+   "corpse": 6069,
+   "targetDistance": 1,
+   "runHealth": 0,
+   "attacks": [
+    {
+     "name": "melee",
+     "interval": 2000,
+     "chance": 100,
+     "min": 0,
+     "max": 45
+    }
+   ],
+   "maxSummons": 0,
+   "summons": [],
+   "defense": 15,
+   "armor": 8,
+   "mitigation": 0.38,
+   "heals": [],
+   "elements": {
+    "energy": 10,
+    "earth": 20,
+    "fire": -5,
+    "ice": -5
+   },
+   "loot": [
+    {
+     "name": "gold coin",
+     "chance": 50000,
+     "max": 45,
+     "id": 3031
+    },
+    {
+     "name": "meat",
+     "chance": 9460,
+     "max": 2,
+     "id": 3577
+    },
+    {
+     "name": "worm",
+     "chance": 2100,
+     "max": 2,
+     "id": 3492
+    },
+    {
+     "name": "carrion worm fang",
+     "chance": 10000,
+     "max": 1,
+     "id": 10275
+    },
+    {
+     "id": 12600,
+     "chance": 210,
+     "max": 1
+    }
+   ]
+  },
+  "wyvern": {
+   "name": "Wyvern",
+   "health": 795,
+   "experience": 515,
+   "speed": 93,
+   "lookType": 239,
+   "corpse": 6301,
+   "targetDistance": 1,
+   "runHealth": 300,
+   "attacks": [
+    {
+     "name": "melee",
+     "interval": 2000,
+     "chance": 100,
+     "min": 0,
+     "max": 120,
+     "condition": {
+      "element": "earth",
+      "min": 480,
+      "max": 480,
+      "tick": 4000
+     }
+    },
+    {
+     "name": "condition",
+     "interval": 2000,
+     "chance": 15,
+     "min": 0,
+     "max": 0,
+     "condition": {
+      "element": "earth",
+      "min": 240,
+      "max": 240,
+      "tick": 2000
+     },
+     "element": "earth",
+     "length": 8,
+     "spread": 3,
+     "target": false,
+     "shoot": 0,
+     "effect": 21
+    }
+   ],
+   "maxSummons": 0,
+   "summons": [],
+   "defense": 25,
+   "armor": 19,
+   "mitigation": 1.21,
+   "heals": [
+    {
+     "interval": 2000,
+     "chance": 15,
+     "min": 45,
+     "max": 65
+    }
+   ],
+   "elements": {
+    "energy": 20,
+    "earth": 100,
+    "ice": 10
+   },
+   "loot": [
+    {
+     "name": "emerald bangle",
+     "chance": 540,
+     "max": 1,
+     "id": 3010
+    },
+    {
+     "name": "small sapphire",
+     "chance": 5000,
+     "max": 1,
+     "id": 3029
+    },
+    {
+     "name": "gold coin",
+     "chance": 100000,
+     "max": 90,
+     "id": 3031
+    },
+    {
+     "name": "wand of inferno",
+     "chance": 810,
+     "max": 1,
+     "id": 3071
+    },
+    {
+     "name": "power bolt",
+     "chance": 3400,
+     "max": 2,
+     "id": 3450
+    },
+    {
+     "name": "dragon ham",
+     "chance": 60500,
+     "max": 3,
+     "id": 3583
+    },
+    {
+     "name": "wyvern fang",
+     "chance": 410,
+     "max": 1,
+     "id": 7408
+    },
+    {
+     "name": "strong health potion",
+     "chance": 2500,
+     "max": 1,
+     "id": 236
+    },
+    {
+     "name": "wyvern talisman",
+     "chance": 12300,
+     "max": 1,
+     "id": 9644
+    }
+   ]
+  },
+  "terror bird": {
+   "name": "Terror Bird",
+   "health": 300,
+   "experience": 150,
+   "speed": 106,
+   "lookType": 218,
+   "corpse": 6057,
+   "targetDistance": 1,
+   "runHealth": 0,
+   "attacks": [
+    {
+     "name": "melee",
+     "interval": 2000,
+     "chance": 100,
+     "min": 0,
+     "max": 90
+    }
+   ],
+   "maxSummons": 0,
+   "summons": [],
+   "defense": 13,
+   "armor": 13,
+   "mitigation": 0.54,
+   "heals": [],
+   "elements": {
+    "energy": 20,
+    "earth": -10,
+    "fire": -10,
+    "ice": 20,
+    "death": -5
+   },
+   "loot": [
+    {
+     "name": "gold coin",
+     "chance": 82430,
+     "max": 30,
+     "id": 3031
+    },
+    {
+     "name": "meat",
+     "chance": 48550,
+     "max": 3,
+     "id": 3577
+    },
+    {
+     "name": "terrorbird beak",
+     "chance": 10310,
+     "max": 1,
+     "id": 10273
+    },
+    {
+     "name": "worm",
+     "chance": 9540,
+     "max": 3,
+     "id": 3492
+    },
+    {
+     "name": "colourful feather",
+     "chance": 3090,
+     "max": 1,
+     "id": 11514
+    },
+    {
+     "name": "health potion",
+     "chance": 690,
+     "max": 1,
+     "id": 266
+    },
+    {
+     "name": "seeds",
+     "chance": 280,
+     "max": 1,
+     "id": 647
+    },
+    {
+     "name": "feather headdress",
+     "chance": 100,
+     "max": 1,
+     "id": 3406
+    }
+   ]
+  },
+  "betrayed wraith": {
+   "name": "Betrayed Wraith",
+   "health": 4200,
+   "experience": 3500,
+   "speed": 173,
+   "lookType": 233,
+   "corpse": 6315,
+   "targetDistance": 1,
+   "runHealth": 300,
+   "attacks": [
+    {
+     "name": "melee",
+     "interval": 2000,
+     "chance": 100,
+     "min": 0,
+     "max": 450
+    },
+    {
+     "name": "paralyze",
+     "interval": 2000,
+     "chance": 20,
+     "min": 0,
+     "max": 0,
+     "speedChange": -600,
+     "duration": 3000,
+     "target": true,
+     "shoot": 32,
+     "effect": 39,
+     "range": 7
+    }
+   ],
+   "maxSummons": 0,
+   "summons": [],
+   "defense": 55,
+   "armor": 42,
+   "mitigation": 1.46,
+   "heals": [
+    {
+     "interval": 2000,
+     "chance": 30,
+     "min": 350,
+     "max": 600
+    }
+   ],
+   "elements": {
+    "energy": 10,
+    "earth": 100,
+    "fire": 100,
+    "lifedrain": 100,
+    "ice": 50,
+    "holy": -20,
+    "death": 100
+   },
+   "loot": [
+    {
+     "name": "small diamond",
+     "chance": 11800,
+     "max": 4,
+     "id": 3028
+    },
+    {
+     "name": "gold coin",
+     "chance": 100000,
+     "max": 200,
+     "id": 3031
+    },
+    {
+     "name": "platinum coin",
+     "chance": 100000,
+     "max": 8,
+     "id": 3035
+    },
+    {
+     "name": "power bolt",
+     "chance": 50000,
+     "max": 5,
+     "id": 3450
+    },
+    {
+     "name": "orichalcum pearl",
+     "chance": 8000,
+     "max": 2,
+     "id": 5021
+    },
+    {
+     "name": "skull helmet",
+     "chance": 390,
+     "max": 1,
+     "id": 5741
+    },
+    {
+     "name": "golden figurine",
+     "chance": 160,
+     "max": 1,
+     "id": 5799
+    },
+    {
+     "name": "soul orb",
+     "chance": 10000,
+     "max": 1,
+     "id": 5944
+    },
+    {
+     "id": 6299,
+     "chance": 390,
+     "max": 1
+    },
+    {
+     "name": "demonic essence",
+     "chance": 19430,
+     "max": 1,
+     "id": 6499
+    },
+    {
+     "name": "flask of demonic blood",
+     "chance": 65250,
+     "max": 1,
+     "id": 6558
+    },
+    {
+     "name": "assassin star",
+     "chance": 10780,
+     "max": 5,
+     "id": 7368
+    },
+    {
+     "name": "mercenary sword",
+     "chance": 1890,
+     "max": 1,
+     "id": 7386
+    },
+    {
+     "name": "bloody edge",
+     "chance": 80,
+     "max": 1,
+     "id": 7416
+    },
+    {
+     "name": "great mana potion",
+     "chance": 15000,
+     "max": 3,
+     "id": 238
+    },
+    {
+     "name": "ultimate health potion",
+     "chance": 15410,
+     "max": 1,
+     "id": 7643
+    },
+    {
+     "name": "unholy bone",
+     "chance": 18410,
+     "max": 1,
+     "id": 10316
+    }
+   ]
+  },
+  "blood priest": {
+   "name": "Blood Priest",
+   "health": 820,
+   "experience": 900,
+   "speed": 99,
+   "lookType": 553,
+   "corpse": 18945,
+   "targetDistance": 1,
+   "runHealth": 0,
+   "attacks": [
+    {
+     "name": "melee",
+     "interval": 2000,
+     "chance": 100,
+     "min": 0,
+     "max": 80,
+     "condition": {
+      "element": "earth",
+      "min": 100,
+      "max": 100,
+      "tick": 4000
+     }
+    },
+    {
+     "name": "combat",
+     "interval": 2000,
+     "chance": 20,
+     "min": 60,
+     "max": 100,
+     "element": "death",
+     "range": 7,
+     "target": true,
+     "shoot": 11,
+     "effect": 39
+    },
+    {
+     "name": "combat",
+     "interval": 2000,
+     "chance": 15,
+     "min": 40,
+     "max": 60,
+     "element": "lifedrain",
+     "radius": 4,
+     "target": false,
+     "shoot": 0,
+     "effect": 14
+    },
+    {
+     "name": "combat",
+     "interval": 3000,
+     "chance": 10,
+     "min": 80,
+     "max": 130,
+     "element": "manadrain",
+     "range": 1,
+     "length": 7,
+     "spread": 0,
+     "target": true,
+     "shoot": 0,
+     "effect": 10
+    },
+    {
+     "name": "condition",
+     "interval": 2000,
+     "chance": 5,
+     "min": 0,
+     "max": 0,
+     "condition": {
+      "element": "physical",
+      "min": 160,
+      "max": 290,
+      "tick": 2000
+     },
+     "element": "physical",
+     "range": 1,
+     "radius": 1,
+     "target": true,
+     "shoot": 0,
+     "effect": 0
+    }
+   ],
+   "maxSummons": 0,
+   "summons": [],
+   "defense": 30,
+   "armor": 55,
+   "mitigation": 1.18,
+   "heals": [
+    {
+     "interval": 2000,
+     "chance": 20,
+     "min": 80,
+     "max": 120
+    }
+   ],
+   "elements": {
+    "physical": -8,
+    "energy": 15,
+    "earth": 100,
+    "fire": -8,
+    "drown": 100,
+    "ice": 15,
+    "holy": -8,
+    "death": 50
+   },
+   "loot": [
+    {
+     "name": "small ruby",
+     "chance": 3510,
+     "max": 2,
+     "id": 3030
+    },
+    {
+     "name": "gold coin",
+     "chance": 50000,
+     "max": 100,
+     "id": 3031
+    },
+    {
+     "name": "gold coin",
+     "chance": 50000,
+     "max": 71,
+     "id": 3031
+    },
+    {
+     "name": "boots of haste",
+     "chance": 120,
+     "max": 1,
+     "id": 3079
+    },
+    {
+     "name": "skull staff",
+     "chance": 180,
+     "max": 1,
+     "id": 3324
+    },
+    {
+     "name": "mystic turban",
+     "chance": 2170,
+     "max": 1,
+     "id": 3574
+    },
+    {
+     "name": "white piece of cloth",
+     "chance": 3040,
+     "max": 1,
+     "id": 5909
+    },
+    {
+     "name": "red piece of cloth",
+     "chance": 640,
+     "max": 1,
+     "id": 5911
+    },
+    {
+     "name": "strong mana potion",
+     "chance": 6000,
+     "max": 1,
+     "id": 237
+    },
+    {
+     "name": "spellbook of warding",
+     "chance": 290,
+     "max": 1,
+     "id": 8073
+    },
+    {
+     "name": "spellbook of mind control",
+     "chance": 180,
+     "max": 1,
+     "id": 8074
+    },
+    {
+     "name": "underworld rod",
+     "chance": 470,
+     "max": 1,
+     "id": 8082
+    },
+    {
+     "name": "book of necromantic rituals",
+     "chance": 13550,
+     "max": 1,
+     "id": 10320
+    },
+    {
+     "id": 3039,
+     "chance": 880,
+     "max": 1
+    },
+    {
+     "name": "lancet",
+     "chance": 14410,
+     "max": 1,
+     "id": 18925
+    },
+    {
+     "name": "horoscope",
+     "chance": 9270,
+     "max": 1,
+     "id": 18926
+    },
+    {
+     "name": "blood tincture in a vial",
+     "chance": 14460,
+     "max": 1,
+     "id": 18928
+    },
+    {
+     "name": "incantation notes",
+     "chance": 14660,
+     "max": 1,
+     "id": 18929
+    },
+    {
+     "name": "pieces of magic chalk",
+     "chance": 7770,
+     "max": 1,
+     "id": 18930
+    }
+   ]
+  },
+  "mutated rat": {
+   "name": "Mutated Rat",
+   "health": 550,
+   "experience": 450,
+   "speed": 115,
+   "lookType": 305,
+   "corpse": 8957,
+   "targetDistance": 1,
+   "runHealth": 0,
+   "attacks": [
+    {
+     "name": "melee",
+     "interval": 2000,
+     "chance": 100,
+     "min": 0,
+     "max": 158,
+     "condition": {
+      "element": "earth",
+      "min": 100,
+      "max": 100,
+      "tick": 4000
+     }
+    },
+    {
+     "name": "combat",
+     "interval": 2000,
+     "chance": 15,
+     "min": 45,
+     "max": 85,
+     "element": "earth",
+     "range": 7,
+     "target": false,
+     "shoot": 15,
+     "effect": 21
+    },
+    {
+     "name": "condition",
+     "interval": 2000,
+     "chance": 10,
+     "min": 0,
+     "max": 0,
+     "condition": {
+      "element": "earth",
+      "min": 80,
+      "max": 100,
+      "tick": 2000
+     },
+     "element": "earth",
+     "length": 5,
+     "spread": 3,
+     "target": false,
+     "shoot": 0,
+     "effect": 21
+    },
+    {
+     "name": "paralyze",
+     "interval": 2000,
+     "chance": 10,
+     "min": 0,
+     "max": 0,
+     "speedChange": -600,
+     "duration": 30000,
+     "target": true,
+     "shoot": 0,
+     "effect": 14,
+     "range": 7
+    },
+    {
+     "name": "combat",
+     "interval": 2000,
+     "chance": 10,
+     "min": 30,
+     "max": 70,
+     "element": "lifedrain",
+     "range": 7,
+     "radius": 3,
+     "target": false,
+     "shoot": 0,
+     "effect": 14
+    }
+   ],
+   "maxSummons": 0,
+   "summons": [],
+   "defense": 15,
+   "armor": 32,
+   "mitigation": 0.99,
+   "heals": [
+    {
+     "interval": 2000,
+     "chance": 5,
+     "min": 80,
+     "max": 95
+    }
+   ],
+   "elements": {
+    "earth": 100,
+    "fire": -10,
+    "lifedrain": 100,
+    "drown": 100,
+    "holy": 10,
+    "death": 100
+   },
+   "loot": [
+    {
+     "name": "gold coin",
+     "chance": 78500,
+     "max": 130,
+     "id": 3031
+    },
+    {
+     "id": 3049,
+     "chance": 540,
+     "max": 1
+    },
+    {
+     "id": 3114,
+     "chance": 20240,
+     "max": 1
+    },
+    {
+     "name": "mouldy cheese",
+     "chance": 950,
+     "max": 1,
+     "id": 3120
+    },
+    {
+     "name": "halberd",
+     "chance": 2990,
+     "max": 1,
+     "id": 3269
+    },
+    {
+     "name": "plate shield",
+     "chance": 3750,
+     "max": 1,
+     "id": 3410
+    },
+    {
+     "name": "tower shield",
+     "chance": 50,
+     "max": 1,
+     "id": 3428
+    },
+    {
+     "name": "green mushroom",
+     "chance": 1390,
+     "max": 1,
+     "id": 3732
+    },
+    {
+     "name": "stone herb",
+     "chance": 4920,
+     "max": 1,
+     "id": 3735
+    },
+    {
+     "name": "health potion",
+     "chance": 560,
+     "max": 1,
+     "id": 266
+    },
+    {
+     "name": "spellbook of enlightenment",
+     "chance": 300,
+     "max": 1,
+     "id": 8072
+    },
+    {
+     "name": "mutated rat tail",
+     "chance": 3800,
+     "max": 1,
+     "id": 9668
+    }
+   ]
+  },
   "munster": {
    "name": "Munster",
    "health": 58,
@@ -20077,6 +25215,254 @@
      "id": 9055
     }
    ]
+  },
+  "war wolf": {
+   "name": "War Wolf",
+   "health": 140,
+   "experience": 55,
+   "speed": 132,
+   "lookType": 3,
+   "corpse": 6009,
+   "targetDistance": 1,
+   "runHealth": 0,
+   "attacks": [
+    {
+     "name": "melee",
+     "interval": 2000,
+     "chance": 100,
+     "min": 0,
+     "max": 50
+    }
+   ],
+   "maxSummons": 0,
+   "summons": [],
+   "defense": 15,
+   "armor": 8,
+   "mitigation": 0.41,
+   "heals": [],
+   "elements": {
+    "earth": 20,
+    "ice": -10,
+    "holy": 10,
+    "death": -10
+   },
+   "loot": [
+    {
+     "name": "ham",
+     "chance": 35000,
+     "max": 2,
+     "id": 3582
+    },
+    {
+     "name": "wolf paw",
+     "chance": 710,
+     "max": 1,
+     "id": 5897
+    },
+    {
+     "name": "warwolf fur",
+     "chance": 5230,
+     "max": 1,
+     "id": 10318
+    }
+   ]
+  },
+  "cobra": {
+   "name": "Cobra",
+   "health": 65,
+   "experience": 30,
+   "speed": 60,
+   "lookType": 81,
+   "corpse": 4188,
+   "targetDistance": 1,
+   "runHealth": 0,
+   "attacks": [
+    {
+     "name": "melee",
+     "interval": 2000,
+     "chance": 100,
+     "min": 0,
+     "max": 0,
+     "condition": {
+      "element": "earth",
+      "min": 100,
+      "max": 100,
+      "tick": 4000
+     }
+    },
+    {
+     "name": "condition",
+     "interval": 2000,
+     "chance": 15,
+     "min": 0,
+     "max": 0,
+     "condition": {
+      "element": "earth",
+      "min": 20,
+      "max": 40,
+      "tick": 2000
+     },
+     "element": "earth",
+     "range": 7,
+     "target": false,
+     "shoot": 15,
+     "effect": 0
+    }
+   ],
+   "maxSummons": 0,
+   "summons": [],
+   "defense": 5,
+   "armor": 1,
+   "mitigation": 0.15,
+   "heals": [],
+   "elements": {
+    "earth": 100,
+    "fire": -10
+   },
+   "loot": [
+    {
+     "name": "cobra tongue",
+     "chance": 5000,
+     "max": 1,
+     "id": 9634
+    }
+   ]
+  },
+  "gazer": {
+   "name": "Gazer",
+   "health": 120,
+   "experience": 90,
+   "speed": 70,
+   "lookType": 109,
+   "corpse": 6036,
+   "targetDistance": 4,
+   "runHealth": 0,
+   "attacks": [
+    {
+     "name": "melee",
+     "interval": 2000,
+     "chance": 100,
+     "min": 0,
+     "max": 15
+    },
+    {
+     "name": "combat",
+     "interval": 2000,
+     "chance": 15,
+     "min": 25,
+     "max": 35,
+     "element": "lifedrain",
+     "range": 7,
+     "target": false,
+     "shoot": 0,
+     "effect": 14
+    },
+    {
+     "name": "combat",
+     "interval": 2000,
+     "chance": 10,
+     "min": 10,
+     "max": 35,
+     "element": "manadrain",
+     "range": 7,
+     "target": false,
+     "shoot": 0,
+     "effect": 0
+    }
+   ],
+   "maxSummons": 0,
+   "summons": [],
+   "defense": 4,
+   "armor": 4,
+   "mitigation": 0.38,
+   "heals": [],
+   "elements": {
+    "energy": 10,
+    "earth": 100,
+    "fire": -10,
+    "ice": 20
+   },
+   "loot": [
+    {
+     "name": "gold coin",
+     "chance": 99350,
+     "max": 16,
+     "id": 3031
+    },
+    {
+     "name": "small flask of eyedrops",
+     "chance": 3200,
+     "max": 1,
+     "id": 11512
+    }
+   ]
+  },
+  "phantasm summon": {
+   "name": "Phantasm Summon",
+   "health": 65,
+   "experience": 1,
+   "speed": 170,
+   "lookType": 241,
+   "corpse": 6343,
+   "targetDistance": 1,
+   "runHealth": 0,
+   "attacks": [
+    {
+     "name": "melee",
+     "interval": 2000,
+     "chance": 100,
+     "min": 0,
+     "max": 50
+    },
+    {
+     "name": "combat",
+     "interval": 2000,
+     "chance": 15,
+     "min": 50,
+     "max": 80,
+     "element": "death",
+     "range": 7,
+     "target": false,
+     "shoot": 32,
+     "effect": 39
+    },
+    {
+     "name": "combat",
+     "interval": 2000,
+     "chance": 10,
+     "min": 5,
+     "max": 80,
+     "element": "manadrain",
+     "radius": 3,
+     "target": false,
+     "shoot": 0,
+     "effect": 8
+    }
+   ],
+   "maxSummons": 0,
+   "summons": [],
+   "defense": 0,
+   "armor": 0,
+   "mitigation": 0.0,
+   "heals": [
+    {
+     "interval": 2000,
+     "chance": 30,
+     "min": 40,
+     "max": 65
+    }
+   ],
+   "elements": {
+    "physical": 100,
+    "energy": -10,
+    "earth": 100,
+    "fire": -10,
+    "lifedrain": 100,
+    "ice": 20,
+    "holy": -10,
+    "death": 100
+   },
+   "loot": []
   }
  },
  "spells": [
@@ -22734,12 +28120,39 @@
    "weight": 270,
    "stackable": 1
   },
+  "269": {
+   "id": 269,
+   "name": "dead dragon hatchling",
+   "containersize": 30,
+   "duration": 10,
+   "fluidsource": "blood"
+  },
+  "270": {
+   "id": 270,
+   "name": "dead dragon hatchling",
+   "containersize": 30,
+   "duration": 10,
+   "fluidsource": "blood"
+  },
   "647": {
    "id": 647,
    "name": "seeds",
    "showcount": 0,
    "weight": 50,
    "stackable": 1
+  },
+  "649": {
+   "id": 649,
+   "name": "flower bouquet",
+   "weight": 80,
+   "stackable": 1
+  },
+  "656": {
+   "id": 656,
+   "name": "dead cyclops",
+   "fluidsource": "blood",
+   "duration": 10,
+   "containersize": 10
   },
   "761": {
    "id": 761,
@@ -22788,6 +28201,12 @@
    "unproperly": "true",
    "slot": "ammo",
    "stackable": 1
+  },
+  "771": {
+   "id": 771,
+   "name": "dead cyclops",
+   "duration": 10,
+   "containersize": 10
   },
   "774": {
    "id": 774,
@@ -23056,6 +28475,16 @@
    "containersize": 10,
    "weight": 9500
   },
+  "2647": {
+   "id": 2647,
+   "name": "green tapestry",
+   "weight": 1000
+  },
+  "2659": {
+   "id": 2659,
+   "name": "blue tapestry",
+   "weight": 1000
+  },
   "2815": {
    "id": 2815,
    "name": "scroll",
@@ -23217,6 +28646,12 @@
    "allowpickupable": 1,
    "weight": 9700
   },
+  "2901": {
+   "id": 2901,
+   "name": "waterskin",
+   "allowpickupable": 1,
+   "weight": 700
+  },
   "2903": {
    "id": 2903,
    "name": "golden mug",
@@ -23237,6 +28672,16 @@
    "id": 2920,
    "name": "torch",
    "weight": 500
+  },
+  "2933": {
+   "id": 2933,
+   "name": "small oil lamp",
+   "weight": 900
+  },
+  "2948": {
+   "id": 2948,
+   "name": "wooden flute",
+   "weight": 200
   },
   "2949": {
    "id": 2949,
@@ -23718,6 +29163,12 @@
    "wandtype": "fire",
    "vocation": "Sorcerer;true, Master Sorcerer",
    "slot": "hand"
+  },
+  "3076": {
+   "id": 3076,
+   "name": "crystal ball",
+   "weight": 3400,
+   "stackable": 1
   },
   "3078": {
    "id": 3078,
@@ -24636,6 +30087,15 @@
    "unproperly": "true",
    "vocation": "Knight;true, Elite Knight"
   },
+  "3330": {
+   "id": 3330,
+   "name": "heavy machete",
+   "weapontype": "sword",
+   "attack": 16,
+   "defense": 10,
+   "weight": 1840,
+   "slot": "hand"
+  },
   "3332": {
    "id": 3332,
    "name": "hammer of wrath",
@@ -24746,6 +30206,16 @@
    "unproperly": "true",
    "slot": "hand",
    "stackable": 1
+  },
+  "3348": {
+   "id": 3348,
+   "name": "banana staff",
+   "weapontype": "club",
+   "attack": 25,
+   "extradef": 2,
+   "defense": 15,
+   "weight": 5000,
+   "slot": "hand"
   },
   "3349": {
    "id": 3349,
@@ -25031,6 +30501,13 @@
    "name": "horseman helmet",
    "armor": 6,
    "weight": 4200,
+   "slot": "head"
+  },
+  "3406": {
+   "id": 3406,
+   "name": "feather headdress",
+   "armor": 2,
+   "weight": 2100,
    "slot": "head"
   },
   "3407": {
@@ -25342,6 +30819,11 @@
    "slot": "ammo",
    "stackable": 1
   },
+  "3451": {
+   "id": 3451,
+   "name": "pitchfork",
+   "weight": 2500
+  },
   "3453": {
    "id": 3453,
    "name": "scythe",
@@ -25370,6 +30852,11 @@
    "id": 3462,
    "name": "small axe",
    "weight": 2000
+  },
+  "3471": {
+   "id": 3471,
+   "name": "cleaver",
+   "weight": 660
   },
   "3481": {
    "id": 3481,
@@ -25565,6 +31052,12 @@
    "weight": 3000,
    "stackable": 1
   },
+  "3584": {
+   "id": 3584,
+   "name": "pear",
+   "weight": 140,
+   "stackable": 1
+  },
   "3585": {
    "id": 3585,
    "name": "red apple",
@@ -25575,6 +31068,24 @@
    "id": 3586,
    "name": "orange",
    "weight": 110,
+   "stackable": 1
+  },
+  "3587": {
+   "id": 3587,
+   "name": "banana",
+   "weight": 180,
+   "stackable": 1
+  },
+  "3588": {
+   "id": 3588,
+   "name": "blueberry",
+   "weight": 20,
+   "stackable": 1
+  },
+  "3589": {
+   "id": 3589,
+   "name": "coconut",
+   "weight": 480,
    "stackable": 1
   },
   "3590": {
@@ -25669,10 +31180,22 @@
    "weight": 80,
    "stackable": 1
   },
+  "3659": {
+   "id": 3659,
+   "name": "blue rose",
+   "weight": 80,
+   "stackable": 1
+  },
   "3661": {
    "id": 3661,
    "name": "grave flower",
    "weight": 60,
+   "stackable": 1
+  },
+  "3674": {
+   "id": 3674,
+   "name": "goat grass",
+   "weight": 80,
    "stackable": 1
   },
   "3723": {
@@ -25693,6 +31216,12 @@
    "weight": 20,
    "stackable": 1
   },
+  "3727": {
+   "id": 3727,
+   "name": "wood mushroom",
+   "weight": 30,
+   "stackable": 1
+  },
   "3728": {
    "id": 3728,
    "name": "dark mushroom",
@@ -25711,10 +31240,28 @@
    "weight": 10,
    "stackable": 1
   },
+  "3735": {
+   "id": 3735,
+   "name": "stone herb",
+   "weight": 20,
+   "stackable": 1
+  },
+  "3736": {
+   "id": 3736,
+   "name": "star herb",
+   "weight": 30,
+   "stackable": 1
+  },
   "3738": {
    "id": 3738,
    "name": "sling herb",
    "weight": 90,
+   "stackable": 1
+  },
+  "3739": {
+   "id": 3739,
+   "name": "powder herb",
+   "weight": 50,
    "stackable": 1
   },
   "3740": {
@@ -25752,6 +31299,13 @@
    "level": 80,
    "slot": "feet",
    "vocation": "Knight;true, Paladin;true, Elite Knight, Royal Paladin"
+  },
+  "4188": {
+   "id": 4188,
+   "name": "dead cobra",
+   "duration": 300,
+   "containersize": 10,
+   "weight": 6000
   },
   "4239": {
    "id": 4239,
@@ -25832,6 +31386,13 @@
    "armor": 9,
    "weight": 4200,
    "slot": "head"
+  },
+  "5799": {
+   "id": 5799,
+   "name": "golden figurine",
+   "writeable": 1,
+   "maxtextlen": 99,
+   "weight": 1500
   },
   "5801": {
    "id": 5801,
@@ -25914,6 +31475,13 @@
    "id": 5882,
    "name": "red dragon scale",
    "weight": 90,
+   "stackable": 1
+  },
+  "5883": {
+   "id": 5883,
+   "name": "ape fur",
+   "showcount": 0,
+   "weight": 120,
    "stackable": 1
   },
   "5886": {
@@ -26014,6 +31582,12 @@
    "weight": 500,
    "stackable": 1
   },
+  "5912": {
+   "id": 5912,
+   "name": "blue piece of cloth",
+   "weight": 500,
+   "stackable": 1
+  },
   "5913": {
    "id": 5913,
    "name": "brown piece of cloth",
@@ -26025,6 +31599,13 @@
    "name": "yellow piece of cloth",
    "weight": 500,
    "stackable": 1
+  },
+  "5917": {
+   "id": 5917,
+   "name": "bandana",
+   "armor": 1,
+   "weight": 850,
+   "slot": "head"
   },
   "5918": {
    "id": 5918,
@@ -26076,6 +31657,11 @@
    "containersize": 8,
    "weight": 800,
    "slot": "backpack"
+  },
+  "5928": {
+   "id": 5928,
+   "name": "empty goldfish bowl",
+   "weight": 3200
   },
   "5930": {
    "id": 5930,
@@ -26266,6 +31852,12 @@
    "duration": 10,
    "containersize": 56
   },
+  "5985": {
+   "id": 5985,
+   "name": "dead fire devil",
+   "duration": 10,
+   "containersize": 20
+  },
   "5988": {
    "id": 5988,
    "name": "dead scorpion",
@@ -26366,6 +31958,13 @@
    "duration": 10,
    "containersize": 10
   },
+  "6009": {
+   "id": 6009,
+   "name": "dead war wolf",
+   "fluidsource": "blood",
+   "duration": 10,
+   "containersize": 10
+  },
   "6010": {
    "id": 6010,
    "name": "dead orc",
@@ -26375,6 +31974,13 @@
   },
   "6011": {
    "id": 6011,
+   "name": "dead elf",
+   "fluidsource": "blood",
+   "duration": 10,
+   "containersize": 10
+  },
+  "6012": {
+   "id": 6012,
    "name": "dead elf",
    "fluidsource": "blood",
    "duration": 10,
@@ -26394,6 +32000,20 @@
    "duration": 10,
    "containersize": 10
   },
+  "6015": {
+   "id": 6015,
+   "name": "dead dwarf",
+   "fluidsource": "blood",
+   "duration": 10,
+   "containersize": 10
+  },
+  "6016": {
+   "id": 6016,
+   "name": "dead djinn",
+   "fluidsource": "blood",
+   "duration": 10,
+   "containersize": 10
+  },
   "6018": {
    "id": 6018,
    "name": "dead troll",
@@ -26407,6 +32027,12 @@
    "fluidsource": "blood",
    "duration": 10,
    "containersize": 44
+  },
+  "6020": {
+   "id": 6020,
+   "name": "dead djinn",
+   "duration": 10,
+   "containersize": 10
   },
   "6021": {
    "id": 6021,
@@ -26455,6 +32081,27 @@
    "duration": 10,
    "containersize": 24
   },
+  "6032": {
+   "id": 6032,
+   "name": "dead efreet",
+   "fluidsource": "blood",
+   "duration": 10,
+   "containersize": 10
+  },
+  "6033": {
+   "id": 6033,
+   "name": "dead marid",
+   "fluidsource": "blood",
+   "duration": 10,
+   "containersize": 10
+  },
+  "6036": {
+   "id": 6036,
+   "name": "dead gazer",
+   "fluidsource": "blood",
+   "duration": 10,
+   "containersize": 5
+  },
   "6037": {
    "id": 6037,
    "name": "dead elder bonelord",
@@ -26469,12 +32116,47 @@
    "duration": 10,
    "containersize": 28
   },
+  "6041": {
+   "id": 6041,
+   "name": "dead lizard snakecharmer",
+   "fluidsource": "blood",
+   "duration": 10,
+   "containersize": 28
+  },
+  "6043": {
+   "id": 6043,
+   "name": "dead kongra",
+   "fluidsource": "blood",
+   "duration": 10,
+   "containersize": 24
+  },
+  "6044": {
+   "id": 6044,
+   "name": "dead merlkin",
+   "fluidsource": "blood",
+   "duration": 10,
+   "containersize": 7
+  },
+  "6045": {
+   "id": 6045,
+   "name": "dead sibang",
+   "fluidsource": "blood",
+   "duration": 10,
+   "containersize": 7
+  },
   "6046": {
    "id": 6046,
    "name": "dead crocodile",
    "fluidsource": "blood",
    "duration": 10,
    "containersize": 18
+  },
+  "6047": {
+   "id": 6047,
+   "name": "dead carniphila",
+   "fluidsource": "slime",
+   "duration": 10,
+   "containersize": 30
   },
   "6048": {
    "id": 6048,
@@ -26490,6 +32172,20 @@
    "duration": 10,
    "containersize": 14
   },
+  "6057": {
+   "id": 6057,
+   "name": "dead bird",
+   "fluidsource": "blood",
+   "duration": 10,
+   "containersize": 30
+  },
+  "6060": {
+   "id": 6060,
+   "name": "dead tarantula",
+   "fluidsource": "slime",
+   "duration": 10,
+   "containersize": 8
+  },
   "6061": {
    "id": 6061,
    "name": "dead serpent spawn",
@@ -26503,6 +32199,13 @@
    "fluidsource": "blood",
    "duration": 10,
    "containersize": 26
+  },
+  "6064": {
+   "id": 6064,
+   "name": "dead quara mantassin",
+   "fluidsource": "blood",
+   "duration": 10,
+   "containersize": 36
   },
   "6065": {
    "id": 6065,
@@ -26518,6 +32221,13 @@
    "duration": 10,
    "containersize": 26
   },
+  "6067": {
+   "id": 6067,
+   "name": "dead quara predator",
+   "fluidsource": "blood",
+   "duration": 10,
+   "containersize": 30
+  },
   "6068": {
    "id": 6068,
    "name": "demon dust",
@@ -26525,6 +32235,13 @@
    "duration": 10,
    "containersize": 24,
    "weight": 100
+  },
+  "6069": {
+   "id": 6069,
+   "name": "dead carrion worm",
+   "fluidsource": "blood",
+   "duration": 10,
+   "containersize": 10
   },
   "6078": {
    "id": 6078,
@@ -26597,6 +32314,13 @@
    "weight": 80,
    "slot": "ring"
   },
+  "6301": {
+   "id": 6301,
+   "name": "dead wyvern",
+   "fluidsource": "blood",
+   "duration": 10,
+   "containersize": 10
+  },
   "6305": {
    "id": 6305,
    "name": "slain undead dragon",
@@ -26615,6 +32339,12 @@
    "fluidsource": "blood",
    "duration": 10,
    "containersize": 28
+  },
+  "6315": {
+   "id": 6315,
+   "name": "slain betrayed wraith",
+   "duration": 10,
+   "containersize": 44
   },
   "6319": {
    "id": 6319,
@@ -26656,9 +32386,22 @@
    "duration": 10,
    "containersize": 10
   },
+  "6343": {
+   "id": 6343,
+   "name": "remains of a phantasm",
+   "duration": 10,
+   "containersize": 32
+  },
   "6353": {
    "id": 6353,
    "name": "slain blightwalker",
+   "duration": 10,
+   "containersize": 40
+  },
+  "6363": {
+   "id": 6363,
+   "name": "dead diabolic imp",
+   "fluidsource": "blood",
    "duration": 10,
    "containersize": 40
   },
@@ -26762,6 +32505,13 @@
    "name": "shard",
    "weight": 1900,
    "stackable": 1
+  },
+  "7330": {
+   "id": 7330,
+   "name": "dead frost giant",
+   "fluidsource": "blood",
+   "duration": 10,
+   "containersize": 10
   },
   "7342": {
    "id": 7342,
@@ -26871,6 +32621,17 @@
    "slot": "hand",
    "stackable": 1
   },
+  "7379": {
+   "id": 7379,
+   "name": "brutetamer's staff",
+   "weapontype": "club",
+   "slottype": "two-handed",
+   "attack": 35,
+   "defense": 15,
+   "weight": 3800,
+   "level": 25,
+   "unproperly": "true"
+  },
   "7382": {
    "id": 7382,
    "name": "demonrage sword",
@@ -26882,6 +32643,18 @@
    "level": 60,
    "unproperly": "true",
    "vocation": "Knight;true, Elite Knight"
+  },
+  "7383": {
+   "id": 7383,
+   "name": "relic sword",
+   "weapontype": "sword",
+   "attack": 42,
+   "extradef": 1,
+   "defense": 24,
+   "weight": 4800,
+   "level": 50,
+   "unproperly": "true",
+   "slot": "hand"
   },
   "7385": {
    "id": 7385,
@@ -27017,6 +32790,18 @@
    "level": 30,
    "unproperly": "true",
    "vocation": "Knight;true, Elite Knight"
+  },
+  "7408": {
+   "id": 7408,
+   "name": "wyvern fang",
+   "weapontype": "sword",
+   "attack": 32,
+   "extradef": 1,
+   "defense": 19,
+   "weight": 2000,
+   "level": 25,
+   "unproperly": "true",
+   "slot": "hand"
   },
   "7411": {
    "id": 7411,
@@ -27240,6 +33025,16 @@
    "unproperly": "true",
    "slot": "hand"
   },
+  "7438": {
+   "id": 7438,
+   "name": "elvish bow",
+   "weapontype": "distance",
+   "slottype": "two-handed",
+   "ammotype": "arrow",
+   "hitchance": 5,
+   "range": 6,
+   "weight": 3900
+  },
   "7439": {
    "id": 7439,
    "name": "berserk potion",
@@ -27305,12 +33100,40 @@
    "weight": 1200,
    "slot": "feet"
   },
+  "7460": {
+   "id": 7460,
+   "name": "norse shield",
+   "weapontype": "shield",
+   "defense": 28,
+   "weight": 4100,
+   "slot": "shield"
+  },
   "7461": {
    "id": 7461,
    "name": "krimhorn helmet",
    "armor": 6,
    "weight": 5100,
    "slot": "head"
+  },
+  "7462": {
+   "id": 7462,
+   "name": "ragnir helmet",
+   "armor": 6,
+   "weight": 3100,
+   "slot": "head"
+  },
+  "7463": {
+   "id": 7463,
+   "name": "mammoth fur cape",
+   "armor": 10,
+   "weight": 2000,
+   "slot": "armor"
+  },
+  "7464": {
+   "id": 7464,
+   "name": "mammoth fur shorts",
+   "weight": 150,
+   "slot": "legs"
   },
   "7642": {
    "id": 7642,
@@ -27648,6 +33471,17 @@
    "slot": "armor",
    "vocation": "Sorcerer;true, Druid;true, Master Sorcerer, Elder Druid"
   },
+  "8072": {
+   "id": 8072,
+   "name": "spellbook of enlightenment",
+   "weapontype": "spellbook",
+   "magiclevelpoints": 1,
+   "defense": 18,
+   "weight": 1950,
+   "level": 30,
+   "slot": "shield",
+   "vocation": "Sorcerer;true, Druid;true, Master Sorcerer, Elder Druid"
+  },
   "8073": {
    "id": 8073,
    "name": "spellbook of warding",
@@ -27914,6 +33748,17 @@
    "weight": 5,
    "stackable": 1
   },
+  "8531": {
+   "id": 8531,
+   "name": "blood goblet",
+   "weight": 490
+  },
+  "8744": {
+   "id": 8744,
+   "name": "slain vampire bride",
+   "duration": 10,
+   "containersize": 10
+  },
   "8860": {
    "id": 8860,
    "name": "brocade backpack",
@@ -27937,6 +33782,17 @@
    "id": 8896,
    "name": "slightly rusted armor",
    "weight": 12000
+  },
+  "8923": {
+   "id": 8923,
+   "name": "velvet tapestry",
+   "weight": 1000
+  },
+  "8957": {
+   "id": 8957,
+   "name": "dead mutated rat",
+   "duration": 10,
+   "containersize": 10
   },
   "9001": {
    "id": 9001,
@@ -28076,6 +33932,12 @@
    "weight": 160,
    "stackable": 1
   },
+  "9634": {
+   "id": 9634,
+   "name": "cobra tongue",
+   "weight": 75,
+   "stackable": 1
+  },
   "9635": {
    "id": 9635,
    "name": "elvish talisman",
@@ -28092,6 +33954,24 @@
    "id": 9637,
    "name": "hellhound slobber",
    "weight": 75,
+   "stackable": 1
+  },
+  "9639": {
+   "id": 9639,
+   "name": "cultish robe",
+   "weight": 200,
+   "stackable": 1
+  },
+  "9644": {
+   "id": 9644,
+   "name": "wyvern talisman",
+   "weight": 225,
+   "stackable": 1
+  },
+  "9645": {
+   "id": 9645,
+   "name": "black hood",
+   "weight": 175,
    "stackable": 1
   },
   "9647": {
@@ -28112,10 +33992,31 @@
    "weight": 120,
    "stackable": 1
   },
+  "9652": {
+   "id": 9652,
+   "name": "witch broom",
+   "weight": 333,
+   "stackable": 1
+  },
+  "9653": {
+   "id": 9653,
+   "name": "witch hat",
+   "absorbpercentmanadrain": 5,
+   "armor": 3,
+   "weight": 780,
+   "slot": "head",
+   "vocation": "Sorcerer;true, Druid;true, Master Sorcerer, Elder Druid"
+  },
   "9657": {
    "id": 9657,
    "name": "cyclops toe",
    "weight": 111,
+   "stackable": 1
+  },
+  "9658": {
+   "id": 9658,
+   "name": "frost giant pelt",
+   "weight": 248,
    "stackable": 1
   },
   "9660": {
@@ -28152,6 +34053,12 @@
    "id": 9667,
    "name": "boggy dreads",
    "weight": 169,
+   "stackable": 1
+  },
+  "9668": {
+   "id": 9668,
+   "name": "mutated rat tail",
+   "weight": 143,
    "stackable": 1
   },
   "9685": {
@@ -28223,6 +34130,24 @@
    "name": "bonebeast trophy",
    "weight": 500
   },
+  "10273": {
+   "id": 10273,
+   "name": "terrorbird beak",
+   "weight": 117,
+   "stackable": 1
+  },
+  "10275": {
+   "id": 10275,
+   "name": "carrion worm fang",
+   "weight": 88,
+   "stackable": 1
+  },
+  "10276": {
+   "id": 10276,
+   "name": "elder bonelord tentacle",
+   "weight": 75,
+   "stackable": 1
+  },
   "10277": {
    "id": 10277,
    "name": "bony tail",
@@ -28233,6 +34158,18 @@
    "id": 10278,
    "name": "stone wing",
    "weight": 153,
+   "stackable": 1
+  },
+  "10280": {
+   "id": 10280,
+   "name": "giant eye",
+   "weight": 120,
+   "stackable": 1
+  },
+  "10281": {
+   "id": 10281,
+   "name": "tarantula egg",
+   "weight": 40,
    "stackable": 1
   },
   "10282": {
@@ -28264,16 +34201,33 @@
    "weight": 60,
    "stackable": 1
   },
+  "10294": {
+   "id": 10294,
+   "name": "stuffed toad",
+   "weight": 450
+  },
   "10298": {
    "id": 10298,
    "name": "metal spike",
    "weight": 50,
    "stackable": 1
   },
+  "10300": {
+   "id": 10300,
+   "name": "carniphila seeds",
+   "weight": 35,
+   "stackable": 1
+  },
   "10302": {
    "id": 10302,
    "name": "compass",
    "weight": 80,
+   "stackable": 1
+  },
+  "10303": {
+   "id": 10303,
+   "name": "dark rosary",
+   "weight": 90,
    "stackable": 1
   },
   "10304": {
@@ -28741,10 +34695,34 @@
    "weight": 94,
    "stackable": 1
   },
+  "11456": {
+   "id": 11456,
+   "name": "dirty turban",
+   "weight": 134,
+   "stackable": 1
+  },
   "11457": {
    "id": 11457,
    "name": "dragon's tail",
    "weight": 250,
+   "stackable": 1
+  },
+  "11458": {
+   "id": 11458,
+   "name": "geomancer's robe",
+   "weight": 130,
+   "stackable": 1
+  },
+  "11463": {
+   "id": 11463,
+   "name": "geomancer's staff",
+   "weight": 122,
+   "stackable": 1
+  },
+  "11464": {
+   "id": 11464,
+   "name": "elven scouting glass",
+   "weight": 80,
    "stackable": 1
   },
   "11465": {
@@ -28769,6 +34747,18 @@
    "id": 11469,
    "name": "hunter's quiver",
    "weight": 132,
+   "stackable": 1
+  },
+  "11470": {
+   "id": 11470,
+   "name": "jewelled belt",
+   "weight": 124,
+   "stackable": 1
+  },
+  "11471": {
+   "id": 11471,
+   "name": "kongra's shoulderpad",
+   "weight": 140,
    "stackable": 1
   },
   "11472": {
@@ -28845,6 +34835,12 @@
    "weight": 130,
    "stackable": 1
   },
+  "11486": {
+   "id": 11486,
+   "name": "noble turban",
+   "weight": 144,
+   "stackable": 1
+  },
   "11487": {
    "id": 11487,
    "name": "quara tentacle",
@@ -28857,10 +34853,22 @@
    "weight": 80,
    "stackable": 1
   },
+  "11489": {
+   "id": 11489,
+   "name": "mantassin tail",
+   "weight": 114,
+   "stackable": 1
+  },
   "11490": {
    "id": 11490,
    "name": "quara pincers",
    "weight": 120,
+   "stackable": 1
+  },
+  "11491": {
+   "id": 11491,
+   "name": "quara bone",
+   "weight": 144,
    "stackable": 1
   },
   "11510": {
@@ -28869,10 +34877,28 @@
    "weight": 79,
    "stackable": 1
   },
+  "11511": {
+   "id": 11511,
+   "name": "banana sash",
+   "weight": 68,
+   "stackable": 1
+  },
   "11512": {
    "id": 11512,
    "name": "small flask of eyedrops",
    "weight": 50,
+   "stackable": 1
+  },
+  "11513": {
+   "id": 11513,
+   "name": "small pitchfork",
+   "weight": 110,
+   "stackable": 1
+  },
+  "11514": {
+   "id": 11514,
+   "name": "colourful feather",
+   "weight": 36,
    "stackable": 1
   },
   "11539": {
@@ -29011,9 +35037,19 @@
    "name": "maxilla maximus",
    "weight": 200
   },
+  "12306": {
+   "id": 12306,
+   "name": "leather whip",
+   "weight": 200
+  },
   "12307": {
    "id": 12307,
    "name": "harness",
+   "weight": 200
+  },
+  "12311": {
+   "id": 12311,
+   "name": "carrot on a stick",
    "weight": 200
   },
   "12318": {
@@ -29031,6 +35067,11 @@
    "name": "medicine pouch",
    "weight": 1200,
    "stackable": 1
+  },
+  "12548": {
+   "id": 12548,
+   "name": "bag of apple slices",
+   "weight": 200
   },
   "12549": {
    "id": 12549,
@@ -29186,9 +35227,23 @@
    "duration": 10,
    "containersize": 36
   },
+  "18058": {
+   "id": 18058,
+   "name": "dead barbarian brutetamer",
+   "fluidsource": "blood",
+   "duration": 10,
+   "containersize": 36
+  },
   "18062": {
    "id": 18062,
    "name": "dead barbarian headsplitter",
+   "fluidsource": "blood",
+   "duration": 10,
+   "containersize": 36
+  },
+  "18066": {
+   "id": 18066,
+   "name": "dead barbarian skullhunter",
    "fluidsource": "blood",
    "duration": 10,
    "containersize": 36
@@ -29256,6 +35311,20 @@
    "duration": 300,
    "containersize": 50
   },
+  "18202": {
+   "id": 18202,
+   "name": "dead pirate marauder",
+   "fluidsource": "blood",
+   "duration": 300,
+   "containersize": 50
+  },
+  "18210": {
+   "id": 18210,
+   "name": "dead priestess",
+   "fluidsource": "blood",
+   "duration": 300,
+   "containersize": 50
+  },
   "18226": {
    "id": 18226,
    "name": "dead smuggler",
@@ -29284,12 +35353,77 @@
    "duration": 300,
    "containersize": 20
   },
+  "18254": {
+   "id": 18254,
+   "name": "dead witch",
+   "fluidsource": "blood",
+   "duration": 300,
+   "containersize": 40
+  },
   "18293": {
    "id": 18293,
    "name": "dead necropharus",
    "fluidsource": "blood",
    "duration": 10,
    "containersize": 20
+  },
+  "18924": {
+   "id": 18924,
+   "name": "tooth file",
+   "weight": 509,
+   "stackable": 1
+  },
+  "18925": {
+   "id": 18925,
+   "name": "lancet",
+   "weight": 490,
+   "stackable": 1
+  },
+  "18926": {
+   "id": 18926,
+   "name": "horoscope",
+   "weight": 280,
+   "stackable": 1
+  },
+  "18927": {
+   "id": 18927,
+   "name": "vampire's cape chain",
+   "weight": 620,
+   "stackable": 1
+  },
+  "18928": {
+   "id": 18928,
+   "name": "blood tincture in a vial",
+   "showcount": 0,
+   "weight": 630,
+   "stackable": 1
+  },
+  "18929": {
+   "id": 18929,
+   "name": "incantation notes",
+   "weight": 440,
+   "stackable": 1
+  },
+  "18930": {
+   "id": 18930,
+   "name": "pieces of magic chalk",
+   "showcount": 0,
+   "weight": 680,
+   "stackable": 1
+  },
+  "18945": {
+   "id": 18945,
+   "name": "dead blood priest",
+   "fluidsource": "blood",
+   "duration": 300,
+   "containersize": 40
+  },
+  "18961": {
+   "id": 18961,
+   "name": "slain vampire viscount",
+   "fluidsource": "blood",
+   "duration": 10,
+   "containersize": 15
   },
   "18966": {
    "id": 18966,
@@ -30869,6 +37003,9 @@
   "2920": {
    "buy": 2
   },
+  "2901": {
+   "buy": 10
+  },
   "3492": {
    "buy": 1
   },
@@ -31046,11 +37183,18 @@
   "3369": {
    "sell": 5000
   },
+  "3076": {
+   "buy": 530,
+   "sell": 190
+  },
   "3061": {
    "sell": 85
   },
   "3062": {
    "sell": 170
+  },
+  "8072": {
+   "sell": 4000
   },
   "8073": {
    "sell": 8000
@@ -31139,6 +37283,13 @@
    "buy": 500,
    "sell": 100
   },
+  "3587": {
+   "buy": 2
+  },
+  "3588": {
+   "buy": 1,
+   "sell": 1
+  },
   "3595": {
    "buy": 1,
    "sell": 1
@@ -31158,6 +37309,9 @@
   },
   "3586": {
    "buy": 5
+  },
+  "3584": {
+   "buy": 4
   },
   "8011": {
    "buy": 3
@@ -31527,6 +37681,9 @@
   "3280": {
    "sell": 4000
   },
+  "9658": {
+   "sell": 160
+  },
   "3269": {
    "sell": 400
   },
@@ -31662,6 +37819,12 @@
   "3597": {
    "buy": 3
   },
+  "11511": {
+   "sell": 55
+  },
+  "3348": {
+   "sell": 1000
+  },
   "3408": {
    "sell": 7500
   },
@@ -31674,11 +37837,17 @@
   "3556": {
    "sell": 1000
   },
+  "3406": {
+   "sell": 850
+  },
   "3405": {
    "sell": 280
   },
   "3347": {
    "sell": 25
+  },
+  "11471": {
+   "sell": 100
   },
   "3404": {
    "sell": 1000
@@ -31705,11 +37874,20 @@
    "sell": 170,
    "buy": 540
   },
+  "5799": {
+   "sell": 3000
+  },
   "3042": {
    "sell": 100
   },
+  "3471": {
+   "buy": 15
+  },
   "9056": {
    "sell": 4000
+  },
+  "8531": {
+   "sell": 10000
   },
   "5668": {
    "sell": 4000
@@ -31785,6 +37963,15 @@
   },
   "2893": {
    "buy": 4
+  },
+  "2659": {
+   "buy": 25
+  },
+  "5928": {
+   "buy": 50
+  },
+  "2647": {
+   "buy": 25
   },
   "5875": {
    "sell": 2000
@@ -31925,11 +38112,17 @@
    "sell": 610,
    "buy": 610
   },
+  "18928": {
+   "sell": 360
+  },
   "5898": {
    "sell": 80
   },
   "10277": {
    "sell": 210
+  },
+  "10275": {
+   "sell": 35
   },
   "5954": {
    "sell": 1000,
@@ -31946,8 +38139,15 @@
    "sell": 550,
    "buy": 550
   },
+  "10276": {
+   "sell": 150
+  },
   "11465": {
    "sell": 90
+  },
+  "11464": {
+   "sell": 50,
+   "buy": 50
   },
   "9636": {
    "sell": 375,
@@ -31962,6 +38162,12 @@
   },
   "9649": {
    "sell": 90
+  },
+  "11463": {
+   "sell": 120
+  },
+  "10280": {
+   "sell": 380
   },
   "9054": {
    "sell": 25
@@ -32027,6 +38233,10 @@
    "sell": 400,
    "buy": 400
   },
+  "9644": {
+   "sell": 265,
+   "buy": 265
+  },
   "3289": {
    "buy": 40,
    "sell": 1
@@ -32036,6 +38246,9 @@
   },
   "7416": {
    "sell": 30000
+  },
+  "3659": {
+   "sell": 250
   },
   "8039": {
    "sell": 50000
@@ -32077,6 +38290,9 @@
    "sell": 55,
    "buy": 55
   },
+  "11514": {
+   "sell": 110
+  },
   "7398": {
    "sell": 500
   },
@@ -32092,7 +38308,13 @@
   "10419": {
    "sell": 8000
   },
+  "11489": {
+   "sell": 280
+  },
   "7401": {
+   "sell": 500
+  },
+  "11491": {
    "sell": 500
   },
   "11490": {
@@ -32103,6 +38325,9 @@
   },
   "9631": {
    "sell": 280
+  },
+  "10273": {
+   "sell": 95
   },
   "5907": {
    "buy": 35000
@@ -32272,6 +38497,10 @@
    "buy": 290,
    "sell": 290
   },
+  "9639": {
+   "buy": 150,
+   "sell": 150
+  },
   "9635": {
    "buy": 45,
    "sell": 45
@@ -32316,17 +38545,32 @@
    "buy": 275,
    "sell": 275
   },
+  "5883": {
+   "sell": 120
+  },
+  "5912": {
+   "sell": 200
+  },
   "5913": {
    "sell": 100
   },
   "9689": {
    "sell": 30
   },
+  "11456": {
+   "sell": 120
+  },
+  "11458": {
+   "sell": 80
+  },
   "9690": {
    "sell": 90
   },
   "5910": {
    "sell": 200
+  },
+  "11470": {
+   "sell": 180
   },
   "5876": {
    "sell": 150
@@ -32336,6 +38580,9 @@
   },
   "11475": {
    "sell": 250
+  },
+  "11486": {
+   "sell": 430
   },
   "11473": {
    "sell": 110
@@ -32351,6 +38598,9 @@
   },
   "5886": {
    "sell": 1000
+  },
+  "8923": {
+   "sell": 800
   },
   "10318": {
    "sell": 30
@@ -32411,11 +38661,17 @@
   "9688": {
    "sell": 800
   },
+  "10300": {
+   "sell": 50
+  },
   "3728": {
    "sell": 100
   },
   "3731": {
    "sell": 200
+  },
+  "3674": {
+   "sell": 50
   },
   "3661": {
    "sell": 25
@@ -32424,6 +38680,9 @@
    "sell": 100
   },
   "9692": {
+   "sell": 10
+  },
+  "3739": {
    "sell": 10
   },
   "3724": {
@@ -32442,14 +38701,28 @@
   "3738": {
    "sell": 10
   },
+  "3736": {
+   "buy": 21,
+   "sell": 15
+  },
+  "3735": {
+   "buy": 28,
+   "sell": 20
+  },
   "3741": {
    "sell": 25
+  },
+  "3727": {
+   "sell": 15
   },
   "5552": {
    "buy": 150
   },
   "9667": {
    "sell": 200
+  },
+  "9634": {
+   "sell": 15
   },
   "10306": {
    "sell": 360
@@ -32475,8 +38748,23 @@
   "9637": {
    "sell": 500
   },
+  "18926": {
+   "sell": 40
+  },
+  "18929": {
+   "sell": 90
+  },
+  "18925": {
+   "sell": 90
+  },
+  "9668": {
+   "sell": 150
+  },
   "11481": {
    "sell": 30
+  },
+  "18930": {
+   "sell": 210
   },
   "11485": {
    "sell": 10
@@ -32490,14 +38778,26 @@
   "9651": {
    "sell": 25
   },
+  "11513": {
+   "sell": 70
+  },
   "8031": {
    "sell": 10
   },
   "11672": {
    "sell": 240
   },
+  "10281": {
+   "sell": 80
+  },
+  "18924": {
+   "sell": 60
+  },
   "10450": {
    "sell": 200
+  },
+  "18927": {
+   "sell": 150
   },
   "10313": {
    "sell": 800
@@ -32538,8 +38838,14 @@
   "7451": {
    "sell": 10000
   },
+  "3451": {
+   "buy": 25
+  },
   "3461": {
    "buy": 95
+  },
+  "649": {
+   "buy": 20
   },
   "10324": {
    "buy": 100
@@ -32577,11 +38883,17 @@
   "7404": {
    "sell": 20000
   },
+  "5917": {
+   "sell": 150
+  },
   "3344": {
    "sell": 1500
   },
   "3441": {
    "sell": 80
+  },
+  "7379": {
+   "sell": 1500
   },
   "3435": {
    "sell": 5000
@@ -32640,6 +38952,9 @@
   "7430": {
    "sell": 3000
   },
+  "7438": {
+   "sell": 2000
+  },
   "3010": {
    "sell": 800
   },
@@ -32666,6 +38981,9 @@
   },
   "3340": {
    "sell": 50000
+  },
+  "3330": {
+   "sell": 90
   },
   "8045": {
    "sell": 3000
@@ -32709,6 +39027,12 @@
   "827": {
    "sell": 2500
   },
+  "7463": {
+   "sell": 6000
+  },
+  "7464": {
+   "sell": 850
+  },
   "3436": {
    "sell": 9000
   },
@@ -32720,6 +39044,9 @@
   },
   "7456": {
    "sell": 10000
+  },
+  "7460": {
+   "sell": 1500
   },
   "8063": {
    "sell": 15000
@@ -32738,6 +39065,12 @@
   },
   "3055": {
    "sell": 2500
+  },
+  "7462": {
+   "sell": 400
+  },
+  "7383": {
+   "sell": 25000
   },
   "3006": {
    "sell": 30000
@@ -32808,6 +39141,12 @@
   "3342": {
    "sell": 12000
   },
+  "9653": {
+   "sell": 5000
+  },
+  "7408": {
+   "sell": 1500
+  },
   "5949": {
    "buy": 20
   },
@@ -32835,6 +39174,9 @@
   },
   "2860": {
    "buy": 5
+  },
+  "3589": {
+   "buy": 8
   },
   "2867": {
    "buy": 20
@@ -32899,14 +39241,23 @@
   "5897": {
    "sell": 70
   },
+  "9645": {
+   "sell": 190
+  },
   "10320": {
    "sell": 180
+  },
+  "10303": {
+   "sell": 48
   },
   "3058": {
    "sell": 200
   },
   "10316": {
    "sell": 480
+  },
+  "9652": {
+   "sell": 60
   },
   "3012": {
    "sell": 100
@@ -33012,6 +39363,9 @@
   },
   "6525": {
    "sell": 3000
+  },
+  "2933": {
+   "sell": 150
   },
   "5809": {
    "sell": 6000

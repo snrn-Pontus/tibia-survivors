@@ -741,8 +741,9 @@ export class Hud {
     ctx.fillRect(c - 4, c - 1, 8, 2);
     ctx.fillRect(c - 1, c - 4, 2, 8);
     const zone = ZONES[Math.max(0, g.zone)];
-    const cap = `${zone.name}|${zone.level}|${clock(g.time)}|${g.kills}`;
-    if (this.changed("mmcap", cap)) this.mmCap.innerHTML = `${zone.name}<small>level ${zone.level}+ · ${clock(g.time)} · ${fmt(g.kills)} kills</small>`;
+    const place = g.hunt ? g.hunt.name[0].toUpperCase() + g.hunt.name.slice(1) : zone.name;
+    const cap = `${place}|${zone.level}|${clock(g.time)}|${g.kills}`;
+    if (this.changed("mmcap", cap)) this.mmCap.innerHTML = `${place}<small>${g.hunt ? `${zone.name} · ` : ""}level ${zone.level}+ · ${clock(g.time)} · ${fmt(g.kills)} kills</small>`;
   }
 
   // ---------- windows ----------

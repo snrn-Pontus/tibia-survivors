@@ -61,9 +61,56 @@ const ZONE_LIGHT = [255, 240, 210, 185, 160, 140, 115, 95, 80, 65, 55, 45, 40];
 export interface Zone {
   name: string; level: number; from: number; pool: string[]; bosses: string[]; maxAlive: number; spawnEvery?: number;
   biome: string; // its terrain (map.ts BIOMES)
+  hunts: Hunt[]; // its hunting grounds
   ambient: number; // world light, 0-255 like Tibia's (255 a sunny day, 40 a deep cave): darker further out
   weights?: number[]; // how often each of `pool` spawns, relative (default: all the same)
 }
+/** A hunting ground, as Tibia has them: a walled-off place in a zone with its own creatures (its spawn) and its
+ *  own look, entered through a gap or two. While you're inside, that's what spawns, a little denser. */
+export interface Hunt { name: string; biome: string; pool: string[] }
+const HUNTS: Hunt[][] = [
+  [{ name: "the Rat Sewers", biome: "mines", pool: ["rat", "cave rat"] },
+    { name: "the Snake Pit", biome: "jungle", pool: ["snake", "spider", "bug"] }],
+  [{ name: "the Wolf Den", biome: "forest", pool: ["wolf", "bug"] },
+    { name: "the Rotworm Caves", biome: "mines", pool: ["rotworm", "cave rat", "bug"] },
+    { name: "the Troll Caves", biome: "mines", pool: ["troll", "rotworm"] }],
+  [{ name: "Shadowthorn", biome: "forest", pool: ["elf", "elf scout", "elf arcanist"] },
+    { name: "the Dwarf Mines", biome: "mines", pool: ["dwarf", "dwarf miner", "dwarf soldier", "dwarf guard"] },
+    { name: "the Swamp Troll Marsh", biome: "swamp", pool: ["swamp troll", "troll", "carrion worm"] },
+    { name: "the Smugglers' Hideout", biome: "camp", pool: ["smuggler", "bandit", "wild warrior"] }],
+  [{ name: "the Orc Fortress", biome: "orcfort", pool: ["orc", "orc spearman", "orc warrior", "orc shaman", "orc rider", "orc leader", "orc berserker"] },
+    { name: "the Amazon Camp", biome: "camp", pool: ["amazon", "valkyrie", "witch"] },
+    { name: "the Barbarian Camp", biome: "snowcamp", pool: ["barbarian skullhunter", "barbarian headsplitter", "barbarian brutetamer", "barbarian bloodwalker"] }],
+  [{ name: "Mintwallin", biome: "ruins", pool: ["minotaur", "minotaur archer", "minotaur mage", "minotaur guard"] },
+    { name: "the Lizard Village", biome: "jungle", pool: ["lizard sentinel", "lizard templar", "lizard snakecharmer"] },
+    { name: "the Deep Dwarf Mines", biome: "mines", pool: ["dwarf soldier", "dwarf guard", "dwarf geomancer"] },
+    { name: "the Ghoul Crypt", biome: "crypt", pool: ["ghoul", "skeleton", "crypt shambler", "ghost"] }],
+  [{ name: "Cyclopolis", biome: "ruins", pool: ["cyclops", "cyclops drone", "cyclops smith"] },
+    { name: "the Pirate Camp", biome: "beach", pool: ["pirate marauder", "pirate cutthroat", "pirate buccaneer", "pirate corsair"] },
+    { name: "Banuta", biome: "jungle", pool: ["kongra", "sibang", "merlkin", "carniphila"] },
+    { name: "the Wyvern Cliffs", biome: "mountains", pool: ["wyvern", "terror bird"] }],
+  [{ name: "the Ankrahmun Tombs", biome: "tombs", pool: ["mummy", "ancient scarab", "larva", "bonebeast", "demon skeleton"] },
+    { name: "the Djinn Tower", biome: "djinn", pool: ["green djinn", "efreet", "blue djinn", "marid"] },
+    { name: "the Bonelord Lair", biome: "webcave", pool: ["bonelord", "elder bonelord"] }],
+  [{ name: "the Vampire Crypt", biome: "crypt", pool: ["vampire", "vampire bride", "vampire viscount"] },
+    { name: "the Necromancer Tower", biome: "ruins", pool: ["necromancer", "priestess", "blood priest"] },
+    { name: "the Spider Caves", biome: "webcave", pool: ["giant spider", "tarantula", "crystal spider"] },
+    { name: "the Banshee Halls", biome: "crypt", pool: ["banshee", "ghost", "necromancer"] }],
+  [{ name: "the Dragon Lair", biome: "lair", pool: ["dragon", "dragon hatchling", "dragon lord hatchling"] },
+    { name: "the Frost Dragon Lair", biome: "iceland", pool: ["frost dragon", "ice golem", "frost giant"] },
+    { name: "the Wyrm Hills", biome: "mountains", pool: ["wyrm", "elder wyrm"] }],
+  [{ name: "the Hero Cave", biome: "ruins", pool: ["hero", "black knight", "vampire", "valkyrie"] },
+    { name: "the Quara Reef", biome: "beach", pool: ["quara constrictor", "quara hydromancer", "quara mantassin", "quara pincher", "quara predator"] },
+    { name: "the Nightmare Isles", biome: "crypt", pool: ["nightmare", "nightmare scion", "betrayed wraith"] }],
+  [{ name: "the Draken Walls", biome: "djinn", pool: ["draken warmaster", "draken spellweaver", "draken elite", "lizard chosen"] },
+    { name: "the Dragon Lord Lair", biome: "lair", pool: ["dragon lord", "dragon", "dragon lord hatchling"] }],
+  [{ name: "the Medusa Tower", biome: "jungle", pool: ["medusa", "serpent spawn"] },
+    { name: "the Ghastly Lair", biome: "crypt", pool: ["ghastly dragon", "draken abomination", "betrayed wraith"] }],
+  [{ name: "the Demon Forge", biome: "forge", pool: ["demon", "fire devil", "diabolic imp", "hellfire fighter"] },
+    { name: "the Hellhound Den", biome: "forge", pool: ["hellhound", "hellspawn", "juggernaut"] },
+    { name: "the Undead Dragon Cave", biome: "crypt", pool: ["undead dragon", "grim reaper", "blightwalker"] },
+    { name: "the Plague Seal", biome: "forge", pool: ["plaguesmith", "dark torturer", "fury"] }],
+];
 export const ZONE_WIDTH = 36; // tiles of distance per zone (map.ts stretches it by direction)
 export const BOSS_KILLS = 20;
 export const ZONES: Zone[] = [
@@ -82,7 +129,7 @@ export const ZONES: Zone[] = [
   { name: "Dragon Lord Peaks", level: 110, pool: ["dragon lord", "behemoth", "hydra", "lizard chosen", "hellspawn", "serpent spawn", "draken spellweaver", "warlock"], bosses: ["demodras"], maxAlive: 10 },
   { name: "Hydra Swamps", level: 130, pool: ["dragon lord", "hydra", "behemoth", "demon", "medusa", "draken abomination", "ghastly dragon", "draken elite", "hand of cursed fate"], bosses: ["the plasmother", "dracola"], maxAlive: 11 },
   { name: "Pits of Inferno", level: 200, pool: ["demon", "behemoth", "hydra", "juggernaut", "fury", "plaguesmith", "hellfire fighter", "dark torturer", "hellhound", "grim reaper", "blightwalker", "undead dragon"], bosses: ["orshabaal", "ghazbaran", "morgaroth", "ferumbras", "gaz'haragoth"], maxAlive: 12 },
-].map((z, i) => ({ ...z, from: i * ZONE_WIDTH, biome: ZONE_BIOMES[i], ambient: ZONE_LIGHT[Math.min(i, ZONE_LIGHT.length - 1)] }));
+].map((z, i) => ({ ...z, from: i * ZONE_WIDTH, biome: ZONE_BIOMES[i], hunts: HUNTS[i] ?? [], ambient: ZONE_LIGHT[Math.min(i, ZONE_LIGHT.length - 1)] }));
 
 
 export const spawnEvery = 1.4; // seconds between spawns while below the zone's maxAlive (unless the zone says otherwise)

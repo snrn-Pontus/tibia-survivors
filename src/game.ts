@@ -1,6 +1,6 @@
 import { Character } from "./character";
-import { achievement, mitigationOf, BESTIARY_STAGES, BOSS_KILLS, SOUL_EVERY, SOULS_PER_ZONE, soulsFor, spawnEvery, VOCATION_LEVEL, ZONES, type VocationDef } from "./data";
-import { groundSpeed, zoneAt } from "./map";
+import { achievement, mitigationOf, BESTIARY_STAGES, BOSS_KILLS, SOUL_EVERY, SOULS_PER_ZONE, soulsFor, spawnEvery, VOCATION_LEVEL, ZONES, type Hunt, type VocationDef } from "./data";
+import { groundSpeed, huntAt, zoneAt } from "./map";
 import { advance, DIAGONAL_COST, isStepping, newWalker, startStep, stepDuration, TILE, tileCenter, type Walker } from "./movement";
 import { areaOffsets, canWear, FIELDS, item, MONSTERS, POTIONS, PRICES, radiusRows, SPELLS, spellArea, spellFormula, waveRows, type Element, type MonsterAttack, type MonsterData, type Offsets, type SpellData } from "./tibia/db";
 import { blockHit, damageList, distanceDamage, expForLevel, speedChange, distanceHitChance, FIGHT_MODES, meleeDamage, mitigation, normalRandom, playerDefense, SKILL, uniform, type FightMode } from "./tibia/rules";
@@ -153,6 +153,7 @@ export class Game {
   private nextId = 1;
   private spawnTimer = 0;
   zone = -1; // the zone you stand in
+  hunt: Hunt | null = null; // the hunting ground you're in, if any
   deepest = 0;
   souls = 0; // earned this run; banked when it ends
   rerolls = 0; // level-up rerolls left this run
@@ -482,6 +483,16 @@ export class Game {
       this.banner = { text: `${info.name} (level ${info.level}+)`, t: 3 };
       this.msg(`You enter ${info.name}. Recommended level: ${info.level}.`, "#80c0ff");
     }
+    // A hunting ground: its own creatures spawn, a little denser (Tibia's spawns), and prey is on them.
+    const hunt = huntAt(this.player.tx, this.player.ty);
+    if (hunt !== this.hunt) {
+      this.hunt = hunt;
+      this.ch.preyPool = hunt?.pool ?? ZONES[z].pool;
+      if (hunt) {
+        this.banner = { text: hunt.name[0].toUpperCase() + hunt.name.slice(1), t: 3 };
+        this.msg(`You enter ${hunt.name}.`, "#80c0ff");
+      }
+    }
     const zone = ZONES[z];
     const kills = this.zoneKills[z] ?? 0;
     const done = this.zoneBossesDone[z] ?? 0;
@@ -498,11 +509,12 @@ export class Game {
     if (this.spawnTimer > 0) return;
     this.spawnTimer = zone.spawnEvery ?? spawnEvery;
     const alive = this.monsters.filter((m) => !m.boss && m.master === undefined).length; // summons don't count
-    if (alive >= zone.maxAlive) return;
-    const w = zone.weights ?? zone.pool.map(() => 1);
+    if (alive >= zone.maxAlive + (hunt ? Math.min(3, z) : 0)) return; // denser hunting grounds, but not in Rookgaard's first fields
+    const pool = hunt?.pool ?? zone.pool;
+    const w = hunt ? pool.map(() => 1) : zone.weights ?? pool.map(() => 1);
     let r = Math.random() * w.reduce((a, b) => a + b, 0), i = 0;
-    while (i < zone.pool.length - 1 && (r -= w[i]) >= 0) i++;
-    this.spawnMonster(zone.pool[i], false);
+    while (i < pool.length - 1 && (r -= w[i]) >= 0) i++;
+    this.spawnMonster(pool[i], false);
   }
 
   private spawnMonster(name: string, boss: boolean, at?: [number, number]): Monster | null {
@@ -527,7 +539,10 @@ export class Game {
       const jitter = () => (tries ? Math.round((Math.random() - 0.5) * 8) : 0);
       const tx = this.player.tx + Math.round(Math.cos(a) * r) + jitter();
       const ty = this.player.ty + Math.round(Math.sin(a) * r) + jitter();
-      if (this.walkable(tx, ty) && this.flowAt(tx, ty) >= 0) return [tx, ty];
+      if (!this.walkable(tx, ty) || this.flowAt(tx, ty) < 0) continue;
+      // In a hunting ground, its creatures come from inside it.
+      if (this.hunt && huntAt(tx, ty) !== this.hunt) continue;
+      return [tx, ty];
     }
     return null;
   }

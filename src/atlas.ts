@@ -1,4 +1,5 @@
 // Loads the atlas produced by tools/extract.py and draws frames from it.
+import type { TerrainFrames } from "./world";
 // Every frame is stored trimmed, with (ox, oy) = offset from the sprite's anchor,
 // which is the centre of the tile the sprite stands on (Tibia's bottom-right tile).
 
@@ -19,7 +20,7 @@ export interface AtlasData {
   effects: Record<string, SimpleAnim>;
   missiles: Record<string, { dirs: number[] }>;
   items: Record<string, SimpleAnim & { stack?: number[] }>; // stack: the 8 count sprites of stackables
-  terrain: { ground: Record<string, number[]>; decor: Record<string, number[]> }; // frames by kind (src/tibia/terrain.json)
+  terrain: TerrainFrames; // frames by kind (src/tibia/terrain.json)
   /** What gives off light (the client's appearance flag): [brightness in tiles, Tibia's 8-bit color]. */
   light?: Record<"creatures" | "effects" | "missiles" | "items", Record<string, [number, number]>>;
 }

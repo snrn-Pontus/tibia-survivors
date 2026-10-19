@@ -76,6 +76,17 @@ If Tibia is somewhere else: `python tools/extract.py "D:\path\to\Tibia\packages\
   terrain's style (tree lines, boulders, cacti, dead trees, lava, swamp water) with a gap or two, so you go from
   one zone to the next through chokepoints; walls inside a zone, ponds, outcrops and groves make the rest.
   Ground speed is Tibia's (stone floors fast, sand and snow slow). The minimap marks the gaps between zones.
+  Grounds meet with Tibia's border sprites (grass edges over water and sand, rock rims around lava), and you start
+  in Rookgaard's village: a stone plaza with four small houses.
+- **Hunting grounds**, as Tibia has them: every zone has a few walled-off places with their own creatures and
+  their own look, entered through a gap or two. The Rat Sewers and the Troll Caves in Rookgaard; Shadowthorn's
+  elves, the Dwarf Mines, the Swamp Troll Marsh and the Smugglers' Hideout; the Orc Fortress, the Amazon Camp and
+  the Barbarian Camp; Mintwallin and the Lizard Village; Cyclopolis, the Pirate Camp, Banuta and the Wyvern
+  Cliffs; the Ankrahmun Tombs and the Djinn Tower; the Vampire Crypt, the Necromancer Tower and the Spider Caves;
+  the Dragon Lair and the Frost Dragon Lair; the Hero Cave and the Quara Reef; the Draken Walls; the Medusa
+  Tower; the Demon Forge, the Hellhound Den and the Undead Dragon Cave (data.ts HUNTS). Forts, halls and tombs are
+  real walls (palisades, stone, sandstone) with doorways. Inside one, its creatures spawn (a little denser past
+  Rookgaard), from within it, and prey is on them; the minimap says where you are.
   It doesn't follow your level: walk further out for tougher monsters.
   Each zone's real Tibia bosses appear after you've killed enough there, and drop treasure chests.
   The run is endless and ends when you die.
