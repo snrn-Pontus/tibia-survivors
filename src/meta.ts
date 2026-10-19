@@ -1,6 +1,7 @@
 // Between runs (Project Ebonhold style): souls earned in every run are banked when it ends, and buy
 // permanent unlocks: better starting gear, starting gold and potions, rerolls, blessings and rate boosts.
-// Inside a run everything is real Tibia. Saved in localStorage.
+// Inside a run everything is real Tibia. Saved in localStorage, per character.
+import type { VocationId } from "./tibia/db";
 import { MAX_BOOST, type BoostId } from "./upgrades";
 
 export interface Save {
@@ -17,18 +18,87 @@ export interface Save {
   refunded?: number; // souls given back by the last migration, shown once on the title screen
 }
 
-const KEY = "tibia-survivors-save-v2";
+const OLD_KEY = "tibia-survivors-save-v2"; // the one save before characters
+const KEY = "tibia-survivors-account-v1";
 const fresh = (): Save => ({ souls: 0, unlocks: {}, boosts: {}, blessings: 0, runs: 0, best: null, maxLevel: 0, zones: [], kills: {}, version: 3 });
-let memory: Save | null = null; // when there is no usable localStorage (the headless simulator)
 const noStorage = () => typeof localStorage === "undefined" || typeof localStorage?.setItem !== "function";
 
-export function loadSave(): Save {
-  if (noStorage()) return (memory ??= fresh());
+// ---------- characters ----------
+// The account holds characters, each with its own souls, unlocks, boosts, bestiary and achievements. The first
+// vocation a character chooses at level 8 is its vocation from then on.
+
+export interface CharacterSave extends Save {
+  name: string;
+  vocation?: VocationId; // locked in by its first choice at level 8
+  created: number;
+}
+interface Account { characters: CharacterSave[]; current: number }
+
+export const newCharacter = (name: string): CharacterSave => ({ ...fresh(), name, created: Date.now() });
+let memory: Account | null = null; // when there is no usable localStorage (the headless simulator)
+
+function loadAccount(): Account {
+  if (noStorage()) return (memory ??= { characters: [newCharacter("Bot")], current: 0 });
   try {
-    return migrate({ ...fresh(), ...JSON.parse(localStorage.getItem(KEY) ?? "{}") });
+    const raw = localStorage.getItem(KEY);
+    if (raw) {
+      const a = JSON.parse(raw) as Account;
+      a.characters = a.characters.map((c) => migrate({ ...fresh(), ...c }) as CharacterSave);
+      return a;
+    }
   } catch {
-    return fresh();
+    // unreadable: start over below (the old save, if any, is still there)
   }
+  // First time with characters: the save from before becomes the first one.
+  let old: Partial<Save> | null = null;
+  try { old = JSON.parse(localStorage.getItem(OLD_KEY) ?? "null"); } catch { old = null; }
+  const a: Account = old ? { characters: [migrate({ ...newCharacter("Adventurer"), ...old }) as CharacterSave], current: 0 } : { characters: [], current: -1 };
+  writeAccount(a);
+  return a;
+}
+
+function writeAccount(a: Account) {
+  if (noStorage()) memory = a;
+  else localStorage.setItem(KEY, JSON.stringify(a));
+}
+
+export const characters = (): CharacterSave[] => loadAccount().characters;
+export const currentCharacter = (): number => loadAccount().current;
+
+export function selectCharacter(i: number) {
+  const a = loadAccount();
+  if (i < 0 || i >= a.characters.length) return;
+  a.current = i;
+  writeAccount(a);
+}
+
+/** A new character, selected. Returns its index. */
+export function createCharacter(name: string): number {
+  const a = loadAccount();
+  a.characters.push(newCharacter(name));
+  a.current = a.characters.length - 1;
+  writeAccount(a);
+  return a.current;
+}
+
+export function deleteCharacter(i: number) {
+  const a = loadAccount();
+  a.characters.splice(i, 1);
+  a.current = a.characters.length ? Math.min(Math.max(0, a.current > i ? a.current - 1 : a.current), a.characters.length - 1) : -1;
+  writeAccount(a);
+}
+
+/** The selected character's save (a blank one if there is none yet). */
+export function loadSave(): CharacterSave {
+  const a = loadAccount();
+  return a.characters[a.current] ?? newCharacter("");
+}
+
+export function writeSave(s: Save) {
+  const a = loadAccount();
+  if (!a.characters[a.current]) return;
+  a.characters[a.current] = s as CharacterSave;
+  writeAccount(a);
 }
 
 /** Starting gear used to go up to mainland items (spike sword, plate armor) that you kept after Rookgaard.
@@ -47,13 +117,7 @@ function migrate(s: Save): Save {
   s.souls += refund;
   s.refunded = refund;
   s.version = 3;
-  writeSave(s);
   return s;
-}
-
-export function writeSave(s: Save) {
-  if (noStorage()) memory = s;
-  else localStorage.setItem(KEY, JSON.stringify(s));
 }
 
 // ---------- unlock tracks ----------

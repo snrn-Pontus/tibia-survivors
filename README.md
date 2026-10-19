@@ -59,6 +59,10 @@ If Tibia is somewhere else: `python tools/extract.py "D:\path\to\Tibia\packages\
   Dragon Lairs, ... Pits of Inferno). It doesn't follow your level: walk further out for tougher monsters.
   Each zone's real Tibia bosses appear after you've killed enough there, and drop treasure chests.
   The run is endless and ends when you die.
+- **Characters**: the first screen. Each character has its own souls, unlocks, boosts, blessings, bestiary and
+  achievements, and the vocation it chooses at level 8 the first time is its vocation for good: later runs
+  make it that vocation at level 8 without asking, and its boost list only shows that vocation's training.
+  (The save from before characters becomes the first one.) Delete asks twice.
 - **Souls** (the meta currency, like Project Ebonhold's Soul Ashes) come from kills (a tenth of the experience,
   a fifth for bosses), from your first kill ever in each zone of a creature that lives there (once per
   account, 10 x the zone number + 1), from **achievements** (killing 10, 100 and 1,000 of a creature over all

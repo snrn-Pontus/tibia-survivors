@@ -1,8 +1,8 @@
 import "./style.css";
 import { Atlas } from "./atlas";
-import { ROOKIE } from "./data";
+import { ROOKIE, VOCATIONS, type VocationDef } from "./data";
 import { applyUnlocks } from "./unlocks";
-import { loadSave, writeSave } from "./meta";
+import { currentCharacter, loadSave, writeSave } from "./meta";
 import { autoCombat } from "./autocast";
 import { describeChoice, Game, type LootDest } from "./game";
 import { HOTKEYS, HOTKEYS_ALT, Hud } from "./hud";
@@ -72,7 +72,16 @@ async function boot() {
     paused = false;
     backdrop = new Game(ROOKIE, world, effectDur);
     hud.bind(null);
-    ui.title(loadSave(), start);
+    if (currentCharacter() < 0) showCharacters();
+    else ui.title(loadSave(), start, showCharacters);
+  };
+
+  /** Character select: the first screen, and the title's Characters button. */
+  const showCharacters = () => {
+    game = null;
+    paused = false;
+    hud.bind(null);
+    ui.characters(showTitle);
   };
 
   /** Start a run: always in Rookgaard, with the unlocked starting gear, gold, potions, rerolls and boosts. */
@@ -144,17 +153,27 @@ async function boot() {
         });
         break;
       }
-      case "vocation":
-        paused = true;
-        ui.chooseVocation((v) => {
+      case "vocation": {
+        const become = (v: VocationDef) => {
           g.ch.setVocation(v);
           g.vocation = v;
           g.msg(`You are now a ${v.name.toLowerCase()}!`, "#ffd34d");
           g.addEffect(11, g.player.x, g.player.y);
+        };
+        // A character keeps the vocation it chose the first time.
+        const locked = VOCATIONS.find((v) => v.id === loadSave().vocation);
+        if (locked) { become(locked); break; }
+        paused = true;
+        ui.chooseVocation((v) => {
+          become(v);
+          const s = loadSave();
+          s.vocation = v.id;
+          writeSave(s);
           ui.close();
           paused = false;
         });
         break;
+      }
       case "chest":
         paused = true;
         ui.chest(g, ev.result, () => { ui.close(); paused = false; });
@@ -194,6 +213,7 @@ async function boot() {
   });
 
   addEventListener("keydown", (e) => {
+    if (e.target instanceof HTMLInputElement) return; // typing a name
     keys.add(e.code);
     if (e.code === "Escape" || e.code === "KeyP") togglePause();
     if (e.code === "KeyC" && game && !ui.open) hud.setChase(!hud.chase);
@@ -279,7 +299,7 @@ async function boot() {
     ui.tick(now / 1000);
     requestAnimationFrame(frame);
   };
-  showTitle();
+  showCharacters();
   requestAnimationFrame(frame);
 }
 

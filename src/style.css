@@ -308,3 +308,16 @@ h4 { margin: 12px 0 6px; color: #bbb; font-size: 13px; }
 .prepare h3 small { color: #888; font-weight: normal; font-size: 12px; }
 .gold { color: #ffd34d; }
 .souls { color: #c9a0ff; }
+
+/* Character select */
+.chars .char { display: flex; flex-direction: column; align-items: center; }
+.chars .card.cur { border-color: #8a7a4a; }
+.chars .btn.del { padding: 3px 12px; font-size: 11px; font-weight: normal; color: #d99; }
+.chars .card.new { cursor: default; justify-content: center; }
+.chars .card.new input {
+  width: 170px; padding: 6px 8px; font: inherit; color: #eee; background: #111; border: 1px solid #555; outline: none;
+}
+.chars .card.new input:focus { border-color: #e8c66a; }
+.who { margin: -6px 0 8px; color: #ccc; }
+.who b { color: #fff; }
+.who .btn.chars { padding: 3px 12px; font-size: 12px; font-weight: normal; margin-left: 8px; }

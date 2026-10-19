@@ -4,7 +4,7 @@ import type { LevelChoice } from "./character";
 import type { Game } from "./game";
 import { imbuement, TIERS } from "./tibia/imbuements";
 import { boost, BOOSTS, MAX_BOOST, MAX_SLOTS, RUN_BONUS_MAX, RUN_BONUS_STEP, runBonus } from "./upgrades";
-import { BLESSING_COST, boostCost, buyBlessing, buyBoost, buyTier, loadSave, tier, trackTier, TRACKS, writeSave, type Save } from "./meta";
+import { BLESSING_COST, boostCost, buyBlessing, buyBoost, buyTier, characters, createCharacter, currentCharacter, deleteCharacter, loadSave, selectCharacter, tier, trackTier, TRACKS, writeSave, type CharacterSave, type Save } from "./meta";
 import { EVOLUTIONS, evolution, evolutionsFor } from "./evolutions";
 import type { ChestResult } from "./game";
 import { buyPrice, canWear, item, itemId, MONSTERS, POTIONS, PRICES, SHOP_PRICES, SPELLS, wornItem, type ItemData, type SpellData } from "./tibia/db";
@@ -86,9 +86,42 @@ export class UI {
     return this.atlas.itemIcon(id, 32, zoom);
   }
 
-  /** Between runs: the bank, boosts bought with banked gold, blessings, and where to start. */
+  /** The account's characters: pick one, make a new one (no name: a random one), or delete one (click twice). */
+  characters(onPick: () => void, focus = 0) {
+    const list = characters(), cur = currentCharacter();
+    const el = this.screen("title chars", `
+      <h1>Tibia <span>Survivors</span></h1>
+      <p class="sub">Choose a character. Each has its own souls and upgrades, and the first vocation it chooses is its vocation for good.</p>
+      <div class="cards">${list.map((c, i) => `<div class="char">
+        <button class="card voc pick${i === cur ? " cur" : ""}"><canvas width="192" height="168"></canvas>
+          <b>${esc(c.name)}</b><em>${vocationOf(c)?.name ?? "No vocation yet"}</em>
+          <small><span class="souls">${c.souls.toLocaleString("en-US")} souls</span> · ${c.runs} run${c.runs === 1 ? "" : "s"}${c.best ? `<br>best: ${ZONES[c.best.zone].name}, level ${c.best.level}` : ""}</small></button>
+        <button class="btn del">Delete</button></div>`).join("")}
+        <div class="card new"><b>New character</b><small>Starts in Rookgaard with nothing unlocked.</small>
+          <input class="name" maxlength="20" placeholder="Name" spellcheck="false"><button class="btn create">Create</button></div>
+      </div>`);
+    const picks = [...el.querySelectorAll<HTMLElement>(".pick")], dels = [...el.querySelectorAll<HTMLElement>(".del")];
+    picks.forEach((c, i) => this.previews.push({ canvas: c.querySelector("canvas")!, sprite: vocationOf(list[i])?.sprite ?? ROOKIE.sprite }));
+    const input = el.querySelector<HTMLInputElement>(".name")!, create = el.querySelector<HTMLElement>(".create")!;
+    const make = () => {
+      const taken = new Set(list.map((c) => c.name.toLowerCase()));
+      const name = input.value.trim().replace(/\s+/g, " ") || RANDOM_NAMES.find((n) => !taken.has(n.toLowerCase())) || `Adventurer ${list.length + 1}`;
+      createCharacter(name);
+      onPick();
+    };
+    input.addEventListener("keydown", (e) => { if (e.key === "Enter") make(); });
+    let armed = -1; // the character a first Delete click asked about
+    const del = (i: number) => () => {
+      if (armed !== i) { armed = i; dels.forEach((d, j) => (d.textContent = j === i ? "Really delete?" : "Delete")); return; }
+      deleteCharacter(i);
+      this.characters(onPick, Math.max(0, i - 1));
+    };
+    this.setButtons([...picks, create, ...dels], [...list.map((_, i) => () => { selectCharacter(i); onPick(); }), make, ...list.map((_, i) => del(i))],
+      list.length ? Math.min(focus, list.length - 1) : 0);
+  }
+
   /** Between runs: spend souls on starting gear and other permanent unlocks, then enter Rookgaard. */
-  title(save: Save, onStart: () => void, focus = 0) {
+  title(save: CharacterSave, onStart: () => void, onCharacters: () => void, focus = 0) {
     type Entry = { icon: number; label: string; sub: string; cost: number | null; buy: () => boolean };
     const entry = (e: Entry) => `<button class="btn buy" ${e.cost === null || save.souls < e.cost ? "disabled" : ""}>
       <span class="ico" data-id="${e.icon}"></span><span class="label">${e.label}<small>${e.sub}</small></span>
@@ -103,7 +136,8 @@ export class UI {
     };
     const gear = TRACKS.filter((t) => !t.rook).map(trackEntry);
     const rook = TRACKS.filter((t) => t.rook).map(trackEntry);
-    const boosts: Entry[] = BOOSTS.map((b) => {
+    // A character with a vocation only sees its own training boosts.
+    const boosts: Entry[] = BOOSTS.filter((b) => !save.vocation || b.for(save.vocation)).map((b) => {
       const lvl = save.boosts[b.id] ?? 0, maxed = lvl >= MAX_BOOST;
       return { icon: b.icon, label: `${b.name} ${lvl}`, sub: b.desc(Math.min(MAX_BOOST, lvl + (maxed ? 0 : 1))),
         cost: maxed ? null : boostCost(b.id, lvl), buy: () => buyBoost(save, b.id) };
@@ -114,12 +148,14 @@ export class UI {
     const refunded = save.refunded ?? 0;
     if (refunded) { save.refunded = 0; writeSave(save); }
     const best = save.best ? ` · best: ${ZONES[save.best.zone].name}, level ${save.best.level}` : "";
+    const voc = vocationOf(save);
     const el = this.screen("title prepare", `
       <h1>Tibia <span>Survivors</span></h1>
+      <p class="who"><b>${esc(save.name)}</b> · ${voc ? voc.name : "no vocation yet"} <button class="btn chars">Characters</button></p>
       <p class="sub"><span class="souls">${save.souls.toLocaleString("en-US")} souls</span>${save.runs ? ` · ${save.runs} run${save.runs === 1 ? "" : "s"}` : ""}${best}</p>
       ${refunded ? `<p class="refund">Starting gear is now what Rookgaard's NPCs sell: the <span class="souls">${refunded.toLocaleString("en-US")} souls</span> you spent on the old gear are back.</p>` : ""}
       <div class="cards"><button class="card voc start"><canvas width="192" height="168"></canvas>
-        <b>Enter Rookgaard</b><small>Real Tibia: level 1, ${trackTier(save, TRACKS[0]).label} in hand. Choose a vocation at level 8.
+        <b>Enter Rookgaard</b><small>Real Tibia: level 1, ${trackTier(save, TRACKS[0]).label} in hand. ${voc ? `Becomes a ${voc.name.toLowerCase()} at level 8.` : "Choose a vocation at level 8: it stays this character's vocation."}
         Walk further out for harder zones. Every kill earns souls, kept when you die.</small></button></div>
       <h3>Starting gear</h3><div class="shop boosts">${gear.map(entry).join("")}</div>
       <h3>Rookgaard <small>(levels 1-8 go faster; these stop working when you choose a vocation)</small></h3>
@@ -132,8 +168,8 @@ export class UI {
     this.previews.push({ canvas: card.querySelector("canvas")!, sprite: ROOKIE.sprite });
     el.querySelectorAll<HTMLElement>(".buy .ico").forEach((c) => c.appendChild(this.icon(Number(c.dataset.id))));
     const all = [...gear, ...rook, ...boosts];
-    const buys = all.map((e, i) => () => { if (e.buy()) this.title(loadSave(), onStart, 1 + i); });
-    this.setButtons([card, ...el.querySelectorAll<HTMLElement>(".buy")], [onStart, ...buys], focus);
+    const buys = all.map((e, i) => () => { if (e.buy()) this.title(loadSave(), onStart, onCharacters, 1 + i); });
+    this.setButtons([card, ...el.querySelectorAll<HTMLElement>(".buy"), el.querySelector<HTMLElement>(".chars")!], [onStart, ...buys, onCharacters], focus);
   }
 
   /** Level 8: leave Rookgaard and pick a vocation. */
@@ -462,6 +498,12 @@ export class UI {
   }
 
 }
+
+const esc = (s: string) => s.replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]!);
+const vocationOf = (c: CharacterSave) => VOCATIONS.find((v) => v.id === c.vocation);
+/** Names for a character created without one. */
+const RANDOM_NAMES = ["Eremo", "Bozo", "Rowenna", "Asima", "Tibianus", "Kazzan", "Harsky", "Avar Tar", "Lynda", "Quentin",
+  "Cipfried", "Dallheim", "Norma", "Amber", "Seymour", "Hyacinth", "Sam", "Obi", "Dixi", "Willie"];
 
 /** Can this character use a shop item at all (class potions, class runes, its ammo)? */
 /** Short stat line for an item, like Tibia's look text: (Atk:24 Def:21) (Arm:12). */
