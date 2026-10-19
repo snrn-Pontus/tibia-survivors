@@ -95,6 +95,7 @@ body:not(.ingame) #side, body:not(.ingame) #hotbar, body:not(.ingame) #console, 
 .mode.on.chase, .mode.on.stand { color: #70e070; box-shadow: 0 0 6px #30c030, inset 0 1px 0 rgba(255, 255, 255, 0.15); }
 .purse { margin-top: 4px; display: grid; grid-template-columns: 1fr auto; row-gap: 1px; }
 .purse .v { text-align: right; font-weight: bold; }
+.purse .cap.low { color: #ff7060; }
 .purse .gold-v { color: #ffd34d; transition: transform 0.1s; display: inline-block; transform-origin: right center; }
 
 /* skills */

@@ -319,6 +319,7 @@ export class UI {
       if (!canWear({ ...it, level: 0 }, ch.voc.id, 9999)) out.push("another vocation");
       return out.length ? `<span class="bad">needs ${out.join(", ")}</span>` : "";
     };
+    const heavy = (id: number) => ch.fits(id) < 1;
     const equip = (id: number, price: number) => () => {
       ch.gold -= price;
       const it = item(id)!, slot = ch.slotFor(it)!;
@@ -338,7 +339,8 @@ export class UI {
     };
     const packs = (id: number, sizes: number[], then?: () => void, ok = true): Pack[] => {
       const each = buyPrice(id);
-      return sizes.map((n) => ({ n, price: each * n, ok, buy: stock(id, n, each * n, then) }));
+      // An NPC won't sell you what you can't carry.
+      return sizes.map((n) => ({ n, price: each * n, ok: ok && ch.fits(id) >= n, label: ok && ch.fits(id) < n ? "too heavy" : undefined, buy: stock(id, n, each * n, then) }));
     };
     const better = (id: number) => {
       const it = item(id)!, slot = ch.slotFor(it), cur = slot ? ch.equipment[slot] : undefined;
@@ -363,7 +365,7 @@ export class UI {
               ch.equip(w.id);
             }
           }, w.usable) });
-        } else rows.push({ id: w.id, note, packs: [{ n: 1, price: w.price, ok: w.usable && !worn, label: worn ? "equipped" : undefined, buy: equip(w.id, w.price) }] });
+        } else rows.push({ id: w.id, note, packs: [{ n: 1, price: w.price, ok: w.usable && !worn && !heavy(w.id), label: worn ? "equipped" : heavy(w.id) ? "too heavy" : undefined, buy: equip(w.id, w.price) }] });
       }
     } else if (GEAR_TABS[tab]) {
       const slots = GEAR_TABS[tab]!;
@@ -373,7 +375,7 @@ export class UI {
       for (const x of list) {
         const worn = Object.values(ch.equipment).includes(x.id);
         rows.push({ id: x.id, note: [stats(x.id), better(x.id), need(x.it!)].filter(Boolean).join(" "),
-          packs: [{ n: 1, price: x.price, ok: canWear(x.it!, ch.voc.id, ch.level) && !worn, label: worn ? "equipped" : undefined, buy: equip(x.id, x.price) }] });
+          packs: [{ n: 1, price: x.price, ok: canWear(x.it!, ch.voc.id, ch.level) && !worn && !heavy(x.id), label: worn ? "equipped" : heavy(x.id) ? "too heavy" : undefined, buy: equip(x.id, x.price) }] });
       }
     } else if (tab === "ammo") {
       // All of it, whatever you hold: buying arrows before the bow is fine.

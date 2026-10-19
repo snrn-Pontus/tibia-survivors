@@ -584,8 +584,9 @@ def parse_items(ids, names):
             if " " in k:
                 continue  # imbuement slot details, not item stats
             k = k.lower()
-            if k in ("description", "weight", "imbuementslot", "script", "primarytype", "decayto", "duration",
-                     "showduration", "showattributes", "showcharges", "stopduration", "transformdeequipto"):
+            # weight (hundredths of an oz), duration (s) and charges matter: capacity, rings and amulets running out.
+            if k in ("description", "imbuementslot", "script", "primarytype", "decayto",
+                     "showduration", "showattributes", "showcharges", "stopduration"):
                 continue
             if k in it and k != "weapontype":
                 continue
@@ -685,7 +686,7 @@ def main():
         f = dict(re.findall(r'(\w+)="([^"]*)"', re.search(r"<formula[^>]*>", v).group(0)))
         mit = dict(re.findall(r'(\w+)="([^"]*)"', re.search(r"<mitigation[^>]*>", v).group(0)))
         vocations[name] = {
-            "gainHp": int(a["gainhp"]), "gainMana": int(a["gainmana"]),
+            "gainHp": int(a["gainhp"]), "gainMana": int(a["gainmana"]), "gainCap": int(a["gaincap"]),
             "gainHpTicks": int(a["gainhpticks"]), "gainHpAmount": int(a["gainhpamount"]),
             "gainManaTicks": int(a["gainmanaticks"]), "gainManaAmount": int(a["gainmanaamount"]),
             "manaMultiplier": float(a["manamultiplier"]), "baseSpeed": int(a["basespeed"]),

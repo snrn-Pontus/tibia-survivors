@@ -22519,37 +22519,44 @@
   "236": {
    "id": 236,
    "name": "strong health potion",
+   "weight": 290,
    "stackable": 1
   },
   "237": {
    "id": 237,
    "name": "strong mana potion",
+   "weight": 290,
    "stackable": 1
   },
   "238": {
    "id": 238,
    "name": "great mana potion",
+   "weight": 310,
    "stackable": 1
   },
   "239": {
    "id": 239,
    "name": "great health potion",
+   "weight": 310,
    "stackable": 1
   },
   "266": {
    "id": 266,
    "name": "health potion",
+   "weight": 270,
    "stackable": 1
   },
   "268": {
    "id": 268,
    "name": "mana potion",
+   "weight": 270,
    "stackable": 1
   },
   "647": {
    "id": 647,
    "name": "seeds",
    "showcount": 0,
+   "weight": 50,
    "stackable": 1
   },
   "761": {
@@ -22561,6 +22568,7 @@
    "elementenergy": 14,
    "maxhitchance": 91,
    "attack": 14,
+   "weight": 70,
    "action": "removecount",
    "level": 20,
    "unproperly": "true",
@@ -22576,6 +22584,7 @@
    "elementice": 14,
    "maxhitchance": 91,
    "attack": 14,
+   "weight": 70,
    "action": "removecount",
    "level": 20,
    "unproperly": "true",
@@ -22591,6 +22600,7 @@
    "elementfire": 14,
    "maxhitchance": 91,
    "attack": 14,
+   "weight": 70,
    "action": "removecount",
    "level": 20,
    "unproperly": "true",
@@ -22606,6 +22616,7 @@
    "elementearth": 14,
    "maxhitchance": 91,
    "attack": 14,
+   "weight": 70,
    "action": "removecount",
    "level": 20,
    "unproperly": "true",
@@ -22618,6 +22629,7 @@
    "absorbpercentpoison": 8,
    "absorbpercentfire": -8,
    "armor": 11,
+   "weight": 2250,
    "level": 50,
    "slot": "armor",
    "vocation": "Sorcerer;true, Druid;true, Master Sorcerer, Elder Druid"
@@ -22628,6 +22640,7 @@
    "absorbpercentpoison": 6,
    "absorbpercentfire": -6,
    "armor": 8,
+   "weight": 1900,
    "level": 40,
    "slot": "legs",
    "vocation": "Sorcerer;true, Druid;true, Master Sorcerer, Elder Druid"
@@ -22638,6 +22651,7 @@
    "absorbpercentpoison": 5,
    "absorbpercentfire": -5,
    "armor": 2,
+   "weight": 750,
    "level": 35,
    "slot": "feet",
    "vocation": "Sorcerer;true, Druid;true, Master Sorcerer, Elder Druid"
@@ -22648,6 +22662,7 @@
    "absorbpercentpoison": 20,
    "absorbpercentfire": -10,
    "charges": 200,
+   "weight": 500,
    "level": 60,
    "slot": "necklace"
   },
@@ -22657,6 +22672,7 @@
    "absorbpercentice": 20,
    "absorbpercentenergy": -10,
    "charges": 200,
+   "weight": 500,
    "level": 60,
    "slot": "necklace"
   },
@@ -22666,6 +22682,7 @@
    "absorbpercentpoison": -10,
    "absorbpercentenergy": 20,
    "charges": 200,
+   "weight": 500,
    "level": 60,
    "slot": "necklace"
   },
@@ -22675,6 +22692,7 @@
    "absorbpercentice": -10,
    "absorbpercentfire": 20,
    "charges": 200,
+   "weight": 500,
    "level": 60,
    "slot": "necklace"
   },
@@ -22684,6 +22702,7 @@
    "absorbpercentice": -5,
    "absorbpercentfire": 5,
    "armor": 2,
+   "weight": 750,
    "level": 35,
    "slot": "feet",
    "vocation": "Sorcerer;true, Druid;true, Master Sorcerer, Elder Druid"
@@ -22694,6 +22713,7 @@
    "absorbpercentpoison": -5,
    "absorbpercentenergy": 5,
    "armor": 2,
+   "weight": 750,
    "level": 35,
    "slot": "feet",
    "vocation": "Sorcerer;true, Druid;true, Master Sorcerer, Elder Druid"
@@ -22704,6 +22724,7 @@
    "absorbpercentice": -6,
    "absorbpercentfire": 6,
    "armor": 8,
+   "weight": 1900,
    "level": 40,
    "slot": "legs",
    "vocation": "Sorcerer;true, Druid;true, Master Sorcerer, Elder Druid"
@@ -22714,6 +22735,7 @@
    "absorbpercentpoison": -6,
    "absorbpercentenergy": 6,
    "armor": 8,
+   "weight": 1900,
    "level": 40,
    "slot": "legs",
    "vocation": "Sorcerer;true, Druid;true, Master Sorcerer, Elder Druid"
@@ -22724,6 +22746,7 @@
    "absorbpercentice": 6,
    "absorbpercentenergy": -6,
    "armor": 8,
+   "weight": 1900,
    "level": 40,
    "slot": "legs",
    "vocation": "Sorcerer;true, Druid;true, Master Sorcerer, Elder Druid"
@@ -22734,6 +22757,7 @@
    "absorbpercentice": 8,
    "absorbpercentenergy": -8,
    "armor": 11,
+   "weight": 2250,
    "level": 50,
    "slot": "armor",
    "vocation": "Sorcerer;true, Druid;true, Master Sorcerer, Elder Druid"
@@ -22744,6 +22768,7 @@
    "absorbpercentpoison": -8,
    "absorbpercentenergy": 8,
    "armor": 11,
+   "weight": 2250,
    "level": 50,
    "slot": "armor",
    "vocation": "Sorcerer;true, Druid;true, Master Sorcerer, Elder Druid"
@@ -22754,6 +22779,7 @@
    "absorbpercentice": -8,
    "absorbpercentfire": 8,
    "armor": 11,
+   "weight": 2250,
    "level": 50,
    "slot": "armor",
    "vocation": "Sorcerer;true, Druid;true, Master Sorcerer, Elder Druid"
@@ -22764,6 +22790,7 @@
    "absorbpercentice": -5,
    "absorbpercentfire": 4,
    "armor": 5,
+   "weight": 1000,
    "slot": "head",
    "vocation": "Sorcerer;true, Druid;true, Master Sorcerer, Elder Druid"
   },
@@ -22773,6 +22800,7 @@
    "absorbpercentpoison": -5,
    "absorbpercentenergy": 4,
    "armor": 5,
+   "weight": 1000,
    "slot": "head",
    "vocation": "Sorcerer;true, Druid;true, Master Sorcerer, Elder Druid"
   },
@@ -22782,6 +22810,7 @@
    "absorbpercentice": 4,
    "absorbpercentenergy": -5,
    "armor": 5,
+   "weight": 1000,
    "slot": "head",
    "vocation": "Sorcerer;true, Druid;true, Master Sorcerer, Elder Druid"
   },
@@ -22791,28 +22820,35 @@
    "absorbpercentpoison": 4,
    "absorbpercentfire": -5,
    "armor": 5,
+   "weight": 1000,
    "slot": "head",
    "vocation": "Sorcerer;true, Druid;true, Master Sorcerer, Elder Druid"
   },
   "893": {
    "id": 893,
-   "name": "waterball"
+   "name": "waterball",
+   "weight": 200
   },
   "907": {
    "id": 907,
    "name": "shapeshifter ring",
+   "duration": 36000,
+   "weight": 80,
    "slot": "ring"
   },
   "946": {
    "id": 946,
    "name": "eternal flames",
+   "weight": 250,
    "stackable": 1
   },
   "949": {
    "id": 949,
    "name": "dead sea serpent",
    "fluidsource": "blood",
-   "containersize": 40
+   "duration": 10,
+   "containersize": 40,
+   "weight": 60000
   },
   "1781": {
    "id": 1781,
@@ -22822,336 +22858,401 @@
    "maxhitchance": 76,
    "range": 4,
    "attack": 5,
+   "weight": 360,
    "breakchance": 3,
    "slot": "hand",
    "stackable": 1
   },
   "2127": {
    "id": 2127,
-   "name": "poison gas"
+   "name": "poison gas",
+   "duration": 2
   },
   "2478": {
    "id": 2478,
    "name": "treasure chest",
-   "containersize": 10
+   "containersize": 10,
+   "weight": 9500
   },
   "2815": {
    "id": 2815,
    "name": "scroll",
    "writeable": 1,
-   "maxtextlen": 511
+   "maxtextlen": 511,
+   "weight": 50
   },
   "2842": {
    "id": 2842,
    "name": "book",
    "writeable": 1,
-   "maxtextlen": 1023
+   "maxtextlen": 1023,
+   "weight": 1300
   },
   "2848": {
    "id": 2848,
-   "name": "purple tome"
+   "name": "purple tome",
+   "weight": 1900
   },
   "2850": {
    "id": 2850,
-   "name": "blue tome"
+   "name": "blue tome",
+   "weight": 1900
   },
   "2852": {
    "id": 2852,
-   "name": "red tome"
+   "name": "red tome",
+   "weight": 1900
   },
   "2853": {
    "id": 2853,
    "name": "bag",
    "containersize": 8,
+   "weight": 800,
    "slot": "backpack"
   },
   "2854": {
    "id": 2854,
    "name": "backpack",
    "containersize": 20,
+   "weight": 1800,
    "slot": "backpack"
   },
   "2857": {
    "id": 2857,
    "name": "green bag",
    "containersize": 8,
+   "weight": 800,
    "slot": "backpack"
   },
   "2858": {
    "id": 2858,
    "name": "yellow bag",
    "containersize": 8,
+   "weight": 800,
    "slot": "backpack"
   },
   "2859": {
    "id": 2859,
    "name": "red bag",
    "containersize": 8,
+   "weight": 800,
    "slot": "backpack"
   },
   "2860": {
    "id": 2860,
    "name": "purple bag",
    "containersize": 8,
+   "weight": 800,
    "slot": "backpack"
   },
   "2861": {
    "id": 2861,
    "name": "blue bag",
    "containersize": 8,
+   "weight": 800,
    "slot": "backpack"
   },
   "2862": {
    "id": 2862,
    "name": "grey bag",
    "containersize": 8,
+   "weight": 800,
    "slot": "backpack"
   },
   "2863": {
    "id": 2863,
    "name": "golden bag",
    "containersize": 8,
+   "weight": 800,
    "slot": "backpack"
   },
   "2864": {
    "id": 2864,
    "name": "camouflage bag",
    "containersize": 8,
+   "weight": 800,
    "slot": "backpack"
   },
   "2865": {
    "id": 2865,
    "name": "green backpack",
    "containersize": 20,
+   "weight": 1800,
    "slot": "backpack"
   },
   "2866": {
    "id": 2866,
    "name": "yellow backpack",
    "containersize": 20,
+   "weight": 1800,
    "slot": "backpack"
   },
   "2867": {
    "id": 2867,
    "name": "red backpack",
    "containersize": 20,
+   "weight": 1800,
    "slot": "backpack"
   },
   "2868": {
    "id": 2868,
    "name": "purple backpack",
    "containersize": 20,
+   "weight": 1800,
    "slot": "backpack"
   },
   "2869": {
    "id": 2869,
    "name": "blue backpack",
    "containersize": 20,
+   "weight": 1800,
    "slot": "backpack"
   },
   "2870": {
    "id": 2870,
    "name": "grey backpack",
    "containersize": 20,
+   "weight": 1800,
    "slot": "backpack"
   },
   "2871": {
    "id": 2871,
    "name": "golden backpack",
    "containersize": 20,
+   "weight": 1800,
    "slot": "backpack"
   },
   "2872": {
    "id": 2872,
    "name": "camouflage backpack",
    "containersize": 20,
+   "weight": 1800,
    "slot": "backpack"
   },
   "2893": {
    "id": 2893,
    "name": "amphora",
-   "allowpickupable": 1
+   "allowpickupable": 1,
+   "weight": 9700
   },
   "2903": {
    "id": 2903,
    "name": "golden mug",
-   "allowpickupable": 1
+   "allowpickupable": 1,
+   "weight": 470
   },
   "2914": {
    "id": 2914,
-   "name": "lamp"
+   "name": "lamp",
+   "weight": 3000
   },
   "2917": {
    "id": 2917,
-   "name": "candlestick"
+   "name": "candlestick",
+   "weight": 300
   },
   "2920": {
    "id": 2920,
-   "name": "torch"
+   "name": "torch",
+   "weight": 500
   },
   "2949": {
    "id": 2949,
-   "name": "lyre"
+   "name": "lyre",
+   "weight": 1250
   },
   "2991": {
    "id": 2991,
-   "name": "doll"
+   "name": "doll",
+   "weight": 650
   },
   "2993": {
    "id": 2993,
-   "name": "teddy bear"
+   "name": "teddy bear",
+   "weight": 590
   },
   "2995": {
    "id": 2995,
-   "name": "piggy bank"
+   "name": "piggy bank",
+   "weight": 750
   },
   "3003": {
    "id": 3003,
-   "name": "rope"
+   "name": "rope",
+   "weight": 1800
   },
   "3004": {
    "id": 3004,
    "name": "wedding ring",
+   "weight": 40,
    "slot": "ring"
   },
   "3006": {
    "id": 3006,
    "name": "ring of the sky",
+   "weight": 40,
    "slot": "ring"
   },
   "3007": {
    "id": 3007,
    "name": "crystal ring",
+   "weight": 90,
    "slot": "ring"
   },
   "3008": {
    "id": 3008,
    "name": "crystal necklace",
+   "weight": 490,
    "slot": "necklace"
   },
   "3010": {
    "id": 3010,
    "name": "emerald bangle",
+   "weight": 179,
    "stackable": 1
   },
   "3012": {
    "id": 3012,
    "name": "wolf tooth chain",
+   "weight": 330,
    "slot": "necklace"
   },
   "3013": {
    "id": 3013,
    "name": "golden amulet",
+   "weight": 830,
    "slot": "necklace"
   },
   "3016": {
    "id": 3016,
    "name": "ruby necklace",
+   "weight": 570,
    "slot": "necklace"
   },
   "3017": {
    "id": 3017,
    "name": "silver brooch",
+   "weight": 115,
    "stackable": 1
   },
   "3018": {
    "id": 3018,
    "name": "scarab amulet",
+   "weight": 770,
    "slot": "necklace"
   },
   "3019": {
    "id": 3019,
    "name": "demonbone amulet",
+   "weight": 690,
    "slot": "necklace"
   },
   "3025": {
    "id": 3025,
    "name": "ancient amulet",
+   "weight": 840,
    "slot": "necklace"
   },
   "3026": {
    "id": 3026,
    "name": "white pearl",
+   "weight": 20,
    "stackable": 1
   },
   "3027": {
    "id": 3027,
    "name": "black pearl",
+   "weight": 20,
    "stackable": 1
   },
   "3028": {
    "id": 3028,
    "name": "small diamond",
+   "weight": 10,
    "stackable": 1
   },
   "3029": {
    "id": 3029,
    "name": "small sapphire",
+   "weight": 10,
    "stackable": 1
   },
   "3030": {
    "id": 3030,
    "name": "small ruby",
+   "weight": 10,
    "stackable": 1
   },
   "3031": {
    "id": 3031,
    "name": "gold coin",
+   "weight": 10,
    "stackable": 1
   },
   "3032": {
    "id": 3032,
    "name": "small emerald",
+   "weight": 10,
    "stackable": 1
   },
   "3033": {
    "id": 3033,
    "name": "small amethyst",
+   "weight": 10,
    "stackable": 1
   },
   "3034": {
    "id": 3034,
    "name": "talon",
+   "weight": 20,
    "stackable": 1
   },
   "3035": {
    "id": 3035,
    "name": "platinum coin",
+   "weight": 10,
    "stackable": 1
   },
   "3036": {
    "id": 3036,
    "name": "violet gem",
+   "weight": 30,
    "stackable": 1
   },
   "3037": {
    "id": 3037,
    "name": "yellow gem",
+   "weight": 30,
    "stackable": 1
   },
   "3038": {
    "id": 3038,
    "name": "green gem",
+   "weight": 30,
    "stackable": 1
   },
   "3039": {
    "id": 3039,
    "name": "red gem",
+   "weight": 30,
    "stackable": 1
   },
   "3041": {
    "id": 3041,
    "name": "blue gem",
+   "weight": 30,
    "stackable": 1
   },
   "3042": {
    "id": 3042,
    "name": "scarab coin",
+   "weight": 20,
    "stackable": 1
   },
   "3043": {
    "id": 3043,
    "name": "crystal coin",
+   "weight": 10,
    "stackable": 1
   },
   "3045": {
@@ -23159,11 +23260,13 @@
    "name": "strange talisman",
    "absorbpercentenergy": 10,
    "charges": 200,
+   "weight": 290,
    "slot": "necklace"
   },
   "3046": {
    "id": 3046,
-   "name": "magic light wand"
+   "name": "magic light wand",
+   "weight": 1500
   },
   "3048": {
    "id": 3048,
@@ -23176,24 +23279,28 @@
    "absorbpercentholy": 20,
    "absorbpercentdeath": 20,
    "charges": 20,
+   "weight": 100,
    "slot": "ring"
   },
   "3049": {
    "id": 3049,
    "name": "stealth ring",
    "transformequipto": 3086,
+   "weight": 100,
    "slot": "ring"
   },
   "3050": {
    "id": 3050,
    "name": "power ring",
    "transformequipto": 3087,
+   "weight": 80,
    "slot": "ring"
   },
   "3051": {
    "id": 3051,
    "name": "energy ring",
    "transformequipto": 3088,
+   "weight": 80,
    "slot": "ring",
    "vocation": "Knight;true, Paladin;true, Elite Knight, Royal Paladin"
   },
@@ -23201,12 +23308,14 @@
    "id": 3052,
    "name": "life ring",
    "transformequipto": 3089,
+   "weight": 80,
    "slot": "ring"
   },
   "3053": {
    "id": 3053,
    "name": "time ring",
    "transformequipto": 3090,
+   "weight": 90,
    "slot": "ring"
   },
   "3054": {
@@ -23214,12 +23323,14 @@
    "name": "silver amulet",
    "absorbpercentpoison": 10,
    "charges": 200,
+   "weight": 500,
    "slot": "necklace"
   },
   "3055": {
    "id": 3055,
    "name": "platinum amulet",
    "armor": 2,
+   "weight": 600,
    "slot": "necklace"
   },
   "3056": {
@@ -23227,17 +23338,20 @@
    "name": "bronze amulet",
    "absorbpercentmanadrain": 20,
    "charges": 200,
+   "weight": 500,
    "slot": "necklace"
   },
   "3057": {
    "id": 3057,
    "name": "amulet of loss",
    "charges": 1,
+   "weight": 420,
    "slot": "necklace"
   },
   "3058": {
    "id": 3058,
    "name": "strange symbol",
+   "weight": 200,
    "stackable": 1
   },
   "3059": {
@@ -23245,27 +23359,32 @@
    "name": "spellbook",
    "weapontype": "spellbook",
    "defense": 14,
+   "weight": 1800,
    "slot": "shield",
    "vocation": "Sorcerer;true, Druid;true, Master Sorcerer, Elder Druid"
   },
   "3060": {
    "id": 3060,
    "name": "orb",
+   "weight": 800,
    "stackable": 1
   },
   "3061": {
    "id": 3061,
    "name": "life crystal",
+   "weight": 263,
    "stackable": 1
   },
   "3062": {
    "id": 3062,
    "name": "mind stone",
+   "weight": 250,
    "stackable": 1
   },
   "3063": {
    "id": 3063,
    "name": "gold ring",
+   "weight": 100,
    "slot": "ring"
   },
   "3065": {
@@ -23274,6 +23393,7 @@
    "weapontype": "wand",
    "shoottype": "smallearth",
    "range": 3,
+   "weight": 2500,
    "level": 26,
    "mana": 8,
    "fromdamage": 37,
@@ -23288,6 +23408,7 @@
    "weapontype": "wand",
    "shoottype": "smallearth",
    "range": 3,
+   "weight": 1900,
    "level": 6,
    "mana": 2,
    "fromdamage": 8,
@@ -23302,6 +23423,7 @@
    "weapontype": "wand",
    "shoottype": "smallice",
    "range": 3,
+   "weight": 2700,
    "level": 33,
    "mana": 13,
    "fromdamage": 56,
@@ -23316,6 +23438,7 @@
    "weapontype": "wand",
    "shoottype": "death",
    "range": 3,
+   "weight": 2300,
    "level": 19,
    "mana": 5,
    "fromdamage": 23,
@@ -23330,6 +23453,7 @@
    "weapontype": "wand",
    "shoottype": "smallice",
    "range": 3,
+   "weight": 2100,
    "level": 13,
    "mana": 3,
    "fromdamage": 13,
@@ -23344,6 +23468,7 @@
    "weapontype": "wand",
    "shoottype": "fire",
    "range": 3,
+   "weight": 2700,
    "level": 33,
    "mana": 8,
    "fromdamage": 56,
@@ -23358,6 +23483,7 @@
    "weapontype": "wand",
    "shoottype": "death",
    "range": 3,
+   "weight": 2300,
    "level": 19,
    "mana": 5,
    "fromdamage": 23,
@@ -23372,6 +23498,7 @@
    "weapontype": "wand",
    "shoottype": "energy",
    "range": 3,
+   "weight": 2500,
    "level": 26,
    "mana": 8,
    "fromdamage": 37,
@@ -23386,6 +23513,7 @@
    "weapontype": "wand",
    "shoottype": "energy",
    "range": 3,
+   "weight": 1900,
    "level": 6,
    "mana": 1,
    "fromdamage": 8,
@@ -23400,6 +23528,7 @@
    "weapontype": "wand",
    "shoottype": "fire",
    "range": 3,
+   "weight": 2300,
    "level": 13,
    "mana": 3,
    "fromdamage": 13,
@@ -23411,12 +23540,14 @@
   "3078": {
    "id": 3078,
    "name": "mysterious fetish",
+   "weight": 490,
    "stackable": 1
   },
   "3079": {
    "id": 3079,
    "name": "boots of haste",
    "speed": 20,
+   "weight": 750,
    "slot": "feet"
   },
   "3081": {
@@ -23425,6 +23556,7 @@
    "absorbpercentphysical": 80,
    "absorbpercentdeath": 80,
    "charges": 5,
+   "weight": 700,
    "slot": "necklace"
   },
   "3082": {
@@ -23438,6 +23570,7 @@
    "absorbpercentholy": 5,
    "absorbpercentdeath": 5,
    "charges": 50,
+   "weight": 270,
    "slot": "necklace"
   },
   "3083": {
@@ -23445,6 +23578,7 @@
    "name": "garlic necklace",
    "absorbpercentlifedrain": 20,
    "charges": 150,
+   "weight": 380,
    "slot": "necklace"
   },
   "3084": {
@@ -23452,6 +23586,7 @@
    "name": "protection amulet",
    "absorbpercentphysical": 6,
    "charges": 250,
+   "weight": 550,
    "slot": "necklace"
   },
   "3085": {
@@ -23459,24 +23594,34 @@
    "name": "dragon necklace",
    "absorbpercentfire": 8,
    "charges": 200,
+   "weight": 630,
    "slot": "necklace"
   },
   "3086": {
    "id": 3086,
    "name": "stealth ring",
    "invisible": 1,
+   "duration": 600,
+   "transformdeequipto": 3049,
+   "weight": 100,
    "slot": "ring"
   },
   "3087": {
    "id": 3087,
    "name": "power ring",
    "skillfist": 6,
+   "duration": 1800,
+   "transformdeequipto": 3050,
+   "weight": 80,
    "slot": "ring"
   },
   "3088": {
    "id": 3088,
    "name": "energy ring",
    "manashield": 1,
+   "duration": 600,
+   "transformdeequipto": 3051,
+   "weight": 80,
    "slot": "ring",
    "vocation": "Knight;true, Paladin;true, Elite Knight, Royal Paladin"
   },
@@ -23487,66 +23632,89 @@
    "managain": 8,
    "healthticks": 6000,
    "healthgain": 2,
+   "duration": 1200,
+   "transformdeequipto": 3052,
+   "weight": 80,
    "slot": "ring"
   },
   "3090": {
    "id": 3090,
    "name": "time ring",
    "speed": 30,
+   "duration": 600,
+   "transformdeequipto": 3053,
+   "weight": 90,
    "slot": "ring"
   },
   "3091": {
    "id": 3091,
    "name": "sword ring",
    "transformequipto": 3094,
+   "weight": 90,
    "slot": "ring"
   },
   "3092": {
    "id": 3092,
    "name": "axe ring",
    "transformequipto": 3095,
+   "weight": 90,
    "slot": "ring"
   },
   "3093": {
    "id": 3093,
    "name": "club ring",
    "transformequipto": 3096,
+   "weight": 90,
    "slot": "ring"
   },
   "3094": {
    "id": 3094,
    "name": "sword ring",
    "skillsword": 4,
+   "duration": 1800,
+   "transformdeequipto": 3091,
+   "weight": 90,
    "slot": "ring"
   },
   "3095": {
    "id": 3095,
    "name": "axe ring",
    "skillaxe": 4,
+   "duration": 1800,
+   "transformdeequipto": 3092,
+   "weight": 90,
    "slot": "ring"
   },
   "3096": {
    "id": 3096,
    "name": "club ring",
    "skillclub": 4,
+   "duration": 1800,
+   "transformdeequipto": 3093,
+   "weight": 90,
    "slot": "ring"
   },
   "3097": {
    "id": 3097,
    "name": "dwarven ring",
    "transformequipto": 3099,
+   "weight": 110,
    "slot": "ring"
   },
   "3098": {
    "id": 3098,
    "name": "ring of healing",
    "transformequipto": 3100,
+   "weight": 80,
    "slot": "ring"
   },
   "3099": {
    "id": 3099,
    "name": "dwarven ring",
    "suppressdrunk": 1,
+   "duration": 3600,
+   "transformdeequipto": 3097,
+   "weight": 110,
    "slot": "ring"
   },
   "3100": {
@@ -23556,57 +23724,70 @@
    "managain": 24,
    "healthticks": 6000,
    "healthgain": 6,
+   "duration": 450,
+   "transformdeequipto": 3098,
+   "weight": 80,
    "slot": "ring"
   },
   "3110": {
    "id": 3110,
    "name": "piece of iron",
+   "weight": 20,
    "stackable": 1
   },
   "3112": {
    "id": 3112,
    "name": "rotten meat",
+   "weight": 60,
    "stackable": 1
   },
   "3114": {
    "id": 3114,
    "name": "skull",
+   "weight": 2180,
    "stackable": 1
   },
   "3115": {
    "id": 3115,
    "name": "bone",
+   "weight": 950,
    "stackable": 1
   },
   "3116": {
    "id": 3116,
    "name": "big bone",
+   "weight": 1900,
    "stackable": 1
   },
   "3120": {
    "id": 3120,
    "name": "mouldy cheese",
+   "weight": 400,
    "stackable": 1
   },
   "3122": {
    "id": 3122,
    "name": "dirty cape",
+   "weight": 2950,
    "stackable": 1
   },
   "3123": {
    "id": 3123,
    "name": "worn leather boots",
+   "weight": 900,
    "stackable": 1
   },
   "3124": {
    "id": 3124,
    "name": "burnt scroll",
+   "weight": 40,
    "stackable": 1
   },
   "3147": {
    "id": 3147,
    "name": "blank rune",
    "type": "rune",
+   "weight": 210,
    "stackable": 1
   },
   "3152": {
@@ -23615,6 +23796,7 @@
    "type": "rune",
    "runespellname": "adura gran",
    "charges": 1,
+   "weight": 210,
    "stackable": 1
   },
   "3155": {
@@ -23623,6 +23805,7 @@
    "type": "rune",
    "runespellname": "adori gran mort",
    "charges": 3,
+   "weight": 70,
    "stackable": 1
   },
   "3158": {
@@ -23631,6 +23814,7 @@
    "type": "rune",
    "runespellname": "adori frigo",
    "charges": 5,
+   "weight": 42,
    "stackable": 1
   },
   "3160": {
@@ -23639,6 +23823,7 @@
    "type": "rune",
    "runespellname": "adura vita",
    "charges": 1,
+   "weight": 210,
    "stackable": 1
   },
   "3161": {
@@ -23647,6 +23832,7 @@
    "type": "rune",
    "runespellname": "adori mas frigo",
    "charges": 4,
+   "weight": 52,
    "stackable": 1
   },
   "3174": {
@@ -23655,6 +23841,7 @@
    "type": "rune",
    "runespellname": "adori min vis",
    "charges": 10,
+   "weight": 21,
    "stackable": 1
   },
   "3175": {
@@ -23663,6 +23850,7 @@
    "type": "rune",
    "runespellname": "adori mas tera",
    "charges": 4,
+   "weight": 52,
    "stackable": 1
   },
   "3179": {
@@ -23671,6 +23859,7 @@
    "type": "rune",
    "runespellname": "adori tera",
    "charges": 10,
+   "weight": 21,
    "stackable": 1
   },
   "3182": {
@@ -23679,6 +23868,7 @@
    "type": "rune",
    "runespellname": "adori san",
    "charges": 5,
+   "weight": 42,
    "stackable": 1
   },
   "3189": {
@@ -23687,6 +23877,7 @@
    "type": "rune",
    "runespellname": "adori flam",
    "charges": 5,
+   "weight": 42,
    "stackable": 1
   },
   "3191": {
@@ -23695,6 +23886,7 @@
    "type": "rune",
    "runespellname": "adori mas flam",
    "charges": 4,
+   "weight": 52,
    "stackable": 1
   },
   "3198": {
@@ -23703,6 +23895,7 @@
    "type": "rune",
    "runespellname": "adori vis",
    "charges": 10,
+   "weight": 21,
    "stackable": 1
   },
   "3200": {
@@ -23711,6 +23904,7 @@
    "type": "rune",
    "runespellname": "adevo mas hur",
    "charges": 6,
+   "weight": 35,
    "stackable": 1
   },
   "3202": {
@@ -23719,11 +23913,13 @@
    "type": "rune",
    "runespellname": "adori mas vis",
    "charges": 4,
+   "weight": 52,
    "stackable": 1
   },
   "3257": {
    "id": 3257,
-   "name": "cornucopia"
+   "name": "cornucopia",
+   "weight": 1400
   },
   "3264": {
    "id": 3264,
@@ -23732,6 +23928,7 @@
    "attack": 14,
    "extradef": 1,
    "defense": 12,
+   "weight": 3500,
    "slot": "hand"
   },
   "3265": {
@@ -23741,6 +23938,7 @@
    "slottype": "two-handed",
    "attack": 30,
    "defense": 25,
+   "weight": 7000,
    "level": 20,
    "unproperly": "true",
    "vocation": "Knight;true, Elite Knight"
@@ -23752,6 +23950,7 @@
    "slottype": "two-handed",
    "attack": 25,
    "defense": 10,
+   "weight": 5000,
    "unproperly": "true",
    "vocation": "Knight;true, Elite Knight"
   },
@@ -23761,6 +23960,7 @@
    "weapontype": "sword",
    "attack": 8,
    "defense": 6,
+   "weight": 950,
    "slot": "hand"
   },
   "3268": {
@@ -23769,6 +23969,7 @@
    "weapontype": "axe",
    "attack": 10,
    "defense": 5,
+   "weight": 1800,
    "slot": "hand"
   },
   "3269": {
@@ -23778,6 +23979,7 @@
    "slottype": "two-handed",
    "attack": 35,
    "defense": 14,
+   "weight": 9000,
    "level": 25,
    "unproperly": "true"
   },
@@ -23787,6 +23989,7 @@
    "weapontype": "club",
    "attack": 7,
    "defense": 7,
+   "weight": 2500,
    "slot": "hand"
   },
   "3271": {
@@ -23796,6 +23999,7 @@
    "attack": 24,
    "extradef": 2,
    "defense": 21,
+   "weight": 5000,
    "slot": "hand"
   },
   "3272": {
@@ -23805,6 +24009,7 @@
    "attack": 10,
    "extradef": 1,
    "defense": 8,
+   "weight": 1500,
    "slot": "hand"
   },
   "3273": {
@@ -23814,6 +24019,7 @@
    "attack": 12,
    "extradef": 1,
    "defense": 10,
+   "weight": 2500,
    "slot": "hand"
   },
   "3274": {
@@ -23822,6 +24028,7 @@
    "weapontype": "axe",
    "attack": 12,
    "defense": 6,
+   "weight": 4000,
    "slot": "hand"
   },
   "3275": {
@@ -23831,6 +24038,7 @@
    "slottype": "two-handed",
    "attack": 35,
    "defense": 12,
+   "weight": 7000,
    "level": 25,
    "unproperly": "true",
    "vocation": "Knight;true, Elite Knight"
@@ -23841,6 +24049,7 @@
    "weapontype": "axe",
    "attack": 15,
    "defense": 8,
+   "weight": 3500,
    "slot": "hand"
   },
   "3277": {
@@ -23851,6 +24060,7 @@
    "maxhitchance": 76,
    "range": 3,
    "attack": 25,
+   "weight": 2000,
    "breakchance": 3,
    "slot": "hand",
    "stackable": 1
@@ -23862,6 +24072,7 @@
    "slottype": "two-handed",
    "attack": 45,
    "defense": 10,
+   "weight": 8500,
    "level": 50,
    "unproperly": "true",
    "vocation": "Knight;true, Elite Knight"
@@ -23874,6 +24085,7 @@
    "attack": 24,
    "extradef": 1,
    "defense": 20,
+   "weight": 2300,
    "level": 30,
    "unproperly": "true",
    "slot": "hand"
@@ -23885,6 +24097,7 @@
    "slottype": "two-handed",
    "attack": 46,
    "defense": 22,
+   "weight": 18000,
    "level": 55,
    "unproperly": "true",
    "vocation": "Knight;true, Elite Knight"
@@ -23895,6 +24108,7 @@
    "weapontype": "club",
    "attack": 25,
    "defense": 11,
+   "weight": 5400,
    "slot": "hand"
   },
   "3283": {
@@ -23904,6 +24118,7 @@
    "attack": 15,
    "extradef": 1,
    "defense": 13,
+   "weight": 4000,
    "slot": "hand"
   },
   "3284": {
@@ -23914,6 +24129,7 @@
    "charges": 1,
    "attack": 42,
    "defense": 1,
+   "weight": 1500,
    "action": "removecharge",
    "slot": "hand"
   },
@@ -23923,6 +24139,7 @@
    "weapontype": "sword",
    "attack": 17,
    "defense": 14,
+   "weight": 4200,
    "slot": "hand"
   },
   "3286": {
@@ -23931,6 +24148,7 @@
    "weapontype": "club",
    "attack": 16,
    "defense": 11,
+   "weight": 3800,
    "slot": "hand"
   },
   "3287": {
@@ -23941,6 +24159,7 @@
    "maxhitchance": 76,
    "range": 4,
    "attack": 30,
+   "weight": 200,
    "breakchance": 10,
    "slot": "hand",
    "stackable": 1
@@ -23951,7 +24170,8 @@
    "weapontype": "club",
    "slottype": "two-handed",
    "attack": 10,
-   "defense": 25
+   "defense": 25,
+   "weight": 3800
   },
   "3290": {
    "id": 3290,
@@ -23959,6 +24179,7 @@
    "weapontype": "sword",
    "attack": 9,
    "defense": 7,
+   "weight": 1020,
    "slot": "hand"
   },
   "3291": {
@@ -23967,6 +24188,7 @@
    "weapontype": "sword",
    "attack": 5,
    "defense": 5,
+   "weight": 420,
    "slot": "hand"
   },
   "3292": {
@@ -23975,6 +24197,7 @@
    "weapontype": "sword",
    "attack": 8,
    "defense": 6,
+   "weight": 870,
    "slot": "hand"
   },
   "3293": {
@@ -23983,6 +24206,7 @@
    "weapontype": "axe",
    "attack": 5,
    "defense": 4,
+   "weight": 1050,
    "slot": "hand"
   },
   "3294": {
@@ -23991,6 +24215,7 @@
    "weapontype": "sword",
    "attack": 11,
    "defense": 11,
+   "weight": 3500,
    "slot": "hand"
   },
   "3297": {
@@ -24001,6 +24226,7 @@
    "attack": 18,
    "extradef": 1,
    "defense": 15,
+   "weight": 4100,
    "slot": "hand"
   },
   "3298": {
@@ -24011,6 +24237,7 @@
    "maxhitchance": 76,
    "range": 4,
    "attack": 25,
+   "weight": 500,
    "breakchance": 7,
    "slot": "hand",
    "stackable": 1
@@ -24022,6 +24249,7 @@
    "elementearth": 2,
    "attack": 16,
    "defense": 8,
+   "weight": 880,
    "slot": "hand"
   },
   "3300": {
@@ -24031,6 +24259,7 @@
    "attack": 16,
    "extradef": 1,
    "defense": 12,
+   "weight": 3100,
    "slot": "hand"
   },
   "3301": {
@@ -24040,6 +24269,7 @@
    "slottype": "two-handed",
    "attack": 26,
    "defense": 23,
+   "weight": 5250,
    "vocation": "Knight;true, Elite Knight"
   },
   "3302": {
@@ -24049,6 +24279,7 @@
    "slottype": "two-handed",
    "attack": 47,
    "defense": 16,
+   "weight": 6700,
    "level": 60,
    "unproperly": "true"
   },
@@ -24058,6 +24289,7 @@
    "weapontype": "club",
    "attack": 5,
    "defense": 6,
+   "weight": 2100,
    "slot": "hand"
   },
   "3305": {
@@ -24066,6 +24298,7 @@
    "weapontype": "club",
    "attack": 24,
    "defense": 14,
+   "weight": 6800,
    "slot": "hand"
   },
   "3306": {
@@ -24074,6 +24307,7 @@
    "weapontype": "axe",
    "attack": 13,
    "defense": 6,
+   "weight": 1950,
    "slot": "hand"
   },
   "3307": {
@@ -24083,6 +24317,7 @@
    "attack": 19,
    "extradef": 1,
    "defense": 13,
+   "weight": 2900,
    "slot": "hand"
   },
   "3308": {
@@ -24091,6 +24326,7 @@
    "weapontype": "sword",
    "attack": 12,
    "defense": 9,
+   "weight": 1650,
    "slot": "hand"
   },
   "3309": {
@@ -24100,6 +24336,7 @@
    "attack": 49,
    "extradef": 1,
    "defense": 35,
+   "weight": 12500,
    "level": 85,
    "unproperly": "true",
    "slot": "hand"
@@ -24111,6 +24348,7 @@
    "attack": 28,
    "extradef": 1,
    "defense": 15,
+   "weight": 5800,
    "level": 20,
    "unproperly": "true",
    "slot": "hand"
@@ -24122,6 +24360,7 @@
    "slottype": "two-handed",
    "attack": 34,
    "defense": 10,
+   "weight": 8000,
    "level": 20,
    "unproperly": "true"
   },
@@ -24131,6 +24370,7 @@
    "weapontype": "axe",
    "attack": 23,
    "defense": 12,
+   "weight": 4500,
    "slot": "hand"
   },
   "3317": {
@@ -24140,6 +24380,7 @@
    "attack": 28,
    "extradef": 1,
    "defense": 18,
+   "weight": 5100,
    "level": 20,
    "unproperly": "true",
    "slot": "hand"
@@ -24151,6 +24392,7 @@
    "attack": 33,
    "extradef": 1,
    "defense": 21,
+   "weight": 5900,
    "level": 25,
    "unproperly": "true",
    "slot": "hand"
@@ -24163,6 +24405,7 @@
    "attack": 27,
    "extradef": 1,
    "defense": 16,
+   "weight": 4000,
    "level": 35,
    "unproperly": "true",
    "slot": "hand"
@@ -24173,6 +24416,7 @@
    "weapontype": "club",
    "attack": 32,
    "defense": 20,
+   "weight": 9700,
    "level": 25,
    "unproperly": "true",
    "slot": "hand"
@@ -24184,6 +24428,7 @@
    "attack": 36,
    "extradef": 1,
    "defense": 12,
+   "weight": 1700,
    "level": 30,
    "unproperly": "true",
    "slot": "hand"
@@ -24194,6 +24439,7 @@
    "weapontype": "club",
    "attack": 21,
    "defense": 12,
+   "weight": 6800,
    "slot": "hand"
   },
   "3328": {
@@ -24203,6 +24449,7 @@
    "slottype": "two-handed",
    "attack": 39,
    "defense": 15,
+   "weight": 5250,
    "level": 25,
    "unproperly": "true",
    "vocation": "Knight;true, Elite Knight"
@@ -24214,6 +24461,7 @@
    "slottype": "two-handed",
    "attack": 48,
    "defense": 12,
+   "weight": 7000,
    "level": 65,
    "unproperly": "true",
    "vocation": "Knight;true, Elite Knight"
@@ -24225,6 +24473,7 @@
    "slottype": "two-handed",
    "attack": 45,
    "defense": 24,
+   "weight": 6400,
    "level": 50,
    "unproperly": "true",
    "vocation": "Knight;true, Elite Knight"
@@ -24235,6 +24484,7 @@
    "weapontype": "club",
    "attack": 9,
    "defense": 8,
+   "weight": 3500,
    "slot": "hand"
   },
   "3337": {
@@ -24243,6 +24493,7 @@
    "weapontype": "club",
    "attack": 12,
    "defense": 8,
+   "weight": 3900,
    "slot": "hand"
   },
   "3338": {
@@ -24251,6 +24502,7 @@
    "weapontype": "sword",
    "attack": 13,
    "defense": 10,
+   "weight": 1900,
    "slot": "hand"
   },
   "3340": {
@@ -24260,6 +24512,7 @@
    "slottype": "two-handed",
    "attack": 49,
    "defense": 15,
+   "weight": 11000,
    "level": 70,
    "unproperly": "true"
   },
@@ -24270,6 +24523,7 @@
    "slottype": "two-handed",
    "attack": 48,
    "defense": 10,
+   "weight": 6150,
    "level": 65,
    "unproperly": "true",
    "vocation": "Knight;true, Elite Knight"
@@ -24281,6 +24535,7 @@
    "attack": 35,
    "extradef": 1,
    "defense": 12,
+   "weight": 6150,
    "level": 30,
    "unproperly": "true",
    "slot": "hand"
@@ -24292,6 +24547,7 @@
    "attack": 23,
    "extradef": 1,
    "defense": 15,
+   "weight": 2900,
    "slot": "hand"
   },
   "3347": {
@@ -24302,6 +24558,7 @@
    "maxhitchance": 80,
    "range": 3,
    "attack": 32,
+   "weight": 2200,
    "breakchance": 6,
    "level": 20,
    "unproperly": "true",
@@ -24314,7 +24571,8 @@
    "weapontype": "distance",
    "slottype": "two-handed",
    "ammotype": "bolt",
-   "range": 5
+   "range": 5,
+   "weight": 4000
   },
   "3350": {
    "id": 3350,
@@ -24322,66 +24580,77 @@
    "weapontype": "distance",
    "slottype": "two-handed",
    "ammotype": "arrow",
-   "range": 6
+   "range": 6,
+   "weight": 3100
   },
   "3351": {
    "id": 3351,
    "name": "steel helmet",
    "armor": 6,
+   "weight": 4600,
    "slot": "head"
   },
   "3352": {
    "id": 3352,
    "name": "chain helmet",
    "armor": 2,
+   "weight": 4200,
    "slot": "head"
   },
   "3353": {
    "id": 3353,
    "name": "iron helmet",
    "armor": 5,
+   "weight": 3000,
    "slot": "head"
   },
   "3354": {
    "id": 3354,
    "name": "brass helmet",
    "armor": 3,
+   "weight": 2700,
    "slot": "head"
   },
   "3355": {
    "id": 3355,
    "name": "leather helmet",
    "armor": 1,
+   "weight": 2200,
    "slot": "head"
   },
   "3356": {
    "id": 3356,
    "name": "devil helmet",
    "armor": 7,
+   "weight": 5000,
    "slot": "head"
   },
   "3357": {
    "id": 3357,
    "name": "plate armor",
    "armor": 10,
+   "weight": 12000,
    "slot": "armor"
   },
   "3358": {
    "id": 3358,
    "name": "chain armor",
    "armor": 6,
+   "weight": 10000,
    "slot": "armor"
   },
   "3359": {
    "id": 3359,
    "name": "brass armor",
    "armor": 8,
+   "weight": 8000,
    "slot": "armor"
   },
   "3360": {
    "id": 3360,
    "name": "golden armor",
    "armor": 14,
+   "weight": 8000,
    "slot": "armor",
    "vocation": "Knight;true, Paladin;true, Elite Knight, Royal Paladin"
   },
@@ -24389,18 +24658,21 @@
    "id": 3361,
    "name": "leather armor",
    "armor": 4,
+   "weight": 6000,
    "slot": "armor"
   },
   "3362": {
    "id": 3362,
    "name": "studded legs",
    "armor": 2,
+   "weight": 2600,
    "slot": "legs"
   },
   "3364": {
    "id": 3364,
    "name": "golden legs",
    "armor": 9,
+   "weight": 5600,
    "slot": "legs",
    "vocation": "Knight;true, Paladin;true, Elite Knight, Royal Paladin"
   },
@@ -24408,6 +24680,7 @@
    "id": 3366,
    "name": "magic plate armor",
    "armor": 17,
+   "weight": 8500,
    "slot": "armor",
    "vocation": "Knight;true, Paladin;true, Elite Knight, Royal Paladin"
   },
@@ -24415,18 +24688,21 @@
    "id": 3367,
    "name": "viking helmet",
    "armor": 4,
+   "weight": 3900,
    "slot": "head"
   },
   "3369": {
    "id": 3369,
    "name": "warrior helmet",
    "armor": 8,
+   "weight": 6800,
    "slot": "head"
   },
   "3370": {
    "id": 3370,
    "name": "knight armor",
    "armor": 12,
+   "weight": 12000,
    "slot": "armor",
    "vocation": "Knight;true, Paladin;true, Elite Knight, Royal Paladin"
   },
@@ -24434,6 +24710,7 @@
    "id": 3371,
    "name": "knight legs",
    "armor": 8,
+   "weight": 7000,
    "slot": "legs",
    "vocation": "Knight;true, Paladin;true, Elite Knight, Royal Paladin"
   },
@@ -24441,60 +24718,70 @@
    "id": 3372,
    "name": "brass legs",
    "armor": 5,
+   "weight": 3800,
    "slot": "legs"
   },
   "3373": {
    "id": 3373,
    "name": "strange helmet",
    "armor": 6,
+   "weight": 4600,
    "slot": "head"
   },
   "3374": {
    "id": 3374,
    "name": "legion helmet",
    "armor": 4,
+   "weight": 3100,
    "slot": "head"
   },
   "3375": {
    "id": 3375,
    "name": "soldier helmet",
    "armor": 5,
+   "weight": 3200,
    "slot": "head"
   },
   "3376": {
    "id": 3376,
    "name": "studded helmet",
    "armor": 2,
+   "weight": 2450,
    "slot": "head"
   },
   "3377": {
    "id": 3377,
    "name": "scale armor",
    "armor": 9,
+   "weight": 10500,
    "slot": "armor"
   },
   "3378": {
    "id": 3378,
    "name": "studded armor",
    "armor": 5,
+   "weight": 7100,
    "slot": "armor"
   },
   "3379": {
    "id": 3379,
    "name": "doublet",
    "armor": 2,
+   "weight": 2500,
    "slot": "armor"
   },
   "3380": {
    "id": 3380,
    "name": "noble armor",
    "armor": 11,
+   "weight": 12000,
    "slot": "armor"
   },
   "3381": {
    "id": 3381,
    "name": "crown armor",
    "armor": 13,
+   "weight": 9900,
    "slot": "armor",
    "vocation": "Knight;true, Paladin;true, Elite Knight, Royal Paladin"
   },
@@ -24502,6 +24789,7 @@
    "id": 3382,
    "name": "crown legs",
    "armor": 8,
+   "weight": 6500,
    "slot": "legs",
    "vocation": "Knight;true, Paladin;true, Elite Knight, Royal Paladin"
   },
@@ -24509,24 +24797,28 @@
    "id": 3383,
    "name": "dark armor",
    "armor": 10,
+   "weight": 12000,
    "slot": "armor"
   },
   "3384": {
    "id": 3384,
    "name": "dark helmet",
    "armor": 6,
+   "weight": 4600,
    "slot": "head"
   },
   "3385": {
    "id": 3385,
    "name": "crown helmet",
    "armor": 7,
+   "weight": 2950,
    "slot": "head"
   },
   "3386": {
    "id": 3386,
    "name": "dragon scale mail",
    "armor": 15,
+   "weight": 11400,
    "slot": "armor",
    "vocation": "Knight;true, Paladin;true, Elite Knight, Royal Paladin"
   },
@@ -24534,6 +24826,7 @@
    "id": 3392,
    "name": "royal helmet",
    "armor": 9,
+   "weight": 4800,
    "slot": "head"
   },
   "3396": {
@@ -24541,30 +24834,35 @@
    "name": "dwarven helmet",
    "absorbpercentphysical": 2,
    "armor": 6,
+   "weight": 4200,
    "slot": "head"
   },
   "3404": {
    "id": 3404,
    "name": "leopard armor",
    "armor": 9,
+   "weight": 9500,
    "slot": "armor"
   },
   "3405": {
    "id": 3405,
    "name": "horseman helmet",
    "armor": 6,
+   "weight": 4200,
    "slot": "head"
   },
   "3407": {
    "id": 3407,
    "name": "charmer's tiara",
    "armor": 2,
+   "weight": 2200,
    "slot": "head"
   },
   "3408": {
    "id": 3408,
    "name": "bonelord helmet",
    "armor": 7,
+   "weight": 4600,
    "slot": "head"
   },
   "3409": {
@@ -24572,6 +24870,7 @@
    "name": "steel shield",
    "weapontype": "shield",
    "defense": 21,
+   "weight": 6900,
    "slot": "shield"
   },
   "3410": {
@@ -24579,6 +24878,7 @@
    "name": "plate shield",
    "weapontype": "shield",
    "defense": 17,
+   "weight": 6500,
    "slot": "shield"
   },
   "3411": {
@@ -24586,6 +24886,7 @@
    "name": "brass shield",
    "weapontype": "shield",
    "defense": 16,
+   "weight": 6000,
    "slot": "shield"
   },
   "3412": {
@@ -24593,6 +24894,7 @@
    "name": "wooden shield",
    "weapontype": "shield",
    "defense": 14,
+   "weight": 4000,
    "slot": "shield"
   },
   "3413": {
@@ -24600,6 +24902,7 @@
    "name": "battle shield",
    "weapontype": "shield",
    "defense": 23,
+   "weight": 6200,
    "slot": "shield"
   },
   "3414": {
@@ -24607,6 +24910,7 @@
    "name": "mastermind shield",
    "weapontype": "shield",
    "defense": 37,
+   "weight": 5700,
    "slot": "shield"
   },
   "3415": {
@@ -24614,6 +24918,7 @@
    "name": "guardian shield",
    "weapontype": "shield",
    "defense": 30,
+   "weight": 5500,
    "slot": "shield"
   },
   "3416": {
@@ -24621,6 +24926,7 @@
    "name": "dragon shield",
    "weapontype": "shield",
    "defense": 31,
+   "weight": 6000,
    "slot": "shield"
   },
   "3418": {
@@ -24628,6 +24934,7 @@
    "name": "bonelord shield",
    "weapontype": "shield",
    "defense": 28,
+   "weight": 4700,
    "slot": "shield"
   },
   "3419": {
@@ -24635,6 +24942,7 @@
    "name": "crown shield",
    "weapontype": "shield",
    "defense": 32,
+   "weight": 6200,
    "slot": "shield"
   },
   "3420": {
@@ -24642,6 +24950,7 @@
    "name": "demon shield",
    "weapontype": "shield",
    "defense": 35,
+   "weight": 2600,
    "slot": "shield"
   },
   "3421": {
@@ -24649,6 +24958,7 @@
    "name": "dark shield",
    "weapontype": "shield",
    "defense": 25,
+   "weight": 5200,
    "slot": "shield"
   },
   "3422": {
@@ -24656,6 +24966,7 @@
    "name": "great shield",
    "weapontype": "shield",
    "defense": 38,
+   "weight": 8400,
    "slot": "shield"
   },
   "3425": {
@@ -24663,6 +24974,7 @@
    "name": "dwarven shield",
    "weapontype": "shield",
    "defense": 26,
+   "weight": 5500,
    "slot": "shield"
   },
   "3426": {
@@ -24670,6 +24982,7 @@
    "name": "studded shield",
    "weapontype": "shield",
    "defense": 15,
+   "weight": 5800,
    "slot": "shield"
   },
   "3428": {
@@ -24677,6 +24990,7 @@
    "name": "tower shield",
    "weapontype": "shield",
    "defense": 32,
+   "weight": 8200,
    "slot": "shield"
   },
   "3429": {
@@ -24684,6 +24998,7 @@
    "name": "black shield",
    "weapontype": "shield",
    "defense": 18,
+   "weight": 4200,
    "slot": "shield"
   },
   "3430": {
@@ -24691,6 +25006,7 @@
    "name": "copper shield",
    "weapontype": "shield",
    "defense": 19,
+   "weight": 6300,
    "slot": "shield"
   },
   "3431": {
@@ -24698,6 +25014,7 @@
    "name": "viking shield",
    "weapontype": "shield",
    "defense": 22,
+   "weight": 6600,
    "slot": "shield"
   },
   "3432": {
@@ -24705,6 +25022,7 @@
    "name": "ancient shield",
    "weapontype": "shield",
    "defense": 27,
+   "weight": 6100,
    "slot": "shield"
   },
   "3434": {
@@ -24712,6 +25030,7 @@
    "name": "vampire shield",
    "weapontype": "shield",
    "defense": 34,
+   "weight": 3800,
    "slot": "shield"
   },
   "3435": {
@@ -24719,6 +25038,7 @@
    "name": "castle shield",
    "weapontype": "shield",
    "defense": 28,
+   "weight": 4900,
    "slot": "shield"
   },
   "3436": {
@@ -24726,6 +25046,7 @@
    "name": "medusa shield",
    "weapontype": "shield",
    "defense": 33,
+   "weight": 5800,
    "slot": "shield"
   },
   "3439": {
@@ -24733,6 +25054,7 @@
    "name": "phoenix shield",
    "weapontype": "shield",
    "defense": 34,
+   "weight": 3500,
    "slot": "shield"
   },
   "3440": {
@@ -24740,6 +25062,7 @@
    "name": "scarab shield",
    "weapontype": "shield",
    "defense": 25,
+   "weight": 4700,
    "slot": "shield"
   },
   "3441": {
@@ -24747,6 +25070,7 @@
    "name": "bone shield",
    "weapontype": "shield",
    "defense": 20,
+   "weight": 5500,
    "slot": "shield"
   },
   "3442": {
@@ -24754,6 +25078,7 @@
    "name": "tempest shield",
    "weapontype": "shield",
    "defense": 36,
+   "weight": 5100,
    "slot": "shield"
   },
   "3444": {
@@ -24761,6 +25086,7 @@
    "name": "sentinel shield",
    "weapontype": "shield",
    "defense": 22,
+   "weight": 4900,
    "slot": "shield"
   },
   "3445": {
@@ -24768,6 +25094,7 @@
    "name": "salamander shield",
    "weapontype": "shield",
    "defense": 26,
+   "weight": 5900,
    "slot": "shield"
   },
   "3446": {
@@ -24778,6 +25105,7 @@
    "shoottype": "bolt",
    "maxhitchance": 87,
    "attack": 30,
+   "weight": 80,
    "action": "removecount",
    "slot": "ammo",
    "stackable": 1
@@ -24790,6 +25118,7 @@
    "shoottype": "arrow",
    "maxhitchance": 91,
    "attack": 25,
+   "weight": 70,
    "action": "removecount",
    "slot": "ammo",
    "stackable": 1
@@ -24802,6 +25131,7 @@
    "shoottype": "poisonarrow",
    "maxhitchance": 91,
    "attack": 23,
+   "weight": 80,
    "stackable": 1
   },
   "3449": {
@@ -24812,6 +25142,7 @@
    "shoottype": "burstarrow",
    "maxhitchance": 100,
    "attack": 27,
+   "weight": 90,
    "stackable": 1
   },
   "3450": {
@@ -24822,6 +25153,7 @@
    "shoottype": "powerbolt",
    "maxhitchance": 91,
    "attack": 40,
+   "weight": 90,
    "action": "removecount",
    "level": 55,
    "unproperly": "true",
@@ -24834,139 +25166,165 @@
    "weapontype": "club",
    "slottype": "two-handed",
    "attack": 8,
-   "defense": 3
+   "defense": 3,
+   "weight": 3000
   },
   "3456": {
    "id": 3456,
-   "name": "pick"
+   "name": "pick",
+   "weight": 4500
   },
   "3457": {
    "id": 3457,
-   "name": "shovel"
+   "name": "shovel",
+   "weight": 3500
   },
   "3461": {
    "id": 3461,
-   "name": "saw"
+   "name": "saw",
+   "weight": 1000
   },
   "3462": {
    "id": 3462,
-   "name": "small axe"
+   "name": "small axe",
+   "weight": 2000
   },
   "3481": {
    "id": 3481,
-   "name": "closed trap"
+   "name": "closed trap",
+   "weight": 2100
   },
   "3483": {
    "id": 3483,
-   "name": "fishing rod"
+   "name": "fishing rod",
+   "weight": 850
   },
   "3492": {
    "id": 3492,
    "name": "worm",
+   "weight": 5,
    "stackable": 1
   },
   "3505": {
    "id": 3505,
    "name": "letter",
    "writeable": 1,
-   "maxtextlen": 1999
+   "maxtextlen": 1999,
+   "weight": 50
   },
   "3509": {
    "id": 3509,
-   "name": "inkwell"
+   "name": "inkwell",
+   "weight": 200
   },
   "3551": {
    "id": 3551,
    "name": "sandals",
+   "weight": 600,
    "slot": "feet"
   },
   "3552": {
    "id": 3552,
    "name": "leather boots",
    "armor": 1,
+   "weight": 900,
    "slot": "feet"
   },
   "3554": {
    "id": 3554,
    "name": "steel boots",
    "armor": 3,
+   "weight": 2900,
    "slot": "feet"
   },
   "3555": {
    "id": 3555,
    "name": "golden boots",
    "armor": 4,
+   "weight": 3100,
    "slot": "feet"
   },
   "3556": {
    "id": 3556,
    "name": "crocodile boots",
    "armor": 1,
+   "weight": 900,
    "slot": "feet"
   },
   "3557": {
    "id": 3557,
    "name": "plate legs",
    "armor": 7,
+   "weight": 5000,
    "slot": "legs"
   },
   "3558": {
    "id": 3558,
    "name": "chain legs",
    "armor": 3,
+   "weight": 3500,
    "slot": "legs"
   },
   "3559": {
    "id": 3559,
    "name": "leather legs",
    "armor": 1,
+   "weight": 1800,
    "slot": "legs"
   },
   "3561": {
    "id": 3561,
    "name": "jacket",
    "armor": 1,
+   "weight": 2400,
    "slot": "armor"
   },
   "3562": {
    "id": 3562,
    "name": "coat",
    "armor": 1,
+   "weight": 2700,
    "slot": "armor"
   },
   "3563": {
    "id": 3563,
    "name": "green tunic",
    "armor": 1,
+   "weight": 930,
    "slot": "armor"
   },
   "3565": {
    "id": 3565,
    "name": "cape",
    "armor": 1,
+   "weight": 3200,
    "slot": "armor"
   },
   "3566": {
    "id": 3566,
    "name": "red robe",
    "armor": 1,
+   "weight": 2600,
    "slot": "armor"
   },
   "3567": {
    "id": 3567,
    "name": "blue robe",
    "armor": 11,
+   "weight": 2200,
    "slot": "armor"
   },
   "3568": {
    "id": 3568,
    "name": "simple dress",
+   "weight": 1000,
    "slot": "armor"
   },
   "3571": {
    "id": 3571,
    "name": "ranger's cloak",
    "armor": 7,
+   "weight": 4800,
    "slot": "armor",
    "vocation": "Paladin;true, Royal Paladin"
   },
@@ -24974,201 +25332,241 @@
    "id": 3572,
    "name": "scarf",
    "armor": 1,
+   "weight": 200,
    "slot": "necklace"
   },
   "3573": {
    "id": 3573,
    "name": "magician hat",
    "armor": 1,
+   "weight": 750,
    "slot": "head"
   },
   "3574": {
    "id": 3574,
    "name": "mystic turban",
    "armor": 1,
+   "weight": 850,
    "slot": "head"
   },
   "3577": {
    "id": 3577,
    "name": "meat",
    "showcount": 0,
+   "weight": 1300,
    "stackable": 1
   },
   "3578": {
    "id": 3578,
    "name": "fish",
+   "weight": 520,
    "stackable": 1
   },
   "3581": {
    "id": 3581,
    "name": "shrimp",
    "showcount": 0,
+   "weight": 50,
    "stackable": 1
   },
   "3582": {
    "id": 3582,
    "name": "ham",
    "showcount": 0,
+   "weight": 2000,
    "stackable": 1
   },
   "3583": {
    "id": 3583,
    "name": "dragon ham",
    "showcount": 0,
+   "weight": 3000,
    "stackable": 1
   },
   "3585": {
    "id": 3585,
    "name": "red apple",
+   "weight": 150,
    "stackable": 1
   },
   "3586": {
    "id": 3586,
    "name": "orange",
+   "weight": 110,
    "stackable": 1
   },
   "3590": {
    "id": 3590,
    "name": "cherry",
+   "weight": 20,
    "stackable": 1
   },
   "3591": {
    "id": 3591,
    "name": "strawberry",
+   "weight": 20,
    "stackable": 1
   },
   "3592": {
    "id": 3592,
    "name": "grapes",
    "showcount": 0,
+   "weight": 250,
    "stackable": 1
   },
   "3593": {
    "id": 3593,
    "name": "melon",
+   "weight": 950,
    "stackable": 1
   },
   "3595": {
    "id": 3595,
    "name": "carrot",
+   "weight": 160,
    "stackable": 1
   },
   "3596": {
    "id": 3596,
    "name": "tomato",
+   "weight": 100,
    "stackable": 1
   },
   "3597": {
    "id": 3597,
    "name": "corncob",
+   "weight": 350,
    "stackable": 1
   },
   "3598": {
    "id": 3598,
    "name": "cookie",
+   "weight": 10,
    "stackable": 1
   },
   "3600": {
    "id": 3600,
    "name": "bread",
+   "weight": 500,
    "stackable": 1
   },
   "3601": {
    "id": 3601,
    "name": "roll",
+   "weight": 100,
    "stackable": 1
   },
   "3602": {
    "id": 3602,
    "name": "brown bread",
+   "weight": 400,
    "stackable": 1
   },
   "3605": {
    "id": 3605,
    "name": "bunch of wheat",
+   "weight": 1250,
    "stackable": 1
   },
   "3606": {
    "id": 3606,
    "name": "egg",
+   "weight": 30,
    "stackable": 1
   },
   "3607": {
    "id": 3607,
    "name": "cheese",
    "showcount": 0,
+   "weight": 400,
    "stackable": 1
   },
   "3658": {
    "id": 3658,
    "name": "red rose",
+   "weight": 80,
    "stackable": 1
   },
   "3661": {
    "id": 3661,
    "name": "grave flower",
+   "weight": 60,
    "stackable": 1
   },
   "3723": {
    "id": 3723,
    "name": "white mushroom",
+   "weight": 40,
    "stackable": 1
   },
   "3724": {
    "id": 3724,
    "name": "red mushroom",
+   "weight": 50,
    "stackable": 1
   },
   "3725": {
    "id": 3725,
    "name": "brown mushroom",
+   "weight": 20,
    "stackable": 1
   },
   "3728": {
    "id": 3728,
    "name": "dark mushroom",
+   "weight": 10,
    "stackable": 1
   },
   "3731": {
    "id": 3731,
    "name": "fire mushroom",
+   "weight": 10,
    "stackable": 1
   },
   "3732": {
    "id": 3732,
    "name": "green mushroom",
+   "weight": 10,
    "stackable": 1
   },
   "3738": {
    "id": 3738,
    "name": "sling herb",
+   "weight": 90,
    "stackable": 1
   },
   "3740": {
    "id": 3740,
    "name": "shadow herb",
+   "weight": 20,
    "stackable": 1
   },
   "3741": {
    "id": 3741,
    "name": "troll green",
+   "weight": 100,
    "stackable": 1
   },
   "3994": {
    "id": 3994,
    "name": "dead rat",
    "fluidsource": "blood",
-   "containersize": 10
+   "duration": 300,
+   "containersize": 10,
+   "weight": 6300
   },
   "3998": {
    "id": 3998,
-   "name": "dead snake"
+   "name": "dead snake",
+   "duration": 300,
+   "weight": 1200
   },
   "4033": {
    "id": 4033,
    "name": "draken boots",
    "speed": 15,
    "armor": 3,
+   "weight": 2500,
    "level": 80,
    "slot": "feet",
    "vocation": "Knight;true, Paladin;true, Elite Knight, Royal Paladin"
@@ -25177,697 +25575,824 @@
    "id": 4239,
    "name": "dead lizard templar",
    "fluidsource": "blood",
+   "duration": 10,
    "containersize": 30
   },
   "4831": {
    "id": 4831,
    "name": "old parchment",
+   "weight": 200,
    "stackable": 1
   },
   "4839": {
    "id": 4839,
    "name": "hydra egg",
+   "weight": 2000,
    "stackable": 1
   },
   "4871": {
    "id": 4871,
    "name": "explorer brooch",
+   "weight": 90,
    "stackable": 1
   },
   "5021": {
    "id": 5021,
    "name": "orichalcum pearl",
+   "weight": 30,
    "stackable": 1
   },
   "5090": {
    "id": 5090,
-   "name": "treasure map"
+   "name": "treasure map",
+   "weight": 830
   },
   "5460": {
    "id": 5460,
    "name": "helmet of the deep",
    "absorbpercentdrown": 100,
    "armor": 2,
+   "weight": 21000,
    "slot": "head"
   },
   "5461": {
    "id": 5461,
    "name": "pirate boots",
    "armor": 2,
+   "weight": 800,
    "slot": "feet"
   },
   "5479": {
    "id": 5479,
    "name": "cat's paw",
+   "weight": 1000,
    "stackable": 1
   },
   "5552": {
    "id": 5552,
    "name": "rum flask",
-   "allowpickupable": 1
+   "allowpickupable": 1,
+   "weight": 280
   },
   "5668": {
    "id": 5668,
-   "name": "mysterious voodoo skull"
+   "name": "mysterious voodoo skull",
+   "weight": 1400
   },
   "5710": {
    "id": 5710,
-   "name": "light shovel"
+   "name": "light shovel",
+   "weight": 1500
   },
   "5741": {
    "id": 5741,
    "name": "skull helmet",
    "armor": 9,
+   "weight": 4200,
    "slot": "head"
   },
   "5801": {
    "id": 5801,
    "name": "jewelled backpack",
    "containersize": 22,
+   "weight": 1700,
    "slot": "backpack"
   },
   "5804": {
    "id": 5804,
    "name": "nose ring",
+   "weight": 500,
    "stackable": 1
   },
   "5808": {
    "id": 5808,
    "name": "Orshabaal's brain",
+   "weight": 3500,
    "stackable": 1
   },
   "5809": {
    "id": 5809,
    "name": "soul stone",
+   "weight": 30,
    "stackable": 1
   },
   "5813": {
    "id": 5813,
-   "name": "skull candle"
+   "name": "skull candle",
+   "weight": 2200
   },
   "5875": {
    "id": 5875,
    "name": "sniper gloves",
+   "weight": 400,
    "stackable": 1
   },
   "5876": {
    "id": 5876,
    "name": "lizard leather",
    "showcount": 0,
+   "weight": 50,
    "stackable": 1
   },
   "5877": {
    "id": 5877,
    "name": "green dragon leather",
    "showcount": 0,
+   "weight": 60,
    "stackable": 1
   },
   "5878": {
    "id": 5878,
    "name": "minotaur leather",
    "showcount": 0,
+   "weight": 40,
    "stackable": 1
   },
   "5879": {
    "id": 5879,
    "name": "spider silk",
    "showcount": 0,
+   "weight": 10,
    "stackable": 1
   },
   "5880": {
    "id": 5880,
    "name": "iron ore",
    "showcount": 0,
+   "weight": 200,
    "stackable": 1
   },
   "5881": {
    "id": 5881,
    "name": "lizard scale",
+   "weight": 80,
    "stackable": 1
   },
   "5882": {
    "id": 5882,
    "name": "red dragon scale",
+   "weight": 90,
    "stackable": 1
   },
   "5886": {
    "id": 5886,
    "name": "spool of yarn",
+   "weight": 100,
    "stackable": 1
   },
   "5887": {
    "id": 5887,
    "name": "piece of royal steel",
+   "weight": 500,
    "stackable": 1
   },
   "5888": {
    "id": 5888,
    "name": "piece of hell steel",
+   "weight": 500,
    "stackable": 1
   },
   "5889": {
    "id": 5889,
    "name": "piece of draconian steel",
+   "weight": 500,
    "stackable": 1
   },
   "5893": {
    "id": 5893,
    "name": "perfect behemoth fang",
+   "weight": 500,
    "stackable": 1
   },
   "5894": {
    "id": 5894,
    "name": "bat wing",
+   "weight": 100,
    "stackable": 1
   },
   "5895": {
    "id": 5895,
    "name": "fish fin",
+   "weight": 120,
    "stackable": 1
   },
   "5897": {
    "id": 5897,
    "name": "wolf paw",
+   "weight": 80,
    "stackable": 1
   },
   "5898": {
    "id": 5898,
    "name": "bonelord eye",
+   "weight": 500,
    "stackable": 1
   },
   "5901": {
    "id": 5901,
    "name": "wood",
    "showcount": 0,
+   "weight": 500,
    "stackable": 1
   },
   "5903": {
    "id": 5903,
    "name": "Ferumbras' hat",
    "armor": 1,
+   "weight": 850,
    "slot": "head"
   },
   "5904": {
    "id": 5904,
    "name": "magic sulphur",
    "showcount": 0,
+   "weight": 100,
    "stackable": 1
   },
   "5907": {
    "id": 5907,
-   "name": "slingshot"
+   "name": "slingshot",
+   "weight": 200
   },
   "5909": {
    "id": 5909,
    "name": "white piece of cloth",
+   "weight": 500,
    "stackable": 1
   },
   "5910": {
    "id": 5910,
    "name": "green piece of cloth",
+   "weight": 500,
    "stackable": 1
   },
   "5911": {
    "id": 5911,
    "name": "red piece of cloth",
+   "weight": 500,
    "stackable": 1
   },
   "5913": {
    "id": 5913,
    "name": "brown piece of cloth",
+   "weight": 500,
    "stackable": 1
   },
   "5914": {
    "id": 5914,
    "name": "yellow piece of cloth",
+   "weight": 500,
    "stackable": 1
   },
   "5918": {
    "id": 5918,
    "name": "pirate knee breeches",
    "armor": 1,
+   "weight": 1200,
    "slot": "legs"
   },
   "5919": {
    "id": 5919,
    "name": "dragon claw",
+   "weight": 1250,
    "stackable": 1
   },
   "5920": {
    "id": 5920,
    "name": "green dragon scale",
+   "weight": 80,
    "stackable": 1
   },
   "5921": {
    "id": 5921,
    "name": "heaven blossom",
+   "weight": 210,
    "stackable": 1
   },
   "5922": {
    "id": 5922,
    "name": "holy orchid",
+   "weight": 250,
    "stackable": 1
   },
   "5925": {
    "id": 5925,
    "name": "hardened bone",
+   "weight": 600,
    "stackable": 1
   },
   "5926": {
    "id": 5926,
    "name": "pirate backpack",
    "containersize": 20,
+   "weight": 1800,
    "slot": "backpack"
   },
   "5927": {
    "id": 5927,
    "name": "pirate bag",
    "containersize": 8,
+   "weight": 800,
    "slot": "backpack"
   },
   "5930": {
    "id": 5930,
    "name": "behemoth claw",
+   "weight": 1250,
    "stackable": 1
   },
   "5943": {
    "id": 5943,
    "name": "Morgaroth's heart",
+   "weight": 3500,
    "stackable": 1
   },
   "5944": {
    "id": 5944,
    "name": "soul orb",
+   "weight": 20,
    "stackable": 1
   },
   "5948": {
    "id": 5948,
    "name": "red dragon leather",
    "showcount": 0,
+   "weight": 60,
    "stackable": 1
   },
   "5949": {
    "id": 5949,
    "name": "beach backpack",
    "containersize": 20,
+   "weight": 1800,
    "slot": "backpack"
   },
   "5950": {
    "id": 5950,
    "name": "beach bag",
    "containersize": 8,
+   "weight": 800,
    "slot": "backpack"
   },
   "5954": {
    "id": 5954,
    "name": "demon horn",
+   "weight": 1000,
    "stackable": 1
   },
   "5960": {
    "id": 5960,
    "name": "dead troll",
    "fluidsource": "blood",
+   "duration": 10,
    "containersize": 7
   },
   "5961": {
    "id": 5961,
    "name": "dead spider",
    "fluidsource": "slime",
+   "duration": 10,
    "containersize": 6
   },
   "5962": {
    "id": 5962,
    "name": "dead cyclops",
    "fluidsource": "blood",
+   "duration": 10,
    "containersize": 30
   },
   "5963": {
    "id": 5963,
    "name": "slain skeleton",
+   "duration": 10,
    "containersize": 10
   },
   "5964": {
    "id": 5964,
    "name": "dead rat",
    "fluidsource": "blood",
+   "duration": 10,
    "containersize": 10
   },
   "5966": {
    "id": 5966,
    "name": "dead orc",
    "fluidsource": "blood",
+   "duration": 10,
    "containersize": 10
   },
   "5967": {
    "id": 5967,
    "name": "dead rotworm",
    "fluidsource": "blood",
+   "duration": 10,
    "containersize": 10
   },
   "5968": {
    "id": 5968,
    "name": "dead wolf",
    "fluidsource": "blood",
+   "duration": 10,
    "containersize": 5
   },
   "5969": {
    "id": 5969,
    "name": "dead minotaur",
    "fluidsource": "blood",
+   "duration": 10,
    "containersize": 10
   },
   "5972": {
    "id": 5972,
    "name": "slain skeleton",
+   "duration": 10,
    "containersize": 10
   },
   "5973": {
    "id": 5973,
    "name": "dead dragon",
    "fluidsource": "blood",
+   "duration": 10,
    "containersize": 12
   },
   "5974": {
    "id": 5974,
    "name": "dead spider",
    "fluidsource": "slime",
+   "duration": 10,
    "containersize": 5
   },
   "5976": {
    "id": 5976,
    "name": "slain ghoul",
+   "duration": 10,
    "containersize": 10
   },
   "5977": {
    "id": 5977,
    "name": "dead giant spider",
    "fluidsource": "slime",
+   "duration": 10,
    "containersize": 30
   },
   "5978": {
    "id": 5978,
    "name": "dead orc",
    "fluidsource": "blood",
+   "duration": 10,
    "containersize": 10
   },
   "5979": {
    "id": 5979,
    "name": "dead orc",
    "fluidsource": "blood",
+   "duration": 10,
    "containersize": 10
   },
   "5980": {
    "id": 5980,
    "name": "dead orc",
    "fluidsource": "blood",
+   "duration": 10,
    "containersize": 10
   },
   "5981": {
    "id": 5981,
    "name": "dead minotaur",
    "fluidsource": "blood",
+   "duration": 10,
    "containersize": 10
   },
   "5982": {
    "id": 5982,
    "name": "dead minotaur",
    "fluidsource": "blood",
+   "duration": 10,
    "containersize": 10
   },
   "5983": {
    "id": 5983,
    "name": "dead minotaur",
    "fluidsource": "blood",
+   "duration": 10,
    "containersize": 10
   },
   "5984": {
    "id": 5984,
    "name": "dead dragon",
    "fluidsource": "blood",
+   "duration": 10,
    "containersize": 56
   },
   "5988": {
    "id": 5988,
    "name": "dead scorpion",
    "fluidsource": "slime",
+   "duration": 10,
    "containersize": 5
   },
   "5990": {
    "id": 5990,
    "name": "dead bug",
    "fluidsource": "slime",
+   "duration": 10,
    "containersize": 10
   },
   "5992": {
    "id": 5992,
    "name": "dead bonelord",
    "fluidsource": "slime",
+   "duration": 10,
    "containersize": 32
   },
   "5993": {
    "id": 5993,
    "name": "remains of a ghost",
+   "duration": 10,
    "containersize": 10
   },
   "5995": {
    "id": 5995,
    "name": "slain demon",
+   "duration": 10,
    "containersize": 15
   },
   "5996": {
    "id": 5996,
    "name": "dead orc",
    "fluidsource": "blood",
+   "duration": 10,
    "containersize": 10
   },
   "5999": {
    "id": 5999,
    "name": "dead behemoth",
    "fluidsource": "blood",
+   "duration": 10,
    "containersize": 50
   },
   "6001": {
    "id": 6001,
    "name": "dead orc",
    "fluidsource": "blood",
+   "duration": 10,
    "containersize": 10
   },
   "6002": {
    "id": 6002,
    "name": "dead goblin",
    "fluidsource": "blood",
+   "duration": 10,
    "containersize": 10
   },
   "6003": {
    "id": 6003,
    "name": "dead elf",
    "fluidsource": "blood",
+   "duration": 10,
    "containersize": 10
   },
   "6004": {
    "id": 6004,
    "name": "remains of a mummy",
+   "duration": 10,
    "containersize": 10
   },
   "6005": {
    "id": 6005,
    "name": "split stone golem",
+   "duration": 10,
    "containersize": 15
   },
   "6006": {
    "id": 6006,
    "name": "slain vampire",
+   "duration": 10,
    "containersize": 10
   },
   "6007": {
    "id": 6007,
    "name": "dead dwarf",
    "fluidsource": "blood",
+   "duration": 10,
    "containersize": 10
   },
   "6008": {
    "id": 6008,
    "name": "dead orc",
    "fluidsource": "blood",
+   "duration": 10,
    "containersize": 10
   },
   "6010": {
    "id": 6010,
    "name": "dead orc",
    "fluidsource": "blood",
+   "duration": 10,
    "containersize": 10
   },
   "6011": {
    "id": 6011,
    "name": "dead elf",
    "fluidsource": "blood",
+   "duration": 10,
    "containersize": 10
   },
   "6013": {
    "id": 6013,
    "name": "dead dwarf",
    "fluidsource": "blood",
+   "duration": 10,
    "containersize": 10
   },
   "6014": {
    "id": 6014,
    "name": "dead dwarf",
    "fluidsource": "blood",
+   "duration": 10,
    "containersize": 10
   },
   "6018": {
    "id": 6018,
    "name": "dead troll",
    "fluidsource": "blood",
+   "duration": 10,
    "containersize": 10
   },
   "6019": {
    "id": 6019,
    "name": "slain banshee",
    "fluidsource": "blood",
+   "duration": 10,
    "containersize": 44
   },
   "6021": {
    "id": 6021,
    "name": "dead ancient scarab",
    "fluidsource": "slime",
+   "duration": 10,
    "containersize": 16
   },
   "6023": {
    "id": 6023,
    "name": "dead larva",
    "fluidsource": "slime",
+   "duration": 10,
    "containersize": 5
   },
   "6026": {
    "id": 6026,
    "name": "dead hyaena",
    "fluidsource": "blood",
+   "duration": 10,
    "containersize": 14
   },
   "6027": {
    "id": 6027,
    "name": "dead gargoyle",
+   "duration": 10,
    "containersize": 28
   },
   "6028": {
    "id": 6028,
    "name": "slain lich",
    "fluidsource": "blood",
+   "duration": 10,
    "containersize": 7
   },
   "6029": {
    "id": 6029,
    "name": "slain crypt shambler",
    "fluidsource": "blood",
+   "duration": 10,
    "containersize": 7
   },
   "6030": {
    "id": 6030,
    "name": "slain bonebeast",
+   "duration": 10,
    "containersize": 24
   },
   "6037": {
    "id": 6037,
    "name": "dead elder bonelord",
    "fluidsource": "slime",
+   "duration": 10,
    "containersize": 38
   },
   "6040": {
    "id": 6040,
    "name": "dead lizard sentinel",
    "fluidsource": "blood",
+   "duration": 10,
    "containersize": 28
   },
   "6046": {
    "id": 6046,
    "name": "dead crocodile",
    "fluidsource": "blood",
+   "duration": 10,
    "containersize": 18
   },
   "6048": {
    "id": 6048,
    "name": "dead hydra",
    "fluidsource": "blood",
+   "duration": 10,
    "containersize": 36
   },
   "6053": {
    "id": 6053,
    "name": "dead bat",
    "fluidsource": "blood",
+   "duration": 10,
    "containersize": 14
   },
   "6061": {
    "id": 6061,
    "name": "dead serpent spawn",
    "fluidsource": "blood",
+   "duration": 10,
    "containersize": 40
   },
   "6063": {
    "id": 6063,
    "name": "dead quara pincher",
    "fluidsource": "blood",
+   "duration": 10,
    "containersize": 26
   },
   "6065": {
    "id": 6065,
    "name": "dead quara constrictor",
    "fluidsource": "blood",
+   "duration": 10,
    "containersize": 28
   },
   "6066": {
    "id": 6066,
    "name": "dead quara hydromancer",
    "fluidsource": "blood",
+   "duration": 10,
    "containersize": 26
   },
   "6068": {
    "id": 6068,
    "name": "demon dust",
    "fluidsource": "blood",
-   "containersize": 24
+   "duration": 10,
+   "containersize": 24,
+   "weight": 100
   },
   "6078": {
    "id": 6078,
    "name": "remains of Ferumbras",
+   "duration": 10,
    "containersize": 10
   },
   "6079": {
    "id": 6079,
    "name": "dead frog",
    "fluidsource": "blood",
+   "duration": 10,
    "containersize": 5
   },
   "6095": {
    "id": 6095,
    "name": "pirate shirt",
    "armor": 3,
+   "weight": 2000,
    "slot": "armor"
   },
   "6096": {
    "id": 6096,
    "name": "pirate hat",
    "armor": 3,
+   "weight": 1250,
    "slot": "head"
   },
   "6097": {
    "id": 6097,
    "name": "hook",
+   "weight": 500,
    "stackable": 1
   },
   "6098": {
    "id": 6098,
    "name": "eye patch",
+   "weight": 150,
    "stackable": 1
   },
   "6120": {
    "id": 6120,
    "name": "Dragha's spellbook",
+   "weight": 5800,
    "slot": "shield"
   },
   "6126": {
    "id": 6126,
    "name": "peg leg",
+   "weight": 500,
    "stackable": 1
   },
   "6299": {
@@ -25876,6 +26401,7 @@
    "absorbpercentdeath": 5,
    "transformequipto": 6300,
    "armor": 1,
+   "weight": 80,
    "slot": "ring"
   },
   "6300": {
@@ -25883,78 +26409,94 @@
    "name": "death ring",
    "absorbpercentdeath": 5,
    "skillshield": -10,
+   "duration": 480,
+   "transformdeequipto": 6299,
    "armor": 1,
+   "weight": 80,
    "slot": "ring"
   },
   "6305": {
    "id": 6305,
    "name": "slain undead dragon",
+   "duration": 10,
    "containersize": 48
   },
   "6306": {
    "id": 6306,
    "name": "slain undead dragon",
+   "duration": 300,
    "containersize": 48
   },
   "6311": {
    "id": 6311,
    "name": "slain hand of cursed fate",
    "fluidsource": "blood",
+   "duration": 10,
    "containersize": 28
   },
   "6319": {
    "id": 6319,
    "name": "dead destroyer",
    "fluidsource": "blood",
+   "duration": 10,
    "containersize": 48
   },
   "6323": {
    "id": 6323,
    "name": "elemental ashes",
+   "duration": 10,
    "containersize": 38
   },
   "6327": {
    "id": 6327,
    "name": "dead torturer",
+   "duration": 300,
    "containersize": 26
   },
   "6331": {
    "id": 6331,
    "name": "dead hellhound",
    "fluidsource": "blood",
+   "duration": 10,
    "containersize": 32
   },
   "6335": {
    "id": 6335,
    "name": "dead juggernaut",
    "fluidsource": "blood",
+   "duration": 10,
    "containersize": 40
   },
   "6339": {
    "id": 6339,
    "name": "dead nightmare",
    "fluidsource": "blood",
+   "duration": 10,
    "containersize": 10
   },
   "6353": {
    "id": 6353,
    "name": "slain blightwalker",
+   "duration": 10,
    "containersize": 40
   },
   "6499": {
    "id": 6499,
    "name": "demonic essence",
+   "weight": 100,
    "stackable": 1
   },
   "6515": {
    "id": 6515,
    "name": "dead plaguesmith",
    "fluidsource": "blood",
+   "duration": 10,
    "containersize": 32
   },
   "6525": {
    "id": 6525,
-   "name": "skeleton decoration"
+   "name": "skeleton decoration",
+   "weight": 1000
   },
   "6528": {
    "id": 6528,
@@ -25964,6 +26506,7 @@
    "shoottype": "infernalbolt",
    "maxhitchance": 91,
    "attack": 72,
+   "weight": 90,
    "action": "removecount",
    "level": 110,
    "unproperly": "true",
@@ -25974,16 +26517,19 @@
    "id": 6532,
    "name": "dead defiler",
    "fluidsource": "slime",
+   "duration": 10,
    "containersize": 36
   },
   "6535": {
    "id": 6535,
    "name": "Plasmother's remains",
+   "weight": 3000,
    "stackable": 1
   },
   "6546": {
    "id": 6546,
    "name": "Dracola's eye",
+   "weight": 1500,
    "stackable": 1
   },
   "6553": {
@@ -25993,6 +26539,7 @@
    "slottype": "two-handed",
    "attack": 50,
    "defense": 15,
+   "weight": 5800,
    "level": 75,
    "unproperly": "true",
    "vocation": "Knight;true, Elite Knight"
@@ -26000,49 +26547,58 @@
   "6558": {
    "id": 6558,
    "name": "flask of demonic blood",
+   "weight": 200,
    "stackable": 1
   },
   "6574": {
    "id": 6574,
    "name": "bar of chocolate",
+   "weight": 10,
    "stackable": 1
   },
   "6578": {
    "id": 6578,
    "name": "party hat",
    "armor": 1,
+   "weight": 750,
    "slot": "head"
   },
   "7091": {
    "id": 7091,
    "name": "dead frost dragon",
+   "duration": 10,
    "containersize": 50
   },
   "7282": {
    "id": 7282,
    "name": "slain ice golem",
+   "duration": 10,
    "containersize": 30
   },
   "7290": {
    "id": 7290,
    "name": "shard",
+   "weight": 1900,
    "stackable": 1
   },
   "7342": {
    "id": 7342,
    "name": "fur backpack",
    "containersize": 20,
+   "weight": 1800,
    "slot": "backpack"
   },
   "7343": {
    "id": 7343,
    "name": "fur bag",
    "containersize": 8,
+   "weight": 800,
    "slot": "backpack"
   },
   "7344": {
    "id": 7344,
    "name": "slain crystal spider",
+   "duration": 10,
    "containersize": 52
   },
   "7363": {
@@ -26053,6 +26609,7 @@
    "shoottype": "piercingbolt",
    "maxhitchance": 87,
    "attack": 33,
+   "weight": 80,
    "action": "removecount",
    "level": 30,
    "unproperly": "true",
@@ -26067,6 +26624,7 @@
    "shoottype": "sniperarrow",
    "maxhitchance": 100,
    "attack": 28,
+   "weight": 70,
    "action": "removecount",
    "level": 20,
    "unproperly": "true",
@@ -26081,6 +26639,7 @@
    "shoottype": "onyxarrow",
    "maxhitchance": 94,
    "attack": 38,
+   "weight": 70,
    "action": "removecount",
    "level": 40,
    "unproperly": "true",
@@ -26096,6 +26655,7 @@
    "hitchance": 80,
    "range": 4,
    "attack": 28,
+   "weight": 200,
    "slot": "hand",
    "stackable": 1
   },
@@ -26107,6 +26667,7 @@
    "maxhitchance": 96,
    "range": 4,
    "attack": 65,
+   "weight": 200,
    "breakchance": 33,
    "level": 80,
    "unproperly": "true",
@@ -26121,6 +26682,7 @@
    "maxhitchance": 80,
    "range": 3,
    "attack": 35,
+   "weight": 2500,
    "breakchance": 3,
    "level": 25,
    "unproperly": "true",
@@ -26134,6 +26696,7 @@
    "slottype": "two-handed",
    "attack": 47,
    "defense": 22,
+   "weight": 15000,
    "level": 60,
    "unproperly": "true",
    "vocation": "Knight;true, Elite Knight"
@@ -26145,6 +26708,7 @@
    "attack": 28,
    "extradef": 1,
    "defense": 20,
+   "weight": 3600,
    "level": 20,
    "unproperly": "true",
    "slot": "hand"
@@ -26156,6 +26720,7 @@
    "slottype": "two-handed",
    "attack": 43,
    "defense": 27,
+   "weight": 6800,
    "level": 40,
    "unproperly": "true",
    "vocation": "Knight;true, Elite Knight"
@@ -26166,6 +26731,7 @@
    "weapontype": "club",
    "attack": 34,
    "defense": 18,
+   "weight": 1500,
    "level": 25,
    "unproperly": "true",
    "slot": "hand"
@@ -26177,41 +26743,50 @@
    "attack": 43,
    "extradef": 3,
    "defense": 19,
+   "weight": 5200,
    "level": 55,
    "unproperly": "true",
    "slot": "hand"
   },
   "7393": {
    "id": 7393,
-   "name": "demon trophy"
+   "name": "demon trophy",
+   "weight": 500
   },
   "7394": {
    "id": 7394,
-   "name": "wolf trophy"
+   "name": "wolf trophy",
+   "weight": 500
   },
   "7396": {
    "id": 7396,
-   "name": "behemoth trophy"
+   "name": "behemoth trophy",
+   "weight": 500
   },
   "7397": {
    "id": 7397,
-   "name": "deer trophy"
+   "name": "deer trophy",
+   "weight": 500
   },
   "7398": {
    "id": 7398,
-   "name": "cyclops trophy"
+   "name": "cyclops trophy",
+   "weight": 500
   },
   "7399": {
    "id": 7399,
-   "name": "dragon lord trophy"
+   "name": "dragon lord trophy",
+   "weight": 500
   },
   "7400": {
    "id": 7400,
-   "name": "lion trophy"
+   "name": "lion trophy",
+   "weight": 500
   },
   "7401": {
    "id": 7401,
-   "name": "minotaur trophy"
+   "name": "minotaur trophy",
+   "weight": 500
   },
   "7402": {
    "id": 7402,
@@ -26220,6 +26795,7 @@
    "slottype": "two-handed",
    "attack": 44,
    "defense": 28,
+   "weight": 8200,
    "level": 45,
    "unproperly": "true",
    "vocation": "Knight;true, Elite Knight"
@@ -26231,6 +26807,7 @@
    "attack": 40,
    "extradef": -2,
    "defense": 12,
+   "weight": 1700,
    "level": 40,
    "unproperly": "true",
    "slot": "hand"
@@ -26242,6 +26819,7 @@
    "slottype": "two-handed",
    "attack": 49,
    "defense": 34,
+   "weight": 7200,
    "level": 70,
    "unproperly": "true",
    "vocation": "Knight;true, Elite Knight"
@@ -26253,6 +26831,7 @@
    "slottype": "two-handed",
    "attack": 40,
    "defense": 12,
+   "weight": 3100,
    "level": 30,
    "unproperly": "true",
    "vocation": "Knight;true, Elite Knight"
@@ -26264,6 +26843,7 @@
    "attack": 42,
    "extradef": 2,
    "defense": 22,
+   "weight": 6150,
    "level": 50,
    "unproperly": "true",
    "slot": "hand"
@@ -26275,6 +26855,7 @@
    "attack": 41,
    "extradef": -2,
    "defense": 24,
+   "weight": 6300,
    "level": 45,
    "unproperly": "true",
    "slot": "hand"
@@ -26286,6 +26867,7 @@
    "slottype": "two-handed",
    "attack": 43,
    "defense": 30,
+   "weight": 8100,
    "level": 40,
    "unproperly": "true",
    "vocation": "Knight;true, Elite Knight"
@@ -26297,6 +26879,7 @@
    "slottype": "two-handed",
    "attack": 47,
    "defense": 21,
+   "weight": 5500,
    "level": 60,
    "unproperly": "true",
    "vocation": "Knight;true, Elite Knight"
@@ -26308,6 +26891,7 @@
    "attack": 43,
    "extradef": -3,
    "defense": 21,
+   "weight": 5200,
    "level": 55,
    "unproperly": "true",
    "slot": "hand"
@@ -26319,6 +26903,7 @@
    "attack": 45,
    "extradef": 2,
    "defense": 32,
+   "weight": 4600,
    "level": 65,
    "unproperly": "true",
    "slot": "hand"
@@ -26330,6 +26915,7 @@
    "attack": 46,
    "extradef": -3,
    "defense": 23,
+   "weight": 4600,
    "level": 70,
    "unproperly": "true",
    "slot": "hand"
@@ -26341,6 +26927,7 @@
    "attack": 40,
    "extradef": -3,
    "defense": 19,
+   "weight": 3800,
    "level": 40,
    "unproperly": "true",
    "slot": "hand"
@@ -26352,6 +26939,7 @@
    "attack": 46,
    "extradef": 2,
    "defense": 25,
+   "weight": 5900,
    "level": 70,
    "unproperly": "true",
    "slot": "hand"
@@ -26362,6 +26950,7 @@
    "weapontype": "club",
    "attack": 45,
    "defense": 18,
+   "weight": 2600,
    "level": 65,
    "unproperly": "true",
    "slot": "hand"
@@ -26373,6 +26962,7 @@
    "attack": 46,
    "extradef": 1,
    "defense": 20,
+   "weight": 3200,
    "level": 70,
    "unproperly": "true",
    "slot": "hand"
@@ -26384,6 +26974,7 @@
    "slottype": "two-handed",
    "attack": 51,
    "defense": 20,
+   "weight": 12000,
    "level": 85,
    "unproperly": "true",
    "vocation": "Knight;true, Elite Knight"
@@ -26395,6 +26986,7 @@
    "slottype": "two-handed",
    "attack": 30,
    "defense": 18,
+   "weight": 5100,
    "level": 20,
    "unproperly": "true"
   },
@@ -26405,6 +26997,7 @@
    "slottype": "two-handed",
    "attack": 43,
    "defense": 25,
+   "weight": 3500,
    "level": 40,
    "unproperly": "true"
   },
@@ -26415,6 +27008,7 @@
    "slottype": "two-handed",
    "attack": 44,
    "defense": 21,
+   "weight": 6300,
    "level": 45,
    "unproperly": "true"
   },
@@ -26424,6 +27018,7 @@
    "weapontype": "club",
    "attack": 35,
    "defense": 18,
+   "weight": 1800,
    "level": 30,
    "unproperly": "true",
    "slot": "hand"
@@ -26435,6 +27030,7 @@
    "attack": 48,
    "extradef": -2,
    "defense": 38,
+   "weight": 18000,
    "level": 80,
    "unproperly": "true",
    "slot": "hand"
@@ -26446,6 +27042,7 @@
    "attack": 45,
    "extradef": 1,
    "defense": 22,
+   "weight": 5500,
    "level": 65,
    "unproperly": "true",
    "slot": "hand"
@@ -26456,6 +27053,7 @@
    "weapontype": "club",
    "attack": 37,
    "defense": 18,
+   "weight": 2100,
    "level": 30,
    "unproperly": "true",
    "slot": "hand"
@@ -26463,11 +27061,13 @@
   "7439": {
    "id": 7439,
    "name": "berserk potion",
+   "weight": 200,
    "stackable": 1
   },
   "7441": {
    "id": 7441,
-   "name": "ice cube"
+   "name": "ice cube",
+   "weight": 2000
   },
   "7449": {
    "id": 7449,
@@ -26476,6 +27076,7 @@
    "slottype": "two-handed",
    "attack": 35,
    "defense": 26,
+   "weight": 6900,
    "level": 25,
    "unproperly": "true",
    "vocation": "Knight;true, Elite Knight"
@@ -26486,6 +27087,7 @@
    "weapontype": "club",
    "attack": 39,
    "defense": 17,
+   "weight": 4100,
    "level": 35,
    "unproperly": "true",
    "slot": "hand"
@@ -26497,6 +27099,7 @@
    "slottype": "two-handed",
    "attack": 41,
    "defense": 21,
+   "weight": 6800,
    "level": 30,
    "unproperly": "true",
    "vocation": "Knight;true, Elite Knight"
@@ -26507,6 +27110,7 @@
    "weapontype": "axe",
    "attack": 39,
    "defense": 22,
+   "weight": 3800,
    "level": 35,
    "unproperly": "true",
    "slot": "hand"
@@ -26516,22 +27120,26 @@
    "name": "fur boots",
    "speed": -6,
    "armor": 2,
+   "weight": 1200,
    "slot": "feet"
   },
   "7461": {
    "id": 7461,
    "name": "krimhorn helmet",
    "armor": 6,
+   "weight": 5100,
    "slot": "head"
   },
   "7642": {
    "id": 7642,
    "name": "great spirit potion",
+   "weight": 310,
    "stackable": 1
   },
   "7643": {
    "id": 7643,
    "name": "ultimate health potion",
+   "weight": 310,
    "stackable": 1
   },
   "7773": {
@@ -26540,6 +27148,7 @@
    "weapontype": "axe",
    "attack": 21,
    "defense": 10,
+   "weight": 4100,
    "slot": "hand"
   },
   "7774": {
@@ -26549,12 +27158,14 @@
    "attack": 21,
    "extradef": 1,
    "defense": 14,
+   "weight": 2900,
    "slot": "hand"
   },
   "7991": {
    "id": 7991,
    "name": "magician's robe",
    "armor": 6,
+   "weight": 2500,
    "slot": "armor",
    "vocation": "Sorcerer;true, Druid;true, Master Sorcerer, Elder Druid"
   },
@@ -26562,32 +27173,38 @@
    "id": 7992,
    "name": "mage hat",
    "armor": 3,
+   "weight": 900,
    "slot": "head",
    "vocation": "Sorcerer;true, Druid;true, Master Sorcerer, Elder Druid"
   },
   "8010": {
    "id": 8010,
    "name": "potato",
+   "weight": 170,
    "stackable": 1
   },
   "8011": {
    "id": 8011,
    "name": "plum",
+   "weight": 130,
    "stackable": 1
   },
   "8012": {
    "id": 8012,
    "name": "raspberry",
+   "weight": 20,
    "stackable": 1
   },
   "8014": {
    "id": 8014,
    "name": "cucumber",
+   "weight": 200,
    "stackable": 1
   },
   "8016": {
    "id": 8016,
    "name": "jalapeno pepper",
+   "weight": 30,
    "stackable": 1
   },
   "8022": {
@@ -26598,6 +27215,7 @@
    "ammotype": "bolt",
    "range": 3,
    "attack": 4,
+   "weight": 5500,
    "level": 60,
    "unproperly": "true",
    "vocation": "Paladin;true, Royal Paladin"
@@ -26611,6 +27229,7 @@
    "hitchance": 3,
    "range": 6,
    "attack": 5,
+   "weight": 12000,
    "level": 130,
    "unproperly": "true",
    "vocation": "Paladin;true, Royal Paladin"
@@ -26624,6 +27243,7 @@
    "hitchance": -20,
    "range": 6,
    "attack": 20,
+   "weight": 5500,
    "level": 100,
    "unproperly": "true",
    "vocation": "Paladin;true, Royal Paladin"
@@ -26636,6 +27256,7 @@
    "ammotype": "bolt",
    "range": 5,
    "attack": 4,
+   "weight": 15000,
    "level": 80,
    "unproperly": "true",
    "vocation": "Paladin;true, Royal Paladin"
@@ -26649,6 +27270,7 @@
    "hitchance": 2,
    "range": 6,
    "attack": 3,
+   "weight": 5200,
    "level": 50,
    "unproperly": "true",
    "vocation": "Paladin;true, Royal Paladin"
@@ -26657,6 +27279,7 @@
    "id": 8031,
    "name": "spider fangs",
    "showcount": 0,
+   "weight": 50,
    "stackable": 1
   },
   "8037": {
@@ -26665,6 +27288,7 @@
    "absorbpercentdeath": 8,
    "absorbpercentholy": -8,
    "armor": 11,
+   "weight": 2900,
    "level": 65,
    "slot": "armor",
    "vocation": "Sorcerer;true, Master Sorcerer"
@@ -26675,6 +27299,7 @@
    "absorbpercentice": -12,
    "absorbpercentfire": 12,
    "armor": 12,
+   "weight": 2850,
    "level": 75,
    "slot": "armor",
    "vocation": "Sorcerer;true, Master Sorcerer"
@@ -26685,6 +27310,7 @@
    "absorbpercentpoison": -12,
    "absorbpercentenergy": 12,
    "armor": 12,
+   "weight": 2850,
    "level": 75,
    "slot": "armor",
    "vocation": "Sorcerer;true, Master Sorcerer"
@@ -26695,6 +27321,7 @@
    "absorbpercentpoison": 12,
    "absorbpercentfire": -12,
    "armor": 12,
+   "weight": 2850,
    "level": 75,
    "slot": "armor",
    "vocation": "Druid;true, Elder Druid"
@@ -26704,6 +27331,7 @@
    "name": "spirit cloak",
    "magiclevelpoints": 1,
    "armor": 8,
+   "weight": 2650,
    "slot": "armor",
    "vocation": "Sorcerer;true, Druid;true, Master Sorcerer, Elder Druid"
   },
@@ -26712,6 +27340,7 @@
    "name": "focus cape",
    "magiclevelpoints": 1,
    "armor": 9,
+   "weight": 2100,
    "slot": "armor",
    "vocation": "Sorcerer;true, Druid;true, Master Sorcerer, Elder Druid"
   },
@@ -26719,12 +27348,14 @@
    "id": 8044,
    "name": "belted cape",
    "armor": 10,
+   "weight": 3500,
    "slot": "armor",
    "vocation": "Paladin;true, Royal Paladin"
   },
   "8045": {
    "id": 8045,
    "name": "hibiscus dress",
+   "weight": 1900,
    "slot": "armor"
   },
   "8050": {
@@ -26733,6 +27364,7 @@
    "absorbpercentice": 3,
    "absorbpercentenergy": -3,
    "armor": 13,
+   "weight": 8450,
    "level": 60,
    "slot": "armor",
    "vocation": "Knight;true, Paladin;true, Elite Knight, Royal Paladin"
@@ -26743,6 +27375,7 @@
    "absorbpercentpoison": 3,
    "absorbpercentfire": -3,
    "armor": 13,
+   "weight": 8450,
    "level": 60,
    "slot": "armor",
    "vocation": "Knight;true, Paladin;true, Elite Knight, Royal Paladin"
@@ -26754,6 +27387,7 @@
    "absorbpercentfire": 5,
    "skillsword": 2,
    "armor": 15,
+   "weight": 12000,
    "level": 100,
    "slot": "armor",
    "vocation": "Knight;true, Elite Knight"
@@ -26765,6 +27399,7 @@
    "absorbpercentenergy": -5,
    "skillshield": 1,
    "armor": 15,
+   "weight": 10000,
    "level": 100,
    "slot": "armor",
    "vocation": "Knight;true, Elite Knight"
@@ -26775,6 +27410,7 @@
    "absorbpercentdeath": 10,
    "absorbpercentholy": -10,
    "armor": 13,
+   "weight": 7500,
    "level": 75,
    "slot": "armor",
    "vocation": "Paladin;true, Royal Paladin"
@@ -26785,6 +27421,7 @@
    "absorbpercentice": -7,
    "absorbpercentfire": 7,
    "armor": 13,
+   "weight": 7500,
    "level": 75,
    "slot": "armor",
    "vocation": "Paladin;true, Royal Paladin"
@@ -26795,6 +27432,7 @@
    "absorbpercentice": 7,
    "absorbpercentenergy": -7,
    "armor": 13,
+   "weight": 7500,
    "level": 75,
    "slot": "armor",
    "vocation": "Paladin;true, Royal Paladin"
@@ -26805,6 +27443,7 @@
    "absorbpercentdeath": 5,
    "absorbpercentholy": -5,
    "armor": 14,
+   "weight": 11000,
    "level": 85,
    "slot": "armor",
    "vocation": "Knight;true, Elite Knight"
@@ -26814,6 +27453,7 @@
    "name": "paladin armor",
    "skilldist": 2,
    "armor": 12,
+   "weight": 6500,
    "slot": "armor",
    "vocation": "Paladin;true, Royal Paladin"
   },
@@ -26822,6 +27462,7 @@
    "name": "ethno coat",
    "magiclevelpoints": 1,
    "armor": 7,
+   "weight": 2550,
    "slot": "armor",
    "vocation": "Sorcerer;true, Druid;true, Master Sorcerer, Elder Druid"
   },
@@ -26831,6 +27472,7 @@
    "weapontype": "spellbook",
    "magiclevelpoints": 1,
    "defense": 22,
+   "weight": 2100,
    "level": 40,
    "slot": "shield",
    "vocation": "Sorcerer;true, Druid;true, Master Sorcerer, Elder Druid"
@@ -26841,6 +27483,7 @@
    "weapontype": "spellbook",
    "magiclevelpoints": 2,
    "defense": 16,
+   "weight": 2450,
    "level": 50,
    "slot": "shield",
    "vocation": "Sorcerer;true, Druid;true, Master Sorcerer, Elder Druid"
@@ -26851,6 +27494,7 @@
    "weapontype": "spellbook",
    "magiclevelpoints": 2,
    "defense": 20,
+   "weight": 2560,
    "level": 60,
    "slot": "shield",
    "vocation": "Sorcerer;true, Druid;true, Master Sorcerer, Elder Druid"
@@ -26861,6 +27505,7 @@
    "weapontype": "spellbook",
    "magiclevelpoints": 3,
    "defense": 12,
+   "weight": 2650,
    "level": 70,
    "slot": "shield",
    "vocation": "Sorcerer;true, Druid;true, Master Sorcerer, Elder Druid"
@@ -26871,6 +27516,7 @@
    "weapontype": "wand",
    "shoottype": "death",
    "range": 3,
+   "weight": 2900,
    "level": 42,
    "mana": 13,
    "fromdamage": 56,
@@ -26885,6 +27531,7 @@
    "weapontype": "wand",
    "shoottype": "smallice",
    "range": 3,
+   "weight": 2900,
    "level": 22,
    "mana": 5,
    "fromdamage": 23,
@@ -26899,6 +27546,7 @@
    "weapontype": "wand",
    "shoottype": "smallearth",
    "range": 3,
+   "weight": 2700,
    "level": 37,
    "mana": 13,
    "fromdamage": 56,
@@ -26913,6 +27561,7 @@
    "weapontype": "spellbook",
    "magiclevelpoints": 3,
    "defense": 16,
+   "weight": 2850,
    "level": 80,
    "slot": "shield",
    "vocation": "Sorcerer;true, Druid;true, Master Sorcerer, Elder Druid"
@@ -26923,6 +27572,7 @@
    "weapontype": "wand",
    "shoottype": "energy",
    "range": 3,
+   "weight": 2550,
    "level": 37,
    "mana": 13,
    "fromdamage": 56,
@@ -26937,6 +27587,7 @@
    "weapontype": "wand",
    "shoottype": "fire",
    "range": 3,
+   "weight": 2700,
    "level": 22,
    "mana": 5,
    "fromdamage": 23,
@@ -26951,6 +27602,7 @@
    "weapontype": "wand",
    "shoottype": "death",
    "range": 3,
+   "weight": 2850,
    "level": 42,
    "mana": 13,
    "fromdamage": 56,
@@ -26963,6 +27615,7 @@
    "id": 8095,
    "name": "ranger legs",
    "armor": 4,
+   "weight": 3500,
    "slot": "legs",
    "vocation": "Paladin;true, Royal Paladin"
   },
@@ -26973,6 +27626,7 @@
    "attack": 51,
    "extradef": 2,
    "defense": 28,
+   "weight": 8800,
    "level": 110,
    "unproperly": "true",
    "slot": "hand",
@@ -26985,6 +27639,7 @@
    "slottype": "two-handed",
    "attack": 53,
    "defense": 20,
+   "weight": 12000,
    "level": 120,
    "unproperly": "true",
    "vocation": "Knight;true, Elite Knight"
@@ -26996,6 +27651,7 @@
    "attack": 50,
    "extradef": 2,
    "defense": 30,
+   "weight": 6500,
    "level": 100,
    "unproperly": "true",
    "slot": "hand"
@@ -27007,6 +27663,7 @@
    "slottype": "two-handed",
    "attack": 51,
    "defense": 20,
+   "weight": 11500,
    "level": 100,
    "unproperly": "true",
    "vocation": "Knight;true, Elite Knight"
@@ -27018,6 +27675,7 @@
    "attack": 49,
    "extradef": 3,
    "defense": 33,
+   "weight": 4100,
    "level": 100,
    "unproperly": "true",
    "slot": "hand"
@@ -27025,115 +27683,143 @@
   "8109": {
    "id": 8109,
    "name": "remains of a vampire lord",
-   "containersize": 10
+   "duration": 10,
+   "containersize": 10,
+   "weight": 50000
   },
   "8113": {
    "id": 8113,
    "name": "dead wyrm",
+   "duration": 10,
    "containersize": 36
   },
   "8119": {
    "id": 8119,
    "name": "dead rotworm queen",
-   "containersize": 8
+   "duration": 10,
+   "containersize": 8,
+   "weight": 50000
   },
   "8123": {
    "id": 8123,
    "name": "slain bog raider",
-   "containersize": 20
+   "duration": 10,
+   "containersize": 20,
+   "weight": 50000
   },
   "8127": {
    "id": 8127,
    "name": "slain reaper",
+   "duration": 10,
    "containersize": 40
   },
   "8136": {
    "id": 8136,
    "name": "remains of an elemental",
-   "containersize": 11
+   "duration": 10,
+   "containersize": 11,
+   "weight": 25000
   },
   "8143": {
    "id": 8143,
    "name": "gland",
+   "weight": 50,
    "stackable": 1
   },
   "8192": {
    "id": 8192,
    "name": "vampire lord token",
+   "weight": 5,
    "stackable": 1
   },
   "8860": {
    "id": 8860,
    "name": "brocade backpack",
    "containersize": 20,
+   "weight": 1800,
    "slot": "backpack"
   },
   "8861": {
    "id": 8861,
    "name": "brocade bag",
    "containersize": 8,
+   "weight": 800,
    "slot": "backpack"
   },
   "8895": {
    "id": 8895,
-   "name": "rusted armor"
+   "name": "rusted armor",
+   "weight": 12000
   },
   "8896": {
    "id": 8896,
-   "name": "slightly rusted armor"
+   "name": "slightly rusted armor",
+   "weight": 12000
   },
   "9001": {
    "id": 9001,
    "name": "dead nightstalker",
+   "duration": 10,
    "containersize": 10
   },
   "9005": {
    "id": 9005,
    "name": "dead nightmare scion",
+   "duration": 10,
    "containersize": 10
   },
   "9009": {
    "id": 9009,
    "name": "dead hellspawn",
+   "duration": 10,
    "containersize": 44
   },
   "9027": {
    "id": 9027,
    "name": "crystal of focus",
+   "weight": 800,
    "stackable": 1
   },
   "9028": {
    "id": 9028,
    "name": "crystal of balance",
+   "weight": 850,
    "stackable": 1
   },
   "9034": {
    "id": 9034,
    "name": "dracoyle statue",
-   "rotateto": 9039
+   "duration": 604800,
+   "rotateto": 9039,
+   "weight": 1500
   },
   "9054": {
    "id": 9054,
    "name": "glob of acid slime",
+   "weight": 10,
    "stackable": 1
   },
   "9055": {
    "id": 9055,
    "name": "glob of tar",
+   "weight": 10,
    "stackable": 1
   },
   "9056": {
    "id": 9056,
-   "name": "black skull"
+   "name": "black skull",
+   "weight": 2400
   },
   "9057": {
    "id": 9057,
    "name": "small topaz",
+   "weight": 10,
    "stackable": 1
   },
   "9058": {
    "id": 9058,
    "name": "gold ingot",
+   "weight": 1800,
    "stackable": 1
   },
   "9302": {
@@ -27142,6 +27828,7 @@
    "absorbpercentphysical": 60,
    "absorbpercentpoison": 40,
    "charges": 5,
+   "weight": 700,
    "level": 80,
    "slot": "necklace"
   },
@@ -27151,6 +27838,7 @@
    "absorbpercentphysical": 60,
    "absorbpercentenergy": 40,
    "charges": 5,
+   "weight": 700,
    "level": 80,
    "slot": "necklace"
   },
@@ -27158,262 +27846,313 @@
    "id": 9601,
    "name": "demon backpack",
    "containersize": 20,
+   "weight": 1800,
    "slot": "backpack"
   },
   "9602": {
    "id": 9602,
    "name": "orange backpack",
    "containersize": 20,
+   "weight": 1800,
    "slot": "backpack"
   },
   "9603": {
    "id": 9603,
    "name": "orange bag",
    "containersize": 8,
+   "weight": 800,
    "slot": "backpack"
   },
   "9605": {
    "id": 9605,
    "name": "crown backpack",
    "containersize": 20,
+   "weight": 1700,
    "slot": "backpack"
   },
   "9606": {
    "id": 9606,
-   "name": "egg of The Many"
+   "name": "egg of The Many",
+   "weight": 5000
   },
   "9607": {
    "id": 9607,
    "name": "dead medusa",
    "fluidsource": "blood",
+   "duration": 10,
    "containersize": 32
   },
   "9631": {
    "id": 9631,
    "name": "scarab pincers",
+   "weight": 230,
    "stackable": 1
   },
   "9632": {
    "id": 9632,
    "name": "ancient stone",
+   "weight": 160,
    "stackable": 1
   },
   "9635": {
    "id": 9635,
    "name": "elvish talisman",
+   "weight": 110,
    "stackable": 1
   },
   "9636": {
    "id": 9636,
    "name": "fiery heart",
+   "weight": 114,
    "stackable": 1
   },
   "9637": {
    "id": 9637,
    "name": "hellhound slobber",
+   "weight": 75,
    "stackable": 1
   },
   "9647": {
    "id": 9647,
    "name": "demonic skeletal hand",
+   "weight": 132,
    "stackable": 1
   },
   "9649": {
    "id": 9649,
    "name": "gauze bandage",
+   "weight": 97,
    "stackable": 1
   },
   "9651": {
    "id": 9651,
    "name": "scorpion tail",
+   "weight": 120,
    "stackable": 1
   },
   "9657": {
    "id": 9657,
    "name": "cyclops toe",
+   "weight": 111,
    "stackable": 1
   },
   "9660": {
    "id": 9660,
    "name": "mystical hourglass",
+   "weight": 96,
    "stackable": 1
   },
   "9661": {
    "id": 9661,
    "name": "frosty heart",
+   "weight": 186,
    "stackable": 1
   },
   "9664": {
    "id": 9664,
    "name": "piece of hellfire armor",
+   "weight": 250,
    "stackable": 1
   },
   "9665": {
    "id": 9665,
    "name": "wyrm scale",
+   "weight": 180,
    "stackable": 1
   },
   "9666": {
    "id": 9666,
    "name": "sea serpent scale",
+   "weight": 146,
    "stackable": 1
   },
   "9667": {
    "id": 9667,
    "name": "boggy dreads",
+   "weight": 169,
    "stackable": 1
   },
   "9685": {
    "id": 9685,
    "name": "vampire teeth",
    "showcount": 0,
+   "weight": 50,
    "stackable": 1
   },
   "9686": {
    "id": 9686,
    "name": "swamp grass",
    "showcount": 0,
+   "weight": 94,
    "stackable": 1
   },
   "9688": {
    "id": 9688,
    "name": "bundle of cursed straw",
+   "weight": 227,
    "stackable": 1
   },
   "9689": {
    "id": 9689,
    "name": "bunch of troll hair",
+   "weight": 85,
    "stackable": 1
   },
   "9690": {
    "id": 9690,
    "name": "ghostly tissue",
+   "weight": 50,
    "stackable": 1
   },
   "9692": {
    "id": 9692,
    "name": "lump of dirt",
+   "weight": 68,
    "stackable": 1
   },
   "9694": {
    "id": 9694,
    "name": "snake skin",
+   "weight": 100,
    "stackable": 1
   },
   "10190": {
    "id": 10190,
    "name": "dead draken warmaster",
    "fluidsource": "blood",
+   "duration": 10,
    "containersize": 28
   },
   "10196": {
    "id": 10196,
    "name": "orc tooth",
+   "weight": 100,
    "stackable": 1
   },
   "10202": {
    "id": 10202,
    "name": "heart backpack",
    "containersize": 20,
+   "weight": 1800,
    "slot": "backpack"
   },
   "10244": {
    "id": 10244,
-   "name": "bonebeast trophy"
+   "name": "bonebeast trophy",
+   "weight": 500
   },
   "10277": {
    "id": 10277,
    "name": "bony tail",
+   "weight": 92,
    "stackable": 1
   },
   "10278": {
    "id": 10278,
    "name": "stone wing",
+   "weight": 153,
    "stackable": 1
   },
   "10282": {
    "id": 10282,
    "name": "hydra head",
+   "weight": 1300,
    "stackable": 1
   },
   "10283": {
    "id": 10283,
    "name": "half-digested piece of meat",
+   "weight": 124,
    "stackable": 1
   },
   "10289": {
    "id": 10289,
    "name": "red lantern",
+   "weight": 300,
    "stackable": 1
   },
   "10290": {
    "id": 10290,
-   "name": "mini mummy"
+   "name": "mini mummy",
+   "weight": 450
   },
   "10291": {
    "id": 10291,
    "name": "rotten piece of cloth",
+   "weight": 60,
    "stackable": 1
   },
   "10298": {
    "id": 10298,
    "name": "metal spike",
+   "weight": 50,
    "stackable": 1
   },
   "10302": {
    "id": 10302,
    "name": "compass",
+   "weight": 80,
    "stackable": 1
   },
   "10304": {
    "id": 10304,
    "name": "hellspawn tail",
+   "weight": 125,
    "stackable": 1
   },
   "10306": {
    "id": 10306,
    "name": "essence of a bad dream",
+   "weight": 95,
    "stackable": 1
   },
   "10309": {
    "id": 10309,
    "name": "strand of medusa hair",
+   "weight": 230,
    "stackable": 1
   },
   "10310": {
    "id": 10310,
    "name": "shiny stone",
+   "weight": 156,
    "stackable": 1
   },
   "10312": {
    "id": 10312,
    "name": "scythe leg",
+   "weight": 150,
    "stackable": 1
   },
   "10313": {
    "id": 10313,
    "name": "winged tail",
+   "weight": 450,
    "stackable": 1
   },
   "10315": {
    "id": 10315,
    "name": "sulphurous stone",
+   "weight": 142,
    "stackable": 1
   },
   "10316": {
    "id": 10316,
    "name": "unholy bone",
+   "weight": 125,
    "stackable": 1
   },
   "10318": {
    "id": 10318,
    "name": "warwolf fur",
    "showcount": 0,
+   "weight": 105,
    "stackable": 1
   },
   "10320": {
    "id": 10320,
    "name": "book of necromantic rituals",
+   "weight": 358,
    "stackable": 1
   },
   "10323": {
@@ -27422,6 +28161,7 @@
    "absorbpercentphysical": 2,
    "absorbpercentholy": -2,
    "armor": 3,
+   "weight": 2250,
    "level": 70,
    "slot": "feet",
    "vocation": "Knight;true, Paladin;true, Elite Knight, Royal Paladin"
@@ -27430,78 +28170,92 @@
    "id": 10324,
    "name": "expedition backpack",
    "containersize": 20,
+   "weight": 1800,
    "slot": "backpack"
   },
   "10325": {
    "id": 10325,
    "name": "expedition bag",
    "containersize": 8,
+   "weight": 800,
    "slot": "backpack"
   },
   "10326": {
    "id": 10326,
    "name": "dragon backpack",
    "containersize": 20,
+   "weight": 1700,
    "slot": "backpack"
   },
   "10327": {
    "id": 10327,
    "name": "minotaur backpack",
    "containersize": 20,
+   "weight": 1850,
    "slot": "backpack"
   },
   "10328": {
    "id": 10328,
    "name": "bunch of ripe rice",
+   "weight": 750,
    "stackable": 1
   },
   "10341": {
    "id": 10341,
    "name": "phoenix charm",
+   "weight": 1000,
    "stackable": 1
   },
   "10342": {
    "id": 10342,
    "name": "unity charm",
+   "weight": 1000,
    "stackable": 1
   },
   "10343": {
    "id": 10343,
    "name": "spiritual charm",
+   "weight": 1000,
    "stackable": 1
   },
   "10344": {
    "id": 10344,
    "name": "twin sun charm",
+   "weight": 1000,
    "stackable": 1
   },
   "10345": {
    "id": 10345,
    "name": "solitude charm",
+   "weight": 1000,
    "stackable": 1
   },
   "10355": {
    "id": 10355,
    "name": "dead lizard high guard",
    "fluidsource": "blood",
+   "duration": 10,
    "containersize": 10
   },
   "10359": {
    "id": 10359,
    "name": "dead lizard legionnaire",
    "fluidsource": "blood",
+   "duration": 10,
    "containersize": 10
   },
   "10367": {
    "id": 10367,
    "name": "dead lizard zaogun",
    "fluidsource": "blood",
+   "duration": 10,
    "containersize": 10
   },
   "10371": {
    "id": 10371,
    "name": "dead lizard chosen",
    "fluidsource": "blood",
+   "duration": 10,
    "containersize": 38
   },
   "10384": {
@@ -27509,6 +28263,7 @@
    "name": "Zaoan armor",
    "speed": 10,
    "armor": 13,
+   "weight": 9550,
    "level": 50,
    "slot": "armor",
    "vocation": "Knight;true, Paladin;true, Elite Knight, Royal Paladin"
@@ -27518,6 +28273,7 @@
    "name": "Zaoan helmet",
    "absorbpercentphysical": 5,
    "armor": 9,
+   "weight": 6600,
    "slot": "head",
    "vocation": "Knight;true, Paladin;true, Elite Knight, Royal Paladin"
   },
@@ -27526,6 +28282,7 @@
    "name": "Zaoan shoes",
    "speed": 5,
    "armor": 1,
+   "weight": 700,
    "slot": "feet"
   },
   "10387": {
@@ -27533,6 +28290,7 @@
    "name": "Zaoan legs",
    "absorbpercentphysical": 2,
    "armor": 8,
+   "weight": 6600,
    "slot": "legs"
   },
   "10388": {
@@ -27542,6 +28300,7 @@
    "slottype": "two-handed",
    "attack": 47,
    "defense": 20,
+   "weight": 5400,
    "level": 60,
    "unproperly": "true"
   },
@@ -27552,6 +28311,7 @@
    "attack": 43,
    "extradef": 2,
    "defense": 18,
+   "weight": 4900,
    "level": 55,
    "unproperly": "true",
    "slot": "hand"
@@ -27563,6 +28323,7 @@
    "slottype": "two-handed",
    "attack": 32,
    "defense": 22,
+   "weight": 5000,
    "level": 20,
    "unproperly": "true",
    "vocation": "Knight;true, Elite Knight"
@@ -27570,27 +28331,32 @@
   "10397": {
    "id": 10397,
    "name": "weaver's wandtip",
+   "weight": 170,
    "stackable": 1
   },
   "10398": {
    "id": 10398,
-   "name": "draken trophy"
+   "name": "draken trophy",
+   "weight": 600
   },
   "10399": {
    "id": 10399,
    "name": "dead draken spellweaver",
    "fluidsource": "blood",
+   "duration": 10,
    "containersize": 30
   },
   "10404": {
    "id": 10404,
    "name": "bone shoulderplate",
+   "weight": 220,
    "stackable": 1
   },
   "10405": {
    "id": 10405,
    "name": "warmaster's wristguards",
    "showcount": 0,
+   "weight": 120,
    "stackable": 1
   },
   "10406": {
@@ -27600,67 +28366,80 @@
    "slottype": "two-handed",
    "attack": 37,
    "defense": 15,
+   "weight": 8700,
    "level": 25,
    "unproperly": "true"
   },
   "10408": {
    "id": 10408,
    "name": "spiked iron ball",
+   "weight": 125,
    "stackable": 1
   },
   "10409": {
    "id": 10409,
    "name": "corrupted flag",
+   "weight": 112,
    "stackable": 1
   },
   "10410": {
    "id": 10410,
    "name": "cursed shoulder spikes",
+   "weight": 97,
    "stackable": 1
   },
   "10413": {
    "id": 10413,
    "name": "zaogun flag",
+   "weight": 98,
    "stackable": 1
   },
   "10414": {
    "id": 10414,
    "name": "zaogun shoulderplates",
    "showcount": 0,
+   "weight": 103,
    "stackable": 1
   },
   "10415": {
    "id": 10415,
    "name": "high guard flag",
+   "weight": 112,
    "stackable": 1
   },
   "10416": {
    "id": 10416,
    "name": "high guard shoulderplates",
+   "weight": 103,
    "stackable": 1
   },
   "10417": {
    "id": 10417,
    "name": "legionnaire flags",
+   "weight": 110,
    "stackable": 1
   },
   "10418": {
    "id": 10418,
    "name": "broken halberd",
+   "weight": 210,
    "stackable": 1
   },
   "10419": {
    "id": 10419,
-   "name": "lizard trophy"
+   "name": "lizard trophy",
+   "weight": 550
   },
   "10420": {
    "id": 10420,
    "name": "petrified scream",
+   "weight": 150,
    "stackable": 1
   },
   "10426": {
    "id": 10426,
-   "name": "piece of marble rock"
+   "name": "piece of marble rock",
+   "weight": 1000
   },
   "10438": {
    "id": 10438,
@@ -27668,6 +28447,7 @@
    "absorbpercentpoison": -10,
    "absorbpercentenergy": 10,
    "armor": 11,
+   "weight": 2350,
    "level": 60,
    "slot": "armor",
    "vocation": "Sorcerer;true, Druid;true, Master Sorcerer, Elder Druid"
@@ -27678,6 +28458,7 @@
    "absorbpercentice": -10,
    "absorbpercentfire": 10,
    "armor": 11,
+   "weight": 2450,
    "level": 60,
    "slot": "armor",
    "vocation": "Sorcerer;true, Druid;true, Master Sorcerer, Elder Druid"
@@ -27686,16 +28467,19 @@
    "id": 10445,
    "name": "slain ghastly dragon",
    "fluidsource": "blood",
+   "duration": 10,
    "containersize": 36
   },
   "10449": {
    "id": 10449,
    "name": "ghastly dragon head",
+   "weight": 1200,
    "stackable": 1
   },
   "10450": {
    "id": 10450,
    "name": "undead heart",
+   "weight": 80,
    "stackable": 1
   },
   "10451": {
@@ -27703,181 +28487,216 @@
    "name": "jade hat",
    "magiclevelpoints": 1,
    "armor": 4,
+   "weight": 900,
    "level": 60,
    "slot": "head",
    "vocation": "Sorcerer;true, Druid;true, Master Sorcerer, Elder Druid"
   },
   "11317": {
    "id": 11317,
-   "name": "blob"
+   "name": "blob",
+   "duration": 60
   },
   "11443": {
    "id": 11443,
    "name": "girlish hair decoration",
+   "weight": 50,
    "stackable": 1
   },
   "11444": {
    "id": 11444,
    "name": "protective charm",
+   "weight": 120,
    "stackable": 1
   },
   "11446": {
    "id": 11446,
    "name": "hair of a banshee",
    "showcount": 0,
+   "weight": 46,
    "stackable": 1
   },
   "11447": {
    "id": 11447,
    "name": "battle stone",
+   "weight": 150,
    "stackable": 1
   },
   "11449": {
    "id": 11449,
    "name": "blood preservation",
    "showcount": 0,
+   "weight": 80,
    "stackable": 1
   },
   "11450": {
    "id": 11450,
    "name": "small notebook",
+   "weight": 80,
    "stackable": 1
   },
   "11451": {
    "id": 11451,
    "name": "broken crossbow",
+   "weight": 130,
    "stackable": 1
   },
   "11452": {
    "id": 11452,
    "name": "broken shamanic staff",
+   "weight": 128,
    "stackable": 1
   },
   "11453": {
    "id": 11453,
    "name": "broken helmet",
+   "weight": 156,
    "stackable": 1
   },
   "11454": {
    "id": 11454,
    "name": "luminous orb",
+   "weight": 94,
    "stackable": 1
   },
   "11457": {
    "id": 11457,
    "name": "dragon's tail",
+   "weight": 250,
    "stackable": 1
   },
   "11465": {
    "id": 11465,
    "name": "elven astral observer",
+   "weight": 112,
    "stackable": 1
   },
   "11466": {
    "id": 11466,
    "name": "flask of embalming fluid",
+   "weight": 75,
    "stackable": 1
   },
   "11467": {
    "id": 11467,
    "name": "ghoul snack",
+   "weight": 140,
    "stackable": 1
   },
   "11469": {
    "id": 11469,
    "name": "hunter's quiver",
+   "weight": 132,
    "stackable": 1
   },
   "11472": {
    "id": 11472,
    "name": "minotaur horn",
+   "weight": 111,
    "stackable": 1
   },
   "11473": {
    "id": 11473,
    "name": "purple robe",
+   "weight": 229,
    "stackable": 1
   },
   "11475": {
    "id": 11475,
    "name": "necromantic robe",
+   "weight": 220,
    "stackable": 1
   },
   "11477": {
    "id": 11477,
    "name": "orcish gear",
    "showcount": 0,
+   "weight": 180,
    "stackable": 1
   },
   "11478": {
    "id": 11478,
    "name": "shamanic hood",
+   "weight": 90,
    "stackable": 1
   },
   "11479": {
    "id": 11479,
    "name": "orc leather",
    "showcount": 0,
+   "weight": 50,
    "stackable": 1
   },
   "11480": {
    "id": 11480,
    "name": "skull belt",
+   "weight": 115,
    "stackable": 1
   },
   "11481": {
    "id": 11481,
    "name": "pelvis bone",
+   "weight": 130,
    "stackable": 1
   },
   "11482": {
    "id": 11482,
    "name": "piece of warrior armor",
+   "weight": 110,
    "stackable": 1
   },
   "11483": {
    "id": 11483,
    "name": "piece of archer armor",
+   "weight": 110,
    "stackable": 1
   },
   "11484": {
    "id": 11484,
    "name": "pile of grave earth",
+   "weight": 98,
    "stackable": 1
   },
   "11485": {
    "id": 11485,
    "name": "poison spider shell",
+   "weight": 130,
    "stackable": 1
   },
   "11487": {
    "id": 11487,
    "name": "quara tentacle",
+   "weight": 107,
    "stackable": 1
   },
   "11488": {
    "id": 11488,
    "name": "quara eye",
+   "weight": 80,
    "stackable": 1
   },
   "11490": {
    "id": 11490,
    "name": "quara pincers",
+   "weight": 120,
    "stackable": 1
   },
   "11510": {
    "id": 11510,
    "name": "scroll of heroic deeds",
+   "weight": 79,
    "stackable": 1
   },
   "11512": {
    "id": 11512,
    "name": "small flask of eyedrops",
+   "weight": 50,
    "stackable": 1
   },
   "11539": {
    "id": 11539,
    "name": "goblin ear",
+   "weight": 75,
    "stackable": 1
   },
   "11651": {
@@ -27885,6 +28704,7 @@
    "name": "elite draken mail",
    "speed": 10,
    "armor": 15,
+   "weight": 12000,
    "level": 100,
    "slot": "armor",
    "vocation": "Knight;true, Paladin;true, Elite Knight, Royal Paladin"
@@ -27893,6 +28713,7 @@
    "id": 11653,
    "name": "dead draken elite",
    "fluidsource": "blood",
+   "duration": 10,
    "containersize": 32
   },
   "11657": {
@@ -27902,6 +28723,7 @@
    "slottype": "two-handed",
    "attack": 47,
    "defense": 30,
+   "weight": 18000,
    "level": 58,
    "unproperly": "true",
    "vocation": "Knight;true, Elite Knight"
@@ -27910,43 +28732,51 @@
    "id": 11658,
    "name": "draken sulphur",
    "showcount": 0,
+   "weight": 68,
    "stackable": 1
   },
   "11659": {
    "id": 11659,
    "name": "draken wristbands",
    "showcount": 0,
+   "weight": 78,
    "stackable": 1
   },
   "11660": {
    "id": 11660,
    "name": "broken draken mail",
+   "weight": 200,
    "stackable": 1
   },
   "11661": {
    "id": 11661,
    "name": "broken slicer",
+   "weight": 140,
    "stackable": 1
   },
   "11667": {
    "id": 11667,
    "name": "dead draken abomination",
    "fluidsource": "blood",
+   "duration": 10,
    "containersize": 32
   },
   "11671": {
    "id": 11671,
    "name": "eye of corruption",
+   "weight": 93,
    "stackable": 1
   },
   "11672": {
    "id": 11672,
    "name": "tail of corruption",
+   "weight": 93,
    "stackable": 1
   },
   "11673": {
    "id": 11673,
    "name": "scale of corruption",
+   "weight": 93,
    "stackable": 1
   },
   "11674": {
@@ -27956,6 +28786,7 @@
    "absorbpercentfire": -5,
    "magiclevelpoints": 2,
    "armor": 3,
+   "weight": 850,
    "slot": "head",
    "vocation": "Sorcerer;true, Druid;true, Master Sorcerer, Elder Druid"
   },
@@ -27965,6 +28796,7 @@
    "weapontype": "shield",
    "skillsword": 3,
    "defense": 36,
+   "weight": 4900,
    "level": 80,
    "slot": "shield",
    "vocation": "Knight;true, Elite Knight"
@@ -27975,6 +28807,7 @@
    "weapontype": "shield",
    "magiclevelpoints": 3,
    "defense": 14,
+   "weight": 2800,
    "level": 100,
    "slot": "shield",
    "vocation": "Sorcerer;true, Druid;true, Master Sorcerer, Elder Druid"
@@ -27986,38 +28819,46 @@
    "attack": 48,
    "extradef": 2,
    "defense": 29,
+   "weight": 6400,
    "level": 82,
    "unproperly": "true",
    "slot": "hand"
   },
   "12304": {
    "id": 12304,
-   "name": "maxilla maximus"
+   "name": "maxilla maximus",
+   "weight": 200
   },
   "12307": {
    "id": 12307,
-   "name": "harness"
+   "name": "harness",
+   "weight": 200
   },
   "12318": {
    "id": 12318,
-   "name": "giant shrimp"
+   "name": "giant shrimp",
+   "weight": 200
   },
   "12320": {
    "id": 12320,
-   "name": "sweet smelling bait"
+   "name": "sweet smelling bait",
+   "weight": 200
   },
   "12517": {
    "id": 12517,
    "name": "medicine pouch",
+   "weight": 1200,
    "stackable": 1
   },
   "12549": {
    "id": 12549,
-   "name": "bamboo leaves"
+   "name": "bamboo leaves",
+   "weight": 200
   },
   "12600": {
    "id": 12600,
    "name": "coal",
+   "weight": 500,
    "stackable": 1
   },
   "14251": {
@@ -28028,6 +28869,7 @@
    "shoottype": "tarsalarrow",
    "maxhitchance": 94,
    "attack": 33,
+   "weight": 70,
    "action": "removecount",
    "level": 30,
    "unproperly": "true",
@@ -28042,6 +28884,7 @@
    "shoottype": "vortexbolt",
    "maxhitchance": 89,
    "attack": 36,
+   "weight": 80,
    "action": "removecount",
    "level": 40,
    "unproperly": "true",
@@ -28056,6 +28899,7 @@
    "shoottype": "crystallinearrow",
    "maxhitchance": 95,
    "attack": 65,
+   "weight": 75,
    "action": "removecount",
    "level": 90,
    "unproperly": "true",
@@ -28065,21 +28909,25 @@
   "16120": {
    "id": 16120,
    "name": "violet crystal shard",
+   "weight": 20,
    "stackable": 1
   },
   "16122": {
    "id": 16122,
    "name": "green crystal splinter",
+   "weight": 10,
    "stackable": 1
   },
   "16124": {
    "id": 16124,
    "name": "blue crystal splinter",
+   "weight": 10,
    "stackable": 1
   },
   "16131": {
    "id": 16131,
    "name": "blazing bone",
+   "weight": 220,
    "stackable": 1
   },
   "16141": {
@@ -28090,6 +28938,7 @@
    "shoottype": "prismaticbolt",
    "maxhitchance": 90,
    "attack": 66,
+   "weight": 85,
    "action": "removecount",
    "level": 90,
    "unproperly": "true",
@@ -28104,6 +28953,7 @@
    "shoottype": "drillbolt",
    "maxhitchance": 90,
    "attack": 56,
+   "weight": 80,
    "action": "removecount",
    "level": 70,
    "unproperly": "true",
@@ -28119,6 +28969,7 @@
    "elementearth": 27,
    "maxhitchance": 93,
    "attack": 27,
+   "weight": 70,
    "action": "removecount",
    "level": 70,
    "unproperly": "true",
@@ -28129,130 +28980,152 @@
    "id": 18042,
    "name": "dead amazon",
    "fluidsource": "blood",
+   "duration": 10,
    "containersize": 40
   },
   "18046": {
    "id": 18046,
    "name": "dead assassin",
    "fluidsource": "blood",
+   "duration": 10,
    "containersize": 40
   },
   "18050": {
    "id": 18050,
    "name": "dead bandit",
    "fluidsource": "blood",
+   "duration": 10,
    "containersize": 36
   },
   "18054": {
    "id": 18054,
    "name": "dead barbarian bloodwalker",
    "fluidsource": "blood",
+   "duration": 10,
    "containersize": 36
   },
   "18062": {
    "id": 18062,
    "name": "dead barbarian headsplitter",
    "fluidsource": "blood",
+   "duration": 10,
    "containersize": 36
   },
   "18074": {
    "id": 18074,
    "name": "dead black knight",
    "fluidsource": "blood",
+   "duration": 10,
    "containersize": 20
   },
   "18118": {
    "id": 18118,
    "name": "dead fury",
    "fluidsource": "blood",
+   "duration": 10,
    "containersize": 20
   },
   "18126": {
    "id": 18126,
    "name": "dead gladiator",
    "fluidsource": "blood",
+   "duration": 10,
    "containersize": 36
   },
   "18134": {
    "id": 18134,
    "name": "slain hero",
    "fluidsource": "blood",
+   "duration": 300,
    "containersize": 60
   },
   "18138": {
    "id": 18138,
    "name": "dead hunter",
    "fluidsource": "blood",
+   "duration": 300,
    "containersize": 20
   },
   "18174": {
    "id": 18174,
    "name": "dead necromancer",
    "fluidsource": "blood",
+   "duration": 300,
    "containersize": 20
   },
   "18190": {
    "id": 18190,
    "name": "dead pirate buccaneer",
    "fluidsource": "blood",
+   "duration": 300,
    "containersize": 50
   },
   "18194": {
    "id": 18194,
    "name": "dead pirate corsair",
    "fluidsource": "blood",
+   "duration": 300,
    "containersize": 50
   },
   "18198": {
    "id": 18198,
    "name": "dead pirate cutthroat",
    "fluidsource": "blood",
+   "duration": 300,
    "containersize": 50
   },
   "18226": {
    "id": 18226,
    "name": "dead smuggler",
    "fluidsource": "blood",
+   "duration": 300,
    "containersize": 20
   },
   "18242": {
    "id": 18242,
    "name": "dead valkyrie",
    "fluidsource": "blood",
+   "duration": 300,
    "containersize": 20
   },
   "18246": {
    "id": 18246,
    "name": "dead warlock",
    "fluidsource": "blood",
+   "duration": 300,
    "containersize": 20
   },
   "18250": {
    "id": 18250,
    "name": "dead wild warrior",
    "fluidsource": "blood",
+   "duration": 300,
    "containersize": 20
   },
   "18293": {
    "id": 18293,
    "name": "dead necropharus",
    "fluidsource": "blood",
+   "duration": 10,
    "containersize": 20
   },
   "18966": {
    "id": 18966,
    "name": "dead elder wyrm",
    "fluidsource": "blood",
+   "duration": 10,
    "containersize": 30
   },
   "20062": {
    "id": 20062,
    "name": "cluster of solace",
+   "weight": 280,
    "stackable": 1
   },
   "20063": {
    "id": 20063,
    "name": "dream matter",
+   "weight": 390,
    "stackable": 1
   },
   "20064": {
@@ -28262,6 +29135,7 @@
    "attack": 48,
    "extradef": 1,
    "defense": 26,
+   "weight": 6300,
    "level": 75,
    "unproperly": "true",
    "vocation": "Knight;true, Elite Knight",
@@ -28274,6 +29148,7 @@
    "attack": 50,
    "extradef": 2,
    "defense": 29,
+   "weight": 5900,
    "level": 120,
    "unproperly": "true",
    "vocation": "Knight;true, Elite Knight",
@@ -28287,6 +29162,7 @@
    "attack": 52,
    "extradef": 3,
    "defense": 31,
+   "weight": 5500,
    "level": 250,
    "unproperly": "true",
    "vocation": "Knight;true, Elite Knight",
@@ -28299,6 +29175,7 @@
    "slottype": "two-handed",
    "attack": 51,
    "defense": 29,
+   "weight": 10000,
    "level": 75,
    "unproperly": "true",
    "vocation": "Knight;true, Elite Knight"
@@ -28310,6 +29187,7 @@
    "slottype": "two-handed",
    "attack": 52,
    "defense": 31,
+   "weight": 9500,
    "level": 120,
    "unproperly": "true",
    "vocation": "Knight;true, Elite Knight"
@@ -28322,6 +29200,7 @@
    "skillsword": 3,
    "attack": 54,
    "defense": 35,
+   "weight": 9000,
    "level": 250,
    "unproperly": "true",
    "vocation": "Knight;true, Elite Knight"
@@ -28333,6 +29212,7 @@
    "attack": 49,
    "extradef": 1,
    "defense": 24,
+   "weight": 9000,
    "level": 75,
    "unproperly": "true",
    "vocation": "Knight;true, Elite Knight",
@@ -28345,6 +29225,7 @@
    "attack": 51,
    "extradef": 2,
    "defense": 27,
+   "weight": 8500,
    "level": 120,
    "unproperly": "true",
    "vocation": "Knight;true, Elite Knight",
@@ -28358,6 +29239,7 @@
    "attack": 53,
    "extradef": 3,
    "defense": 30,
+   "weight": 8000,
    "level": 250,
    "unproperly": "true",
    "vocation": "Knight;true, Elite Knight",
@@ -28370,6 +29252,7 @@
    "slottype": "two-handed",
    "attack": 51,
    "defense": 27,
+   "weight": 12000,
    "level": 75,
    "unproperly": "true",
    "vocation": "Knight;true, Elite Knight"
@@ -28381,6 +29264,7 @@
    "slottype": "two-handed",
    "attack": 52,
    "defense": 30,
+   "weight": 11500,
    "level": 120,
    "unproperly": "true",
    "vocation": "Knight;true, Elite Knight"
@@ -28393,6 +29277,7 @@
    "skillaxe": 3,
    "attack": 54,
    "defense": 34,
+   "weight": 11000,
    "level": 250,
    "unproperly": "true",
    "vocation": "Knight;true, Elite Knight"
@@ -28404,6 +29289,7 @@
    "attack": 48,
    "extradef": 1,
    "defense": 22,
+   "weight": 9000,
    "level": 75,
    "unproperly": "true",
    "vocation": "Knight;true, Elite Knight",
@@ -28416,6 +29302,7 @@
    "attack": 50,
    "extradef": 2,
    "defense": 26,
+   "weight": 8500,
    "level": 120,
    "unproperly": "true",
    "vocation": "Knight;true, Elite Knight",
@@ -28429,6 +29316,7 @@
    "attack": 52,
    "extradef": 3,
    "defense": 30,
+   "weight": 8000,
    "level": 250,
    "unproperly": "true",
    "vocation": "Knight;true, Elite Knight",
@@ -28441,6 +29329,7 @@
    "slottype": "two-handed",
    "attack": 51,
    "defense": 27,
+   "weight": 17000,
    "level": 75,
    "unproperly": "true",
    "vocation": "Knight;true, Elite Knight"
@@ -28452,6 +29341,7 @@
    "slottype": "two-handed",
    "attack": 53,
    "defense": 30,
+   "weight": 16500,
    "level": 120,
    "unproperly": "true",
    "vocation": "Knight;true, Elite Knight"
@@ -28464,6 +29354,7 @@
    "skillclub": 3,
    "attack": 55,
    "defense": 34,
+   "weight": 16000,
    "level": 250,
    "unproperly": "true",
    "vocation": "Knight;true, Elite Knight"
@@ -28477,6 +29368,7 @@
    "hitchance": 5,
    "range": 7,
    "attack": 2,
+   "weight": 5000,
    "level": 75,
    "unproperly": "true",
    "vocation": "Paladin;true, Royal Paladin"
@@ -28490,6 +29382,7 @@
    "hitchance": 5,
    "range": 7,
    "attack": 4,
+   "weight": 4500,
    "level": 120,
    "unproperly": "true",
    "vocation": "Paladin;true, Royal Paladin"
@@ -28504,6 +29397,7 @@
    "hitchance": 5,
    "range": 7,
    "attack": 6,
+   "weight": 4000,
    "level": 250,
    "unproperly": "true",
    "vocation": "Paladin;true, Royal Paladin"
@@ -28517,6 +29411,7 @@
    "hitchance": 1,
    "range": 5,
    "attack": 3,
+   "weight": 13000,
    "level": 75,
    "unproperly": "true",
    "vocation": "Paladin;true, Royal Paladin"
@@ -28530,6 +29425,7 @@
    "hitchance": 2,
    "range": 5,
    "attack": 6,
+   "weight": 12500,
    "level": 120,
    "unproperly": "true",
    "vocation": "Paladin;true, Royal Paladin"
@@ -28544,6 +29440,7 @@
    "hitchance": 4,
    "range": 5,
    "attack": 9,
+   "weight": 12000,
    "level": 250,
    "unproperly": "true",
    "vocation": "Paladin;true, Royal Paladin"
@@ -28558,6 +29455,7 @@
    "absorbpercentenergy": 2,
    "magiclevelpoints": 1,
    "defense": 14,
+   "weight": 4000,
    "level": 75,
    "slot": "shield",
    "vocation": "Sorcerer;true, Druid;true, Master Sorcerer, Elder Druid"
@@ -28572,6 +29470,7 @@
    "absorbpercentenergy": 3,
    "magiclevelpoints": 2,
    "defense": 16,
+   "weight": 3500,
    "level": 150,
    "slot": "shield",
    "vocation": "Sorcerer;true, Druid;true, Master Sorcerer, Elder Druid"
@@ -28586,6 +29485,7 @@
    "absorbpercentenergy": 5,
    "magiclevelpoints": 4,
    "defense": 20,
+   "weight": 3000,
    "level": 250,
    "slot": "shield",
    "vocation": "Sorcerer;true, Druid;true, Master Sorcerer, Elder Druid"
@@ -28594,43 +29494,52 @@
    "id": 20228,
    "name": "dead gaz'haragoth",
    "fluidsource": "blood",
+   "duration": 10,
    "containersize": 20
   },
   "20264": {
    "id": 20264,
    "name": "unrealized dream",
+   "weight": 3300,
    "stackable": 1
   },
   "20274": {
    "id": 20274,
-   "name": "nightmare horn"
+   "name": "nightmare horn",
+   "weight": 200
   },
   "20276": {
    "id": 20276,
    "name": "dream warden mask",
+   "weight": 3400,
    "stackable": 1
   },
   "20277": {
    "id": 20277,
-   "name": "psychedelic tapestry"
+   "name": "psychedelic tapestry",
+   "weight": 1000
   },
   "20278": {
    "id": 20278,
-   "name": "demonic tapestry"
+   "name": "demonic tapestry",
+   "weight": 1000
   },
   "20279": {
    "id": 20279,
-   "name": "eye pod"
+   "name": "eye pod",
+   "weight": 500
   },
   "21091": {
    "id": 21091,
    "name": "dead mooh'tah warrior",
    "fluidsource": "blood",
+   "duration": 10,
    "containersize": 15
   },
   "21955": {
    "id": 21955,
    "name": "sweetheart ring",
+   "weight": 90,
    "slot": "ring"
   },
   "22518": {
@@ -28640,6 +29549,7 @@
    "absorbpercentfire": 8,
    "skillsword": 4,
    "armor": 18,
+   "weight": 14500,
    "level": 200,
    "slot": "armor",
    "vocation": "Knight;true, Elite Knight"
@@ -28651,6 +29561,7 @@
    "absorbpercentfire": 8,
    "skillaxe": 4,
    "armor": 18,
+   "weight": 14500,
    "level": 200,
    "slot": "armor",
    "vocation": "Knight;true, Elite Knight"
@@ -28662,6 +29573,7 @@
    "absorbpercentfire": 8,
    "skillclub": 4,
    "armor": 18,
+   "weight": 14500,
    "level": 200,
    "slot": "armor",
    "vocation": "Knight;true, Elite Knight"
@@ -28673,6 +29585,7 @@
    "absorbpercentfire": -8,
    "skillsword": 4,
    "armor": 18,
+   "weight": 14500,
    "level": 200,
    "slot": "armor",
    "vocation": "Knight;true, Elite Knight"
@@ -28684,6 +29597,7 @@
    "absorbpercentfire": -8,
    "skillaxe": 4,
    "armor": 18,
+   "weight": 14500,
    "level": 200,
    "slot": "armor",
    "vocation": "Knight;true, Elite Knight"
@@ -28695,6 +29609,7 @@
    "absorbpercentfire": -8,
    "skillclub": 4,
    "armor": 18,
+   "weight": 14500,
    "level": 200,
    "slot": "armor",
    "vocation": "Knight;true, Elite Knight"
@@ -28706,6 +29621,7 @@
    "absorbpercentenergy": 8,
    "skillsword": 4,
    "armor": 18,
+   "weight": 14500,
    "level": 200,
    "slot": "armor",
    "vocation": "Knight;true, Elite Knight"
@@ -28717,6 +29633,7 @@
    "absorbpercentenergy": 8,
    "skillaxe": 4,
    "armor": 18,
+   "weight": 14500,
    "level": 200,
    "slot": "armor",
    "vocation": "Knight;true, Elite Knight"
@@ -28728,6 +29645,7 @@
    "absorbpercentenergy": 8,
    "skillclub": 4,
    "armor": 18,
+   "weight": 14500,
    "level": 200,
    "slot": "armor",
    "vocation": "Knight;true, Elite Knight"
@@ -28739,6 +29657,7 @@
    "absorbpercentenergy": -8,
    "skillsword": 4,
    "armor": 18,
+   "weight": 14500,
    "level": 200,
    "slot": "armor",
    "vocation": "Knight;true, Elite Knight"
@@ -28750,6 +29669,7 @@
    "absorbpercentenergy": -8,
    "skillaxe": 4,
    "armor": 18,
+   "weight": 14500,
    "level": 200,
    "slot": "armor",
    "vocation": "Knight;true, Elite Knight"
@@ -28761,6 +29681,7 @@
    "absorbpercentenergy": -8,
    "skillclub": 4,
    "armor": 18,
+   "weight": 14500,
    "level": 200,
    "slot": "armor",
    "vocation": "Knight;true, Elite Knight"
@@ -28772,6 +29693,7 @@
    "absorbpercentfire": 8,
    "skilldist": 4,
    "armor": 18,
+   "weight": 14500,
    "level": 200,
    "slot": "armor",
    "vocation": "Paladin;true, Royal Paladin"
@@ -28783,6 +29705,7 @@
    "absorbpercentfire": -8,
    "skilldist": 4,
    "armor": 18,
+   "weight": 14500,
    "level": 200,
    "slot": "armor",
    "vocation": "Paladin;true, Royal Paladin"
@@ -28794,6 +29717,7 @@
    "absorbpercentenergy": 8,
    "skilldist": 4,
    "armor": 18,
+   "weight": 14500,
    "level": 200,
    "slot": "armor",
    "vocation": "Paladin;true, Royal Paladin"
@@ -28805,6 +29729,7 @@
    "absorbpercentenergy": -8,
    "skilldist": 4,
    "armor": 18,
+   "weight": 14500,
    "level": 200,
    "slot": "armor",
    "vocation": "Paladin;true, Royal Paladin"
@@ -28816,6 +29741,7 @@
    "absorbpercentfire": 8,
    "magiclevelpoints": 4,
    "armor": 15,
+   "weight": 5500,
    "level": 200,
    "slot": "armor",
    "vocation": "Sorcerer;true, Druid;true, Master Sorcerer, Elder Druid"
@@ -28827,6 +29753,7 @@
    "absorbpercentfire": -8,
    "magiclevelpoints": 4,
    "armor": 15,
+   "weight": 5500,
    "level": 200,
    "slot": "armor",
    "vocation": "Sorcerer;true, Druid;true, Master Sorcerer, Elder Druid"
@@ -28838,6 +29765,7 @@
    "absorbpercentenergy": 8,
    "magiclevelpoints": 4,
    "armor": 15,
+   "weight": 5500,
    "level": 200,
    "slot": "armor",
    "vocation": "Sorcerer;true, Druid;true, Master Sorcerer, Elder Druid"
@@ -28849,6 +29777,7 @@
    "absorbpercentenergy": -8,
    "magiclevelpoints": 4,
    "armor": 15,
+   "weight": 5500,
    "level": 200,
    "slot": "armor",
    "vocation": "Sorcerer;true, Druid;true, Master Sorcerer, Elder Druid"
@@ -28856,6 +29785,7 @@
   "23986": {
    "id": 23986,
    "name": "heavy old tome",
+   "weight": 1000,
    "stackable": 1
   },
   "27449": {
@@ -28864,6 +29794,7 @@
    "weapontype": "sword",
    "attack": 50,
    "defense": 33,
+   "weight": 5000,
    "level": 200,
    "unproperly": "true",
    "vocation": "Knight;true, Elite Knight",
@@ -28876,6 +29807,7 @@
    "slottype": "two-handed",
    "attack": 52,
    "defense": 30,
+   "weight": 7000,
    "level": 200,
    "unproperly": "true",
    "vocation": "Knight;true, Elite Knight"
@@ -28886,6 +29818,7 @@
    "weapontype": "axe",
    "attack": 51,
    "defense": 31,
+   "weight": 5000,
    "level": 200,
    "unproperly": "true",
    "vocation": "Knight;true, Elite Knight",
@@ -28898,6 +29831,7 @@
    "slottype": "two-handed",
    "attack": 52,
    "defense": 30,
+   "weight": 7000,
    "level": 200,
    "unproperly": "true",
    "vocation": "Knight;true, Elite Knight"
@@ -28908,6 +29842,7 @@
    "weapontype": "club",
    "attack": 50,
    "defense": 32,
+   "weight": 5000,
    "level": 200,
    "unproperly": "true",
    "vocation": "Knight;true, Elite Knight",
@@ -28920,6 +29855,7 @@
    "slottype": "two-handed",
    "attack": 53,
    "defense": 29,
+   "weight": 7000,
    "level": 200,
    "unproperly": "true",
    "vocation": "Knight;true, Elite Knight"
@@ -28933,6 +29869,7 @@
    "hitchance": 5,
    "range": 6,
    "attack": 5,
+   "weight": 5500,
    "level": 200,
    "unproperly": "true",
    "vocation": "Paladin;true, Royal Paladin"
@@ -28946,6 +29883,7 @@
    "hitchance": 5,
    "range": 5,
    "attack": 6,
+   "weight": 6500,
    "level": 200,
    "unproperly": "true",
    "vocation": "Paladin;true, Royal Paladin"
@@ -28957,6 +29895,7 @@
    "shoottype": "energy",
    "magiclevelpoints": 1,
    "range": 4,
+   "weight": 3500,
    "level": 200,
    "mana": 20,
    "fromdamage": 80,
@@ -28972,6 +29911,7 @@
    "shoottype": "smallice",
    "magiclevelpoints": 1,
    "range": 4,
+   "weight": 3500,
    "level": 200,
    "mana": 20,
    "fromdamage": 80,
@@ -28985,6 +29925,7 @@
    "name": "quiver",
    "slottype": "right-hand",
    "containersize": 6,
+   "weight": 1700,
    "slot": "right-hand",
    "vocation": "None;true, Paladin;true, Royal Paladin"
   },
@@ -28993,6 +29934,7 @@
    "name": "blue quiver",
    "slottype": "right-hand",
    "containersize": 6,
+   "weight": 1700,
    "slot": "right-hand",
    "vocation": "None;true, Paladin;true, Royal Paladin"
   },
@@ -29001,6 +29943,7 @@
    "name": "red quiver",
    "slottype": "right-hand",
    "containersize": 6,
+   "weight": 1700,
    "slot": "right-hand",
    "vocation": "None;true, Paladin;true, Royal Paladin"
   },
@@ -29012,6 +29955,7 @@
    "shoottype": "diamondarrow",
    "maxhitchance": 100,
    "attack": 37,
+   "weight": 80,
    "stackable": 1
   },
   "35902": {
@@ -29022,6 +29966,7 @@
    "shoottype": "spectralbolt",
    "maxhitchance": 100,
    "attack": 78,
+   "weight": 90,
    "action": "removecount",
    "level": 150,
    "unproperly": "true",
@@ -29037,6 +29982,7 @@
    "skillfist": 1,
    "elementalbond": "physical",
    "slottype": "dualwielding",
+   "weight": 7900,
    "level": 75,
    "unproperly": "true",
    "vocation": "Monk;true, Exalted Monk",
@@ -29051,6 +29997,7 @@
    "skillfist": 2,
    "elementalbond": "physical",
    "slottype": "dualwielding",
+   "weight": 7400,
    "level": 120,
    "unproperly": "true",
    "vocation": "Monk;true, Exalted Monk",
@@ -29065,6 +30012,7 @@
    "skillfist": 3,
    "elementalbond": "physical",
    "slottype": "dualwielding",
+   "weight": 6900,
    "level": 250,
    "unproperly": "true",
    "vocation": "Monk;true, Exalted Monk",
@@ -29079,6 +30027,7 @@
    "skillfist": 1,
    "elementalbond": "energy",
    "slottype": "two-handed",
+   "weight": 1700,
    "level": 0,
    "unproperly": "true",
    "vocation": "Monk;true, Exalted Monk",
@@ -29092,6 +30041,7 @@
    "defense": 17,
    "elementalbond": "physical",
    "slottype": "two-handed",
+   "weight": 7000,
    "level": 200,
    "unproperly": "true",
    "vocation": "Monk;true, Exalted Monk",
@@ -29106,6 +30056,7 @@
    "skillfist": 1,
    "elementalbond": "energy",
    "slottype": "two-handed",
+   "weight": 2100,
    "unproperly": "true",
    "vocation": "Monk;true, Exalted Monk",
    "slot": "hand",
@@ -29118,6 +30069,7 @@
    "armor": 4,
    "skillfist": 1,
    "absorbpercentenergy": 3,
+   "weight": 2600,
    "level": 80,
    "unproperly": "true",
    "vocation": "Monk;true, Exalted Monk",
@@ -29130,6 +30082,7 @@
    "armor": 3,
    "mantra": 2,
    "skillfist": 1,
+   "weight": 900,
    "slot": "head",
    "vocation": "Monk;true, Exalted Monk"
   },
@@ -29139,6 +30092,7 @@
    "armor": 2,
    "mantra": 2,
    "skillfist": 1,
+   "weight": 510,
    "level": 8,
    "slot": "necklace",
    "vocation": "Monk;true, Exalted Monk"
@@ -29149,6 +30103,7 @@
    "armor": 6,
    "mantra": 7,
    "skillfist": 1,
+   "weight": 6500,
    "unproperly": "true",
    "vocation": "Monk;true, Exalted Monk",
    "slot": "body"
@@ -29159,6 +30114,7 @@
    "armor": 7,
    "mantra": 11,
    "skillfist": 1,
+   "weight": 110000,
    "level": 50,
    "unproperly": "true",
    "vocation": "Monk;true, Exalted Monk",
@@ -29171,6 +30127,7 @@
    "name": "boots of enlightenment",
    "armor": 1,
    "skillfist": 1,
+   "weight": 900,
    "level": 8,
    "unproperly": "true",
    "vocation": "Monk;true, Exalted Monk",
@@ -29184,6 +30141,7 @@
    "skillfist": 3,
    "magiclevelpoints": 1,
    "absorbpercentice": 4,
+   "weight": 2400,
    "level": 150,
    "unproperly": "true",
    "vocation": "Monk;true, Exalted Monk",
@@ -29198,6 +30156,7 @@
    "mantra": 3,
    "skillfist": 1,
    "absorbpercentearth": 3,
+   "weight": 2100,
    "level": 40,
    "unproperly": "true",
    "vocation": "Monk;true, Exalted Monk",
@@ -29214,6 +30173,7 @@
    "skillfist": 1,
    "elementalbond": "energy",
    "slottype": "dualwielding",
+   "weight": 1800,
    "level": 20,
    "unproperly": "true",
    "vocation": "Monk;true, Exalted Monk",
@@ -29230,6 +30190,7 @@
    "skillfist": 1,
    "elementalbond": "earth",
    "slottype": "dualwielding",
+   "weight": 5900,
    "level": 100,
    "unproperly": "true",
    "vocation": "Monk;true, Exalted Monk",
@@ -29246,6 +30207,7 @@
    "skillfist": 1,
    "elementalbond": "physical",
    "slottype": "two-handed",
+   "weight": 2900,
    "level": 50,
    "unproperly": "true",
    "vocation": "Monk;true, Exalted Monk",
@@ -29259,6 +30221,7 @@
    "mantra": 4,
    "skillfist": 1,
    "armor": 4,
+   "weight": 1000,
    "augments": 1,
    "value": 6,
    "level": 70,
@@ -29274,6 +30237,7 @@
    "magiclevelpoints": 1,
    "absorbpercentenergy": 7,
    "absorbpercentice": -7,
+   "weight": 13500,
    "level": 75,
    "unproperly": "true",
    "vocation": "Monk;true, Exalted Monk",
@@ -29286,6 +30250,7 @@
    "skillfist": 4,
    "absorbpercentfire": 8,
    "absorbpercentice": -8,
+   "weight": 7500,
    "level": 200,
    "unproperly": "true",
    "vocation": "Monk;true, Exalted Monk",
@@ -29345,6 +30310,7 @@
   "none": {
    "gainHp": 5,
    "gainMana": 5,
+   "gainCap": 10,
    "gainHpTicks": 12000,
    "gainHpAmount": 1,
    "gainManaTicks": 6000,
@@ -29372,6 +30338,7 @@
   "sorcerer": {
    "gainHp": 5,
    "gainMana": 30,
+   "gainCap": 10,
    "gainHpTicks": 12000,
    "gainHpAmount": 1,
    "gainManaTicks": 3000,
@@ -29399,6 +30366,7 @@
   "druid": {
    "gainHp": 5,
    "gainMana": 30,
+   "gainCap": 10,
    "gainHpTicks": 12000,
    "gainHpAmount": 1,
    "gainManaTicks": 3000,
@@ -29426,6 +30394,7 @@
   "paladin": {
    "gainHp": 10,
    "gainMana": 15,
+   "gainCap": 20,
    "gainHpTicks": 8000,
    "gainHpAmount": 1,
    "gainManaTicks": 4000,
@@ -29453,6 +30422,7 @@
   "knight": {
    "gainHp": 15,
    "gainMana": 5,
+   "gainCap": 25,
    "gainHpTicks": 6000,
    "gainHpAmount": 1,
    "gainManaTicks": 6000,

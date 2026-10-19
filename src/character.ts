@@ -1,5 +1,8 @@
 // The player's character sheet: level, experience, skills, equipment and supplies, with Tibia's rules.
 import { BACKPACK, COIN_VALUE, Container } from "./container";
+
+/** An item's weight in oz (items.xml keeps hundredths). */
+export const weightOf = (id: number) => (item(id)?.weight ?? 0) / 100;
 import { expRate, MAGIC_RATE, SKILL_RATE, START_GOLD, START_LEVEL, type VocationDef } from "./data";
 import { canWear, item, itemId, POTIONS, PRICES, SHOP_PRICES, SPELLS, VOCATION_DATA, wornItem, type Element, type ItemData, type SpellData, type VocationData } from "./tibia/db";
 import { IMBUEMENTS, imbuement, type ImbuementKind } from "./tibia/imbuements";
@@ -454,6 +457,7 @@ export class Character {
     if (slot === "weapon") { if (old !== id) this.takeOffWeapon(); }
     else if (old && slot !== "ammo") this.stash(old);
     this.equipment[slot] = id;
+    this.startWear(slot, id);
     if (stack) this.supplies.set(id, (this.supplies.get(id) ?? 0) + n);
     return null;
   }
@@ -489,7 +493,26 @@ export class Character {
     if (it.slottype === "two-handed" && this.equipment.shield) { this.stash(this.equipment.shield); delete this.equipment.shield; }
     if (slot === "shield" && this.weapon?.slottype === "two-handed") { this.stash(this.equipment.weapon!); delete this.equipment.weapon; }
     this.equipment[slot] = id;
+    this.startWear(slot, id);
     return true;
+  }
+
+  /** Rings run for their duration while worn (life ring 20 min, time ring 10 min), amulets and might rings for
+   *  their charges (stone skin amulet 5 hits); Game counts them down. A fresh one each time it's put on. */
+  wear: Partial<Record<Slot, { left: number; timed: boolean }>> = {};
+  startWear(slot: Slot, id: number) {
+    const it = item(id), w = wornItem(id) ?? it;
+    if (w?.duration) this.wear[slot] = { left: Number(w.duration), timed: true };
+    else if (it?.charges && (slot === "ring" || slot === "necklace")) this.wear[slot] = { left: Number(it.charges), timed: false };
+    else delete this.wear[slot];
+  }
+
+  /** Does a worn item protect against an element (and so use a charge when it does)? */
+  protects(slot: Slot, el: Element): boolean {
+    const id = this.equipment[slot], w = id ? wornItem(id) : undefined;
+    if (!w) return false;
+    const key = el === "earth" ? "absorbpercentpoison" : `absorbpercent${el}`;
+    return !!(Number(w[key]) || Number(w.absorbpercentall));
   }
 
   /** Equipment NPCs sell that this character can wear and that beats what it has, cheapest first per slot. */
@@ -546,6 +569,30 @@ export class Character {
   /** What NPCs pay for the loot in the backpack. */
   lootValue(): number {
     return this.backpack.worth();
+  }
+
+  /** Capacity (oz): 400 at level 1, +10 per level without a vocation, then the vocation's gain (vocations.xml:
+   *  knights 25, paladins 20, mages 10). Coins don't count: they go to your gold. */
+  get capacity() {
+    const at = Math.min(this.level, this.vocationAt);
+    return 400 + (at - 1) * 10 + Math.max(0, this.level - this.vocationAt) * this.vd.gainCap;
+  }
+
+  /** What you carry (oz): what you wear, the backpack and everything in it, and your supplies. */
+  get carried(): number {
+    const w = (id: number) => weightOf(id);
+    let oz = w(BACKPACK);
+    for (const id of new Set(Object.values(this.equipment))) if (id && id !== this.thrown && id !== this.equipment.ammo) oz += w(id);
+    const box = (c: Container): number => c.items.reduce((s, t) => s + (t.inner ? w(t.id) + box(t.inner) : w(t.id) * t.n), 0);
+    oz += box(this.backpack);
+    for (const [id, n] of this.supplies) if (n > 0) oz += w(id) * n;
+    return oz;
+  }
+
+  /** How many of an item still fit in your capacity. */
+  fits(id: number): number {
+    const w = weightOf(id);
+    return w <= 0 ? Infinity : Math.max(0, Math.floor((this.capacity - this.carried) / w + 1e-9));
   }
 
   /** What an NPC pays for one: coins at face value, anything else at the best NPC price. */

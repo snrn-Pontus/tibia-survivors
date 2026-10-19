@@ -137,7 +137,7 @@ const it = (label: string, item: number, cost: number): Tier => ({ label, item, 
 export const TRACKS: Track[] = [
   { id: "weapon", name: "Starting weapon", tiers: [it("club", 3270, 0), it("rapier", 3272, 10), it("sabre", 3273, 25)] },
   { id: "spears", name: "Starting spears", tiers: [
-    { label: "none", cost: 0 }, { label: "10 spears", item: 3277, count: 10, cost: 15 }, { label: "25 spears", item: 3277, count: 25, cost: 40 }] },
+    { label: "none", cost: 0 }, { label: "5 spears", item: 3277, count: 5, cost: 15 }, { label: "10 spears", item: 3277, count: 10, cost: 40 }] }, // 20 oz each
   { id: "shield", name: "Starting shield", tiers: [{ label: "none", cost: 0 }, it("wooden shield", 3412, 10), it("studded shield", 3426, 25)] },
   { id: "armor", name: "Starting armor", tiers: [it("coat", 3562, 0), it("doublet", 3379, 5), it("leather armor", 3361, 15)] },
   { id: "helmet", name: "Starting helmet", tiers: [{ label: "none", cost: 0 }, it("leather helmet", 3355, 5), it("studded helmet", 3376, 15)] },

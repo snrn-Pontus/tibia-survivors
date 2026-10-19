@@ -108,6 +108,10 @@ export interface ItemData {
   managain?: number;
   manaticks?: number;
   transformequipto?: number;
+  transformdeequipto?: number;
+  weight?: number; // hundredths of an oz (items.xml)
+  duration?: number; // seconds an equipped ring lasts
+  charges?: number; // hits an amulet or ring absorbs before it's used up
   magiclevelpoints?: number;
   [key: string]: string | number | undefined;
 }
@@ -115,6 +119,7 @@ export interface ItemData {
 export interface VocationData {
   gainHp: number;
   gainMana: number;
+  gainCap: number; // capacity (oz) per level
   gainHpTicks: number;
   gainHpAmount: number;
   gainManaTicks: number;

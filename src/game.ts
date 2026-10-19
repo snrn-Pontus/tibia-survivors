@@ -5,6 +5,7 @@ import { areaOffsets, canWear, FIELDS, item, MONSTERS, POTIONS, PRICES, radiusRo
 import { blockHit, damageList, distanceDamage, expForLevel, speedChange, distanceHitChance, FIGHT_MODES, meleeDamage, mitigation, normalRandom, playerDefense, SKILL, uniform, type FightMode } from "./tibia/rules";
 import { imbuement } from "./tibia/imbuements";
 import { charm, CHARM_TIERS, describePrey, type GradeBonus } from "./picks";
+import type { Slot } from "./character";
 import { boost, MAX_PENDING, RUN_BONUS_STEP, runBonus } from "./upgrades";
 import { EVOLUTIONS, type EvolutionId } from "./evolutions";
 import type { LevelChoice } from "./character";
@@ -39,7 +40,11 @@ export interface Missile { fx: number; fy: number; tx: number; ty: number; t: nu
 export interface Effect { id: number; x: number; y: number; t: number; dur: number }
 export interface FloatText { x: number; y: number; text: string; color: string; t: number; dur: number }
 /** A body on the ground holding the loot rolled when the monster died. */
-export interface Corpse { tx: number; ty: number; item: number; name: string; loot: { id: number; n: number }[]; looted: boolean; until: number }
+export interface Corpse {
+  tx: number; ty: number; item: number; name: string; loot: { id: number; n: number }[]; looted: boolean; until: number;
+  opened?: boolean; // looted once already (what's left didn't fit)
+  nextTry?: number; // when to try again for what didn't fit
+}
 export const CORPSE_SECONDS = 60;
 
 /** Where looted things fly: the gold counter, the backpack, the supplies window or the equipment. */
@@ -225,8 +230,10 @@ export class Game {
 
   // ---------- main update ----------
 
+  private dtLast = 0;
   update(dt: number, mx: number, my: number) {
     if (this.over) return;
+    this.dtLast = dt;
     this.time += dt;
     this.updatePlayer(dt, mx, my);
     // Re-plan when you move, and a few times a second as monsters shuffle around you.
@@ -726,9 +733,21 @@ export class Game {
     return true;
   }
 
-  /** Hastes, paralysis, stances and Recovery wearing off; Recovery's ticks. */
+  /** A ring or amulet ran out: gone, as in Tibia. */
+  private wornOut(slot: Slot) {
+    const id = this.ch.equipment[slot];
+    if (!id) return;
+    delete this.ch.equipment[slot];
+    delete this.ch.wear[slot];
+    this.msg(`Your ${item(id)?.name ?? "item"} has run out.`, "#ff9c30");
+  }
+
+  /** Hastes, paralysis, stances and Recovery wearing off; Recovery's ticks; rings running down. */
   private updateBuffs() {
     const ch = this.ch;
+    for (const [slot, wear] of Object.entries(ch.wear) as [Slot, { left: number; timed: boolean }][]) {
+      if (wear.timed && (wear.left -= this.dtLast) <= 0) this.wornOut(slot);
+    }
     if (ch.slowDelta && this.time >= this.paralyzedUntil) ch.slowDelta = 0;
     if (ch.hasteDelta && this.time >= this.hasteUntil) ch.hasteDelta = 0;
     if (ch.stance && this.time >= this.stanceUntil) ch.stance = null;
@@ -860,6 +879,11 @@ export class Game {
     // then mitigation. Defense only works while a block is left: 2 at most, +1 per second, and every
     // physical hit uses one, so the more monsters hit you, the more hits get through unblocked.
     dmg = Math.round((dmg * (100 - ch.absorb(el))) / 100);
+    // An amulet or ring that absorbed part of the hit uses a charge.
+    for (const slot of ["necklace", "ring"] as const) {
+      const wear = ch.wear[slot];
+      if (wear && !wear.timed && ch.protects(slot, el) && --wear.left <= 0) this.wornOut(slot);
+    }
     const sh = ch.shield, w = ch.weapon;
     if (el === "physical") {
       const hasBlock = this.blockCount > 0;
@@ -1107,8 +1131,8 @@ export class Game {
   private updateCorpses() {
     const p = this.player;
     for (const c of this.corpses) {
-      if (!c.looted && cheb(c.tx, c.ty, p.tx, p.ty) <= (this.ch.evolutions.has("goldpouch") ? 3 : 1)) {
-        c.looted = true;
+      if (!c.looted && this.time >= (c.nextTry ?? 0) && cheb(c.tx, c.ty, p.tx, p.ty) <= (this.ch.evolutions.has("goldpouch") ? 3 : 1)) {
+        c.nextTry = this.time + 1; // what didn't fit is tried again (after selling, say)
         this.takeLoot(c);
       }
     }
@@ -1127,7 +1151,26 @@ export class Game {
     const got: string[] = [];
     const gold0 = ch.gold;
     const cx = tileCenter(c.tx), cy = tileCenter(c.ty);
-    c.loot.filter((l) => !ch.isJunk(l.id)).forEach(({ id: lid, n }, i) => {
+    // Capacity: coins go to your gold and Gold Pouch sells on the spot, but anything you keep must fit; what
+    // doesn't stays in the corpse (and junk always does).
+    const left: Corpse["loot"] = [];
+    let tooHeavy = false;
+    const keep = c.loot.filter((l) => {
+      if (ch.isJunk(l.id)) { left.push(l); return false; }
+      const coins = l.id === 3031 || l.id === 3035 || l.id === 3043;
+      const sold = ch.evolutions.has("goldpouch") && !POTIONS[l.id] && !SPELLS.some((s) => s.runeId === l.id) && !ch.slotFor(item(l.id)!);
+      if (coins || sold) return true;
+      const fit = Math.min(l.n, ch.fits(l.id));
+      if (fit < l.n) { tooHeavy = true; left.push({ id: l.id, n: l.n - fit }); }
+      l.n = fit;
+      return fit > 0;
+    });
+    c.loot = left;
+    c.looted = !left.some((l) => !ch.isJunk(l.id));
+    if (tooHeavy && !c.opened) this.msg("You do not have enough capacity to carry everything.", "#ff9c30", "loot");
+    if (!keep.length && c.opened) return;
+    c.opened = true;
+    keep.forEach(({ id: lid, n }, i) => {
       const l = { id: lid };
       const it = item(lid)!;
       got.push(n > 1 ? `${n} ${it.name}s` : `${/^[aeiou]/.test(it.name) ? "an" : "a"} ${it.name}`);

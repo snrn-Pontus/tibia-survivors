@@ -98,6 +98,8 @@ export function describeItem(id: number, n = 1): string {
   }
   if (req.length) rows.push(`Needs ${req.join(", ")}`);
   const price = COIN_VALUE[id] ?? PRICES[id]?.sell ?? 0;
+  const oz = (it.weight ?? 0) / 100;
+  if (oz) rows.push(`<small>${n > 1 ? `${fmt(oz * n)} oz (${oz.toFixed(2)} each)` : `${oz.toFixed(2)} oz`}</small>`);
   if (price) rows.push(`<span class="gold">${COIN_VALUE[id] ? "Worth" : "NPCs pay"} ${fmt(price * n)} gold${n > 1 ? ` (${fmt(price)} each)` : ""}</span>`);
   return rows.join("<br>");
 }

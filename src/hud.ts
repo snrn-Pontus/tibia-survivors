@@ -109,6 +109,7 @@ export class Hud {
   private modeBtns = new Map<string, HTMLElement>();
   private goldEl!: HTMLElement;
   private soulsEl!: HTMLElement;
+  private capEl!: HTMLElement;
   private bankedSouls = 0; // in the bank when the run started
   private shownGold = 0;
   private goldPulse = 0;
@@ -355,9 +356,10 @@ export class Hud {
     mode("chase", "»", "Chase opponent (C)", () => this.setChase(true));
     mode("stand", "■", "Stand while fighting (C)", () => this.setChase(false));
     wrap.append(grid, modes);
-    const purse = el("div", "purse", `<div>Gold</div><div class="v"><span class="gold-v">0</span></div><div>Souls</div><div class="v souls">0</div>`);
+    const purse = el("div", "purse", `<div>Gold</div><div class="v"><span class="gold-v">0</span></div><div>Souls</div><div class="v souls">0</div><div>Cap</div><div class="v cap">0</div>`);
     this.goldEl = purse.querySelector(".gold-v")!;
     this.soulsEl = purse.querySelector(".souls")!;
+    this.capEl = purse.querySelector(".cap")!;
     body.append(wrap, purse);
   }
 
@@ -669,6 +671,11 @@ export class Hud {
 
   private purse(g: Game, dt: number) {
     const ch = g.ch;
+    // Free capacity, as Tibia's inventory shows it; red when there's little left.
+    const free = ch.capacity - ch.carried;
+    this.capEl.textContent = fmt(Math.max(0, free));
+    this.capEl.classList.toggle("low", free < 20);
+    this.capEl.title = `Capacity ${fmt(ch.capacity)} oz, carrying ${ch.carried.toFixed(1)} oz`;
     // Gold rolls up and pulses when it grows.
     if (ch.gold < this.shownGold) this.shownGold = ch.gold;
     if (ch.gold > this.shownGold) {
@@ -744,10 +751,15 @@ export class Hud {
       if (!s) continue;
       const id = ch.equipment[slot];
       const n = id && (slot === "ammo" || id === ch.thrown) ? ch.supplies.get(id) ?? 0 : 0;
-      if (!this.changed(`slot:${slot}`, `${id}:${n}`)) continue;
+      // A ring's minutes or an amulet's charges left.
+      const wear = ch.wear[slot];
+      const left = wear ? (wear.timed ? `${Math.ceil(wear.left / 60)}m` : String(wear.left)) : "";
+      if (!this.changed(`slot:${slot}`, `${id}:${n}:${left}`)) continue;
       s.classList.toggle("empty", !id);
-      s.innerHTML = id ? `<img src="${this.itemUrl(id)}" alt=""><span class="count">${n || ""}</span>` : "";
+      s.innerHTML = id ? `<img src="${this.itemUrl(id)}" alt=""><span class="count">${n || left}</span>` : "";
       if (id) { s.dataset.item = String(id); s.dataset.n = String(n || 1); } else { delete s.dataset.item; delete s.dataset.n; }
+      if (wear) s.dataset.hint = wear.timed ? `${Math.ceil(wear.left / 60)} minutes left` : `${wear.left} charges left`;
+      else delete s.dataset.hint;
     }
   }
 

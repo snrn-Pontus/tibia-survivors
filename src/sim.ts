@@ -25,7 +25,7 @@ export function trade(g: Game) {
   const thrown = ch.thrown;
   if (thrown) {
     const price = buyPrice(thrown);
-    while ((ch.supplies.get(thrown) ?? 0) < 20 && price && ch.gold >= price * 10) {
+    while ((ch.supplies.get(thrown) ?? 0) < 10 && price && ch.gold >= price * 10 && ch.fits(thrown) >= 10) {
       ch.gold -= price * 10;
       ch.supplies.set(thrown, (ch.supplies.get(thrown) ?? 0) + 10);
     }
