@@ -21,11 +21,6 @@ export class Renderer {
 
   constructor(private ctx: CanvasRenderingContext2D, private atlas: Atlas) {}
 
-  private groundAt(tx: number, ty: number): number {
-    const g = this.atlas.data.ground;
-    return hash(tx, ty, 3) < 0.75 ? g[11] : g[Math.floor(hash(tx, ty, 5) * g.length)];
-  }
-
   private creatureFrame(anim: CreatureAnim, dir: number, moving: boolean, dist: number, t: number): number {
     if (moving) {
       const w = anim.walk[dir];
@@ -64,7 +59,7 @@ export class Renderer {
     for (let ty = ty0; ty <= ty1; ty++)
       for (let tx = tx0; tx <= tx1; tx++) {
         const cx = tileCenter(tx), cy = tileCenter(ty);
-        atlas.draw(ctx, this.groundAt(tx, ty), cx, cy);
+        atlas.draw(ctx, g.world.groundFrame(tx, ty), cx, cy);
         const d = g.world.decorAt(tx, ty);
         if (!d) continue;
         if (d.tall) tall.push({ x: cx, y: cy, frame: d.frame });

@@ -37,7 +37,7 @@ async function boot() {
   installTooltips();
   const renderer = new Renderer(ctx, atlas);
   const effectDur = (id: number) => (atlas.data.effects[id] ? atlas.effectDuration(id) : 0);
-  const world = new World(atlas.data.decor);
+  const world = new World(atlas.data.terrain);
   if (import.meta.env.DEV) {
     // Balance testing from the console: run whole games without rendering.
     import("./sim").then((sim) => {

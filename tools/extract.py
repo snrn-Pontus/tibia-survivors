@@ -27,13 +27,7 @@ PLAYERS = {
     "druid": (144, [(0x90, 0xB0, 0x50), (0x20, 0x70, 0x60), (0x40, 0x60, 0x30), (0x50, 0x40, 0x20)]),
 }
 
-GROUND = list(range(4515, 4531))
-DECOR = {
-    "trees": [3614, 3615, 3616, 3617, 3618, 3619, 3620, 3621, 3622, 3625],
-    "bushes": [3681, 3682, 3700, 3701, 3743, 3744, 3745],
-    "flowers": [3657, 3658, 3662, 3663, 3676, 3677, 3678, 3679, 3680],
-    "dead": [3631, 3632, 3633, 3634, 3628],
-}
+TERRAIN = os.path.join(ROOT, "src", "tibia", "terrain.json")  # ground and decoration sprites by kind
 
 
 class Packer:
@@ -187,7 +181,7 @@ def main():
     with open(GAME_DATA, encoding="utf-8") as fh:
         game = json.load(fh)
     p = Packer()
-    data = {"creatures": {}, "effects": {}, "missiles": {}, "items": {}, "ground": [], "decor": {},
+    data = {"creatures": {}, "effects": {}, "missiles": {}, "items": {}, "terrain": {"ground": {}, "decor": {}},
             "light": {"creatures": {}, "effects": {}, "missiles": {}, "items": {}}}  # what glows: [brightness, color]
 
     for name, (looktype, colors) in PLAYERS.items():
@@ -225,10 +219,20 @@ def main():
         if app and app.light:
             data["light"]["items"][iid] = app.light
     print("effects", len(data["effects"]), "missiles", len(data["missiles"]), "items", len(data["items"]))
-    data["ground"] = [p.add(a.sprite(a.objects[g].frame_groups[0].sprite_ids[0])) for g in GROUND]
-    for kind, ids in DECOR.items():
-        # [frame, blocks movement] -- straight from the client's unpass flag
-        data["decor"][kind] = [[p.add(a.sprite(a.objects[i].frame_groups[0].sprite_ids[0])), a.objects[i].unpass] for i in ids]
+    with open(TERRAIN, encoding="utf-8") as fh:
+        terrain = json.load(fh)
+    for section in ("ground", "decor"):
+        for kind, spec in terrain[section].items():
+            frames = []
+            for i in spec["ids"]:
+                o = a.objects.get(i)
+                if not o or not o.frame_groups or not o.frame_groups[0].sprite_ids:
+                    print("no sprite for", section, kind, i)
+                    continue
+                if o.unpass != bool(spec.get("block")):
+                    print(f"{section} {kind} {i}: the client says unpass={o.unpass}, terrain.json disagrees")
+                frames.append(p.add(a.sprite(o.frame_groups[0].sprite_ids[0])))
+            data["terrain"][section][kind] = frames
 
     atlas = p.pack()
     data["frames"] = p.frames

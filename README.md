@@ -68,8 +68,15 @@ If Tibia is somewhere else: `python tools/extract.py "D:\path\to\Tibia\packages\
   light). You see by your light: Light, Great Light and Ultimate Light (utevo lux; their Canary levels and
   durations, fading as they run out; auto-combat keeps one up in the dark) or something glowing you wear, and
   creatures, fields, effects and missiles light up the dark in their own color (the client's light flag).
-- **The world is zones**, rings around where you start (Rookgaard Fields, Troll Woods, Orc Fortress, Cyclopolis,
-  Dragon Lairs, ... Pits of Inferno). It doesn't follow your level: walk further out for tougher monsters.
+- **The world is zones** (Rookgaard Fields, Troll Woods, Orc Fortress, Cyclopolis, Dragon Lairs, ... Pits of
+  Inferno), each with its own terrain: meadows and forests, the orcs' red steppe, rocky hills, the desert of the
+  tombs, a graveyard, scorched rock, a cave, snowy peaks, swamp, the Pits' lava. They lie further out the harder
+  they get, but as irregular territories rather than rings: some directions get hard sooner, others reach far
+  (map.ts lays them out from the cheapest walk over the map's regions). Between zones there are walls in the
+  terrain's style (tree lines, boulders, cacti, dead trees, lava, swamp water) with a gap or two, so you go from
+  one zone to the next through chokepoints; walls inside a zone, ponds, outcrops and groves make the rest.
+  Ground speed is Tibia's (stone floors fast, sand and snow slow). The minimap marks the gaps between zones.
+  It doesn't follow your level: walk further out for tougher monsters.
   Each zone's real Tibia bosses appear after you've killed enough there, and drop treasure chests.
   The run is endless and ends when you die.
 - **Characters**: the first screen. Each character has its own souls, unlocks, boosts, blessings, bestiary and

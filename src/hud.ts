@@ -9,7 +9,8 @@ import { tooltipCharacter } from "./tooltip";
 import { CHARM_TIERS, describeCharm, describeGrade, describePrey, PREY_SLOTS, spellGrades } from "./picks";
 import { imbuement, TIERS } from "./tibia/imbuements";
 import { MAX_SLOTS } from "./upgrades";
-import { BESTIARY_STAGES, zoneAt, ZONES } from "./data";
+import { BESTIARY_STAGES, ZONES } from "./data";
+import { mapColor, zoneAt } from "./map";
 import { evolution } from "./evolutions";
 import { cheb, ELEMENT_COLORS, type Channel, type Game, type LootDest, type Monster, type Targeting } from "./game";
 import type { Renderer } from "./render";
@@ -66,11 +67,6 @@ const clock = (t: number) => `${String(Math.floor(t / 60)).padStart(2, "0")}:${S
 /** Tibia's health colors, by fraction left. */
 export const hpColor = (f: number) => (f > 0.92 ? "#00c000" : f > 0.6 ? "#60c060" : f > 0.3 ? "#c0c000" : f > 0.08 ? "#c03030" : "#600000");
 const pct = (f: number) => `${Math.max(0, Math.min(100, f * 100)).toFixed(1)}%`;
-/** Minimap colors per zone ring, from Rookgaard green to Inferno red. */
-const ZONE_RGB = ZONES.map((_, i) => {
-  const k = i / (ZONES.length - 1);
-  return [Math.round(70 + 110 * k), Math.round(120 - 80 * k), Math.round(55 - 25 * k)];
-});
 
 /** Tibia's condition icons for damage over time, by the damage type it ticks. */
 const CONDITION_ICONS: Partial<Record<DamageType, [string, string]>> = {
@@ -719,10 +715,9 @@ export class Hud {
     for (let y = 0; y < n; y++)
       for (let x = 0; x < n; x++) {
         const tx = x0 + x, ty = y0 + y, zi = zoneAt(tx, ty);
-        let [r, gg, b] = ZONE_RGB[zi];
-        // Zone borders: a lighter line where the ring changes.
-        if (zoneAt(tx + 1, ty) !== zi || zoneAt(tx, ty + 1) !== zi) [r, gg, b] = [200, 190, 150];
-        else if (g.world.blocked(tx, ty)) [r, gg, b] = [r * 0.45, gg * 0.6, b * 0.45];
+        let [r, gg, b] = mapColor(tx, ty);
+        // Where one zone opens into the next (a gap in the wall): a light line.
+        if ((zoneAt(tx + 1, ty) !== zi || zoneAt(tx, ty + 1) !== zi) && !g.world.blocked(tx, ty)) [r, gg, b] = [230, 220, 170];
         const o = (y * n + x) * 4;
         img.data[o] = r; img.data[o + 1] = gg; img.data[o + 2] = b; img.data[o + 3] = 255;
       }

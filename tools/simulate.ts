@@ -10,7 +10,7 @@ import { MAX_BOOST, type BoostId } from "../src/upgrades";
 import { World } from "../src/world";
 
 const atlas = JSON.parse(readFileSync("public/assets/tibia-atlas.json", "utf-8"));
-const world = new World(atlas.decor);
+const world = new World(atlas.terrain);
 const effectDur = (id: number) => {
   const e = atlas.effects[id];
   return e ? e.ms.reduce((a: number, b: number) => a + b, 0) / 1000 : 0;

@@ -19,8 +19,7 @@ export interface AtlasData {
   effects: Record<string, SimpleAnim>;
   missiles: Record<string, { dirs: number[] }>;
   items: Record<string, SimpleAnim & { stack?: number[] }>; // stack: the 8 count sprites of stackables
-  ground: number[];
-  decor: Record<string, [number, boolean][]>; // [frame, blocks movement]
+  terrain: { ground: Record<string, number[]>; decor: Record<string, number[]> }; // frames by kind (src/tibia/terrain.json)
   /** What gives off light (the client's appearance flag): [brightness in tiles, Tibia's 8-bit color]. */
   light?: Record<"creatures" | "effects" | "missiles" | "items", Record<string, [number, number]>>;
 }
@@ -79,7 +78,7 @@ export class Atlas {
   /** Items are keyed by their Tibia item id; stackables look different by count (a coin, a few, a pile). */
   itemIcon(id: number, size = 32, zoom = 1, count = 1) {
     const it = this.data.items[id];
-    if (!it) return this.icon(this.data.ground[0], size, zoom);
+    if (!it) return this.icon(this.data.terrain.ground.grass[0], size, zoom);
     return this.icon(it.stack ? it.stack[stackPattern(count)] : it.frames[0], size, zoom);
   }
 

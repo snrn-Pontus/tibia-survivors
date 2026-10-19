@@ -50,18 +50,21 @@ export const expRate = (_level: number) => 1;
 export const SKILL_RATE = 1;
 export const MAGIC_RATE = 1;
 
-/** The world: zones by distance from where you start, like Tibia's hunting grounds. The world doesn't
+/** The world: zones further out from where you start (map.ts lays them out), like Tibia's hunting grounds. The world doesn't
  *  follow your level; you choose how far out to push. Each zone's bosses show up, one at a time, after you've
  *  killed enough there (`bossAt` kills for the first, then every `bossAt` more). */
 /** Rookgaard in daylight, the mainland at dusk, then deeper and darker: crypts, lairs, the Pits of Inferno. */
+/** Each zone's terrain, from Rookgaard's meadows out to the Pits of Inferno's lava. */
+const ZONE_BIOMES = ["meadow", "forest", "darkwood", "steppe", "hills", "mountains", "desert", "graveyard", "scorched", "cave", "snow", "swamp", "inferno"];
 const ZONE_LIGHT = [255, 240, 210, 185, 160, 140, 115, 95, 80, 65, 55, 45, 40];
 
 export interface Zone {
   name: string; level: number; from: number; pool: string[]; bosses: string[]; maxAlive: number; spawnEvery?: number;
+  biome: string; // its terrain (map.ts BIOMES)
   ambient: number; // world light, 0-255 like Tibia's (255 a sunny day, 40 a deep cave): darker further out
   weights?: number[]; // how often each of `pool` spawns, relative (default: all the same)
 }
-export const ZONE_WIDTH = 30; // tiles per ring
+export const ZONE_WIDTH = 36; // tiles of distance per zone (map.ts stretches it by direction)
 export const BOSS_KILLS = 20;
 export const ZONES: Zone[] = [
   // Mainland zones also have the creatures of Tibia's hunting grounds at their experience, for the armor they drop.
@@ -79,12 +82,8 @@ export const ZONES: Zone[] = [
   { name: "Dragon Lord Peaks", level: 110, pool: ["dragon lord", "behemoth", "hydra", "lizard chosen", "hellspawn", "serpent spawn", "draken spellweaver", "warlock"], bosses: ["demodras"], maxAlive: 10 },
   { name: "Hydra Swamps", level: 130, pool: ["dragon lord", "hydra", "behemoth", "demon", "medusa", "draken abomination", "ghastly dragon", "draken elite", "hand of cursed fate"], bosses: ["the plasmother", "dracola"], maxAlive: 11 },
   { name: "Pits of Inferno", level: 200, pool: ["demon", "behemoth", "hydra", "juggernaut", "fury", "plaguesmith", "hellfire fighter", "dark torturer", "hellhound", "grim reaper", "blightwalker", "undead dragon"], bosses: ["orshabaal", "ghazbaran", "morgaroth", "ferumbras", "gaz'haragoth"], maxAlive: 12 },
-].map((z, i) => ({ ...z, from: i * ZONE_WIDTH, ambient: ZONE_LIGHT[Math.min(i, ZONE_LIGHT.length - 1)] }));
+].map((z, i) => ({ ...z, from: i * ZONE_WIDTH, biome: ZONE_BIOMES[i], ambient: ZONE_LIGHT[Math.min(i, ZONE_LIGHT.length - 1)] }));
 
-/** Which zone a tile is in: rings around the start. */
-export function zoneAt(tx: number, ty: number): number {
-  return Math.min(ZONES.length - 1, Math.floor(Math.hypot(tx, ty) / ZONE_WIDTH));
-}
 
 export const spawnEvery = 1.4; // seconds between spawns while below the zone's maxAlive (unless the zone says otherwise)
 /** Souls also come from exploring and surviving, so even a run without kills moves you forward. */

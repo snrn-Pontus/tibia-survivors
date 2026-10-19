@@ -1,5 +1,6 @@
 import { Character } from "./character";
-import { achievement, mitigationOf, BESTIARY_STAGES, BOSS_KILLS, SOUL_EVERY, SOULS_PER_ZONE, soulsFor, spawnEvery, VOCATION_LEVEL, zoneAt, ZONES, type VocationDef } from "./data";
+import { achievement, mitigationOf, BESTIARY_STAGES, BOSS_KILLS, SOUL_EVERY, SOULS_PER_ZONE, soulsFor, spawnEvery, VOCATION_LEVEL, ZONES, type VocationDef } from "./data";
+import { groundSpeed, zoneAt } from "./map";
 import { advance, DIAGONAL_COST, isStepping, newWalker, startStep, stepDuration, TILE, tileCenter, type Walker } from "./movement";
 import { areaOffsets, canWear, FIELDS, item, MONSTERS, POTIONS, PRICES, radiusRows, SPELLS, spellArea, spellFormula, waveRows, type Element, type MonsterAttack, type MonsterData, type Offsets, type SpellData } from "./tibia/db";
 import { blockHit, damageList, distanceDamage, expForLevel, speedChange, distanceHitChance, FIGHT_MODES, meleeDamage, mitigation, normalRandom, playerDefense, SKILL, uniform, type FightMode } from "./tibia/rules";
@@ -332,7 +333,7 @@ export class Game {
       return;
     }
     p.lastAxis = dx ? 0 : 1;
-    startStep(p, dx, dy, (stepDuration(this.ch.speed) * cost) / 1000, Math.min(left, 0.05));
+    startStep(p, dx, dy, (stepDuration(this.ch.speed, groundSpeed(p.tx, p.ty)) * cost) / 1000, Math.min(left, 0.05)); // the ground you step off sets the pace
     advance(p, 0);
     p.moving = true;
     this.stepIntoField(p.tx, p.ty);
@@ -533,7 +534,7 @@ export class Game {
 
   private moveMonster(m: Monster, dx: number, dy: number) {
     this.occupied.delete(key(m.tx, m.ty));
-    const ms = stepDuration(m.data.speed) * (dx && dy ? DIAGONAL_COST : 1);
+    const ms = stepDuration(m.data.speed, groundSpeed(m.tx, m.ty)) * (dx && dy ? DIAGONAL_COST : 1);
     startStep(m, dx, dy, ms / 1000);
     this.occupied.set(key(m.tx, m.ty), m);
     this.monsterIntoField(m);

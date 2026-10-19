@@ -3,7 +3,8 @@
 // The bot stands and lets auto-combat fight (chase mode on), backs off below 30% HP,
 // learns the highest spell offered, and trades once a minute like a player in the pause menu.
 import { autoCombat } from "./autocast";
-import { ROOKIE, VOCATIONS, zoneAt, ZONES } from "./data";
+import { ROOKIE, VOCATIONS, ZONES } from "./data";
+import { zoneAt } from "./map";
 import { cheb, Game } from "./game";
 import { buyPrice, itemId, PRICES } from "./tibia/db";
 import type { World } from "./world";
@@ -56,6 +57,7 @@ export function run(world: World, effectDur: (id: number) => number, voc: number
   const rows: Record<string, unknown>[] = [];
   const dt = 0.05;
   let lastTrade = 0, nextRow = 60, resting = false;
+  const router = new Router();
   while (!g.over && g.time < seconds) {
     let mx = 0, my = 0;
     const p = g.player;
@@ -77,16 +79,13 @@ export function run(world: World, effectDur: (id: number) => number, voc: number
       // Nothing close: go loot the nearest unlooted corpse.
       const c = [...g.chests, ...g.corpses.filter((c) => !c.looted && c.loot.length)].filter((c) => cheb(c.tx, c.ty, p.tx, p.ty) <= 7)
         .sort((a, b) => cheb(a.tx, a.ty, p.tx, p.ty) - cheb(b.tx, b.ty, p.tx, p.ty))[0];
-      if (c) { mx = Math.sign(c.tx - p.tx); my = Math.sign(c.ty - p.ty); }
+      if (c) [mx, my] = router.step(g, `c${c.tx},${c.ty}`, (x, y) => cheb(x, y, c.tx, c.ty) <= 1);
       else {
-        // Strong enough for the next zone? Walk outward; too weak for this one? Walk back in.
+        // Strong enough for the next zone? Walk out to it (through a gap in the wall); too weak for this one?
+        // Walk back in.
         const z = zoneAt(p.tx, p.ty), next = ZONES[z + 1];
         const out = next && g.ch.level >= next.level ? 1 : z > 0 && g.ch.level < ZONES[z].level - 5 ? -1 : 0;
-        if (out) {
-          const d = Math.hypot(p.tx, p.ty) || 1;
-          mx = out * (p.tx / d || 1);
-          my = out * (p.ty / d);
-        }
+        if (out) [mx, my] = router.step(g, `z${z}${out}`, (x, y) => (out > 0 ? zoneAt(x, y) > z : zoneAt(x, y) < z));
       }
     }
     g.update(dt, mx, my);
@@ -137,4 +136,53 @@ function escape(g: Game): [number, number] {
     if (score > bestScore) { bestScore = score; best = [dx, dy]; }
   }
   return best;
+}
+
+/** The bot's way around walls: a breadth-first path (8-way) to the nearest tile `goal` accepts, followed step by
+ *  step and planned again when the goal changes, the bot strays from it, or every few seconds. */
+class Router {
+  private path: [number, number][] = [];
+  private key = "";
+  private at = -99;
+
+  step(g: Game, key: string, goal: (tx: number, ty: number) => boolean, radius = 90): [number, number] {
+    const p = g.player;
+    while (this.path.length && this.path[0][0] === p.tx && this.path[0][1] === p.ty) this.path.shift();
+    const next = this.path[0];
+    if (key !== this.key || g.time - this.at > 4 || !next || cheb(next[0], next[1], p.tx, p.ty) !== 1) {
+      this.path = findPath(g, goal, radius);
+      this.key = key;
+      this.at = g.time;
+    }
+    const n = this.path[0];
+    return n ? [n[0] - p.tx, n[1] - p.ty] : [0, 0];
+  }
+}
+
+function findPath(g: Game, goal: (tx: number, ty: number) => boolean, R: number): [number, number][] {
+  const p = g.player, W = R * 2 + 1;
+  const prev = new Int32Array(W * W).fill(-1), q = new Int32Array(W * W);
+  const start = R * W + R;
+  let h = 0, n = 0;
+  q[n++] = start;
+  prev[start] = start;
+  while (h < n) {
+    const i = q[h++], x = (i % W) - R + p.tx, y = Math.floor(i / W) - R + p.ty;
+    if (i !== start && goal(x, y)) {
+      const out: [number, number][] = [];
+      for (let j = i; j !== start; j = prev[j]) out.push([(j % W) - R + p.tx, Math.floor(j / W) - R + p.ty]);
+      return out.reverse();
+    }
+    for (const [dx, dy] of [[0, -1], [1, 0], [0, 1], [-1, 0], [1, -1], [1, 1], [-1, 1], [-1, -1]]) {
+      const nx = x + dx, ny = y + dy, ix = nx - p.tx + R, iy = ny - p.ty + R;
+      if (ix < 0 || iy < 0 || ix >= W || iy >= W) continue;
+      const j = iy * W + ix;
+      if (prev[j] >= 0 || g.world.blocked(nx, ny)) continue;
+      // No cutting a corner between two walls.
+      if (dx && dy && g.world.blocked(x + dx, y) && g.world.blocked(x, y + dy)) continue;
+      prev[j] = i;
+      q[n++] = j;
+    }
+  }
+  return [];
 }
