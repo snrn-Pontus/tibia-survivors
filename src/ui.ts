@@ -1,4 +1,5 @@
 import type { Atlas } from "./atlas";
+import { extractAtlas, type AssetState } from "./assets";
 import { achievement, BOSS_MILESTONES, KILL_MILESTONES, ROOKIE, SHOP, VOCATIONS, ZONES, type VocationDef } from "./data";
 import type { LevelChoice } from "./character";
 import type { Game } from "./game";
@@ -615,13 +616,48 @@ function describe(s: SpellData): string {
   return `${el[0].toUpperCase() + el.slice(1)} damage to your target (range ${s.range ?? 1}).`;
 }
 
-export function showMissingAssets(root: HTMLElement) {
+/** No sprites yet: ask for the player's own Tibia client and build the atlas from it (src/assets.ts). Resolves
+ *  once it's built. */
+export function showAssetPicker(root: HTMLElement, state: AssetState): Promise<Atlas> {
   root.hidden = false;
-  root.innerHTML = `<div class="panel title">
+  root.innerHTML = `<div class="panel title assets">
     <h1>Tibia <span>Survivors</span></h1>
-    <p>No sprite atlas found. Extract it from your Tibia client first:</p>
-    <pre>npm run extract</pre>
-    <p class="hint">Reads %LOCALAPPDATA%\\Tibia\\packages\\Tibia\\assets and writes public/assets/.</p></div>`;
+    <p>${state === "outdated" ? "The game has changed since your sprites were read: pick your Tibia folder again." : "The game draws with the sprites of your own Tibia client. Pick its folder to read them."}</p>
+    <button class="btn pick">Choose Tibia folder</button>
+    <input type="file" webkitdirectory hidden>
+    <div class="bar" hidden><div></div></div>
+    <p class="status"></p>
+    <p class="hint">The <b>assets</b> folder of your Tibia install (or any folder above it). On Windows:<br>
+      <code>%LOCALAPPDATA%\\Tibia\\packages\\Tibia\\assets</code><br>
+      Your browser may ask to "upload" the files: nothing leaves your computer. The sprites are read here
+      and kept in this browser only.</p></div>`;
+  const pick = root.querySelector<HTMLButtonElement>(".pick")!;
+  const input = root.querySelector<HTMLInputElement>("input")!;
+  const bar = root.querySelector<HTMLElement>(".bar")!;
+  const status = root.querySelector<HTMLElement>(".status")!;
+  pick.focus();
+  return new Promise((resolve) => {
+    pick.onclick = () => input.click();
+    input.onchange = async () => {
+      const files = [...(input.files ?? [])];
+      input.value = "";
+      if (!files.length) return;
+      pick.disabled = true;
+      bar.hidden = false;
+      status.textContent = "Reading sprites...";
+      try {
+        const atlas = await extractAtlas(files, (done, total) => {
+          (bar.firstElementChild as HTMLElement).style.width = `${(100 * done) / total}%`;
+        });
+        root.hidden = true;
+        resolve(atlas);
+      } catch (e) {
+        status.textContent = e instanceof Error ? e.message : String(e);
+        bar.hidden = true;
+        pick.disabled = false;
+      }
+    };
+  });
 }
 
 function fmt(t: number) {

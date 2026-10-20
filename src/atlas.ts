@@ -1,4 +1,4 @@
-// Loads the atlas produced by tools/extract.py and draws frames from it.
+// Loads the atlas produced by tools/extract.py (or built in the browser, src/assets.ts) and draws frames from it.
 import type { TerrainFrames } from "./world";
 // Every frame is stored trimmed, with (ox, oy) = offset from the sprite's anchor,
 // which is the centre of the tile the sprite stands on (Tibia's bottom-right tile).
@@ -31,7 +31,7 @@ export function stackPattern(n: number) {
 }
 
 export class Atlas {
-  constructor(public img: HTMLImageElement, public data: AtlasData) {}
+  constructor(public img: HTMLImageElement | HTMLCanvasElement, public data: AtlasData) {}
 
   static async load(base = "assets/tibia-atlas"): Promise<Atlas> {
     const res = await fetch(`${base}.json`);

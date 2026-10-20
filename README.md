@@ -16,6 +16,9 @@ npm run dev
 
 If Tibia is somewhere else: `python tools/extract.py "D:\path\to\Tibia\packages\Tibia\assets"`.
 
+`npm run extract` is for development (and the headless sims, which read `public/assets/`). Without it, the
+game asks for your Tibia folder on first start and builds the sprites in the browser instead.
+
 ## Playing
 
 - Move with WASD / arrows / gamepad, one tile at a time. Everything else is automatic, like a Tibia
@@ -161,6 +164,8 @@ edge, and monsters spawning around you.
 
 - `tools/fetch_tibia_data.py`: parses Canary's Lua/XML into `src/tibia/data.json`.
 - `tools/extract.py`, `tools/tibia_assets.py`: read the client's protobuf appearances and LZMA sprite sheets.
+  `src/extract/` is the same in TypeScript, run in a worker when a player picks their Tibia folder; `src/assets.ts`
+  caches its atlas in IndexedDB. Keep the two extractors in step (and bump `EXTRACTOR` in `src/assets.ts`).
 - `src/tibia/rules.ts` (formulas), `src/tibia/db.ts` (data, areas, spell formulas), `src/movement.ts` (walking).
 - `src/game.ts` (world, monsters, combat, loot), `src/autocast.ts` (the hotkey "player"), `src/character.ts`.
 - `src/render.ts` draws the world on a canvas; `src/hud.ts` is the HTML client around it (windows, hotbar,
@@ -172,4 +177,6 @@ edge, and monsters spawning around you.
 ## Assets
 
 The sprites are CipSoft's. They're extracted locally from your own client and git-ignored;
-don't commit or redistribute `public/assets/` (or a build containing it).
+don't commit or redistribute `public/assets/`. `npm run build` leaves `public/` out, so `dist/` is safe to
+host anywhere: each player's browser reads their own client (picked with a folder picker, nothing uploaded)
+and keeps the atlas in IndexedDB. The cache is rebuilt when the game needs different sprites.

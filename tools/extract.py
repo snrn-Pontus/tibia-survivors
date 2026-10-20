@@ -3,6 +3,7 @@
 Usage: python tools/extract.py [path-to-Tibia-assets-folder]
 
 The output is CipSoft's artwork: keep it local, don't commit or redistribute it.
+src/extract/ does the same in the browser: keep the two in step.
 """
 import hashlib
 import json

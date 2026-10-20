@@ -223,6 +223,11 @@ h1 span { color: #c33; }
 h2 { margin: 0 0 16px; color: #e8c66a; text-shadow: 2px 2px 0 #000; }
 .sub { margin: 0 0 18px; color: #aaa; }
 .hint { color: #888; font-size: 13px; margin: 14px 0 0; }
+.assets .bar { width: 320px; height: 10px; margin: 14px auto 0; background: #111; border: 1px solid #555; }
+.assets .bar > div { width: 0; height: 100%; background: #e8c66a; }
+.assets .bar[hidden] { display: none; }
+.assets .status { min-height: 1.2em; color: #ccc; }
+.assets code { color: #9f9; }
 pre { background: #111; padding: 8px 12px; border: 1px solid #555; display: inline-block; color: #9f9; }
 
 .cards { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; }

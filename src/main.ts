@@ -1,5 +1,5 @@
 import "./style.css";
-import { Atlas } from "./atlas";
+import { loadAtlas } from "./assets";
 import { ROOKIE, VOCATIONS, type VocationDef } from "./data";
 import { applyUnlocks } from "./unlocks";
 import { currentCharacter, loadSave, writeSave } from "./meta";
@@ -8,7 +8,7 @@ import { describeChoice, Game, type LootDest } from "./game";
 import { HOTKEYS, HOTKEYS_ALT, Hud } from "./hud";
 import { Renderer } from "./render";
 import { installTooltips } from "./tooltip";
-import { showMissingAssets, UI } from "./ui";
+import { showAssetPicker, UI } from "./ui";
 import { World } from "./world";
 import { imbuement, TIERS } from "./tibia/imbuements";
 import { boost } from "./upgrades";
@@ -26,13 +26,8 @@ let paused = false;
 
 async function boot() {
   const overlay = document.getElementById("overlay")!;
-  let atlas: Atlas;
-  try {
-    atlas = await Atlas.load();
-  } catch {
-    showMissingAssets(overlay);
-    return;
-  }
+  const loaded = await loadAtlas();
+  const atlas = loaded.atlas ?? (await showAssetPicker(overlay, loaded.state));
   const ui = new UI(overlay, atlas);
   installTooltips();
   const renderer = new Renderer(ctx, atlas);
