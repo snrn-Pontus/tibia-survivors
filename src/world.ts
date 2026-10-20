@@ -1,7 +1,8 @@
 // The world's sprites: map.ts decides what is where (zones, walls, ponds, trees...); this picks the frames.
 // Things that block movement stand up (drawn y-sorted with creatures); the rest lie on the ground. Grounds get
 // Tibia's borders: a ground with a higher z draws its border pieces over the tiles next to it, so grass edges
-// spill onto water and sand, and rock rims a lava pool, the way the Tibia map is drawn.
+// spill onto water and sand, and rock rims a lava pool, the way the Tibia map is drawn. Underground, earth walls
+// get a rim where the cave floor is north or west of them.
 import { tileAt, type GroundKind } from "./map";
 import TERRAIN from "./tibia/terrain.json";
 export { hash } from "./map";
@@ -15,6 +16,7 @@ export interface TerrainFrames {
   decor: Record<string, number[]>;
   border: Record<string, Partial<Record<Piece, number>>>;
   walls: Record<string, { h: number; v: number; corner: number; pole: number }>;
+  cavewall: Record<"plain" | "N" | "W" | "NW" | "lump", number[]>;
 }
 
 const Z = (k: GroundKind) => (TERRAIN.ground[k] as { z: number }).z;
@@ -25,16 +27,25 @@ export class World {
   /** Without frames (the headless simulator) only the map is known. */
   constructor(private frames: TerrainFrames | null = null) {}
 
-  /** The ground's frame: mostly the kind's first sprite, now and then one of the others. */
+  /** The ground's frame: mostly the kind's first sprite, now and then one of the others; a shore's piece; an earth
+   *  wall's by where the cave floor is; -1 for the dark beyond a cave (nothing to draw). */
   groundFrame(tx: number, ty: number): number {
     const t = tileAt(tx, ty), f = this.frames?.ground[t.ground];
+    if (t.ground === "void") return -1;
     if (!f?.length) return 0;
+    if (t.piece !== undefined) return f[t.piece] ?? f[0];
+    if (t.ground === "cavewall" && this.frames?.cavewall) {
+      const c = this.frames.cavewall;
+      const n = tileAt(tx, ty - 1).ground !== "cavewall", w = tileAt(tx - 1, ty).ground !== "cavewall";
+      const set = n && w ? c.NW : n ? c.N : w ? c.W : t.v < 0.06 ? c.lump : c.plain;
+      return set[Math.floor(((t.v * 7919) % 1) * set.length)];
+    }
     return t.v < 0.7 || f.length === 1 ? f[0] : f[1 + Math.floor(((t.v - 0.7) / 0.3) * (f.length - 1))];
   }
 
   /** Border pieces to draw over this tile's ground, lowest ground first. */
   bordersAt(tx: number, ty: number): number[] {
-    const key = (tx + 0x8000) * 0x10000 + (ty + 0x8000);
+    const key = (tx + 0x100000) * 0x200000 + (ty + 0x100000);
     let out = this.borders.get(key);
     if (out) return out;
     out = [];
@@ -84,10 +95,17 @@ export class World {
     const f = this.frames?.decor[t.decor];
     if (!f?.length) return null;
     const frame = f[Math.floor(((t.v * 7919) % 1) * f.length)];
-    return { frame, block: t.block, tall: t.block };
+    // Stairs lie on the ground, except a ladder or stairs going up.
+    return { frame, block: t.block, tall: t.block && (!t.stair || t.decor === "ladder" || t.decor === "upstairs") };
   }
 
+  /** Blocks walking about: monsters and paths go around stairs too (you step onto them on purpose). */
   blocked(tx: number, ty: number): boolean {
     return tileAt(tx, ty).block;
+  }
+
+  /** Stairs on a tile: 1 down, -1 up, 0 none. */
+  stairAt(tx: number, ty: number): number {
+    return tileAt(tx, ty).stair;
   }
 }

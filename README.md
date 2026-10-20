@@ -76,8 +76,10 @@ If Tibia is somewhere else: `python tools/extract.py "D:\path\to\Tibia\packages\
   terrain's style (tree lines, boulders, cacti, dead trees, lava, swamp water) with a gap or two, so you go from
   one zone to the next through chokepoints; walls inside a zone, ponds, outcrops and groves make the rest.
   Ground speed is Tibia's (stone floors fast, sand and snow slow). The minimap marks the gaps between zones.
-  Grounds meet with Tibia's border sprites (grass edges over water and sand, rock rims around lava), and you start
-  in Rookgaard's village: a stone plaza with four small houses.
+  Grounds meet with Tibia's border sprites (grass edges over water and sand, rock rims around lava) and interlock
+  where two lands meet, and you start in Rookgaard's village: a stone plaza with four small houses. Lakes are
+  rounded and never a single tile across; deserts, beaches and stretches of the meadows have Tibia's sandy shore
+  tiles with surf, and a beach behind them.
 - **Hunting grounds**, as Tibia has them: every zone has a few walled-off places with their own creatures and
   their own look, entered through a gap or two. The Rat Sewers and the Troll Caves in Rookgaard; Shadowthorn's
   elves, the Dwarf Mines, the Swamp Troll Marsh and the Smugglers' Hideout; the Orc Fortress, the Amazon Camp and
@@ -87,6 +89,14 @@ If Tibia is somewhere else: `python tools/extract.py "D:\path\to\Tibia\packages\
   Tower; the Demon Forge, the Hellhound Den and the Undead Dragon Cave (data.ts HUNTS). Forts, halls and tombs are
   real walls (palisades, stone, sandstone) with doorways. Inside one, its creatures spawn (a little denser past
   Rookgaard), from within it, and prey is on them; the minimap says where you are.
+  **Dungeons**: the hunting grounds that are underground in Tibia (the Rat Sewers, the Rotworm and Troll Caves, the
+  Dwarf Mines, Mintwallin, the crypts and tombs, the Spider Caves, the dragon lairs, the Hero Cave, the Demon
+  Forge...) go one to three floors down. Each of their regions has a way down (a hole, a sewer grate, or stairs
+  in the halls and tombs): walk onto it. Below are caves dug into the earth, a chamber under each region with
+  galleries off it and tunnels to its neighbours, and a ladder (or stairs) back up; you come out next to the
+  other end. Creatures don't follow you. Each floor is darker (under Rookgaard still dim light, deep down black),
+  spawns a little denser, and its tougher creatures more often. Hold a key into the stairs and you only take
+  them once: let go to take them again.
   It doesn't follow your level: walk further out for tougher monsters.
   Each zone's real Tibia bosses appear after you've killed enough there, and drop treasure chests.
   The run is endless and ends when you die.

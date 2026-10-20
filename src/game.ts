@@ -1,6 +1,6 @@
 import { Character } from "./character";
 import { achievement, mitigationOf, BESTIARY_STAGES, BOSS_KILLS, SOUL_EVERY, SOULS_PER_ZONE, soulsFor, spawnEvery, VOCATION_LEVEL, ZONES, type Hunt, type VocationDef } from "./data";
-import { groundSpeed, huntAt, zoneAt } from "./map";
+import { floorOf, FLOOR_SPAN, groundSpeed, huntAt, zoneAt } from "./map";
 import { advance, DIAGONAL_COST, isStepping, newWalker, startStep, stepDuration, TILE, tileCenter, type Walker } from "./movement";
 import { areaOffsets, canWear, FIELDS, item, MONSTERS, POTIONS, PRICES, radiusRows, SPELLS, spellArea, spellFormula, waveRows, type Element, type MonsterAttack, type MonsterData, type Offsets, type SpellData } from "./tibia/db";
 import { blockHit, damageList, distanceDamage, expForLevel, speedChange, distanceHitChance, FIGHT_MODES, meleeDamage, mitigation, normalRandom, playerDefense, SKILL, uniform, type FightMode } from "./tibia/rules";
@@ -72,7 +72,7 @@ export const ELEMENT_COLORS: Record<Element, string> = {
   death: "#c02040", lifedrain: "#ff3030", manadrain: "#4f8cff", drown: "#88e0ff", healing: "#40ff60",
 };
 
-const key = (tx: number, ty: number) => (tx + 0x8000) * 0x10000 + (ty + 0x8000);
+const key = (tx: number, ty: number) => (tx + 0x100000) * 0x200000 + (ty + 0x100000); // floors below are far down in y
 const ORTHO: [number, number][] = [[0, -1], [1, 0], [0, 1], [-1, 0]];
 const DIAG: [number, number][] = [[1, -1], [1, 1], [-1, 1], [-1, -1]];
 const FLOW_R = 22;
@@ -117,6 +117,8 @@ export class Game {
 
   /** The world's light where you stand (255 day, 40 a deep cave), easing between zones. */
   ambient = 255;
+  floor = 0; // how far below the surface you are
+  private stairsLock = false; // no stairs again until you let go of the keys: holding one doesn't bounce you back
   recovery: { hp: number; every: number; next: number; until: number } | null = null; // Recovery / Intense Recovery
   fightMode: FightMode = "offensive"; // offensive / balanced / defensive: Tibia's attack and defense factors
   lastAttack = -99; // full attack only drops your defense right after you swing
@@ -260,7 +262,7 @@ export class Game {
     this.updateConditions();
     this.updateFields();
     this.updateBuffs();
-    this.ambient += (ZONES[Math.max(0, zoneAt(this.player.tx, this.player.ty))].ambient - this.ambient) * Math.min(1, dt * 1.5);
+    this.ambient += (this.ambientHere() - this.ambient) * Math.min(1, dt * 1.5);
 
     this.updateRegen(dt);
     if (this.time - this.lastKill < SOUL_EVERY) this.soulClock += dt; // only while you're killing things
@@ -296,9 +298,45 @@ export class Game {
     }
   }
 
+  /** The zone's light, and below the surface much less: under Rookgaard still dim light, deeper down black. */
+  private ambientHere() {
+    const lit = ZONES[Math.max(0, zoneAt(this.player.tx, this.player.ty))].ambient;
+    return this.floor ? Math.max(12, Math.round(lit * 0.45) - 15 * (this.floor - 1)) : lit;
+  }
+
+  /** Take the stairs (a hole, a grate, a ladder) at a tile: you come out south of the ones at the other end, at the
+   *  same place a floor down or up. Creatures don't follow (a boss waits where it was). */
+  private takeStairs(tx: number, ty: number, dir: number) {
+    const p = this.player, ny = ty + dir * FLOOR_SPAN + 1;
+    for (const m of this.monsters) {
+      if (m.boss || m.dead) continue;
+      m.dead = true;
+      this.occupied.delete(key(m.tx, m.ty));
+    }
+    this.monsters = this.monsters.filter((m) => !m.dead);
+    const there = this.occupied.get(key(tx, ny));
+    if (there) {
+      // A boss standing where you come out steps aside.
+      const free = [...ORTHO, ...DIAG].find(([dx, dy]) => this.walkable(tx + dx, ny + dy));
+      if (free) {
+        this.occupied.delete(key(tx, ny));
+        Object.assign(there, newWalker(tx + free[0], ny + free[1]));
+        this.occupied.set(key(there.tx, there.ty), there);
+      }
+    }
+    const facing = p.dir;
+    Object.assign(p, newWalker(tx, ny));
+    p.dir = facing;
+    this.floor = floorOf(ny);
+    this.flowX = NaN;
+    this.stairsLock = true;
+    this.msg(this.floor ? `You go ${dir > 0 ? "down" : "up"} to floor -${this.floor}.` : "You climb back up to the surface.", "#80c0ff");
+  }
+
   private updatePlayer(dt: number, mx: number, my: number) {
     const p = this.player;
     p.hurt = Math.max(0, p.hurt - dt);
+    if (Math.abs(mx) <= 0.35 && Math.abs(my) <= 0.35) this.stairsLock = false; // let go: stairs work again
     const left = advance(p, dt);
     p.moving = isStepping(p);
     if (left < 0) return;
@@ -327,6 +365,11 @@ export class Game {
         const other: [number, number] = p.lastAxis === 0 ? [sx, 0] : [0, sy];
         [dx, dy] = this.walkable(p.tx + first[0], p.ty + first[1]) ? first : other;
       }
+    }
+    const stair = this.world.stairAt(p.tx + dx, p.ty + dy);
+    if (stair && !this.stairsLock) {
+      this.takeStairs(p.tx + dx, p.ty + dy, stair);
+      return;
     }
     const ghost = this.ch.evolutions.has("draken");
     if (ghost ? this.world.blocked(p.tx + dx, p.ty + dy) : !this.walkable(p.tx + dx, p.ty + dy)) {
@@ -509,9 +552,12 @@ export class Game {
     if (this.spawnTimer > 0) return;
     this.spawnTimer = zone.spawnEvery ?? spawnEvery;
     const alive = this.monsters.filter((m) => !m.boss && m.master === undefined).length; // summons don't count
-    if (alive >= zone.maxAlive + (hunt ? Math.min(3, z) : 0)) return; // denser hunting grounds, but not in Rookgaard's first fields
+    // Denser hunting grounds (but not in Rookgaard's first fields), and denser still further down.
+    if (alive >= zone.maxAlive + (hunt ? Math.min(3, z) + this.floor : 0)) return;
     const pool = hunt?.pool ?? zone.pool;
-    const w = hunt ? pool.map(() => 1) : zone.weights ?? pool.map(() => 1);
+    // Down below, the tougher of the hunting ground's creatures (by experience) are more common, floor by floor.
+    const top = Math.max(...pool.map((n) => MONSTERS[n]?.experience ?? 0));
+    const w = hunt ? pool.map((n) => 1 + (this.floor * (MONSTERS[n]?.experience ?? 0)) / Math.max(1, top)) : zone.weights ?? pool.map(() => 1);
     let r = Math.random() * w.reduce((a, b) => a + b, 0), i = 0;
     while (i < pool.length - 1 && (r -= w[i]) >= 0) i++;
     this.spawnMonster(pool[i], false);

@@ -271,6 +271,9 @@ def main():
         if len(pieces) != 12:
             print(f"border {kind}: {len(pieces)} of 12 pieces", sorted(pieces))
         data["terrain"]["border"][kind] = pieces
+    # Earth cave walls, by which of their sides have a rim (the cave floor is there).
+    data["terrain"]["cavewall"] = {k: [p.add(a.sprite(a.objects[i].frame_groups[0].sprite_ids[0])) for i in ids]
+                                   for k, ids in terrain["cavewall"].items()}
     data["terrain"]["walls"] = {}
     for name, parts in terrain["walls"].items():
         data["terrain"]["walls"][name] = {k: p.add(a.sprite(a.objects[i].frame_groups[0].sprite_ids[0])) for k, i in parts.items()}
