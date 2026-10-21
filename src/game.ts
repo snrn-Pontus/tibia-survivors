@@ -30,6 +30,7 @@ export interface Monster extends Walker {
   dot?: DamageCondition & { element: Element }; // a field burning it
   rootedUntil?: number; // Cripple / Numb charms: paralyzed in place until then
   holdUntil?: number; // Fatal Hold charm: won't flee until then
+  fleeFrom?: [number, number]; // where you stood when it started to run: it stays on that screen
   summonTimers: number[]; // per monster.summon entry: seconds until its next roll
 }
 /** A magic field on the ground (a fire, poison or energy field item), until it decays. */
@@ -332,9 +333,8 @@ export class Game {
   }
 
   /** On your screen (15 x 11 tiles: 7 to either side, but only 5 up or down). What you can target and hit. */
-  onScreen(tx: number, ty: number) {
-    const p = this.player;
-    return Math.abs(tx - p.tx) <= Math.floor(this.viewW / TILE / 2) && Math.abs(ty - p.ty) <= Math.floor(this.viewH / TILE / 2);
+  onScreen(tx: number, ty: number, cx = this.player.tx, cy = this.player.ty) {
+    return Math.abs(tx - cx) <= Math.floor(this.viewW / TILE / 2) && Math.abs(ty - cy) <= Math.floor(this.viewH / TILE / 2);
   }
 
   /** Creatures within range that you can see (a range of 7 reaches past the top and bottom of the screen). */
@@ -450,9 +450,10 @@ export class Game {
       // Tibia's "chase opponent" fight mode: walk to the target until it's in weapon range.
       const t = this.monsters.find((m) => m.id === this.targetId && !m.dead);
       if (!t || !this.onScreen(t.tx, t.ty) || cheb(t.tx, t.ty, p.tx, p.ty) <= this.ch.attackRange) return;
-      // Something else on you: fight it first (auto-combat swings at what's in reach); don't drag it along after
-      // a target that runs or keeps its distance.
-      if (this.monsters.some((o) => o !== t && !o.dead && cheb(o.tx, o.ty, p.tx, p.ty) <= 1)) return;
+      // Something else on you: fight it first (auto-combat swings at what's in reach) rather than drag it along
+      // after a target that keeps its distance. One that runs you go after anyway, as in Tibia (your weapon hits
+      // whatever is in reach on the way).
+      if (!this.fleeing(t) && this.monsters.some((o) => o !== t && !o.dead && cheb(o.tx, o.ty, p.tx, p.ty) <= 1)) return;
       const step = this.pathStep(t.tx, t.ty);
       if (!step) return;
       [sx, sy] = step;
@@ -776,6 +777,7 @@ export class Game {
         if (t) {
           this.occupied.delete(key(m.tx, m.ty));
           Object.assign(m, newWalker(t[0], t[1]));
+          m.fleeFrom = undefined;
           this.occupied.set(key(m.tx, m.ty), m);
         }
         continue;
@@ -786,18 +788,29 @@ export class Game {
     }
   }
 
+  /** Hurt below its runHealth (and no Fatal Hold on it): it runs from you. */
+  fleeing(m: Monster) {
+    return m.hp < m.data.runHealth && this.time >= (m.holdUntil ?? 0);
+  }
+
   private chooseStep(m: Monster, d: number): [number, number] | null {
     const p = this.player;
     if (this.time < (m.rootedUntil ?? 0)) return null; // crippled: stands (it still attacks)
-    const fleeing = m.hp < m.data.runHealth && this.time >= (m.holdUntil ?? 0);
+    const fleeing = this.fleeing(m);
     const want = fleeing ? 99 : Math.max(1, m.data.targetDistance);
+    if (!fleeing) m.fleeFrom = undefined;
+    else m.fleeFrom ??= [p.tx, p.ty];
     // Monsters don't walk into fields that would hurt them (they do if they're immune: a demon in fire).
     const free = (s: [number, number]) => this.walkable(m.tx + s[0], m.ty + s[1]) && !this.fieldHurts(m.tx + s[0], m.ty + s[1], m);
     if (d < want) {
       // Ranged monsters keep their distance; hurt ones run (runHealth), but only to the edge of your screen: there
       // they stand, so you can still catch them (they used to vanish, bosses too). With the way straight back
-      // blocked (a tree, or the top of the screen), they slide sideways, toward a corner.
-      const open = ORTHO.filter((s) => free(s) && this.onScreen(m.tx + s[0], m.ty + s[1]));
+      // blocked (a tree, or the top of the screen), they slide sideways, toward a corner. A runner keeps to the
+      // screen you had when it started to run: your screen moves with you, so chasing it used to open new room
+      // ahead of it on every step and you never caught anything as fast as you.
+      const anchor = m.fleeFrom;
+      const inside = (x: number, y: number) => this.onScreen(x, y) && (!anchor || this.onScreen(x, y, anchor[0], anchor[1]));
+      const open = ORTHO.filter((s) => free(s) && inside(m.tx + s[0], m.ty + s[1]));
       const dist = (s: [number, number]) => cheb(m.tx + s[0], m.ty + s[1], p.tx, p.ty);
       const manhattan = (s: [number, number]) => Math.abs(m.tx + s[0] - p.tx) + Math.abs(m.ty + s[1] - p.ty);
       let away = open.filter((s) => dist(s) > d);
