@@ -1,5 +1,7 @@
 # Tibia Survivors
 
+[![Netlify Status](https://api.netlify.com/api/v1/badges/4a0f7da3-eeb1-46db-a08a-5e4a573f899e/deploy-status)](https://app.netlify.com/projects/tibiasurvivor/deploys)
+
 A survivors-style game with Tibia's real rules: sprites from your own Tibia client, and monsters, spells,
 items, prices and formulas from the [Canary](https://github.com/opentibiabr/canary) server project.
 
