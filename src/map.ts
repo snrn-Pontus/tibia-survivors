@@ -5,8 +5,8 @@
 // A border between two zones is a wall in that terrain's style (a tree line, rock, water, lava) with a gap or
 // two, so you go from zone to zone through chokepoints; some borders inside a zone are walled as well. Inside
 // a region there are ponds, outcrops and groves, kept away from the borders so every gap stays reachable.
-// Water lies in smooth lakes at least two tiles across, and where a grassy or sandy land meets it there are
-// Tibia's sandy shore tiles with surf, and a beach behind them.
+// Water lies in smooth lakes at least three tiles across (a wall of it two), and where a grassy or sandy land meets
+// it there are Tibia's sandy shore tiles with surf, and a beach behind them.
 // Hunting grounds that are dungeons in Tibia (sewers, mines, caves, crypts, lairs) go down: a hole, a grate or
 // stairs in each of their regions leads to caves below, one to three floors deep, with a ladder back up.
 // Floors below lie in their own band of the coordinate plane (floor k at y + k * FLOOR_SPAN), so everything that
@@ -37,8 +37,9 @@ function noise(x: number, y: number, seed: number): number {
   return a + (b - a) * sx + (c - a) * sy + (a - b - c + d) * sx * sy;
 }
 
-/** A wall, pond or outcrop: a blocking ground, or a blocking thing on the biome's ground. */
-interface Fill { ground?: GroundKind; decor?: DecorKind; w?: number }
+/** A wall, pond or outcrop: a blocking ground, or a blocking thing on the biome's ground. `thin`: where a wall of
+ *  liquid is too thin to keep, this stands there instead, so the wall doesn't fall apart into pools. */
+interface Fill { ground?: GroundKind; decor?: DecorKind; w?: number; thin?: DecorKind }
 export interface Biome {
   name: string;
   ground: GroundKind[]; // the first is the main one; the others come in patches
@@ -71,15 +72,15 @@ export const BIOMES: Record<string, Biome> = {
     scatter: [["cactus", 0.012], ["bones", 0.006], ["palm", 0.003], ["sandstone", 0.004], ["pebbles", 0.01]] },
   graveyard: { name: "graveyard", ground: ["mud"], wall: [{ decor: "deadtree" }], pond: { ground: "swampwater" }, outcrop: { decor: "deadtree" },
     scatter: [["graves", 0.014], ["bones", 0.012], ["deadtree", 0.02], ["mushrooms", 0.006]] },
-  scorched: { name: "scorched rock", ground: ["scorched"], wall: [{ ground: "lava" }], pond: { ground: "lava" }, outcrop: rocks,
+  scorched: { name: "scorched rock", ground: ["scorched"], wall: [{ ground: "lava", thin: "boulder" }], pond: { ground: "lava" }, outcrop: rocks,
     scatter: [["boulder", 0.01], ["bones", 0.008], ["pebbles", 0.02]] },
   cave: { name: "cave", ground: ["caverock"], wall: [rocks, { decor: "stalagmite", w: 0.6 }], outcrop: { decor: "stalagmite" }, pond: { ground: "water" },
     scatter: [["stalagmite", 0.02], ["pebbles", 0.03], ["mushrooms", 0.006]] },
   snow: { name: "snow", ground: ["snow", "ice"], wall: [{ decor: "snowtree" }], pond: { ground: "water" }, outcrop: rocks,
     scatter: [["snowtree", 0.02], ["snowheap", 0.01], ["pebbles", 0.01]] },
-  swamp: { name: "swamp", ground: ["mud"], wall: [{ ground: "swampwater" }], pond: { ground: "swampwater" }, outcrop: { decor: "jungle" },
+  swamp: { name: "swamp", ground: ["mud"], wall: [{ ground: "swampwater", thin: "reeds" }], pond: { ground: "swampwater" }, outcrop: { decor: "jungle" },
     scatter: [["reeds", 0.015], ["jungle", 0.01], ["deadtree", 0.008], ["fern", 0.02], ["mushrooms", 0.01]] },
-  inferno: { name: "inferno", ground: ["scorched"], wall: [{ ground: "lava" }], pond: { ground: "lava" }, outcrop: rocks,
+  inferno: { name: "inferno", ground: ["scorched"], wall: [{ ground: "lava", thin: "boulder" }], pond: { ground: "lava" }, outcrop: rocks,
     scatter: [["bones", 0.012], ["stalagmite", 0.008], ["boulder", 0.006]] },
 
   // Hunting grounds (data.ts HUNTS): each looks like its kind of place in Tibia.
@@ -87,7 +88,7 @@ export const BIOMES: Record<string, Biome> = {
     scatter: [["stalagmite", 0.02], ["pebbles", 0.035], ["crate", 0.004], ["boulder", 0.008], ["dwarfstatue", 0.001]] },
   jungle: { name: "jungle", ground: ["grass", "mud"], wall: [{ decor: "jungle" }, tree], pond: { ground: "swampwater" }, outcrop: { decor: "jungle" }, beach: 0.5,
     scatter: [["jungle", 0.035], ["fern", 0.03], ["palm", 0.008], ["flowers", 0.012], ["cobrastatue", 0.002]] },
-  beach: { name: "beach", ground: ["sand"], wall: [{ ground: "water" }], pond: { ground: "water" }, outcrop: { decor: "palm" }, beach: 1,
+  beach: { name: "beach", ground: ["sand"], wall: [{ ground: "water", thin: "palm" }], pond: { ground: "water" }, outcrop: { decor: "palm" }, beach: 1,
     scatter: [["palm", 0.012], ["pebbles", 0.012], ["crate", 0.004], ["bones", 0.004]] },
   ruins: { name: "ruins", ground: ["stonefloor"], wall: [rocks], outcrop: rocks, built: "stone", below: ["stonefloor", "caverock"], entrance: "stairs",
     scatter: [["pebbles", 0.02], ["bones", 0.008], ["minostatue", 0.003], ["boulder", 0.006]] },
@@ -103,13 +104,13 @@ export const BIOMES: Record<string, Biome> = {
     scatter: [["tent", 0.012], ["campfire", 0.004], ["snowheap", 0.012], ["snowtree", 0.008]] },
   orcfort: { name: "fortress", ground: ["earth", "dirt"], wall: [rocks], outcrop: rocks, built: "palisade",
     scatter: [["tent", 0.01], ["campfire", 0.004], ["bones", 0.008], ["crate", 0.004], ["pebbles", 0.02]] },
-  crypt: { name: "crypt", ground: ["stonefloor", "mud"], wall: [{ decor: "deadtree" }], outcrop: { decor: "darkstatue" }, built: "stone", below: ["stonefloor", "caverock"], entrance: "stairs",
+  crypt: { name: "crypt", ground: ["stonefloor", "mud"], wall: [{ decor: "deadtree" }], outcrop: { decor: "deadtree" }, built: "stone", below: ["stonefloor", "caverock"], entrance: "stairs",
     scatter: [["coffin", 0.01], ["graves", 0.012], ["bones", 0.014], ["brazier", 0.003], ["darkstatue", 0.002]] },
   lair: { name: "dragon lair", ground: ["scorched", "caverock"], wall: [rocks], pond: { ground: "lava" }, outcrop: rocks, below: ["caverock", "scorched"],
     scatter: [["bones", 0.025], ["boulder", 0.01], ["pebbles", 0.02]] },
   iceland: { name: "ice", ground: ["ice", "snow"], wall: [{ decor: "snowtree" }], pond: { ground: "water" }, outcrop: rocks,
     scatter: [["snowheap", 0.02], ["boulder", 0.008], ["bones", 0.006]] },
-  forge: { name: "forge", ground: ["scorched"], wall: [{ ground: "lava" }], pond: { ground: "lava" }, outcrop: { decor: "darkstatue" },
+  forge: { name: "forge", ground: ["scorched"], wall: [{ ground: "lava", thin: "boulder" }], pond: { ground: "lava" }, outcrop: { decor: "darkstatue" },
     scatter: [["darkstatue", 0.004], ["brazier", 0.004], ["bones", 0.012], ["boulder", 0.008], ["stalagmite", 0.006]] },
 };
 
@@ -340,11 +341,12 @@ const groundOf = (grounds: GroundKind[], tx: number, ty: number, gx: number, gy:
 /** Water, swamp water, lava: the blocking grounds. */
 const isLiquid = (g: GroundKind) => !!GROUNDS[g].block;
 
-type RawTile = Tile & { land: GroundKind };
+type RawTile = Tile & { land: GroundKind; thin: DecorKind | null; pond: boolean };
 /** The surface before the water is tidied up: zones, walls and their gaps, buildings, lakes, outcrops and scatter.
- *  `land` is the ground under a lake or a wall of water, for where it's too thin to keep. */
+ *  `land` is the ground under a lake or a wall of water, for where it's too thin to keep, and `thin` what stands
+ *  there instead in a wall; `pond`: liquid of a lake (which has to be wider than a wall's). */
 function surfaceRaw(tx: number, ty: number): RawTile {
-  const { wx, wy, a, b, edge, len } = locate(tx, ty);
+  const { wx, wy, a, b, edge, len, near } = locate(tx, ty);
   const ax = a.gx, ay = a.gy, bx = b.gx, by = b.gy, sa = a.s, sb = b.s;
   const za = regionZone(ax, ay), zb = regionZone(bx, by), ha = regionHunt(ax, ay), hb = regionHunt(bx, by);
   const biome = biomeOf(za, ha);
@@ -360,13 +362,18 @@ function surfaceRaw(tx: number, ty: number): RawTile {
     if (u > 0 !== up) ground = groundOf(other.ground, tx, ty, bx, by);
   }
   const land = ground;
-  let decor: DecorKind | null = null, wall: WallKind | null = null;
-  const fill = (f: Fill) => { if (f.ground) ground = f.ground; if (f.decor) decor = f.decor; };
+  let decor: DecorKind | null = null, wall: WallKind | null = null, thin: DecorKind | null = null, pond = false;
+  const fill = (f: Fill) => { if (f.ground) ground = f.ground; if (f.decor) decor = f.decor; thin = f.thin ?? null; };
   // How thick this side of the border's wall is: between zones both sides wall up; around a hunting ground only
   // its own side does (a real wall if it has one), so it reads as a walled place with entrances. It swells and
   // thins along the border, with a ragged edge.
   const base = za !== zb ? ZONE_WALL : ha !== hb ? (ha < 0 ? 0 : ZONE_WALL * 0.8) : INNER_WALL;
-  const thick = base * (0.65 + 0.75 * noise(tx / 6, ty / 6, SEED + 52)) + (hash(tx, ty, SEED + 53) - 0.5) * 0.5;
+  let thick = base * (0.65 + 0.75 * noise(tx / 6, ty / 6, SEED + 52)) + (hash(tx, ty, SEED + 53) - 0.5) * 0.5;
+  // A wall inside a zone that runs into a corner where the next border is open tapers off instead of stopping dead.
+  if (base === INNER_WALL) {
+    const end = openEnd(wx, wy, a, b, near);
+    if (end < 5) thick *= Math.max(0, end - 1) / 4;
+  }
   const house = biome.built && !start ? building(ax, ay, tx, ty) : null;
   const inTown = Math.abs(tx) <= 12 && Math.abs(ty) <= 10;
   const town = inTown ? village(tx, ty) : null;
@@ -389,7 +396,7 @@ function surfaceRaw(tx: number, ty: number): RawTile {
     // Lakes: a slow noise and a quicker one, so they're rounded with wobbly shores, and shrink toward the
     // region's border.
     const lake = 0.6 * noise(tx / 9, ty / 9, SEED + 11 + za) + 0.4 * noise(tx / 3.6, ty / 3.6, SEED + 14);
-    if (inner && biome.pond && lake > LAKES + Math.max(0, MARGIN + 3 - edge) * 0.03) fill(biome.pond);
+    if (inner && biome.pond && lake > LAKES + Math.max(0, MARGIN + 3 - edge) * 0.03) { fill(biome.pond); pond = true; }
     else if (inner && biome.outcrop && noise(tx / 4.5, ty / 4.5, SEED + 13 + za) > 0.78) fill(biome.outcrop);
     else {
       // Scatter: flowers and pebbles anywhere; things in the way only clear of borders and building walls.
@@ -402,7 +409,20 @@ function surfaceRaw(tx: number, ty: number): RawTile {
     }
   }
   const block = wall !== null || isLiquid(ground) || (decor !== null && !!DECORS[decor as DecorKind].block);
-  return { zone: za, region: regionId(ax, ay), hunt: ha, ground, decor, wall, block, stair: 0, v, land };
+  return { zone: za, region: regionId(ax, ay), hunt: ha, ground, decor, wall, block, stair: 0, v, land, thin, pond };
+}
+
+/** How far a tile on the border of regions a and b is from the end of their border where it meets a third region
+ *  with an open (unwalled) border to a; Infinity if there's none close. */
+function openEnd(wx: number, wy: number, a: Seed, b: Seed, near: Seed[]) {
+  let best = Infinity;
+  for (const c of near) {
+    if (c === a || c === b) continue;
+    const l = Math.hypot(c.s[0] - a.s[0], c.s[1] - a.s[1]), e = (c.d - a.d) / (2 * l);
+    if (e >= best || e > 6) continue;
+    if (!walled(a.gx, a.gy, regionZone(a.gx, a.gy), regionHunt(a.gx, a.gy), c.gx, c.gy, regionZone(c.gx, c.gy), regionHunt(c.gx, c.gy))) best = e;
+  }
+  return best;
 }
 
 /** Rookgaard's village where you start: a stone plaza with braziers at its corners, and four small stone houses
@@ -537,11 +557,17 @@ function raw(tx: number, ty: number) {
   return t;
 }
 const rawLiquid = (tx: number, ty: number) => isLiquid(raw(tx, ty).ground);
-/** Liquid that stays: part of a 2 x 2 block of it, so no lake, moat or wall of water is a single tile across. */
+/** Liquid that stays: part of a 2 x 2 block of it (a lake's: 3 x 3), so no wall of water is a single tile across
+ *  and no lake a little square. */
 function liquid(tx: number, ty: number) {
   if (!rawLiquid(tx, ty)) return false;
-  for (const [ox, oy] of [[0, 0], [-1, 0], [0, -1], [-1, -1]])
-    if (rawLiquid(tx + ox, ty + oy) && rawLiquid(tx + ox + 1, ty + oy) && rawLiquid(tx + ox, ty + oy + 1) && rawLiquid(tx + ox + 1, ty + oy + 1)) return true;
+  const n = raw(tx, ty).pond ? 3 : 2;
+  for (let oy = 1 - n; oy <= 0; oy++)
+    for (let ox = 1 - n; ox <= 0; ox++) {
+      let all = true;
+      for (let y = 0; y < n && all; y++) for (let x = 0; x < n && all; x++) all = rawLiquid(tx + ox + x, ty + oy + y);
+      if (all) return true;
+    }
   return false;
 }
 const lake = (tx: number, ty: number) => raw(tx, ty).ground === "water" && liquid(tx, ty);
@@ -567,7 +593,10 @@ function surface(tx: number, ty: number): Tile {
   if (st.clear) return { ...t, ground: t.land, decor: null, wall: null, block: false };
   if (isLiquid(t.ground) && liquid(tx, ty)) return t;
   if (t.ground !== "lava" && t.ground !== "swampwater" && water(tx, ty)) return { ...t, ground: "water", decor: null, wall: null, block: true };
-  return shore(tx, ty, isLiquid(t.ground) ? { ...t, ground: t.land, decor: null, block: false } : t);
+  // Too thin to keep: what stands there instead keeps the wall whole (no shore under it, which would clear it).
+  if (isLiquid(t.ground) && t.thin) return { ...t, ground: t.land, decor: t.thin, block: true };
+  if (isLiquid(t.ground)) return shore(tx, ty, { ...t, ground: t.land, decor: null, block: false });
+  return shore(tx, ty, t);
 }
 
 /** Shores: where the land has beaches (all of a desert's, stretches of a meadow's), the tiles next to the water are
@@ -576,7 +605,7 @@ function shore(tx: number, ty: number, t: Tile): Tile {
   const biome = biomeOf(t.zone, t.hunt);
   if (!biome.beach || t.wall || t.ground === "stonefloor" || t.ground === "tombfloor") return t;
   let wet = false;
-  for (let dy = -2; dy <= 2 && !wet; dy++) for (let dx = -2; dx <= 2 && !wet; dx++) wet = rawLiquid(tx + dx, ty + dy);
+  for (let dy = -2; dy <= 2 && !wet; dy++) for (let dx = -2; dx <= 2 && !wet; dx++) wet = dx * dx + dy * dy <= 5 && rawLiquid(tx + dx, ty + dy);
   if (!wet || noise(tx / 16, ty / 16, SEED + 55) > biome.beach + 0.08) return t;
   const n = water(tx, ty - 1), s = water(tx, ty + 1), w = water(tx - 1, ty), e = water(tx + 1, ty);
   const piece = n && s || w && e ? -1 : n && w ? SHORE.NW : n && e ? SHORE.NE : s && w ? SHORE.SW : s && e ? SHORE.SE
@@ -584,7 +613,8 @@ function shore(tx: number, ty: number, t: Tile): Tile {
     : water(tx + 1, ty + 1) ? SHORE.se : water(tx - 1, ty + 1) ? SHORE.sw : water(tx + 1, ty - 1) ? SHORE.ne : water(tx - 1, ty - 1) ? SHORE.nw : -1;
   if (piece >= 0) return { ...t, ground: "shore", piece, decor: null, block: false };
   let behind = false;
-  for (let dy = -2; dy <= 2 && !behind; dy++) for (let dx = -2; dx <= 2 && !behind; dx++) behind = water(tx + dx, ty + dy);
+  // A round reach, so a beach's corners are round too.
+  for (let dy = -2; dy <= 2 && !behind; dy++) for (let dx = -2; dx <= 2 && !behind; dx++) behind = dx * dx + dy * dy <= 5 && water(tx + dx, ty + dy);
   if (!behind || t.block) return t;
   return { ...t, ground: "sand", decor: t.decor === "pebbles" ? t.decor : null };
 }
@@ -634,10 +664,16 @@ function caveOwner(tx: number, sy: number, floor: number): Seed | null {
   if (own === undefined) {
     if (owners.size > 300000) owners.clear();
     own = findOwner(tx, sy, floor);
+    // A lone pillar of rock in a cave: open it, if what's around it is one dungeon's.
+    if (!own) {
+      const around = [findOwner(tx + 1, sy, floor), findOwner(tx - 1, sy, floor), findOwner(tx, sy + 1, floor), findOwner(tx, sy - 1, floor)];
+      if (around.every((n) => n && dungeonOf(n) === dungeonOf(around[0]!))) own = around[0];
+    }
     owners.set(key, own);
   }
   return own;
 }
+const dungeonOf = (n: Seed) => regionZone(n.gx, n.gy) * 64 + regionHunt(n.gx, n.gy);
 function findOwner(tx: number, sy: number, floor: number): Seed | null {
   const { near, a, edge } = locate(tx, sy);
   const k = SEED + 60 + floor * 7;
@@ -687,8 +723,7 @@ function findOwner(tx: number, sy: number, floor: number): Seed | null {
   // its ground against the other's galleries.
   const [mx, my] = middleOf(own.gx, own.gy);
   if ((tx - mx) ** 2 + (sy - my) ** 2 < 30) return own; // the heart of a chamber, where its stairs are, always
-  const dungeon = (n: Seed) => regionZone(n.gx, n.gy) * 64 + regionHunt(n.gx, n.gy);
-  for (const n of near) if (dungeon(n) !== dungeon(own) && claims(n, 2) >= level) return null;
+  for (const n of near) if (dungeonOf(n) !== dungeonOf(own) && claims(n, 2) >= level) return null;
   return own;
 }
 
