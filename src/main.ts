@@ -194,7 +194,7 @@ async function boot() {
   };
 
   // ---------- input ----------
-  // Right-click (or click) a creature in the game view to attack it, like Tibia.
+  // Right-click (or click) a creature in the game view to attack it, like Tibia; click the ground to walk there.
   const toCanvas = (e: MouseEvent) => {
     const r = canvas.getBoundingClientRect();
     return [((e.clientX - r.left) * canvas.width) / r.width, ((e.clientY - r.top) * canvas.height) / r.height] as const;
@@ -205,6 +205,10 @@ async function boot() {
     const [x, y] = toCanvas(e);
     const m = renderer.monsterAtScreen(game, x, y);
     if (m || e.button === 2) game.setTarget(m);
+    else if (e.button === 0) {
+      const t = renderer.tileAtScreen(x, y);
+      if (t) game.walkToTile(t[0], t[1]);
+    }
   });
 
   addEventListener("keydown", (e) => {

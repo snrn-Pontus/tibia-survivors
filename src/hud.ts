@@ -194,6 +194,14 @@ export class Hud {
       });
       btns.append(b);
     }
+    // Click the minimap to walk there, as in Tibia.
+    this.mm.addEventListener("click", (e) => {
+      const g = this.g;
+      if (!g || g.over) return;
+      const r = this.mm.getBoundingClientRect(), z = this.layout.zoom, size = this.mm.width;
+      const px = ((e.clientX - r.left) * size) / r.width, py = ((e.clientY - r.top) * size) / r.height;
+      g.walkToTile(g.player.tx + Math.floor((px - size / 2) / z + 0.5), g.player.ty + Math.floor((py - size / 2) / z + 0.5));
+    });
     this.mmCap = el("div", "mm-cap");
     mm.append(this.mm, btns, this.mmCap);
 
