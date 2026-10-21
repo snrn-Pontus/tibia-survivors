@@ -30,6 +30,7 @@ export interface Monster extends Walker {
   dot?: DamageCondition & { element: Element }; // a field burning it
   rootedUntil?: number; // Cripple / Numb charms: paralyzed in place until then
   holdUntil?: number; // Fatal Hold charm: won't flee until then
+  fleeFrom?: [number, number]; // where you stood when it started to run: it stays on that screen
   summonTimers: number[]; // per monster.summon entry: seconds until its next roll
 }
 /** A magic field on the ground (a fire, poison or energy field item), until it decays. */
@@ -99,6 +100,10 @@ export class Game {
   pendingChoices = 0; // one choice per level gained (and per skill advance, see advance())
   private nextSkillPick = 0;
   chase = true; // Tibia fight mode: chase opponent (C toggles "stand while fighting")
+  walkTo: [number, number] | null = null; // click to move (Tibia's autowalk): where you're walking
+  private walkPath: [number, number][] = []; // the tiles still to walk there, the next one first
+  private walkRetries = 0;
+  private walkWait = 0;
   targeting: Targeting = "closest"; // which creature auto-targeting picks (T toggles)
   conditions = new Map<Element, DamageCondition>(); // poison, fire, energy... ticking on you, by damage type
   paralyzedUntil = 0; // a paralysis on you (Character.slowDelta is how strong)
@@ -228,15 +233,108 @@ export class Game {
     this.manualTarget = true;
   }
 
+  /** Click to move, as in Tibia: walk the fastest way to a tile, on the screen or on the minimap. Onto stairs
+   *  too (you take them); to a creature, next to it. Moving yourself stops the walk. */
+  walkToTile(tx: number, ty: number) {
+    const p = this.player;
+    this.walkTo = null;
+    this.walkPath = [];
+    if (tx === p.tx && ty === p.ty) return;
+    // The client's limits: a map click 250 tiles away is out of range; walls, trees and water have no way in.
+    if (cheb(tx, ty, p.tx, p.ty) > 250) return this.msg("Destination is out of range.");
+    const path = this.world.blocked(tx, ty) && !this.world.stairAt(tx, ty) ? null : this.findPath(tx, ty);
+    if (!path) return this.msg("There is no way.");
+    this.walkTo = [tx, ty];
+    this.walkPath = path;
+    this.walkRetries = 0;
+    this.walkWait = 0; // a new walk doesn't wait out the last one's retry
+  }
+
+  /** Next to stairs (you step onto them) or a creature standing there; else onto the tile itself. */
+  private walkReach(tx: number, ty: number) {
+    return this.world.stairAt(tx, ty) || this.occupied.has(key(tx, ty)) ? 1 : 0;
+  }
+
+  /** The fastest walk to (gx, gy), or to a tile next to it for stairs or a creature there: the tiles in order,
+   *  or null if there's no way. A* over 8 directions, as the Tibia client's map does it: a step costs the ground
+   *  it leaves (mud is quicker than sand), a diagonal x1.4 like yours. It goes around fields and the creatures on
+   *  your screen (the client doesn't know about the others), and gives up after 60,000 tiles. */
+  private findPath(gx: number, gy: number, reach = this.walkReach(gx, gy), budget = 60000): [number, number][] | null {
+    const p = this.player, MIN_GROUND = 100, PAD = Math.min(64, Math.ceil(Math.sqrt(budget) / 2));
+    // A box around you and the goal, with room to go around things.
+    const x0 = Math.min(p.tx, gx) - PAD, y0 = Math.min(p.ty, gy) - PAD;
+    const W = Math.abs(p.tx - gx) + PAD * 2 + 1, H = Math.abs(p.ty - gy) + PAD * 2 + 1;
+    const cost = new Int32Array(W * H).fill(0x7fffffff), prev = new Int32Array(W * H).fill(-1);
+    // Admissible: the straight and diagonal steps still needed, all on the fastest ground there is.
+    const h = (x: number, y: number) => {
+      const ax = Math.max(0, Math.abs(x - gx) - reach), ay = Math.max(0, Math.abs(y - gy) - reach);
+      return MIN_GROUND * (7 * Math.min(ax, ay) + 5 * Math.abs(ax - ay));
+    };
+    // A binary heap of tile indices by estimate.
+    const heap: number[] = [], est: number[] = [];
+    const push = (i: number, e: number) => {
+      let k = heap.length;
+      heap.push(i); est.push(e);
+      while (k > 0) {
+        const up = (k - 1) >> 1;
+        if (est[up] <= e) break;
+        heap[k] = heap[up]; est[k] = est[up];
+        k = up;
+      }
+      heap[k] = i; est[k] = e;
+    };
+    const pop = () => {
+      const top = heap[0], i = heap.pop()!, e = est.pop()!;
+      if (heap.length) {
+        let k = 0;
+        for (;;) {
+          let c = k * 2 + 1;
+          if (c >= heap.length) break;
+          if (c + 1 < heap.length && est[c + 1] < est[c]) c++;
+          if (est[c] >= e) break;
+          heap[k] = heap[c]; est[k] = est[c];
+          k = c;
+        }
+        heap[k] = i; est[k] = e;
+      }
+      return top;
+    };
+    const passable = (x: number, y: number) => !this.world.blocked(x, y) && !(this.onScreen(x, y) && this.occupied.has(key(x, y)))
+      && (!this.fieldHurts(x, y) || (x === gx && y === gy));
+    const start = (p.ty - y0) * W + (p.tx - x0);
+    cost[start] = 0;
+    push(start, h(p.tx, p.ty));
+    for (let seen = 0; heap.length && seen < budget; ) {
+      const e = est[0], i = pop(), x = (i % W) + x0, y = Math.floor(i / W) + y0, c = cost[i];
+      if (e !== c + h(x, y)) continue; // reached cheaper since
+      seen++;
+      if (cheb(x, y, gx, gy) <= reach) {
+        const path: [number, number][] = [];
+        for (let j = i; j !== start; j = prev[j]) path.push([(j % W) + x0, Math.floor(j / W) + y0]);
+        return path.reverse();
+      }
+      const ground = groundSpeed(x, y);
+      for (const [dx, dy] of [...ORTHO, ...DIAG]) {
+        const nx = x + dx, ny = y + dy;
+        if (nx < x0 || ny < y0 || nx >= x0 + W || ny >= y0 + H) continue;
+        const ni = (ny - y0) * W + (nx - x0), nc = c + ground * (dx && dy ? 7 : 5);
+        if (nc >= cost[ni] || !passable(nx, ny)) continue;
+        cost[ni] = nc;
+        prev[ni] = i;
+        push(ni, nc + h(nx, ny));
+      }
+    }
+    return null;
+  }
+
   /** Tibia: one creature per tile, and trees and bushes block. */
   walkable(tx: number, ty: number) {
     return !this.world.blocked(tx, ty) && !this.occupied.has(key(tx, ty)) && !(tx === this.player.tx && ty === this.player.ty);
   }
 
   /** On your screen (15 x 11 tiles: 7 to either side, but only 5 up or down). What you can target and hit. */
-  onScreen(tx: number, ty: number) {
-    const p = this.player;
-    return Math.abs(tx - p.tx) <= Math.floor(this.viewW / TILE / 2) && Math.abs(ty - p.ty) <= Math.floor(this.viewH / TILE / 2);
+  onScreen(tx: number, ty: number, cx = this.player.tx, cy = this.player.ty) {
+    return Math.abs(tx - cx) <= Math.floor(this.viewW / TILE / 2) && Math.abs(ty - cy) <= Math.floor(this.viewH / TILE / 2);
   }
 
   /** Creatures within range that you can see (a range of 7 reaches past the top and bottom of the screen). */
@@ -330,6 +428,7 @@ export class Game {
     this.floor = floorOf(ny);
     this.flowX = NaN;
     this.stairsLock = true;
+    this.walkTo = null;
     this.msg(this.floor ? `You go ${dir > 0 ? "down" : "up"} to floor -${this.floor}.` : "You climb back up to the surface.", "#80c0ff");
   }
 
@@ -337,18 +436,24 @@ export class Game {
     const p = this.player;
     p.hurt = Math.max(0, p.hurt - dt);
     if (Math.abs(mx) <= 0.35 && Math.abs(my) <= 0.35) this.stairsLock = false; // let go: stairs work again
+    else this.walkTo = null; // walking yourself stops a click-to-move walk
     const left = advance(p, dt);
     p.moving = isStepping(p);
     if (left < 0) return;
     let sx = Math.abs(mx) > 0.35 ? Math.sign(mx) : 0;
     let sy = Math.abs(my) > 0.35 ? Math.sign(my) : 0;
-    if (!sx && !sy && this.chase) {
+    if (!sx && !sy && this.walkTo) {
+      const step = this.walkStep();
+      if (!step) return;
+      [sx, sy] = step;
+    } else if (!sx && !sy && this.chase) {
       // Tibia's "chase opponent" fight mode: walk to the target until it's in weapon range.
       const t = this.monsters.find((m) => m.id === this.targetId && !m.dead);
       if (!t || !this.onScreen(t.tx, t.ty) || cheb(t.tx, t.ty, p.tx, p.ty) <= this.ch.attackRange) return;
-      // Something else on you: fight it first (auto-combat swings at what's in reach); don't drag it along after
-      // a target that runs or keeps its distance.
-      if (this.monsters.some((o) => o !== t && !o.dead && cheb(o.tx, o.ty, p.tx, p.ty) <= 1)) return;
+      // Something else on you: fight it first (auto-combat swings at what's in reach) rather than drag it along
+      // after a target that keeps its distance. One that runs you go after anyway, as in Tibia (your weapon hits
+      // whatever is in reach on the way).
+      if (!this.fleeing(t) && this.monsters.some((o) => o !== t && !o.dead && cheb(o.tx, o.ty, p.tx, p.ty) <= 1)) return;
       const step = this.pathStep(t.tx, t.ty);
       if (!step) return;
       [sx, sy] = step;
@@ -377,10 +482,46 @@ export class Game {
       return;
     }
     p.lastAxis = dx ? 0 : 1;
+    if (this.walkPath[0]?.[0] === p.tx + dx && this.walkPath[0][1] === p.ty + dy) this.walkPath.shift();
     startStep(p, dx, dy, (stepDuration(this.ch.speed, groundSpeed(p.tx, p.ty)) * cost) / 1000, Math.min(left, 0.05)); // the ground you step off sets the pace
     advance(p, 0);
     p.moving = true;
     this.stepIntoField(p.tx, p.ty);
+  }
+
+  /** The next step of a click-to-move walk. Something in the way (a creature walked in, a field went up, or you
+   *  slid off the path): a new path, and with none, like the client, three more tries before "There is no way." */
+  private walkStep(): [number, number] | null {
+    const p = this.player, [gx, gy] = this.walkTo!;
+    const stair = this.world.stairAt(gx, gy);
+    if (stair && cheb(gx, gy, p.tx, p.ty) <= 1) {
+      this.takeStairs(gx, gy, stair);
+      return null;
+    }
+    if (cheb(gx, gy, p.tx, p.ty) <= this.walkReach(gx, gy)) {
+      this.walkTo = null;
+      return null;
+    }
+    if (this.time < this.walkWait) return null;
+    const next = this.walkPath[0];
+    const goal = next && next[0] === gx && next[1] === gy;
+    if (!next || cheb(next[0], next[1], p.tx, p.ty) !== 1 || !this.walkable(next[0], next[1]) || (this.fieldHurts(next[0], next[1]) && !goal)) {
+      // A short way around first, back onto the path a few steps on (monsters get in the way all the time, and a
+      // long walk is costly to plan again); then a whole new path.
+      const k = Math.min(this.walkPath.length - 1, 6), [rx, ry] = this.walkPath[k] ?? [gx, gy];
+      const around = k > 0 && this.walkable(rx, ry) ? this.findPath(rx, ry, 0, 1500) : null;
+      const path = around ? [...around, ...this.walkPath.slice(k + 1)] : this.findPath(gx, gy);
+      if (!path?.length) {
+        if (++this.walkRetries > 3) {
+          this.walkTo = null;
+          this.msg("There is no way.");
+        } else this.walkWait = this.time + 0.2 + 0.1 * this.walkRetries; // 300, 400, 500 ms
+        return null;
+      }
+      this.walkPath = path;
+    }
+    this.walkRetries = 0;
+    return [this.walkPath[0][0] - p.tx, this.walkPath[0][1] - p.ty];
   }
 
   /** First step of the quickest walk (8-way, around trees, creatures and fields) to a tile next to (gx, gy). */
@@ -636,6 +777,7 @@ export class Game {
         if (t) {
           this.occupied.delete(key(m.tx, m.ty));
           Object.assign(m, newWalker(t[0], t[1]));
+          m.fleeFrom = undefined;
           this.occupied.set(key(m.tx, m.ty), m);
         }
         continue;
@@ -646,18 +788,29 @@ export class Game {
     }
   }
 
+  /** Hurt below its runHealth (and no Fatal Hold on it): it runs from you. */
+  fleeing(m: Monster) {
+    return m.hp < m.data.runHealth && this.time >= (m.holdUntil ?? 0);
+  }
+
   private chooseStep(m: Monster, d: number): [number, number] | null {
     const p = this.player;
     if (this.time < (m.rootedUntil ?? 0)) return null; // crippled: stands (it still attacks)
-    const fleeing = m.hp < m.data.runHealth && this.time >= (m.holdUntil ?? 0);
+    const fleeing = this.fleeing(m);
     const want = fleeing ? 99 : Math.max(1, m.data.targetDistance);
+    if (!fleeing) m.fleeFrom = undefined;
+    else m.fleeFrom ??= [p.tx, p.ty];
     // Monsters don't walk into fields that would hurt them (they do if they're immune: a demon in fire).
     const free = (s: [number, number]) => this.walkable(m.tx + s[0], m.ty + s[1]) && !this.fieldHurts(m.tx + s[0], m.ty + s[1], m);
     if (d < want) {
       // Ranged monsters keep their distance; hurt ones run (runHealth), but only to the edge of your screen: there
       // they stand, so you can still catch them (they used to vanish, bosses too). With the way straight back
-      // blocked (a tree, or the top of the screen), they slide sideways, toward a corner.
-      const open = ORTHO.filter((s) => free(s) && this.onScreen(m.tx + s[0], m.ty + s[1]));
+      // blocked (a tree, or the top of the screen), they slide sideways, toward a corner. A runner keeps to the
+      // screen you had when it started to run: your screen moves with you, so chasing it used to open new room
+      // ahead of it on every step and you never caught anything as fast as you.
+      const anchor = m.fleeFrom;
+      const inside = (x: number, y: number) => this.onScreen(x, y) && (!anchor || this.onScreen(x, y, anchor[0], anchor[1]));
+      const open = ORTHO.filter((s) => free(s) && inside(m.tx + s[0], m.ty + s[1]));
       const dist = (s: [number, number]) => cheb(m.tx + s[0], m.ty + s[1], p.tx, p.ty);
       const manhattan = (s: [number, number]) => Math.abs(m.tx + s[0] - p.tx) + Math.abs(m.ty + s[1] - p.ty);
       let away = open.filter((s) => dist(s) > d);

@@ -45,11 +45,10 @@ export function autoCombat(g: Game) {
   const picked = g.manualTarget ? g.monsters.find((m) => m.id === g.targetId && !m.dead && g.onScreen(m.tx, m.ty)) : undefined;
   if (!picked) g.manualTarget = false;
   const dist = (m: Monster) => cheb(m.tx, m.ty, p.tx, p.ty);
-  // A monster you're fighting that runs away stays your target while it's on screen and nothing else is in
-  // reach (chase mode follows it); with something on you, you fight that and go back for it after.
+  // A monster you're fighting that runs away stays your target while it's on screen, even with others on you
+  // (chase mode follows it; your weapon hits what's in reach meanwhile).
   const current = g.monsters.find((m) => m.id === g.targetId && !m.dead && hurtable(m) && g.onScreen(m.tx, m.ty));
-  const busy = g.monstersInRange(ch.attackRange).some((m) => m !== current && hurtable(m));
-  let target = picked ?? (current && current.hp < current.data.runHealth && !busy ? current : undefined);
+  let target = picked ?? (current && g.fleeing(current) ? current : undefined);
   if (!target && g.targeting === "weakest") {
     // Least health left (by percent), closest first on a tie: among those we can hit from here, else nearby.
     // Re-picked every tick, so it switches as soon as another one drops lower.

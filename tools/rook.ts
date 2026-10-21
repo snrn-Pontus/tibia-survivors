@@ -27,7 +27,7 @@ const SETUPS: { name: string; unlocks: Record<string, number> }[] = [
   { name: "rapier", unlocks: { weapon: 1 } },
   { name: "10 spears", unlocks: { spears: 1 } },
   { name: "rapier, rook 1", unlocks: { weapon: 1, rook_xp: 1, rook_train: 1, rook_regen: 1 } },
-  { name: "all gear, rook 1", unlocks: { weapon: 2, spears: 2, shield: 2, armor: 2, helmet: 2, legs: 1, rook_xp: 1, rook_train: 1, rook_regen: 1 } },
+  { name: "all gear, rook 1", unlocks: { weapon: 2, spears: 2, shield: 2, armor: 2, helmet: 2, legs: 1, boots: 1, amulet: 1, rook_xp: 1, rook_train: 1, rook_regen: 1 } },
   { name: "rapier, rook 2", unlocks: { weapon: 1, rook_xp: 2, rook_train: 2, rook_regen: 2 } },
   { name: "rapier, rook 3", unlocks: { weapon: 1, rook_xp: 3, rook_train: 3, rook_regen: 3 } },
   { name: "rapier, rook max", unlocks: { weapon: 1, rook_xp: 4, rook_train: 4, rook_regen: 3 } },

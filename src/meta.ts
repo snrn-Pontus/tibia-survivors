@@ -133,7 +133,8 @@ export interface Track {
 const it = (label: string, item: number, cost: number): Tier => ({ label, item, cost });
 
 // Starting gear is what Rookgaard's NPCs sell (Obi, Dixi, Lee'Delle): it helps levels 1-8 and is no better
-// than what you'd find there, so the mainland stays as hard as it is. (No boots: nobody on Rookgaard sells any.)
+// than what you'd find there, so the mainland stays as hard as it is. (Boots and the scarf aren't sold there, but
+// both drop on Rookgaard.)
 export const TRACKS: Track[] = [
   { id: "weapon", name: "Starting weapon", tiers: [it("club", 3270, 0), it("rapier", 3272, 10), it("sabre", 3273, 25)] },
   { id: "spears", name: "Starting spears", tiers: [
@@ -142,6 +143,8 @@ export const TRACKS: Track[] = [
   { id: "armor", name: "Starting armor", tiers: [it("coat", 3562, 0), it("doublet", 3379, 5), it("leather armor", 3361, 15)] },
   { id: "helmet", name: "Starting helmet", tiers: [{ label: "none", cost: 0 }, it("leather helmet", 3355, 5), it("studded helmet", 3376, 15)] },
   { id: "legs", name: "Starting legs", tiers: [{ label: "none", cost: 0 }, it("leather legs", 3559, 5)] },
+  { id: "boots", name: "Starting boots", tiers: [{ label: "none", cost: 0 }, it("leather boots", 3552, 5)] },
+  { id: "amulet", name: "Starting amulet", tiers: [{ label: "none", cost: 0 }, it("scarf", 3572, 5)] },
   { id: "potions", name: "Starting health potions", tiers: [
     { label: "none", cost: 0 }, { label: "5 potions", count: 5, cost: 20 }, { label: "15 potions", count: 15, cost: 60 },
     { label: "30 potions", count: 30, cost: 150 }] },

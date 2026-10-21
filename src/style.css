@@ -2,22 +2,27 @@
 html, body { margin: 0; height: 100%; overflow: hidden; background: #111; font-family: Verdana, sans-serif; color: #ddd; }
 
 /* ---------- client layout: game view, hotbar and console on the left, window columns on the right ---------- */
+/* Colors from Tibia 13/14 client screenshots: neutral greys, darker title bars, near-black slots. */
 :root {
   --gold: #e5c46a;
-  --edge: #0c0c0c;
-  --stone: linear-gradient(#3b3936, #2b2927);
-  --well: #161514;
+  --edge: #161616;
+  --client: #464646; /* the client's background, around the game window */
+  --stone: #4a4a4a; /* window bodies */
+  --title: #323333; /* window title bars */
+  --well: #242425; /* slots */
+  --bevel: inset 1px 1px 0 #111, inset -1px -1px 0 #5e5e5e;
+  --raised: linear-gradient(#5c5c5c, #444 55%, #3a3a3a);
   --shadow: 1px 1px 0 #000, -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000;
 }
 #app { position: fixed; inset: 0; display: flex; }
-#main { flex: 1; min-width: 0; display: flex; flex-direction: column; background: #000; }
+#main { flex: 1; min-width: 0; display: flex; flex-direction: column; background: var(--client); }
 #viewport { position: relative; flex: 1; min-height: 0; overflow: hidden; }
 #game { position: absolute; inset: 0; width: 100%; height: 100%; image-rendering: pixelated; }
 #fx { position: fixed; inset: 0; width: 100vw; height: 100vh; pointer-events: none; z-index: 5; }
-#side { display: flex; background: #1c1b1a; border-left: 2px solid var(--edge); }
+#side { display: flex; background: var(--client); border-left: 2px solid var(--edge); }
 .col { width: 196px; display: flex; flex-direction: column; gap: 3px; padding: 3px; overflow-y: auto; overflow-x: hidden; scrollbar-width: thin; }
 .col + .col { border-left: 2px solid var(--edge); }
-.col.drop { background: #24221f; }
+.col.drop { background: #505050; }
 body:not(.ingame) #side, body:not(.ingame) #hotbar, body:not(.ingame) #console, body:not(.ingame) #labels { display: none; }
 #side, #hotbar, #console, #labels { font-size: 11px; }
 @media (max-width: 1100px) { #col-b:empty { display: none; } }
@@ -38,80 +43,94 @@ body:not(.ingame) #side, body:not(.ingame) #hotbar, body:not(.ingame) #console, 
 #status-msg.on { opacity: 1; transition: none; }
 
 /* ---------- windows ---------- */
-.win { background: var(--stone); border: 1px solid var(--edge); box-shadow: inset 0 1px 0 #5a5650; flex: none; display: flex; flex-direction: column; }
+.win { background: var(--stone); border: 1px solid var(--edge); box-shadow: inset 1px 1px 0 #5e5e5e; flex: none; display: flex; flex-direction: column; }
 .win.closed { display: none; }
 .win.dragging { opacity: 0.6; outline: 1px dashed var(--gold); }
-.win-head { display: flex; align-items: center; gap: 3px; padding: 2px 3px 2px 6px; cursor: grab; user-select: none;
-  background: linear-gradient(#4a4640, #34312d); border-bottom: 1px solid var(--edge); }
-.win-head span { flex: 1; font-weight: bold; color: #cfcab8; text-shadow: var(--shadow); }
+.win-head { display: flex; align-items: center; gap: 2px; height: 18px; padding: 0 2px 0 5px; cursor: grab; user-select: none;
+  background: var(--title); border-bottom: 1px solid var(--edge); }
+.win-head span { flex: 1; font-weight: bold; color: #c0c0c0; text-shadow: 1px 1px 0 #000; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .win-head button, .tool, .mode, .mm-btn, .tab {
-  font: bold 10px Verdana, sans-serif; color: #ddd; cursor: pointer; border: 1px solid var(--edge);
-  background: linear-gradient(#5a5650 0%, #403c37 50%, #36322e 100%); box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.15);
+  font: bold 10px Verdana, sans-serif; color: #c8c8c8; cursor: pointer; border: 1px solid var(--edge);
+  background: var(--raised); box-shadow: inset 1px 1px 0 rgba(255, 255, 255, 0.18);
 }
-.win-head button { width: 15px; height: 15px; padding: 0; line-height: 12px; }
+.win-head button { width: 14px; height: 14px; padding: 0; line-height: 11px; }
 .win-head button:hover, .tool:hover, .mode:hover, .mm-btn:hover, .tab:hover { color: #fff; filter: brightness(1.2); }
 .win-body { padding: 4px; overflow-y: auto; scrollbar-width: thin; min-height: 30px; }
 .win.min .win-body, .win.min .win-foot { display: none; }
-.win-foot { height: 4px; cursor: ns-resize; background: #23211f; border-top: 1px solid var(--edge); }
+.win-foot { height: 4px; cursor: ns-resize; background: #3a3a3a; border-top: 1px solid var(--edge); }
 
 .toolbar { display: flex; flex-wrap: wrap; gap: 2px; }
 .tool { flex: 1 1 auto; padding: 3px 4px; }
-.tool.on { color: var(--gold); border-color: #6b5a3a; }
+.tool.on { color: #fff; background: linear-gradient(#6a6a6a, #505050 55%, #464646); }
+.tool:not(.on):not(.shop) { color: #8c8c8c; }
 .tool.shop { color: #ffd34d; }
 
 /* status: health and mana bars, condition icons */
-.status { padding: 4px; background: var(--stone); border: 1px solid var(--edge); }
-.bar { position: relative; height: 13px; margin: 2px 0; background: #000; border: 1px solid var(--edge); }
-.bar s { position: absolute; inset: 0 auto 0 0; text-decoration: none; }
-.bar.hp s { background: linear-gradient(#e04040, #a01818); }
-.bar.mana s { background: linear-gradient(#4a7cf0, #1e3fa0); }
-.bar.shield s { background: linear-gradient(#9a6af0, #5a2fa0); }
-.bar span { position: relative; display: block; text-align: center; font-weight: bold; font-size: 10px; line-height: 11px; color: #fff; text-shadow: var(--shadow); }
+.status { padding: 3px 4px; background: var(--stone); border: 1px solid var(--edge); box-shadow: inset 1px 1px 0 #5e5e5e; }
+/* Tibia's slim rounded bars: an icon, the bar, the number on the right. */
+#side .bar { display: flex; align-items: center; gap: 3px; height: 13px; margin: 1px 0; }
+#side .bar[hidden] { display: none; }
+.bar i { width: 12px; text-align: center; font-style: normal; font-size: 12px; line-height: 12px; text-shadow: 1px 1px 0 #000; }
+.bar.hp i::before { content: "\2665"; color: #e03030; }
+.bar.mana i::before { content: "\2666"; color: #4a7cf0; }
+.bar.shield i::before { content: "\25C8"; color: #9a6af0; }
+.bar b { position: relative; flex: 1; height: 8px; border-radius: 4px; overflow: hidden; background: #1a1a1a; box-shadow: inset 0 0 0 1px #000; }
+.bar s { position: absolute; inset: 0 auto 0 0; text-decoration: none; border-radius: 4px; }
+.bar.hp s { background: linear-gradient(#ff8a8a, #e03a3a 40%, #a01818); }
+.bar.mana s { background: linear-gradient(#9ab8ff, #4a6cf0 40%, #1e3fa0); }
+.bar.shield s { background: linear-gradient(#d0b0ff, #9a6af0 40%, #5a2fa0); }
+.bar span { width: 46px; text-align: right; font-weight: bold; font-size: 11px; color: #dfdfdf; text-shadow: 1px 1px 0 #000; }
 .conds { display: flex; flex-wrap: wrap; gap: 2px; min-height: 16px; margin-top: 3px; }
-.cond { padding: 0 3px; height: 15px; line-height: 13px; font-size: 9px; font-weight: bold; border: 1px solid var(--edge); background: #222; text-shadow: var(--shadow); }
+.cond { padding: 0 3px; height: 15px; line-height: 13px; font-size: 9px; font-weight: bold; border: 1px solid var(--edge); background: var(--well); text-shadow: var(--shadow); }
 
 /* minimap */
-.minimap { position: relative; background: var(--stone); border: 1px solid var(--edge); padding: 4px; }
-.minimap canvas { display: block; width: 100%; aspect-ratio: 1; image-rendering: pixelated; border-radius: 6px; border: 1px solid var(--edge); background: #000; }
-.mm-btns { position: absolute; right: 8px; top: 8px; display: flex; flex-direction: column; gap: 2px; }
+.minimap { background: var(--stone); border: 1px solid var(--edge); box-shadow: inset 1px 1px 0 #5e5e5e; padding: 4px; }
+.mm-row { display: flex; gap: 4px; align-items: flex-start; justify-content: center; }
+.minimap canvas { display: block; cursor: crosshair; flex: none; width: 148px; height: 148px; image-rendering: pixelated; border: 1px solid #000; background: #000; }
+.mm-btns { display: flex; flex-direction: column; gap: 2px; }
 .mm-btn { width: 17px; height: 17px; padding: 0; font-size: 12px; line-height: 12px; }
 .mm-cap { text-align: center; font-weight: bold; margin-top: 3px; text-shadow: var(--shadow); }
-.mm-cap small { display: block; font-weight: normal; color: #aaa; }
+.mm-cap small { display: block; font-weight: normal; color: #b4b4b4; }
 
 /* equipment */
 .equip-win { display: flex; gap: 4px; }
 .slots { display: grid; grid-template-columns: repeat(3, 34px); grid-auto-rows: 34px; gap: 3px; }
-.slot { position: relative; background: var(--well); border: 1px solid var(--edge); box-shadow: inset 1px 1px 0 #000, inset -1px -1px 0 #3a3733; }
+.slot { position: relative; background: var(--well); border: 1px solid #1a1a1a; box-shadow: var(--bevel); }
 .slot img { width: 32px; height: 32px; image-rendering: pixelated; display: block; }
 .slot.empty::after { content: attr(data-slot); position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
-  font-size: 8px; color: #4c4842; text-transform: uppercase; }
-.slot.none { visibility: hidden; }
+  font-size: 8px; color: #4e4e4e; text-transform: uppercase; }
+/* Tibia's Soul and Cap boxes under the inventory */
+.slot.stat { height: 26px; align-self: start; display: flex; flex-direction: column; align-items: center; justify-content: center; line-height: 11px; }
+.slot.stat small { font-size: 9px; color: #b4b4b4; }
+.slot.stat b { font-size: 10px; color: #dfdfdf; }
+.slot.stat b.souls { color: #c9a0ff; }
+.slot.stat b.cap.low { color: #ff7060; }
 .count { position: absolute; right: 1px; bottom: 0; font-size: 10px; font-weight: bold; color: #fff; text-shadow: var(--shadow); pointer-events: none; }
-.modes { display: flex; flex-direction: column; gap: 3px; margin-left: auto; }
-.mode { width: 26px; height: 22px; padding: 0; font-size: 13px; color: #888; }
+/* combat controls, beside the inventory: attack modes, then chase and stand */
+.modes { display: grid; grid-template-rows: repeat(3, 22px); grid-auto-flow: column; grid-auto-columns: 22px; gap: 3px; margin-left: auto; align-content: start; }
+.mode { width: 22px; height: 22px; padding: 0; font-size: 12px; color: #888; }
 .mode.on.offensive { color: #ff6050; box-shadow: 0 0 6px #ff3020, inset 0 1px 0 rgba(255, 255, 255, 0.15); }
 .mode.on.balanced { color: #ffd34d; box-shadow: 0 0 6px #e0b020, inset 0 1px 0 rgba(255, 255, 255, 0.15); }
 .mode.on.defensive { color: #60a0ff; box-shadow: 0 0 6px #3070ff, inset 0 1px 0 rgba(255, 255, 255, 0.15); }
 .mode.on.chase, .mode.on.stand { color: #70e070; box-shadow: 0 0 6px #30c030, inset 0 1px 0 rgba(255, 255, 255, 0.15); }
-.purse { margin-top: 4px; display: grid; grid-template-columns: 1fr auto; row-gap: 1px; }
+.purse { margin-top: 4px; display: grid; grid-template-columns: 1fr auto; row-gap: 1px; color: #c0c0c0; }
 .purse .v { text-align: right; font-weight: bold; }
-.purse .cap.low { color: #ff7060; }
 .purse .gold-v { color: #ffd34d; transition: transform 0.1s; display: inline-block; transform-origin: right center; }
 
 /* skills */
 .sk { display: grid; grid-template-columns: 1fr auto; column-gap: 6px; }
-.sk .k { color: #bbb; }
-.sk .v { color: #fff; text-align: right; font-weight: bold; }
-.sk .pct { grid-column: 1 / -1; height: 3px; background: #000; margin: 1px 0 3px; }
+.sk .k { color: #dfdfdf; font-weight: bold; }
+.sk .v { color: #dfdfdf; text-align: right; font-weight: bold; }
+.sk .pct { grid-column: 1 / -1; height: 3px; background: #1a1a1a; box-shadow: 0 0 0 1px #000; margin: 2px 0 4px; }
 .sk .pct s { display: block; height: 100%; background: #c03030; text-decoration: none; }
-.sk .sep { grid-column: 1 / -1; height: 1px; background: #4a463f; margin: 4px 0; }
+.sk .sep { grid-column: 1 / -1; height: 1px; background: #2c2c2c; box-shadow: 0 1px 0 #5e5e5e; margin: 4px 0; }
 .sk .hd { grid-column: 1 / -1; color: var(--gold); font-weight: bold; }
 
 /* battle */
 .win-head .target-mode { width: auto; padding: 0 4px; color: #9cc8ff; }
 .win-head .target-mode.weakest { color: #ff8080; }
 .brow { display: flex; align-items: center; gap: 4px; padding: 1px; cursor: pointer; border: 1px solid transparent; }
-.brow:hover { background: #3a3733; }
+.brow:hover { background: #575757; }
 .brow canvas { width: 26px; height: 26px; image-rendering: pixelated; background: var(--well); border: 1px solid var(--edge); flex: none; }
 .brow.target canvas { border-color: #ff2020; box-shadow: 0 0 0 1px #ff2020; }
 .brow.target.auto canvas { border-color: #a03030; box-shadow: none; }
@@ -121,50 +140,50 @@ body:not(.ingame) #side, body:not(.ingame) #hotbar, body:not(.ingame) #console, 
 .brow.target b { color: #ff8080; }
 .brow .hpb { height: 4px; background: #000; margin-top: 2px; }
 .brow .hpb s { display: block; height: 100%; text-decoration: none; }
-.empty-note { color: #777; font-size: 10px; padding: 2px; }
+.empty-note { color: #a8a8a8; font-size: 10px; padding: 2px; }
 
 /* supplies */
 .grid { display: grid; grid-template-columns: repeat(auto-fill, 34px); grid-auto-rows: 34px; gap: 3px; }
-.loot-line { margin-top: 4px; color: #bbb; }
+.loot-line { margin-top: 4px; color: #c0c0c0; }
 
 /* backpack: a Tibia container window (34 px cells, counts bottom right in #e7e7e7, shown from 2 up) */
 .win-ico { width: 16px; height: 16px; image-rendering: pixelated; margin-left: -3px; }
 .win-ico:not([src]) { visibility: hidden; }
 .grid.box .slot[data-i] { cursor: pointer; }
-.grid.box .slot[data-i]:hover { box-shadow: inset 0 0 0 1px #8a8478; }
+.grid.box .slot[data-i]:hover { box-shadow: inset 0 0 0 1px #9a9a9a; }
 .grid.box .count { right: 2px; color: #e7e7e7; }
 .slot.bp { cursor: pointer; }
 .grid.box .slot.wear:hover { box-shadow: inset 0 0 0 1px #80c060; }
 
 /* supplies: runes toggle auto-use, ammunition is picked */
 .slot.pick { cursor: pointer; }
-.slot.pick:hover { box-shadow: inset 0 0 0 1px #8a8478; }
+.slot.pick:hover { box-shadow: inset 0 0 0 1px #9a9a9a; }
 .slot.off img { filter: grayscale(1) brightness(0.5); }
 .slot.off::after { content: "off"; position: absolute; left: 1px; top: 0; font-size: 8px; color: #ff7060; text-shadow: var(--shadow); }
 .slot.inuse { box-shadow: inset 0 0 0 1px #9cc8ff; }
 
 /* backpack selling */
 .bp-sell { display: block; width: 100%; margin-top: 3px; padding: 2px; font: 10px Verdana, sans-serif; color: #ffd34d; cursor: pointer;
-  border: 1px solid var(--edge); background: linear-gradient(#5a5650 0%, #403c37 50%, #36322e 100%); }
+  border: 1px solid var(--edge); background: var(--raised); }
 .bp-sell:disabled { color: #777; cursor: default; }
 
 /* upgrades window */
 .up-h { color: var(--gold); font-weight: bold; margin: 4px 0 1px; }
 .up-h:first-child { margin-top: 0; }
-.up-r { display: flex; flex-direction: column; padding: 1px 0 2px 4px; border-left: 2px solid #3a3733; margin-bottom: 1px; }
+.up-r { display: flex; flex-direction: column; padding: 1px 0 2px 4px; border-left: 2px solid #2c2c2c; margin-bottom: 1px; }
 .up-r b { font-weight: normal; color: #eee; }
-.up-r i { font-style: normal; color: #9a968c; font-size: 10px; }
+.up-r i { font-style: normal; color: #b4b4b4; font-size: 10px; }
 
 /* bestiary window */
 .be { display: flex; align-items: center; gap: 4px; padding: 1px; cursor: pointer; }
-.be:hover { background: #3a3733; }
+.be:hover { background: #575757; }
 .be img { width: 26px; height: 26px; image-rendering: pixelated; background: var(--well); border: 1px solid var(--edge); flex: none; }
 .be-n { min-width: 0; }
 .be-n b { display: block; font-weight: normal; }
-.be-n i { font-style: normal; color: #9a968c; font-size: 10px; }
-.be.open { background: #2c2a26; }
-.be-d { padding: 2px 4px 4px 32px; font-size: 10px; color: #bbb; line-height: 1.5; }
-.be-d i { color: #777; }
+.be-n i { font-style: normal; color: #b4b4b4; font-size: 10px; }
+.be.open { background: #3e3e3e; }
+.be-d { padding: 2px 4px 4px 32px; font-size: 10px; color: #c8c8c8; line-height: 1.5; }
+.be-d i { color: #9a9a9a; }
 .be-d .res { color: #70c070; }
 .be-d .weak { color: #ff7060; }
 
@@ -179,15 +198,15 @@ body:not(.ingame) #side, body:not(.ingame) #hotbar, body:not(.ingame) #console, 
 #tip .up { color: #70e070; }
 #tip .down, #tip .bad { color: #ff7060; }
 #tip .gold { color: #ffd34d; }
-.slot.bp:hover { box-shadow: inset 0 0 0 1px #8a8478; }
+.slot.bp:hover { box-shadow: inset 0 0 0 1px #9a9a9a; }
 
 /* hotbar: F1-F12 */
-#hotbar { display: flex; justify-content: center; gap: 3px; padding: 4px; background: var(--stone); border-top: 2px solid var(--edge); }
-.hk { position: relative; width: 36px; height: 36px; background: var(--well); border: 1px solid var(--edge); cursor: pointer;
-  box-shadow: inset 1px 1px 0 #000, inset -1px -1px 0 #3a3733; }
+/* Tibia's action bar: a dark strip under the game window, F1 in each slot's corner */
+#hotbar { display: flex; justify-content: center; gap: 2px; padding: 3px 4px; background: #2a2a2a; border-top: 1px solid var(--edge); box-shadow: inset 0 1px 0 #3c3c3c; }
+.hk { position: relative; width: 36px; height: 36px; background: var(--well); border: 1px solid #1a1a1a; cursor: pointer; box-shadow: var(--bevel); }
 .hk img { width: 34px; height: 34px; image-rendering: pixelated; display: block; }
 .hk .cd { position: absolute; inset: 0; pointer-events: none; }
-.hk .key { position: absolute; left: 1px; top: 0; font-size: 8px; color: #aaa; text-shadow: var(--shadow); pointer-events: none; }
+.hk .key { position: absolute; left: 2px; top: 1px; font-size: 8px; color: #c0c0c0; text-shadow: var(--shadow); pointer-events: none; }
 .hk .count { color: #7fff7f; }
 .hk.off img { filter: grayscale(1) brightness(0.55); }
 .hk.ok { animation: hk-ok 0.25s; }
@@ -196,15 +215,15 @@ body:not(.ingame) #side, body:not(.ingame) #hotbar, body:not(.ingame) #console, 
 @keyframes hk-fail { 0%, 100% { transform: none; } 25% { transform: translateX(-3px); box-shadow: 0 0 0 2px #e03030; } 75% { transform: translateX(3px); } }
 
 /* console */
-#console { height: 150px; display: flex; flex-direction: column; background: #1c1b1a; border-top: 2px solid var(--edge); }
-.tabs { display: flex; gap: 2px; padding: 3px 3px 0; }
-.tab { padding: 2px 10px; border-bottom: none; color: #aaa; }
-.tab.on { color: #fff; border-color: var(--gold); }
+#console { height: 150px; display: flex; flex-direction: column; background: #404040; border-top: 1px solid var(--edge); }
+.tabs { display: flex; gap: 1px; padding: 2px 3px 0; }
+.tab { min-width: 92px; padding: 2px 10px; border-bottom: none; color: #8c8c8c; background: linear-gradient(#4a4a4a, #383838); }
+.tab.on { color: #dfdfdf; background: linear-gradient(#5e5e5e, #4a4a4a); }
 .tab.new { animation: tab-new 1s infinite; }
 @keyframes tab-new { 50% { color: #ff9c30; } }
-.lines { flex: 1; overflow-y: auto; padding: 3px 6px; background: #121110; border-top: 1px solid var(--edge); scrollbar-width: thin; font-size: 11px; line-height: 15px; }
+.lines { flex: 1; overflow-y: auto; padding: 3px 6px; background: #2e2e2e; border-top: 1px solid var(--edge); scrollbar-width: thin; font-size: 11px; line-height: 15px; }
 .lines[hidden] { display: none; }
-.lines .ts { color: #777; margin-right: 6px; }
+.lines .ts { color: #8c8c8c; margin-right: 6px; }
 
 #overlay { position: fixed; inset: 0; z-index: 10; display: flex; align-items: center; justify-content: center; background: rgba(0, 0, 0, 0.55); }
 #overlay[hidden] { display: none; }
@@ -258,7 +277,7 @@ pre { background: #111; padding: 8px 12px; border: 1px solid #555; display: inli
 .card.r1 { border-color: #3d7fc4; } .card.r1 .rarity { color: #5aa8ff; }
 .card.r2 { border-color: #8a4fc9; box-shadow: 0 0 10px #8a4fc955; } .card.r2 .rarity { color: #c08bff; }
 .card.r3 { border-color: #e08a1e; box-shadow: 0 0 14px #ff9a2e77; background: #241b10; } .card.r3 .rarity { color: #ffae4d; }
-.card.r1.focus { border-color: #8cc4ff; } .card.r2.focus { border-color: #d7b3ff; } .card.r3.focus { border-color: #ffd08a; }
+.card.r1.focus { border-color: #8cc4ff; } .card.r2.focus { border-color: #d7b3ff; } .card.r3.focus { border-color: #ffd08a; background: #33240f; }
 .chest canvas { image-rendering: pixelated; display: block; margin: 0 auto 8px; }
 .chest ul, .equip { list-style: none; padding: 0; margin: 0 0 8px; }
 .chest li { color: #9f9; margin: 4px 0; }

@@ -44,8 +44,10 @@ export class Renderer {
     const ox = Math.round(left + gw / 2 - camX * S), oy = Math.round(topY + gh / 2 - camY * S);
     ctx.setTransform(1, 0, 0, 1, 0, 0);
     ctx.imageSmoothingEnabled = false;
+    // Around the game window the client's grey shows through (#viewport), behind a black frame.
+    ctx.clearRect(0, 0, W, H);
     ctx.fillStyle = "#000";
-    ctx.fillRect(0, 0, W, H);
+    ctx.fillRect(left - 1, topY - 1, gw + 2, gh + 2);
     ctx.save();
     ctx.beginPath();
     ctx.rect(left, topY, gw, gh);
@@ -235,6 +237,13 @@ export class Renderer {
     // Sprites stand up and to the left of their tile; accept a click on the body too.
     return g.monsters.filter((m) => !m.dead && Math.abs(wx - m.x) < 18 && wy > m.y - 40 && wy < m.y + 16)
       .sort((a, b) => Math.hypot(a.x - wx, a.y - wy) - Math.hypot(b.x - wx, b.y - wy))[0];
+  }
+
+  /** The tile under a screen point in the game window (for click to move), if it's on it. */
+  tileAtScreen(sx: number, sy: number): [number, number] | undefined {
+    const { ox, oy, S, left, top, gw, gh } = this.view;
+    if (sx < left || sx > left + gw || sy < top || sy > top + gh) return undefined;
+    return [Math.floor((sx - ox) / S / TILE), Math.floor((sy - oy) / S / TILE)];
   }
 
   /** Loot hops out of the corpse, then flies across the window into the side panel: gold to the gold

@@ -113,7 +113,7 @@ game asks for your Tibia folder on first start and builds the sprites in the bro
   your runs, or 1, 5 and 25 of a boss; listed on the title screen) and from surviving while you fight (one
   every 30 s with a kill in them). They are all kept when you die and spent between runs on permanent unlocks:
   **starting gear** (what Rookgaard's NPCs sell: rapier, sabre, spears, wooden and studded shields, leather
-  armor, helmets and legs), starting gold and potions, rerolls for level-up choices, blessings, and the rate
+  armor, helmets, legs, leather boots and a scarf), starting gold and potions, rerolls for level-up choices, blessings, and the rate
   **boosts** (XP, Loot, Gold, Haste, skill training: x2, x3, x5 ... x50 per level; Luck: +5 luck per level).
 - **Rookgaard unlocks** make levels 1-8 faster and stop working when you choose a vocation, so the mainland
   stays as it is: Rookgaard experience and training (x5 to x50; training keeps your skills at 8 where a slower
