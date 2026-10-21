@@ -44,8 +44,10 @@ export class Renderer {
     const ox = Math.round(left + gw / 2 - camX * S), oy = Math.round(topY + gh / 2 - camY * S);
     ctx.setTransform(1, 0, 0, 1, 0, 0);
     ctx.imageSmoothingEnabled = false;
+    // Around the game window the client's grey shows through (#viewport), behind a black frame.
+    ctx.clearRect(0, 0, W, H);
     ctx.fillStyle = "#000";
-    ctx.fillRect(0, 0, W, H);
+    ctx.fillRect(left - 1, topY - 1, gw + 2, gh + 2);
     ctx.save();
     ctx.beginPath();
     ctx.rect(left, topY, gw, gh);

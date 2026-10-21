@@ -179,10 +179,10 @@ export class Hud {
     shop.addEventListener("click", () => this.actions.shop());
     bar.append(shop);
 
-    // Minimap, with zoom buttons.
+    // Minimap, with its zoom buttons in a column beside it (Tibia's top right).
     const mm = el("div", "minimap");
     this.mm = el("canvas");
-    this.mm.width = this.mm.height = 176;
+    this.mm.width = this.mm.height = 148; // drawn 1:1 (style.css), leaving room for the buttons and a scrollbar
     const btns = el("div", "mm-btns");
     for (const [label, d] of [["+", 1], ["−", -1]] as const) {
       const b = el("button", "mm-btn", label);
@@ -203,18 +203,20 @@ export class Hud {
       g.walkToTile(g.player.tx + Math.floor((px - size / 2) / z + 0.5), g.player.ty + Math.floor((py - size / 2) / z + 0.5));
     });
     this.mmCap = el("div", "mm-cap");
-    mm.append(this.mm, btns, this.mmCap);
+    mm.append(el("div", "mm-row"), this.mmCap);
+    mm.firstElementChild!.append(this.mm, btns);
 
-    // Health, mana, magic shield, conditions.
+    // Health, mana, magic shield (Tibia's slim bars, the number beside them), conditions.
     const st = el("div", "status");
-    const bar2 = (cls: string) => el("div", `bar ${cls}`, "<s></s><span></span>");
+    const bar2 = (cls: string) => el("div", `bar ${cls}`, "<i></i><b><s></s></b><span></span>");
     this.hpBar = bar2("hp");
     this.manaBar = bar2("mana");
     this.shieldBar = bar2("shield");
     this.conds = el("div", "conds");
     st.append(this.hpBar, this.manaBar, this.shieldBar, this.conds);
 
-    this.colA.append(bar, mm, st);
+    // Tibia's order: minimap, health and mana, then the buttons, then the windows.
+    this.colA.append(mm, st, bar);
     for (const w of WINDOWS) this.wins.set(w.id, this.makeWindow(w.id, w.title));
     this.placeWindows();
     this.buildEquipment();
@@ -333,11 +335,18 @@ export class Hud {
     const body = this.wins.get("equipment")!.body;
     const wrap = el("div", "equip-win");
     const grid = el("div", "slots");
-    // Tibia's inventory: amulet, helmet, backpack / weapon, armor, shield / ring, legs, ammo / boots.
-    const layout: (Slot | "backpack" | null)[] = ["necklace", "head", "backpack", "weapon", "armor", "shield", "ring", "legs", "ammo", null, "feet", null];
+    // Tibia's inventory: amulet, helmet, backpack / weapon, armor, shield / ring, legs, ammo / soul, boots, cap.
+    const layout: (Slot | "backpack" | "soul" | "cap")[] = ["necklace", "head", "backpack", "weapon", "armor", "shield", "ring", "legs", "ammo", "soul", "feet", "cap"];
     for (const slot of layout) {
+      if (slot === "soul" || slot === "cap") {
+        // Tibia's Soul and Cap boxes; here Soul counts your souls, the meta currency.
+        const box = el("div", "slot stat", `<small>${slot === "soul" ? "Soul" : "Cap"}</small><b class="${slot === "soul" ? "souls" : "cap"}">0</b>`);
+        if (slot === "soul") this.soulsEl = box.querySelector("b")!;
+        else this.capEl = box.querySelector("b")!;
+        grid.append(box);
+        continue;
+      }
       const s = el("div", "slot");
-      if (!slot) { s.classList.add("none"); grid.append(s); continue; }
       if (slot === "backpack") {
         // Click the backpack to open it, like in Tibia.
         s.classList.add("bp");
@@ -368,10 +377,8 @@ export class Hud {
     mode("chase", "»", "Chase opponent (C)", () => this.setChase(true));
     mode("stand", "■", "Stand while fighting (C)", () => this.setChase(false));
     wrap.append(grid, modes);
-    const purse = el("div", "purse", `<div>Gold</div><div class="v"><span class="gold-v">0</span></div><div>Souls</div><div class="v souls">0</div><div>Cap</div><div class="v cap">0</div>`);
+    const purse = el("div", "purse", `<div>Gold</div><div class="v"><span class="gold-v">0</span></div>`);
     this.goldEl = purse.querySelector(".gold-v")!;
-    this.soulsEl = purse.querySelector(".souls")!;
-    this.capEl = purse.querySelector(".cap")!;
     body.append(wrap, purse);
   }
 
@@ -649,8 +656,9 @@ export class Hud {
   private statusBars(g: Game) {
     const ch = g.ch;
     const set = (bar: HTMLElement, cur: number, max: number, label: string) => {
-      (bar.firstElementChild as HTMLElement).style.width = pct(cur / max);
-      (bar.lastElementChild as HTMLElement).textContent = `${label} ${fmt(Math.max(0, Math.ceil(cur)))} / ${fmt(max)}`;
+      bar.querySelector("s")!.style.width = pct(cur / max);
+      bar.querySelector("span")!.textContent = fmt(Math.max(0, Math.ceil(cur)));
+      bar.title = `${label} ${fmt(Math.max(0, Math.ceil(cur)))} / ${fmt(max)}`;
     };
     set(this.hpBar, ch.hp, ch.maxHp, "HP");
     set(this.manaBar, ch.mana, ch.maxMana, "MP");
