@@ -246,6 +246,7 @@ export class Game {
     this.walkTo = [tx, ty];
     this.walkPath = path;
     this.walkRetries = 0;
+    this.walkWait = 0; // a new walk doesn't wait out the last one's retry
   }
 
   /** Next to stairs (you step onto them) or a creature standing there; else onto the tile itself. */
