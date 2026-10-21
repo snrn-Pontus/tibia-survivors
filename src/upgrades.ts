@@ -8,10 +8,12 @@ export const MAX_SLOTS = 6; // distinct boosts + imbuements you can pick in a ru
 export const RATE_TABLE = [1, 2, 3, 5, 7, 10, 14, 19, 25, 35, 50];
 /** Speed added per Haste level. */
 export const HASTE_TABLE = [0, 30, 55, 75, 90, 105, 120, 135, 150, 165, 180];
+/** Luck added per Luck level (see rarity.ts for what luck does). */
+export const LUCK_TABLE = [0, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50];
 export const MAX_BOOST = 10; // x1024 at the top
 export const MAX_PENDING = 5; // queued level-up choices; extra levels at once don't add more
 
-export type BoostId = "xp" | "loot" | "gold" | "haste" | "train_club" | "train_sword" | "train_axe" | "train_distance" | "train_shielding" | "train_magic";
+export type BoostId = "xp" | "loot" | "gold" | "haste" | "luck" | "train_club" | "train_sword" | "train_axe" | "train_distance" | "train_shielding" | "train_magic";
 
 export interface BoostDef {
   id: BoostId;
@@ -24,6 +26,7 @@ export interface BoostDef {
 
 const rate = (l: number) => RATE_TABLE[Math.min(l, RATE_TABLE.length - 1)];
 export const hasteBonus = (l: number) => HASTE_TABLE[Math.min(l, HASTE_TABLE.length - 1)];
+export const luckBonus = (l: number) => LUCK_TABLE[Math.min(l, LUCK_TABLE.length - 1)];
 const fmt = (x: number) => (x >= 10 ? Math.round(x).toLocaleString("en-US") : x.toFixed(x >= 3 ? 1 : 2).replace(/\.?0+$/, ""));
 const knight = (v: VocationId) => v === "knight";
 const mage = (v: VocationId) => v === "sorcerer" || v === "druid";
@@ -33,6 +36,7 @@ export const BOOSTS: BoostDef[] = [
   { id: "loot", name: "Loot Boost", icon: 2854, desc: (l) => `Item drop chances x${fmt(rate(l))}.`, for: () => true },
   { id: "gold", name: "Gold Boost", icon: 3035, desc: (l) => `Gold dropped x${fmt(rate(l))}.`, for: () => true },
   { id: "haste", name: "Haste", icon: 3079, desc: (l) => `Speed +${hasteBonus(l)}.`, for: () => true },
+  { id: "luck", name: "Luck", icon: 3076, desc: (l) => `Luck +${luckBonus(l)}: rarer level-up cards.`, for: () => true },
   { id: "train_sword", name: "Sword Training", icon: 3264, skill: SKILL.sword, desc: (l) => `Sword fighting trains x${fmt(rate(l))} faster.`, for: knight },
   { id: "train_axe", name: "Axe Training", icon: 3274, skill: SKILL.axe, desc: (l) => `Axe fighting trains x${fmt(rate(l))} faster.`, for: knight },
   { id: "train_club", name: "Club Training", icon: 3270, skill: SKILL.club, desc: (l) => `Club fighting trains x${fmt(rate(l))} faster.`, for: knight },

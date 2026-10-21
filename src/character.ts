@@ -10,10 +10,11 @@ import { IMBUEMENTS, imbuement, type ImbuementKind } from "./tibia/imbuements";
 import type { Stance } from "./support";
 import { charm, CHARM_LIST, PREY_SLOTS, preyPercent, spellGrades, type GradeBonus, type Prey, type PreyBonus } from "./picks";
 import type { EvolutionId } from "./evolutions";
-import { BOOSTS, boostRate, hasteBonus, MAX_SLOTS, RUN_BONUS_MAX, RUN_BONUS_STEP, RUN_BONUSES, type BoostId, type RunBonusId } from "./upgrades";
+import { extraCardChance, fitRarity, LUCK_STEP, PREY_STARS, rarityMult, rollRarity, RUN_LUCK_MAX, type Rarity } from "./rarity";
+import { BOOSTS, boostRate, hasteBonus, luckBonus, MAX_SLOTS, RUN_BONUS_MAX, RUN_BONUS_STEP, RUN_BONUSES, type BoostId, type RunBonusId } from "./upgrades";
 import { expForLevel, maxHealthAt, maxManaAt, reqMana, reqSkillTries, SKILL, SKILL_NAMES } from "./tibia/rules";
 
-export type LevelChoice =
+export type LevelChoice = (
   | { kind: "spell"; spell: SpellData }
   | { kind: "imbue"; id: string }
   | { kind: "boost"; id: BoostId }
@@ -23,7 +24,9 @@ export type LevelChoice =
   | { kind: "gold"; n: number } // a pouch of gold for the shop
   | { kind: "grade"; spell: SpellData } // the next Wheel of Destiny grade of a spell you know
   | { kind: "charm"; name: string } // a bestiary charm, or its next tier
-  | { kind: "prey"; prey: Prey }; // a prey bonus on a creature
+  | { kind: "prey"; prey: Prey } // a prey bonus on a creature
+  | { kind: "luck"; n: number } // luck for the rest of this run
+) & { rarity?: Rarity }; // a rarer card gives more of the same (rarity.ts)
 
 export type Slot = "head" | "necklace" | "armor" | "legs" | "feet" | "ring" | "weapon" | "shield" | "ammo";
 export const SLOTS: Slot[] = ["head", "necklace", "weapon", "armor", "shield", "legs", "ring", "feet", "ammo"];
@@ -48,6 +51,7 @@ export class Character {
   imbuements = new Map<string, number>(); // id -> tier (1 Basic, 2 Intricate, 3 Powerful)
   boosts = new Map<BoostId, number>(); // id -> level
   runBonuses = new Map<RunBonusId, number>(); // id -> picks this run
+  runLuck = 0; // from Luck cards this run
   evolutions = new Set<EvolutionId>();
   blessings = 0; // Tibia blessings: each one saves you from a death
   // Rookgaard unlocks: experience and skill training multipliers that end with the vocation choice.
@@ -126,6 +130,8 @@ export class Character {
   rate(id: BoostId) { return boostRate(this.boostLevel(id)); }
   /** Multiplier from this run's bonus picks (x1 without). */
   runRate(id: RunBonusId) { return 1 + ((this.runBonuses.get(id) ?? 0) * RUN_BONUS_STEP) / 100; }
+  /** Luck: the Luck boost plus this run's Luck cards. Makes rarer cards likelier (rarity.ts). */
+  get luck() { return luckBonus(this.boostLevel("luck")) + this.runLuck; }
   get slotsUsed() { return this.imbuements.size; } // boosts are bought between runs and take no slot
   skill(i: number) {
     const v = this.skills[i].level + this.bonus(SKILL_ATTR[i]) + this.imbued("skill", (d) => d.skill === i);
@@ -145,7 +151,8 @@ export class Character {
     return v;
   }
 
-  /** Three level-up choices: a new class spell when one has unlocked, the rest imbuements. */
+  /** Three level-up choices (four, with luck), each with a rarity: imbuements, spell grades, prey, run bonuses,
+   *  luck, and repeatable fillers. */
   rollChoices(): LevelChoice[] {
     const shuffle = <T,>(xs: T[]) => xs.sort(() => Math.random() - 0.5);
     // Imbuements use MAX_SLOTS; once full, only the ones you have can be upgraded. (Boosts are bought between runs.)
@@ -161,22 +168,49 @@ export class Character {
     const prey: LevelChoice[] = free.length ? [{ kind: "prey", prey: {
       creature: free[Math.floor(Math.random() * free.length)],
       bonus: (["damage", "defense", "xp", "loot"] as const)[Math.floor(Math.random() * 4)],
-      stars: 1 + Math.floor(Math.random() * 10),
+      stars: 1, // set by its rarity
     } }] : [];
     // Run bonuses: +20% experience, gold, loot or training for the rest of this run.
     const bonuses: LevelChoice[] = shuffle(RUN_BONUSES.filter((b) => b.for(this.voc.id) && (this.runBonuses.get(b.id) ?? 0) < RUN_BONUS_MAX)
       .map((b) => ({ kind: "bonus", id: b.id }) as LevelChoice));
-    const out = shuffle([...ups.slice(0, 2), ...grades.slice(0, 2), ...prey, ...bonuses.slice(0, 2)]).slice(0, 3);
-    // Repeatable fillers, so every level has a choice.
+    const luck: LevelChoice[] = this.runLuck < RUN_LUCK_MAX ? [{ kind: "luck", n: LUCK_STEP }] : [];
+    const n = Math.random() < extraCardChance(this.luck) ? 4 : 3;
+    const out = shuffle([...ups.slice(0, 2), ...grades.slice(0, 2), ...prey, ...bonuses.slice(0, 2), ...luck]).slice(0, n);
+    // Repeatable fillers, so every level has a choice; the other kind of potion only for a fourth card.
     const fillers: LevelChoice[] = ([this.trainChoice(), this.supplyChoice(), { kind: "gold", n: 50 * this.level }] as LevelChoice[]).sort(() => Math.random() - 0.5);
-    for (const f of fillers) if (out.length < 3) out.push(f);
-    return out;
+    fillers.push(this.supplyChoice(true));
+    for (const f of fillers) if (out.length < n) out.push(f);
+    return out.map((c) => this.withRarity(c));
+  }
+
+  /** A card at a rolled rarity (lowered to what it can still use), with its amounts scaled to it. */
+  withRarity(c: LevelChoice, rolled = rollRarity(this.luck)): LevelChoice {
+    if (c.kind === "spell") return c;
+    const rarity = fitRarity(rolled, this.room(c)), m = rarityMult(rarity);
+    if (c.kind === "gold" || c.kind === "supply" || c.kind === "luck") return { ...c, n: c.n * m, rarity };
+    if (c.kind === "prey") {
+      const [lo, hi] = PREY_STARS[rarity];
+      return { ...c, prey: { ...c.prey, stars: lo + Math.floor(Math.random() * (hi - lo + 1)) }, rarity };
+    }
+    return { ...c, rarity };
+  }
+
+  /** How many tiers, picks or luck steps a card has left in it (Infinity for the repeatable ones). */
+  private room(c: LevelChoice): number {
+    switch (c.kind) {
+      case "imbue": return 3 - (this.imbuements.get(c.id) ?? 0);
+      case "grade": return spellGrades(c.spell).grades.length - (this.grades.get(c.spell.file) ?? 0);
+      case "charm": return 3 - (this.charms.get(c.name) ?? 0);
+      case "bonus": return RUN_BONUS_MAX - (this.runBonuses.get(c.id) ?? 0);
+      case "luck": return Math.floor((RUN_LUCK_MAX - this.runLuck) / LUCK_STEP);
+      default: return Infinity;
+    }
   }
 
   /** A bestiary stage: three charms to get or tier up. */
   charmChoices(): LevelChoice[] {
     return CHARM_LIST.filter((c) => (this.charms.get(c.name) ?? 0) < 3).sort(() => Math.random() - 0.5).slice(0, 3)
-      .map((c) => ({ kind: "charm", name: c.name }));
+      .map((c) => this.withRarity({ kind: "charm", name: c.name }));
   }
 
   /** A charm's value at the tier you have (its chance, or for passive charms its percent), 0 without it. */
@@ -203,9 +237,10 @@ export class Character {
     return { kind: "train", skill: this.voc.id === "paladin" ? SKILL.distance : this.weaponSkill };
   }
 
-  /** 25 of the best potion this vocation and level may drink: health for knights, mana for the others. */
-  supplyChoice(): LevelChoice {
-    const kind = this.voc.id === "knight" ? "health" : "mana";
+  /** 25 of the best potion this vocation and level may drink: health for knights, mana for the others
+   *  (`other`: the other way round). */
+  supplyChoice(other = false): LevelChoice {
+    const kind = (this.voc.id === "knight") !== other ? "health" : "mana";
     let best = 0, bestV = 0;
     for (const [k, pot] of Object.entries(POTIONS)) {
       const range = pot[kind];
@@ -216,17 +251,22 @@ export class Character {
     return { kind: "supply", id: best, n: 25 };
   }
 
+  /** Tiers, picks or levels a card gives: one, more on a rarer card (amounts are already scaled in the card). */
+  static steps = (c: LevelChoice) => rarityMult(c.rarity);
+
   applyChoice(c: LevelChoice) {
+    const k = Character.steps(c);
     if (c.kind === "spell") this.known.add(c.spell.file);
-    else if (c.kind === "imbue") this.imbuements.set(c.id, (this.imbuements.get(c.id) ?? 0) + 1);
+    else if (c.kind === "imbue") this.imbuements.set(c.id, Math.min(3, (this.imbuements.get(c.id) ?? 0) + k));
     else if (c.kind === "boost") this.boosts.set(c.id, this.boostLevel(c.id) + 1);
-    else if (c.kind === "bonus") this.runBonuses.set(c.id, (this.runBonuses.get(c.id) ?? 0) + 1);
+    else if (c.kind === "bonus") this.runBonuses.set(c.id, Math.min(RUN_BONUS_MAX, (this.runBonuses.get(c.id) ?? 0) + k));
+    else if (c.kind === "luck") this.runLuck = Math.min(RUN_LUCK_MAX, this.runLuck + c.n);
     else if (c.kind === "train") {
-      if (c.skill === "magic") this.magicLevel++;
-      else this.skills[c.skill].level++;
+      if (c.skill === "magic") this.magicLevel += k;
+      else this.skills[c.skill].level += k;
     } else if (c.kind === "gold") this.gold += c.n;
-    else if (c.kind === "grade") this.grades.set(c.spell.file, (this.grades.get(c.spell.file) ?? 0) + 1);
-    else if (c.kind === "charm") this.charms.set(c.name, (this.charms.get(c.name) ?? 0) + 1);
+    else if (c.kind === "grade") this.grades.set(c.spell.file, Math.min(spellGrades(c.spell).grades.length, (this.grades.get(c.spell.file) ?? 0) + k));
+    else if (c.kind === "charm") this.charms.set(c.name, Math.min(3, (this.charms.get(c.name) ?? 0) + k));
     else if (c.kind === "prey") {
       if (this.prey.length >= PREY_SLOTS) this.prey.shift();
       this.prey.push(c.prey);

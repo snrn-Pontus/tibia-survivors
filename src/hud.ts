@@ -16,7 +16,7 @@ import { cheb, ELEMENT_COLORS, type Channel, type Game, type LootDest, type Mons
 import type { Renderer } from "./render";
 import { item, MONSTERS, POTIONS, PRICES, SPELLS, type Element as DamageType, type SpellData } from "./tibia/db";
 import { FIGHT_MODES, SKILL_NAMES, type FightMode } from "./tibia/rules";
-import { boost, boostRate, formatRate, hasteBonus, RUN_BONUS_STEP, runBonus } from "./upgrades";
+import { boost, boostRate, formatRate, hasteBonus, luckBonus, RUN_BONUS_STEP, runBonus } from "./upgrades";
 
 const LAYOUT_KEY = "tibia-survivors-ui-v1";
 type WinId = "equipment" | "skills" | "battle" | "backpack" | "supplies" | "upgrades" | "bestiary";
@@ -802,11 +802,12 @@ export class Hud {
     row("Armor", String(ch.armor));
     row("Attack", String(ch.attackValue));
     if (ch.blessings) row("Blessings", String(ch.blessings));
+    if (ch.luck) row("Luck", String(ch.luck));
     if (ch.boosts.size || ch.evolutions.size) {
       rows.push(`<div class="sep"></div><div class="hd">Boosts</div>`);
       for (const [id, l] of ch.boosts) {
         const b = boost(id)!;
-        row(`${b.name} ${l}`, id === "haste" ? `+${hasteBonus(l)}` : `x${formatRate(boostRate(l))}`);
+        row(`${b.name} ${l}`, id === "haste" ? `+${hasteBonus(l)}` : id === "luck" ? `+${luckBonus(l)}` : `x${formatRate(boostRate(l))}`);
       }
       for (const id of ch.evolutions) row(`<span class="evo">${evolution(id).name}</span>`, "evolved");
     }

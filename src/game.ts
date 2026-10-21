@@ -1720,11 +1720,12 @@ export function describeChoice(ch: Character, c: LevelChoice): string {
     case "boost": return `${boost(c.id)!.name} ${ch.boostLevel(c.id)}`;
     case "bonus": return `${runBonus(c.id).name} +${(ch.runBonuses.get(c.id) ?? 0) * RUN_BONUS_STEP}% this run`;
     case "imbue": return `${TIERS[(ch.imbuements.get(c.id) ?? 1) - 1]} ${imbuementDef(c.id).name}`;
-    case "train": return c.skill === "magic" ? "+1 magic level" : "+1 skill";
+    case "train": return `+${Character.steps(c)} ${c.skill === "magic" ? "magic level" : "skill"}`;
     case "supply": return `${c.n} ${item(c.id)!.name}s`;
     case "gold": return `${c.n} gold`;
     case "grade": return `${c.spell.name} grade ${["", "I", "II", "III"][ch.grades.get(c.spell.file) ?? 0]}`;
     case "charm": return `${c.name} ${CHARM_TIERS[ch.charms.get(c.name) ?? 0]}`;
     case "prey": return `prey: ${describePrey(c.prey)}`;
+    case "luck": return `Luck +${c.n} this run`;
   }
 }

@@ -114,7 +114,7 @@ game asks for your Tibia folder on first start and builds the sprites in the bro
   every 30 s with a kill in them). They are all kept when you die and spent between runs on permanent unlocks:
   **starting gear** (what Rookgaard's NPCs sell: rapier, sabre, spears, wooden and studded shields, leather
   armor, helmets, legs, leather boots and a scarf), starting gold and potions, rerolls for level-up choices, blessings, and the rate
-  **boosts** (XP, Loot, Gold, Haste, skill training: x2, x3, x5 ... x50 per level).
+  **boosts** (XP, Loot, Gold, Haste, skill training: x2, x3, x5 ... x50 per level; Luck: +5 luck per level).
 - **Rookgaard unlocks** make levels 1-8 faster and stop working when you choose a vocation, so the mainland
   stays as it is: Rookgaard experience and training (x5 to x50; training keeps your skills at 8 where a slower
   run would have them), Rookgaard regeneration (x5 to x20), and Dawnport (start at level 8, once you've reached 8).
@@ -131,7 +131,13 @@ game asks for your Tibia folder on first start and builds the sprites in the bro
   then +26% and +18% critical damage), **prey** (a creature of the zone you're in, 1-10 stars: damage, damage
   reduction, experience or loot, Canary's `ioprey.cpp` values; 3 at a time), **run bonuses** (+20% experience,
   gold, loot, skill training or magic level training per pick, up to +100%, this run only, on top of the boosts),
-  exercise weapons, potions and gold.
+  **luck** (+5 per pick, up to +50 this run), exercise weapons, potions and gold.
+  Every card has a **rarity**: Common (70%), Rare (22%), Epic (7%) or Legendary (1%). A rarer card is the same
+  pick, more of it: x2, x3 or x5 the tiers, run bonus, skill levels, gold, potions and luck (two imbuement tiers
+  at once, say), and more prey stars (1-7 on a Common, all ten on a Legendary). A card is never rarer than it can
+  use: one tier from Powerful is always Common. **Luck** (the Luck boost plus this run's Luck cards) makes rarer
+  cards likelier (at 50, Rare x2, Epic x3, Legendary x5: half the cards are Common) and adds a fourth card to
+  luck / 2 percent of level-ups (at most half). Charms and boss chest picks roll rarities too.
   Killing 5, 25 and 100 of a creature in a run (bestiary stages) offers **charms** (Canary's
   `bestiary_charms.lua`, three tiers: Wound, Enflame... deal 5% of a creature's health; Dodge, Parry, Low Blow,
   Savage Blow, Cripple, Numb, Adrenaline Burst, Carnage, Vampiric Embrace and more). Evolutions come from
@@ -155,7 +161,7 @@ game asks for your Tibia folder on first start and builds the sprites in the bro
 | Items | attack, defense, armor, range, level and vocation requirements, ring regeneration, NPC buy/sell prices (all NPC shop lists) |
 | Containers | slots (`containersize`), new items in front and stacks of 100 (Canary's `Container`), which items stack (the `cumulative` flag in Canary's appearances.dat), the count sprites 1, 2, 3, 4, 5+, 10+, 25+, 50+ (otclient's `Item::calculatePatterns`) |
 
-Not real: the boosts, imbuements as level-up rewards, quick-looting corpses, a shop in the pause menu,
+Not real: the boosts, luck and card rarity, imbuements as level-up rewards, quick-looting corpses, a shop in the pause menu,
 selling from the backpack anywhere, spells without Wheel data getting a +5/10/15% grade, charms working on every
 creature (in Tibia you assign each to one), never running out of backpacks, your diagonal steps (and chase autowalk) costing their distance (x1.41) instead of x3, thrown spears coming back to you, fleeing monsters stopping at the screen's
 edge, and monsters spawning around you.
@@ -170,7 +176,7 @@ edge, and monsters spawning around you.
 - `src/game.ts` (world, monsters, combat, loot), `src/autocast.ts` (the hotkey "player"), `src/character.ts`.
 - `src/render.ts` draws the world on a canvas; `src/hud.ts` is the HTML client around it (windows, hotbar,
   console, names and health bars); `src/ui.ts` the menus.
-- `src/data.ts`: vocation kits, hunting grounds, bosses. `src/upgrades.ts`: boosts and slots. `npm run sim -- [voc] [runs] [seconds]` plays whole runs headless
+- `src/data.ts`: vocation kits, hunting grounds, bosses. `src/upgrades.ts`: boosts and slots. `src/rarity.ts`: card rarity and luck. `npm run sim -- [voc] [runs] [seconds]` plays whole runs headless
   (0-3 = knight, paladin, sorcerer, druid), for balancing. `npm run sim:rook -- [runs] [voc]` compares
   Rookgaard unlock setups: time to level 8, skills at 8, and the mainland after.
 

@@ -272,6 +272,12 @@ pre { background: #111; padding: 8px 12px; border: 1px solid #555; display: inli
 .row { margin-top: 14px; }
 
 .levelup .card { width: 230px; min-height: 190px; }
+/* Card rarity (rarity.ts): Rare, Epic, Legendary frames and a tag on top. */
+.card .rarity { font-size: 11px; font-weight: bold; letter-spacing: 1px; text-transform: uppercase; }
+.card.r1 { border-color: #3d7fc4; } .card.r1 .rarity { color: #5aa8ff; }
+.card.r2 { border-color: #8a4fc9; box-shadow: 0 0 10px #8a4fc955; } .card.r2 .rarity { color: #c08bff; }
+.card.r3 { border-color: #e08a1e; box-shadow: 0 0 14px #ff9a2e77; background: #241b10; } .card.r3 .rarity { color: #ffae4d; }
+.card.r1.focus { border-color: #8cc4ff; } .card.r2.focus { border-color: #d7b3ff; } .card.r3.focus { border-color: #ffd08a; background: #33240f; }
 .chest canvas { image-rendering: pixelated; display: block; margin: 0 auto 8px; }
 .chest ul, .equip { list-style: none; padding: 0; margin: 0 0 8px; }
 .chest li { color: #9f9; margin: 4px 0; }
