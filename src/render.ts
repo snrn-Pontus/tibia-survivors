@@ -239,6 +239,13 @@ export class Renderer {
       .sort((a, b) => Math.hypot(a.x - wx, a.y - wy) - Math.hypot(b.x - wx, b.y - wy))[0];
   }
 
+  /** The tile under a screen point in the game window (for click to move), if it's on it. */
+  tileAtScreen(sx: number, sy: number): [number, number] | undefined {
+    const { ox, oy, S, left, top, gw, gh } = this.view;
+    if (sx < left || sx > left + gw || sy < top || sy > top + gh) return undefined;
+    return [Math.floor((sx - ox) / S / TILE), Math.floor((sy - oy) / S / TILE)];
+  }
+
   /** Loot hops out of the corpse, then flies across the window into the side panel: gold to the gold
    *  counter, items to the backpack, potions to supplies. Drawn on a full-window canvas; `at` is the game
    *  canvas's offset in that canvas, `to` the targets, all in its pixels. */
