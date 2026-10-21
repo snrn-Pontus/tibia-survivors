@@ -1,7 +1,8 @@
 import type { Atlas } from "./atlas";
 import { extractAtlas, type AssetState } from "./assets";
 import { achievement, BOSS_MILESTONES, KILL_MILESTONES, ROOKIE, SHOP, VOCATIONS, ZONES, type VocationDef } from "./data";
-import type { LevelChoice } from "./character";
+import { Character, type LevelChoice } from "./character";
+import { RARITIES, rarityOdds } from "./rarity";
 import type { Game } from "./game";
 import { imbuement, TIERS } from "./tibia/imbuements";
 import { boost, BOOSTS, MAX_BOOST, MAX_SLOTS, RUN_BONUS_MAX, RUN_BONUS_STEP, runBonus } from "./upgrades";
@@ -162,7 +163,7 @@ export class UI {
       <h3>Starting gear</h3><div class="shop boosts">${gear.map(entry).join("")}</div>
       <h3>Rookgaard <small>(levels 1-8 go faster; these stop working when you choose a vocation)</small></h3>
       <div class="shop boosts">${rook.map(entry).join("")}</div>
-      <h3>Boosts <small>(multiply experience, loot, gold or skill training in every run)</small></h3>
+      <h3>Boosts <small>(multiply experience, loot, gold or skill training, or add speed and luck, in every run)</small></h3>
       <div class="shop boosts">${boosts.map(entry).join("")}</div>
       ${achievementsHtml(save)}
       <p class="hint">WASD / arrows / gamepad to move; your character fights by itself. Battle list: click to attack. P / Esc pauses.</p>`);
@@ -191,66 +192,74 @@ export class UI {
   /** Level-up (or a bestiary stage, with charms): pick one of the cards. `roll` makes new ones for a reroll. */
   levelUp(g: Game, choices: LevelChoice[], onPick: (c: LevelChoice) => void, title?: string, roll = () => g.ch.rollChoices()) {
     const ch = g.ch;
+    // A rarer card wears its rarity: a colored frame and its name on top.
+    const open = (c: LevelChoice) => `<button class="card choice${c.rarity ? ` r${c.rarity}` : ""}">${c.rarity ? `<span class="rarity">${RARITIES[c.rarity].name}</span>` : ""}<div class="ico"></div>`;
     const card = (c: LevelChoice, i: number) => {
+      const k = Character.steps(c);
       if (c.kind === "grade") {
-        const s = c.spell, { grades, wheel } = spellGrades(s), g0 = ch.grades.get(s.file) ?? 0;
-        return `<button class="card choice"><div class="ico"></div>
-          <b>${i + 1}. ${s.name} ${CHARM_TIERS[g0 + 1]}</b><em>Spell grade${wheel ? " (Wheel of Destiny)" : ""}</em>
-          <small>${describeGrade(grades[g0])}${g0 ? `<br><i>now: ${describeGrade(grades[g0 - 1])}</i>` : ""}</small></button>`;
+        const s = c.spell, { grades, wheel } = spellGrades(s), g0 = ch.grades.get(s.file) ?? 0, g1 = g0 + k;
+        return `${open(c)}
+          <b>${i + 1}. ${s.name} ${CHARM_TIERS[g1]}</b><em>Spell grade${wheel ? " (Wheel of Destiny)" : ""}</em>
+          <small>${describeGrade(grades[g1 - 1])}${g0 ? `<br><i>now: ${describeGrade(grades[g0 - 1])}</i>` : ""}</small></button>`;
       }
       if (c.kind === "charm") {
-        const t = (ch.charms.get(c.name) ?? 0) + 1;
-        return `<button class="card choice"><div class="ico"></div>
-          <b>${i + 1}. ${c.name} ${CHARM_TIERS[t]}</b><em>${t === 1 ? "New charm" : `Charm ${CHARM_TIERS[t - 1]} → ${CHARM_TIERS[t]}`}</em>
+        const t0 = ch.charms.get(c.name) ?? 0, t = t0 + k;
+        return `${open(c)}
+          <b>${i + 1}. ${c.name} ${CHARM_TIERS[t]}</b><em>${t0 === 0 ? "New charm" : `Charm ${CHARM_TIERS[t0]} → ${CHARM_TIERS[t]}`}</em>
           <small>${describeCharm(c.name, t)}.</small></button>`;
       }
       if (c.kind === "prey") {
         const full = ch.prey.length >= PREY_SLOTS ? ch.prey[0] : null;
-        return `<button class="card choice"><div class="ico"></div>
+        return `${open(c)}
           <b>${i + 1}. Prey: ${MONSTERS[c.prey.creature]?.name ?? c.prey.creature}</b><em>${"★".repeat(c.prey.stars)}${"☆".repeat(10 - c.prey.stars)}</em>
           <small>${describePrey(c.prey)}.${full ? `<br><i>Replaces: ${describePrey(full)}</i>` : ""}</small></button>`;
       }
       if (c.kind === "spell") {
         const s = c.spell;
-        return `<button class="card choice"><div class="ico"></div>
+        return `${open(c)}
           <b>${i + 1}. ${s.name}</b><em>New spell: "${s.words}"</em>
           <small>Level ${s.level} · ${s.mana} mana · ${(s.cooldown ?? 2000) / 1000}s cooldown<br>${describe(s)}</small></button>`;
       }
       if (c.kind === "train") {
         const name = c.skill === "magic" ? "magic level" : SKILL_NAMES[c.skill].toLowerCase();
         const weapon = c.skill === "magic" ? (ch.voc.id === "druid" ? "rod" : "wand") : ["", "club", "sword", "axe", "bow"][c.skill] ?? "sword";
-        return `<button class="card choice"><div class="ico"></div>
-          <b>${i + 1}. Exercise ${weapon}</b><em>Training session</em><small>+1 ${name}.</small></button>`;
+        return `${open(c)}
+          <b>${i + 1}. Exercise ${weapon}${k > 1 ? ` x${k}` : ""}</b><em>Training session${k > 1 ? "s" : ""}</em><small>+${k} ${name}.</small></button>`;
       }
       if (c.kind === "gold") {
-        return `<button class="card choice"><div class="ico"></div>
+        return `${open(c)}
           <b>${i + 1}. ${c.n.toLocaleString("en-US")} gold</b><em>Gold pouch</em><small>For the shop: supplies, runes and gear.</small></button>`;
       }
       if (c.kind === "supply") {
-        return `<button class="card choice"><div class="ico"></div>
+        return `${open(c)}
           <b>${i + 1}. ${c.n} ${item(c.id)!.name}s</b><em>Supplies</em><small>A backpack of potions.</small></button>`;
       }
       if (c.kind === "boost") {
         const b = boost(c.id)!, l = ch.boostLevel(c.id) + 1;
-        return `<button class="card choice"><div class="ico"></div>
+        return `${open(c)}
           <b>${i + 1}. ${b.name} ${l}</b><em>${l === 1 ? "New upgrade" : `Level ${l - 1} → ${l}`}</em>
           <small>${b.desc(l)}${evoHint(c.id)}</small></button>`;
       }
       if (c.kind === "bonus") {
-        const b = runBonus(c.id), n = (ch.runBonuses.get(c.id) ?? 0) + 1;
-        return `<button class="card choice"><div class="ico"></div>
-          <b>${i + 1}. ${b.name} +${RUN_BONUS_STEP}%</b><em>Run bonus ${n}/${RUN_BONUS_MAX}</em>
+        const b = runBonus(c.id), n = (ch.runBonuses.get(c.id) ?? 0) + k;
+        return `${open(c)}
+          <b>${i + 1}. ${b.name} +${k * RUN_BONUS_STEP}%</b><em>Run bonus ${n}/${RUN_BONUS_MAX}</em>
           <small>${b.what[0].toUpperCase() + b.what.slice(1)} +${n * RUN_BONUS_STEP}% for the rest of this run.</small></button>`;
       }
+      if (c.kind === "luck") {
+        return `${open(c)}
+          <b>${i + 1}. Luck +${c.n}</b><em>Run bonus</em>
+          <small>Luck ${ch.luck} → ${ch.luck + c.n} for the rest of this run: rarer cards, and now and then a fourth.</small></button>`;
+      }
       if (c.kind !== "imbue") return "";
-      const d = imbuement(c.id), tier = (ch.imbuements.get(c.id) ?? 0) + 1;
-      return `<button class="card choice"><div class="ico"></div>
-        <b>${i + 1}. ${TIERS[tier - 1]} ${d.name}</b><em>${tier === 1 ? "New imbuement" : `Upgrade from ${TIERS[tier - 2]}`}</em>
+      const d = imbuement(c.id), t0 = ch.imbuements.get(c.id) ?? 0, tier = t0 + k;
+      return `${open(c)}
+        <b>${i + 1}. ${TIERS[tier - 1]} ${d.name}</b><em>${t0 === 0 ? "New imbuement" : `Upgrade from ${TIERS[t0 - 1]}`}</em>
         <small>${d.desc(d.values[tier - 1])}${evoHint(c.id)}</small></button>`;
     };
     const el = this.screen("levelup", `
       <h2>${title ?? `Level ${ch.level}!`}</h2>
-      <p class="sub">Upgrades ${ch.slotsUsed}/${MAX_SLOTS}${ch.slotsUsed >= MAX_SLOTS ? " (full: only upgrades to what you have)" : ""}</p>
+      <p class="sub">Upgrades ${ch.slotsUsed}/${MAX_SLOTS}${ch.slotsUsed >= MAX_SLOTS ? " (full: only upgrades to what you have)" : ""}${ch.luck ? ` · <span title="${luckOdds(ch.luck)}">Luck ${ch.luck}</span>` : ""}</p>
       <div class="cards">${choices.map(card).join("")}</div>
       ${g.rerolls > 0 ? `<div class="row"><button class="btn reroll">Reroll (${g.rerolls} left)</button></div>` : ""}
       <p class="hint">1–${choices.length}, arrows + Enter, click, or gamepad A</p>`);
@@ -264,6 +273,7 @@ export class UI {
       }
       if (ch.kind === "boost") { c.appendChild(this.icon(boost(ch.id)!.icon, 2)); return; }
       if (ch.kind === "bonus") { c.appendChild(this.icon(runBonus(ch.id).icon, 2)); return; }
+      if (ch.kind === "luck") { c.appendChild(this.icon(LUCK_ICON, 2)); return; }
       if (ch.kind === "train") {
         const w = g.ch.weapon;
         if (w) { c.appendChild(this.icon(w.id, 2)); return; }
@@ -432,7 +442,8 @@ export class UI {
       <div class="cols">
         <div class="sheet"><h3>${ch.vocName}, level ${ch.level}</h3>
           <table><tr><td>Magic Level</td><td>${ch.ml}</td></tr>${skills}
-          <tr><td>Speed</td><td>${ch.speed}</td></tr><tr><td>Armor</td><td>${ch.armor}</td></tr></table>
+          <tr><td>Speed</td><td>${ch.speed}</td></tr><tr><td>Armor</td><td>${ch.armor}</td></tr>
+          <tr title="${luckOdds(ch.luck)}"><td>Luck</td><td>${ch.luck}</td></tr></table>
           <h4>Upgrades ${ch.slotsUsed}/${MAX_SLOTS}</h4>
           <p class="spells">${[...boosts, ...imbues].join("<br>") || "None yet"}</p>
           <h4>Evolutions</h4>
@@ -571,6 +582,9 @@ const RANDOM_NAMES = ["Eremo", "Bozo", "Rowenna", "Asima", "Tibianus", "Kazzan",
 /** Can this character use a shop item at all (class potions, class runes, its ammo)? */
 /** Short stat line for an item, like Tibia's look text: (Atk:24 Def:21) (Arm:12). */
 const cap = (s: string) => s[0].toUpperCase() + s.slice(1);
+const LUCK_ICON = boost("luck")!.icon;
+/** Card odds at a luck, for tooltips: "Common 70% · Rare 22% · ...". */
+const luckOdds = (luck: number) => rarityOdds(luck).map((p, i) => `${RARITIES[i].name} ${p < 10 ? p.toFixed(1) : Math.round(p)}%`).join(" · ");
 const article = (s: string) => (/^[A-Z]/.test(s) ? s : `${/^[aeiou]/i.test(s) ? "an" : "a"} ${s}`);
 
 /** Achievements on the title screen: every creature you've killed, its milestones reached (stars), and

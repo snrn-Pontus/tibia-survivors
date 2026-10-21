@@ -184,7 +184,7 @@ export function buyTier(s: Save, t: Track): boolean {
 
 /** Soul cost of the first level of each boost; every further level costs twice the last. */
 const BASE_COST: Record<BoostId, number> = {
-  xp: 30, loot: 25, gold: 20, haste: 25,
+  xp: 30, loot: 25, gold: 20, haste: 25, luck: 40,
   train_sword: 20, train_axe: 20, train_club: 20, train_distance: 20, train_shielding: 20, train_magic: 25,
 };
 export const BLESSING_COST = 100; // souls per blessing, for one run
