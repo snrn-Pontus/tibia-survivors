@@ -593,7 +593,9 @@ function surface(tx: number, ty: number): Tile {
   if (st.clear) return { ...t, ground: t.land, decor: null, wall: null, block: false };
   if (isLiquid(t.ground) && liquid(tx, ty)) return t;
   if (t.ground !== "lava" && t.ground !== "swampwater" && water(tx, ty)) return { ...t, ground: "water", decor: null, wall: null, block: true };
-  if (isLiquid(t.ground)) return shore(tx, ty, t.thin ? { ...t, ground: t.land, decor: t.thin, block: true } : { ...t, ground: t.land, decor: null, block: false });
+  // Too thin to keep: what stands there instead keeps the wall whole (no shore under it, which would clear it).
+  if (isLiquid(t.ground) && t.thin) return { ...t, ground: t.land, decor: t.thin, block: true };
+  if (isLiquid(t.ground)) return shore(tx, ty, { ...t, ground: t.land, decor: null, block: false });
   return shore(tx, ty, t);
 }
 
