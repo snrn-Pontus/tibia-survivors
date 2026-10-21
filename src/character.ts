@@ -176,8 +176,9 @@ export class Character {
     const luck: LevelChoice[] = this.runLuck < RUN_LUCK_MAX ? [{ kind: "luck", n: LUCK_STEP }] : [];
     const n = Math.random() < extraCardChance(this.luck) ? 4 : 3;
     const out = shuffle([...ups.slice(0, 2), ...grades.slice(0, 2), ...prey, ...bonuses.slice(0, 2), ...luck]).slice(0, n);
-    // Repeatable fillers, so every level has a choice.
+    // Repeatable fillers, so every level has a choice; the other kind of potion only for a fourth card.
     const fillers: LevelChoice[] = ([this.trainChoice(), this.supplyChoice(), { kind: "gold", n: 50 * this.level }] as LevelChoice[]).sort(() => Math.random() - 0.5);
+    fillers.push(this.supplyChoice(true));
     for (const f of fillers) if (out.length < n) out.push(f);
     return out.map((c) => this.withRarity(c));
   }
@@ -236,9 +237,10 @@ export class Character {
     return { kind: "train", skill: this.voc.id === "paladin" ? SKILL.distance : this.weaponSkill };
   }
 
-  /** 25 of the best potion this vocation and level may drink: health for knights, mana for the others. */
-  supplyChoice(): LevelChoice {
-    const kind = this.voc.id === "knight" ? "health" : "mana";
+  /** 25 of the best potion this vocation and level may drink: health for knights, mana for the others
+   *  (`other`: the other way round). */
+  supplyChoice(other = false): LevelChoice {
+    const kind = (this.voc.id === "knight") !== other ? "health" : "mana";
     let best = 0, bestV = 0;
     for (const [k, pot] of Object.entries(POTIONS)) {
       const range = pot[kind];
