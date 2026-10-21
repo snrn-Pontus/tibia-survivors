@@ -85,8 +85,8 @@ body:not(.ingame) #side, body:not(.ingame) #hotbar, body:not(.ingame) #console, 
 
 /* minimap */
 .minimap { background: var(--stone); border: 1px solid var(--edge); box-shadow: inset 1px 1px 0 #5e5e5e; padding: 4px; }
-.mm-row { display: flex; gap: 4px; align-items: flex-start; }
-.minimap canvas { display: block; flex: 1; min-width: 0; aspect-ratio: 1; image-rendering: pixelated; border: 1px solid #000; background: #000; }
+.mm-row { display: flex; gap: 4px; align-items: flex-start; justify-content: center; }
+.minimap canvas { display: block; flex: none; width: 148px; height: 148px; image-rendering: pixelated; border: 1px solid #000; background: #000; }
 .mm-btns { display: flex; flex-direction: column; gap: 2px; }
 .mm-btn { width: 17px; height: 17px; padding: 0; font-size: 12px; line-height: 12px; }
 .mm-cap { text-align: center; font-weight: bold; margin-top: 3px; text-shadow: var(--shadow); }

@@ -182,7 +182,7 @@ export class Hud {
     // Minimap, with its zoom buttons in a column beside it (Tibia's top right).
     const mm = el("div", "minimap");
     this.mm = el("canvas");
-    this.mm.width = this.mm.height = 176;
+    this.mm.width = this.mm.height = 148; // drawn 1:1 (style.css), leaving room for the buttons and a scrollbar
     const btns = el("div", "mm-btns");
     for (const [label, d] of [["+", 1], ["−", -1]] as const) {
       const b = el("button", "mm-btn", label);
