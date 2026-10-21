@@ -72,7 +72,7 @@ body:not(.ingame) #side, body:not(.ingame) #hotbar, body:not(.ingame) #console, 
 
 /* minimap */
 .minimap { position: relative; background: var(--stone); border: 1px solid var(--edge); padding: 4px; }
-.minimap canvas { display: block; width: 100%; aspect-ratio: 1; image-rendering: pixelated; border-radius: 6px; border: 1px solid var(--edge); background: #000; }
+.minimap canvas { display: block; cursor: crosshair; width: 100%; aspect-ratio: 1; image-rendering: pixelated; border-radius: 6px; border: 1px solid var(--edge); background: #000; }
 .mm-btns { position: absolute; right: 8px; top: 8px; display: flex; flex-direction: column; gap: 2px; }
 .mm-btn { width: 17px; height: 17px; padding: 0; font-size: 12px; line-height: 12px; }
 .mm-cap { text-align: center; font-weight: bold; margin-top: 3px; text-shadow: var(--shadow); }
