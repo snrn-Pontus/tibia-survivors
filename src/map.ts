@@ -5,8 +5,8 @@
 // A border between two zones is a wall in that terrain's style (a tree line, rock, water, lava) with a gap or
 // two, so you go from zone to zone through chokepoints; some borders inside a zone are walled as well. Inside
 // a region there are ponds, outcrops and groves, kept away from the borders so every gap stays reachable.
-// Water lies in smooth lakes at least three tiles across (a wall of it two), and where a grassy or sandy land meets it there are
-// Tibia's sandy shore tiles with surf, and a beach behind them.
+// Water lies in smooth lakes at least three tiles across (a wall of it two), and where a grassy or sandy land meets
+// it there are Tibia's sandy shore tiles with surf, and a beach behind them.
 // Hunting grounds that are dungeons in Tibia (sewers, mines, caves, crypts, lairs) go down: a hole, a grate or
 // stairs in each of their regions leads to caves below, one to three floors deep, with a ladder back up.
 // Floors below lie in their own band of the coordinate plane (floor k at y + k * FLOOR_SPAN), so everything that
