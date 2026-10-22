@@ -1,0 +1,671 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Uncapped &amp; Unequal: a level-up rework for Tibia Survivors (Mira Halvorsen)</title>
+<style>
+:root {
+  --bg: #120f0b; --stone: #1b1712; --stone2: #231d16; --parch: #2b2319; --parch2: #352b1e;
+  --edge: #0a0806; --line: #4a3b26; --gold: #e5c46a; --gold2: #b88a2a; --ink: #e9dfc9; --ink2: #bfb299; --mute: #8d826d;
+  --common: #c9c9c9; --rare: #5aa8ff; --epic: #c08bff; --legend: #ffae4d;
+  --commonB: #8a8a8a; --rareB: #3d7fc4; --epicB: #8a4fc9; --legendB: #e08a1e;
+  --good: #7fcf7f; --bad: #e07a6a;
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; scroll-padding-top: 16px; }
+body { margin: 0; color: var(--ink); font: 15px/1.6 Verdana, Geneva, Tahoma, sans-serif;
+  background: radial-gradient(ellipse at 50% -10%, #2b2216 0%, transparent 60%),
+    repeating-linear-gradient(45deg, rgba(255,255,255,0.012) 0 2px, transparent 2px 7px), var(--bg); }
+a { color: var(--gold); }
+h1, h2, h3, h4 { font-family: Georgia, "Times New Roman", serif; color: var(--gold); font-weight: normal; letter-spacing: 0.3px; }
+h2 { font-size: 28px; margin: 0 0 6px; border-bottom: 1px solid var(--line); padding-bottom: 8px; }
+h2 .num { color: var(--mute); font-size: 18px; margin-right: 10px; }
+h3 { font-size: 20px; margin: 26px 0 8px; }
+h4 { font-size: 16px; margin: 18px 0 6px; color: #d8bd77; }
+p { margin: 8px 0 12px; }
+code, .mono { font-family: Consolas, "Courier New", monospace; font-size: 13px; background: #0e0b08; border: 1px solid #3a2e1e; padding: 0 4px; border-radius: 3px; color: #f0dfa8; }
+small, .small { font-size: 12.5px; color: var(--ink2); }
+.layout { display: grid; grid-template-columns: 250px minmax(0, 1fr); max-width: 1380px; margin: 0 auto; gap: 28px; padding: 0 20px; }
+nav.toc { position: sticky; top: 14px; align-self: start; max-height: calc(100vh - 28px); overflow: auto; margin-top: 14px;
+  background: linear-gradient(#211b14, #18140f); border: 1px solid var(--line); box-shadow: inset 0 0 0 1px #000, 0 6px 20px #0008; border-radius: 4px; padding: 14px 10px 14px 14px; }
+nav.toc .brand { font-family: Georgia, serif; color: var(--gold); font-size: 15px; margin-bottom: 8px; border-bottom: 1px solid var(--line); padding-bottom: 8px; }
+nav.toc .brand small { display: block; color: var(--mute); font-family: Verdana, sans-serif; font-size: 11px; }
+nav.toc ol { list-style: none; margin: 0; padding: 0; counter-reset: toc; }
+nav.toc li { counter-increment: toc; }
+nav.toc a { display: block; padding: 4px 6px; color: var(--ink2); text-decoration: none; font-size: 13px; border-left: 2px solid transparent; border-radius: 2px; }
+nav.toc li a::before { content: counter(toc) ". "; color: var(--mute); }
+nav.toc a:hover { color: var(--gold); background: #2c2418; border-left-color: var(--gold2); }
+main { padding: 14px 0 80px; min-width: 0; }
+section { background: linear-gradient(180deg, var(--parch) 0%, #261f16 100%); border: 1px solid var(--line); border-radius: 4px;
+  box-shadow: inset 0 1px 0 #4d3d26, inset 0 0 0 1px #000, 0 8px 24px #0007; padding: 26px 30px; margin: 0 0 22px; position: relative; }
+section::before, section::after { content: ""; position: absolute; width: 14px; height: 14px; border: 2px solid var(--gold2); opacity: 0.6; }
+section::before { top: 6px; left: 6px; border-right: 0; border-bottom: 0; }
+section::after { bottom: 6px; right: 6px; border-left: 0; border-top: 0; }
+.hero { text-align: center; padding: 46px 30px 36px; background: radial-gradient(ellipse at 50% 0%, #3a2c18 0%, #241c13 55%, #1c1610 100%); }
+.hero .kicker { color: var(--mute); text-transform: uppercase; letter-spacing: 3px; font-size: 12px; }
+.hero h1 { font-size: 54px; margin: 8px 0 4px; text-shadow: 0 2px 0 #000, 0 0 30px #e5c46a33; }
+.hero h1 .amp { color: var(--legend); }
+.hero .tag { font-size: 19px; color: var(--ink); font-family: Georgia, serif; font-style: italic; max-width: 760px; margin: 10px auto 18px; }
+.hero .by { color: var(--ink2); font-size: 13px; }
+.pills { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; margin: 18px 0 0; }
+.pill { border: 1px solid var(--line); background: #1a150f; padding: 4px 12px; border-radius: 14px; font-size: 12.5px; color: var(--ink2); }
+.pill b { color: var(--gold); }
+.lead { font-size: 17px; color: var(--ink); }
+.callout { border-left: 3px solid var(--gold2); background: #1d1810; padding: 12px 16px; margin: 14px 0; border-radius: 0 4px 4px 0; }
+.callout.warn { border-left-color: var(--bad); }
+.callout.ok { border-left-color: var(--good); }
+.quote { font-family: Georgia, serif; font-style: italic; font-size: 18px; color: #f1e2b8; }
+.grid2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+.grid3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
+.grid4 { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }
+@media (max-width: 1100px) { .grid4 { grid-template-columns: repeat(2, minmax(0, 1fr)); } .grid3 { grid-template-columns: 1fr; } }
+@media (max-width: 860px) { .layout { grid-template-columns: 1fr; } nav.toc { position: static; max-height: none; } .grid2 { grid-template-columns: 1fr; } .hero h1 { font-size: 38px; } }
+.stat { background: #17120d; border: 1px solid var(--line); border-radius: 4px; padding: 14px 16px; }
+.stat .big { font-family: Georgia, serif; font-size: 34px; color: var(--gold); line-height: 1.1; }
+.stat .big.bad { color: var(--bad); }
+.stat .lbl { font-size: 13px; color: var(--ink2); }
+.stat .src { font-size: 11.5px; color: var(--mute); margin-top: 6px; }
+table { width: 100%; border-collapse: collapse; margin: 10px 0 16px; font-size: 13.5px; }
+th, td { border: 1px solid #3d311f; padding: 6px 9px; text-align: left; vertical-align: top; }
+th { background: #1a150f; color: var(--gold); font-weight: normal; font-family: Georgia, serif; font-size: 14px; }
+tr:nth-child(even) td { background: #241d14; }
+td.n, th.n { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.tc { color: var(--common); } .tr { color: var(--rare); } .te { color: var(--epic); } .tl { color: var(--legend); }
+th.tc { color: var(--common); } th.tr { color: var(--rare); } th.te { color: var(--epic); } th.tl { color: var(--legend); }
+.tag-v { display: inline-block; font-size: 11px; padding: 0 6px; border-radius: 3px; border: 1px solid var(--line); color: var(--ink2); margin-right: 3px; white-space: nowrap; }
+.k { color: #e3a0a0; } .p { color: #9fd59f; } .s { color: #f0a868; } .d { color: #8fd0e0; }
+.wall { color: var(--bad); font-weight: bold; }
+
+/* ---------- level-up cards (mockups of src/ui.ts levelUp) ---------- */
+.cards { display: flex; flex-wrap: wrap; gap: 14px; justify-content: center; margin: 16px 0; }
+.card { width: 232px; min-height: 330px; background: linear-gradient(#3a3a3a, #2b2b2b 30%, #262626); border: 2px solid var(--commonB);
+  border-radius: 4px; box-shadow: inset 1px 1px 0 #5e5e5e, inset -1px -1px 0 #111, 0 6px 16px #000a; padding: 10px 12px 12px; position: relative; display: flex; flex-direction: column; text-align: center; color: #e8e8e8; font-size: 12.5px; }
+.card .rar { font-size: 11px; font-weight: bold; letter-spacing: 2px; text-transform: uppercase; color: var(--common); }
+.card.r1 { border-color: var(--rareB); } .card.r1 .rar { color: var(--rare); }
+.card.r2 { border-color: var(--epicB); box-shadow: inset 1px 1px 0 #5e5e5e, 0 0 14px #8a4fc966, 0 6px 16px #000a; } .card.r2 .rar { color: var(--epic); }
+.card.r3 { border-color: var(--legendB); background: linear-gradient(#3b2a14, #241b10 40%, #1f170d); box-shadow: inset 1px 1px 0 #6e5430, 0 0 22px #ff9a2e77, 0 6px 16px #000a; animation: glow 2.6s ease-in-out infinite; }
+.card.r3 .rar { color: var(--legend); }
+@keyframes glow { 50% { box-shadow: inset 1px 1px 0 #6e5430, 0 0 32px #ffae4daa, 0 6px 16px #000a; } }
+@media (prefers-reduced-motion: reduce) { .card.r3 { animation: none; } }
+.ico { width: 64px; height: 64px; margin: 8px auto 6px; border: 1px solid #111; background: #242425; box-shadow: inset 1px 1px 0 #111, inset -1px -1px 0 #5e5e5e; display: grid; place-items: center; }
+.gem { width: 34px; height: 34px; transform: rotate(45deg); border-radius: 4px; box-shadow: inset -5px -5px 0 #0004, inset 4px 4px 0 #fff4, 0 0 10px currentColor; }
+.gem.blood { background: radial-gradient(circle at 35% 35%, #ff8a8a, #b1121d 60%, #5a060b); color: #ff3b3b; }
+.gem.void { background: radial-gradient(circle at 35% 35%, #c2b0ff, #4a2bb8 60%, #1d0f55); color: #7a5cff; }
+.gem.axe { background: radial-gradient(circle at 35% 35%, #f3f3f3, #8a8f99 60%, #3a3d44); color: #aab; }
+.gem.fire { background: radial-gradient(circle at 35% 35%, #ffe48a, #f06a12 60%, #7a1d02); color: #ff7a1a; }
+.gem.ice { background: radial-gradient(circle at 35% 35%, #e6fbff, #3fb2e0 60%, #0d4b6e); color: #5fd0ff; }
+.gem.holy { background: radial-gradient(circle at 35% 35%, #fffbe0, #e8c44a 60%, #7a5a10); color: #ffe066; }
+.gem.earth { background: radial-gradient(circle at 35% 35%, #d4ffb0, #4f9a2a 60%, #1f430c); color: #7fdc4a; }
+.card b.t { display: block; font-size: 14px; color: #fff; margin-top: 2px; }
+.card em { display: block; font-style: normal; color: #c9b48a; font-size: 11.5px; margin-bottom: 6px; }
+.card .ln { text-align: left; border-top: 1px solid #ffffff14; padding: 5px 2px 4px 22px; position: relative; line-height: 1.4; }
+.card .ln::before { position: absolute; left: 2px; top: 5px; font-size: 12px; }
+.card .ln.rank::before { content: "\25C6"; color: var(--common); }
+.card .ln.sec::before { content: "\25C6"; color: var(--rare); }
+.card .ln.perk::before { content: "\25C6"; color: var(--epic); }
+.card .ln.relic::before { content: "\2605"; color: var(--legend); }
+.card .ln .h { font-size: 10.5px; text-transform: uppercase; letter-spacing: 1px; display: block; }
+.card .ln.rank .h { color: #aaa; } .card .ln.sec .h { color: var(--rare); } .card .ln.perk .h { color: var(--epic); } .card .ln.relic .h { color: var(--legend); }
+.card .now { color: #9a9a9a; font-style: italic; font-size: 11px; }
+.card .up { color: #9fe39f; }
+.card .foot { margin-top: auto; padding-top: 8px; font-size: 10.5px; color: #8f8f8f; border-top: 1px solid #ffffff10; }
+.screen { background: #1d1d1d; border: 1px solid #000; box-shadow: inset 0 0 0 1px #3a3a3a; border-radius: 4px; padding: 18px; margin: 14px 0; text-align: center; }
+.screen h3 { margin: 0; color: #fff; font-family: Verdana, sans-serif; font-weight: bold; font-size: 22px; text-shadow: 1px 1px 0 #000; }
+.screen .sub { color: #bbb; font-size: 12.5px; margin: 4px 0 0; }
+.screen .sub b { color: var(--gold); font-weight: normal; }
+.screen .cards { gap: 10px; flex-wrap: wrap; } .screen .card { width: 200px; }
+.btn { display: inline-block; background: linear-gradient(#5c5c5c, #444 55%, #3a3a3a); border: 1px solid #161616; box-shadow: inset 1px 1px 0 rgba(255,255,255,0.18); color: #ddd; padding: 5px 14px; font-size: 12px; border-radius: 2px; margin: 0 4px; }
+.btn.gold { color: var(--gold); }
+
+/* ---------- chart ---------- */
+.chart { background: var(--stone); border: 1px solid var(--line); border-radius: 4px; padding: 14px 14px 6px; position: relative; }
+.chart .legend { display: flex; gap: 18px; font-size: 12.5px; color: var(--ink2); margin: 0 0 6px 6px; flex-wrap: wrap; }
+.chart .legend i { display: inline-block; width: 18px; height: 3px; vertical-align: middle; margin-right: 6px; border-radius: 2px; }
+.chart svg { width: 100%; height: auto; display: block; }
+.chart .tip { position: absolute; pointer-events: none; background: #0d0a07f0; border: 1px solid var(--line); border-radius: 4px; padding: 6px 9px; font-size: 12px; color: var(--ink); opacity: 0; transition: opacity 0.1s; white-space: nowrap; }
+.chart .tip b { color: var(--gold); font-weight: normal; }
+
+/* ---------- run logs ---------- */
+.run { border: 1px solid var(--line); border-radius: 4px; background: #1a150f; margin: 10px 0 16px; }
+.run .rh { padding: 10px 14px; border-bottom: 1px solid var(--line); display: flex; justify-content: space-between; gap: 10px; flex-wrap: wrap; align-items: baseline; }
+.run .rh b { font-family: Georgia, serif; font-size: 18px; color: var(--gold); font-weight: normal; }
+.run ol { margin: 0; padding: 8px 14px 10px 14px; list-style: none; font-size: 13px; }
+.run li { padding: 4px 0; border-bottom: 1px dashed #3a2e1e; display: grid; grid-template-columns: 52px 86px 1fr; gap: 8px; }
+.run li:last-child { border-bottom: 0; }
+.run .lv { color: var(--mute); font-variant-numeric: tabular-nums; }
+.run .end { padding: 10px 14px; border-top: 1px solid var(--line); font-size: 13px; color: var(--ink2); background: #15110c; }
+.rbad { display: inline-block; font-size: 10.5px; padding: 0 6px; border-radius: 3px; border: 1px solid; text-transform: uppercase; letter-spacing: 1px; height: 18px; line-height: 16px; align-self: start; text-align: center; }
+.rbad.c { color: var(--common); border-color: var(--commonB); } .rbad.r { color: var(--rare); border-color: var(--rareB); }
+.rbad.e { color: var(--epic); border-color: var(--epicB); } .rbad.l { color: var(--legend); border-color: var(--legendB); background: #2a1c0b; }
+.bar { height: 10px; background: #0f0c08; border: 1px solid #3a2e1e; border-radius: 3px; overflow: hidden; display: flex; gap: 2px; }
+.bar span { display: block; height: 100%; }
+.sig { font-family: "Brush Script MT", "Segoe Script", cursive; font-size: 34px; color: var(--gold); margin: 10px 0 0; }
+.ask li { margin: 6px 0; }
+.foot-note { text-align: center; color: var(--mute); font-size: 12px; margin-top: 30px; }
+</style>
+</head>
+<body>
+<div class="layout">
+<nav class="toc" aria-label="Contents">
+  <div class="brand">Uncapped &amp; Unequal<small>A level-up rework pitch, by Mira Halvorsen</small></div>
+  <ol>
+    <li><a href="#hook">The hook</a></li>
+    <li><a href="#problems">What breaks today</a></li>
+    <li><a href="#vision">The vision in three rules</a></li>
+    <li><a href="#curve">The curve: no walls</a></li>
+    <li><a href="#cards">What a card looks like</a></li>
+    <li><a href="#affixes">Affix tables</a></li>
+    <li><a href="#relics">Legendary relics</a></li>
+    <li><a href="#systems">Imbuements, charms, grades</a></li>
+    <li><a href="#others">Prey, luck, boosts, evolutions</a></li>
+    <li><a href="#vocations">Four vocations, four runs</a></li>
+    <li><a href="#why">Why this over the others</a></li>
+    <li><a href="#risks">Risks and mitigations</a></li>
+    <li><a href="#effort">Effort and rollout</a></li>
+    <li><a href="#ask">The ask</a></li>
+  </ol>
+  <p class="small" style="margin:12px 4px 0">Engineering detail: <a href="IMPLEMENTATION.md">IMPLEMENTATION.md</a></p>
+</nav>
+
+<main>
+<!-- ============ HERO ============ -->
+<section class="hero" id="top">
+  <div class="kicker">Tibia Survivors · level-up and skill system rework</div>
+  <h1>Uncapped <span class="amp">&amp;</span> Unequal</h1>
+  <p class="tag">Every pick keeps stacking, so a run never runs out of good cards. A rarer card isn't just more of the same: it's a different card.</p>
+  <div class="by">Pitched by <b style="color:var(--gold)">Mira Halvorsen</b>, roguelite designer (survivors-likes, Brotato-style shops, Hades boons, PoE affixes)</div>
+  <div class="pills">
+    <span class="pill"><b>0</b> hard tier caps</span>
+    <span class="pill"><b>4</b> rarities that each add a different thing</span>
+    <span class="pill"><b>1</b> curve for every stat</span>
+    <span class="pill"><b>24</b> rule-breaking relics, 3 per run</span>
+    <span class="pill"><b>Tibia's real tiers kept</b> as ranks 1 to 3</span>
+  </div>
+</section>
+
+<!-- ============ 1. HOOK ============ -->
+<section id="hook">
+  <h2><span class="num">1</span>The hook</h2>
+  <p class="lead">Play a sorcerer for an hour in the headless sim and look at the character at the end. Level 43. All six imbuements at Powerful. Every spell grade maxed: 13 out of 13. <b>Twenty of the 22 bestiary charms at tier III.</b> All four run bonuses at 5/5, luck at 50/50.</p>
+  <p class="lead">That character has nothing left to want. Every level-up after that is gold, potions, an exercise wand or yet another prey re-roll. The game's most exciting moment, the card screen, has turned into a chore.</p>
+  <div class="callout"><span class="quote">"In a survivors game the level-up screen is the slot machine. Ours pays out three cherries for 40 minutes, then only coins."</span></div>
+  <p>My fix is two moves that work together:</p>
+  <div class="grid2">
+    <div class="stat"><div class="big">Uncapped</div><div class="lbl">Basic, Intricate and Powerful stay exactly as Tibia has them. They become <b>ranks 1 to 3</b> of a line that keeps going: <i>Powerful +1, +2, +3...</i> Each extra rank adds less than the one before, but never zero. No card ever drops out of the pool because it's full.</div></div>
+    <div class="stat"><div class="big" style="color:var(--legend)">Unequal</div><div class="lbl">Every card gives one rank. Rarity adds a <b>different kind</b> of bonus on top: Rare adds a secondary stat, Epic adds a proc, Legendary adds a <b>relic</b>, a rule-breaker like <i>"your critical hits chain to a second creature"</i> or <i>"every 5th attack spell is free"</i>.</div></div>
+  </div>
+</section>
+
+<!-- ============ 2. PROBLEMS ============ -->
+<section id="problems">
+  <h2><span class="num">2</span>What breaks today</h2>
+  <p>I read the code (<code>rarity.ts</code>, <code>character.ts</code>, <code>picks.ts</code>, <code>game.ts</code>) and ran the headless sim with a counter on every level-up offer: 3 runs per vocation, 60 minutes each, Dawnport start and mid-level boosts (XP 6, training 5, luck 2). Here is what the numbers say.</p>
+
+  <div class="grid4">
+    <div class="stat"><div class="big bad">88%</div><div class="lbl">of a knight's cards are fillers (gold, potions, training) on offers 51–75. Paladin 78%, druid 46%</div><div class="src">Sim, 3 runs per vocation. 0% for everyone on offers 1–25.</div></div>
+    <div class="stat"><div class="big bad">62%</div><div class="lbl">of Legendary rolls were quietly downgraded: 57 of 92 across 12 runs (the knight kept 3 of 14)</div><div class="src">fitRarity: imbuements, charms and grades have 3 tiers, and x5 never fits</div></div>
+    <div class="stat"><div class="big bad">54</div><div class="lbl">non-filler steps in a level-20 knight's entire pool (18 imbuement tiers + 20 run-bonus picks + 10 luck + 6 grade steps)</div><div class="src">About 39 cards at the average rarity multiplier of 1.4</div></div>
+    <div class="stat"><div class="big bad">72</div><div class="lbl">prey picks across 3 paladin runs: prey is the one card that never runs out, so it churns</div><div class="src">PREY_SLOTS 3; a 4th replaces the oldest</div></div>
+  </div>
+
+  <h3>Filler share by offer number (sim, 3 runs per vocation)</h3>
+  <table>
+    <tr><th>Offers in the run</th><th class="n">Knight</th><th class="n">Paladin</th><th class="n">Druid</th><th class="n">Sorcerer</th><th>What's going on</th></tr>
+    <tr><td>1–25</td><td class="n">0%</td><td class="n">0%</td><td class="n">0%</td><td class="n">0%</td><td>Everything is new. The best part of the run.</td></tr>
+    <tr><td>26–50</td><td class="n">32%</td><td class="n">29%</td><td class="n">8%</td><td class="n">2%</td><td>Imbuements hit Powerful, run bonuses hit 5/5, luck hits 50.</td></tr>
+    <tr><td>51–75</td><td class="n wall">88%</td><td class="n wall">78%</td><td class="n wall">46%</td><td class="n">18%</td><td>The pool is empty: gold, potions, exercise weapons, prey churn. Mages last longer only because they have more spells to grade, and the sorcerer still maxed all of them by L43.</td></tr>
+  </table>
+  <p class="small">On top of that, 18.5% of all Rare-or-better rolls (245 of 1,327) were downgraded by <code>fitRarity</code>. Offers come fast: one per level <i>and</i> one per skill advance (at most every 20 s, <code>Game.advance</code>). A knight sees about 45 offers in 40 minutes (134 over three runs) and reaches level 16 to 18. Its whole pool is 54 steps, about 39 picks. By minute 40 its build is done.</p>
+
+  <h3>Five structural problems</h3>
+  <h4>1. Hard walls everywhere</h4>
+  <p>Imbuements stop at Powerful (<code>room()</code> returns <code>3 - tier</code>), charms at III, grades at 3, run bonuses at 5 picks (<code>RUN_BONUS_MAX</code>), run luck at 50 (<code>RUN_LUCK_MAX</code>). The 6 imbuement slots (<code>MAX_SLOTS</code>) cap how many lines you have; the tiers cap how far each one goes. Once both are full, <code>rollChoices</code> has only fillers left.</p>
+  <h4>2. Rarity is "more of the same", and often less than it says</h4>
+  <ul>
+    <li>An Epic Vampirism card from nothing skips Basic and Intricate and lands on 25% life leech in one click: the most exciting card is also the one that empties its line fastest.</li>
+    <li>An Epic charm takes you to tier III, which is <b>+1%</b> over tier II for every major charm (Wound 10% to 11%, Low Blow 8% to 9%). An Epic charm card is practically a Rare one.</li>
+    <li>Legendary (1%, x5) <b>can't exist</b> on imbuements, charms or grades. In the sim, 62% of Legendary rolls (57 of 92; the knight's worst, 11 of 14) were silently turned into something lower. The rarest event in the game mostly shows up as an Epic.</li>
+  </ul>
+  <h4>3. Three systems, one stat</h4>
+  <table>
+    <tr><th>Stat</th><th>Imbuement</th><th>Charm</th><th>Spell grade</th></tr>
+    <tr><td>Life leech</td><td>Vampirism 5 / 10 / 25%</td><td>Vampiric Embrace 1.6 / 2.4 / 3.2%</td><td>Front Sweep, Terra Wave 5%</td></tr>
+    <tr><td>Mana leech</td><td>Void 3 / 5 / 8%</td><td>Void's Call 0.8 / 1.2 / 1.6%</td><td>Strong Ice Wave 3%</td></tr>
+    <tr><td>Critical hits</td><td>Strike: 10% chance, +5 / 15 / 40% damage</td><td>Low Blow +4/8/9% chance, Savage Blow +20/40/44% damage</td><td>Groundshaker, Berserk, Annihilation... crit damage</td></tr>
+  </table>
+  <p>They just add up in <code>damageMonster</code>, so you can't see your real life leech anywhere. And there's a trap: <b>Low Blow does nothing at all without Strike or Blood Rage</b> (<code>critChance = ... + (crit &gt; 0 || bloodRage ? Low Blow : 0)</code>). A player can pick Low Blow III and get zero.</p>
+  <h4>4. Imbuement slots don't create choices</h4>
+  <p>Six slots, up to 17 options for a knight, no structure. The sim paladin filled 4 of its 6 slots with protection imbuements (3 / 8 / 15% each) because they showed up. Nothing told it that its weapon had no leech or crit.</p>
+  <h4>5. No class identity in the picks</h4>
+  <p>Everyone gets the same 22 charms. A sorcerer is offered Overpower ("hit for 5% of your health") and Fatal Hold. Nothing in the pool says "knight": no extra melee swings, no casting for free.</p>
+</section>
+
+<!-- ============ 3. VISION ============ -->
+<section id="vision">
+  <h2><span class="num">3</span>The vision in three rules</h2>
+  <div class="grid3">
+    <div class="stat"><div class="big" style="font-size:24px">I. Lines, not tiers</div><div class="lbl">Every pick (an imbuement, a charm, a spell grade, a run bonus, luck, a prey star) is a <b>line</b> with <b>ranks</b>. Ranks 1–3 are Tibia's real Basic / Intricate / Powerful values. Rank 4 and up follow one shared curve: each rank adds less, and none adds nothing.</div></div>
+    <div class="stat"><div class="big" style="font-size:24px">II. Rarity adds layers</div><div class="lbl">Every card is <b>+1 rank</b>. <span class="tr">Rare</span> adds a secondary stat. <span class="te">Epic</span> also adds a vocation proc (a Wheel of Destiny perk). <span class="tl">Legendary</span> adds a relic instead of a proc. Same line, different card.</div></div>
+    <div class="stat"><div class="big" style="font-size:24px">III. One sheet</div><div class="lbl">All sources of a stat pool into one total with one cap in sight. The Upgrades window shows <i>Life leech 31.4% (Vampirism 5, Vampiric Embrace 2, Front Sweep)</i>. Imbuements own stats, charms own procs, grades own spells. Overlap is visible, never hidden.</div></div>
+  </div>
+  <h3>What changes for the player, in one paragraph</h3>
+  <p>At level 60 the card screen still shows Powerful +4 Slash, a Rare Ethereal Spear grade that also gives 4% max health, and an Epic Vampirism with <i>Combat Mastery</i>, a 6% chance for melee hits to strike twice. All three are worth taking. Gold and potion cards are gone: a <b>Skip</b> button pays 75 gold per level, and potions are in the shop where they belong. Once or twice a run, an orange card shows up, and you shout.</p>
+</section>
+
+<!-- ============ 4. CURVE ============ -->
+<section id="curve">
+  <h2><span class="num">4</span>The curve: no walls</h2>
+  <p>One formula for every line, so the game stays legible. Up to the <b>knee</b> <i>K</i> (Powerful = rank 3 for imbuements, charms and grades; 5 picks for run bonuses), values are exactly today's. Past the knee each rank adds a <b>tail step</b> <i>s</i>, divided by how far past the knee you are:</p>
+  <div class="callout"><span class="mono">value(r) = value(K) + s · K · (H<sub>r</sub> − H<sub>K</sub>)</span> &nbsp; where H<sub>n</sub> = 1 + ½ + ⅓ + … + 1/n<br>
+  <small>Rank K+1 adds <i>s · K/(K+1)</i>, rank 2K adds <i>s/2</i>, rank 3K adds <i>s/3</i>... It grows like a logarithm: <b>it never stops</b>, it just slows down. Percent-chance stats also get a <b>rail</b>, a safety limit set so high (life leech 50%, dodge 30%) that it takes about 20 ranks to get near it.</small></div>
+
+  <div class="chart" id="chart">
+    <div class="legend"><span><i style="background:#5f8fd6"></i>Today: Vampirism (Basic, Intricate, Powerful, then gone from the pool)</span><span><i style="background:#b88a2a"></i>Proposed: Powerful +1, +2, ... (s = 4%)</span><span><i style="background:#8d826d;height:0;border-top:2px dashed #8d826d"></i>Rail: 50%</span></div>
+    <svg viewBox="0 0 760 300" role="img" aria-label="Life leech by rank: today it stops at 25% at rank 3; proposed it keeps climbing to 46% at rank 20, under a 50% rail">
+      <g id="grid"></g><g id="lines"></g><g id="hover"></g>
+      <rect id="hit" x="50" y="10" width="690" height="250" fill="transparent"/>
+    </svg>
+    <div class="tip" id="tip"></div>
+  </div>
+
+  <h3>Worked numbers</h3>
+  <table>
+    <tr><th>Line</th><th class="n">K</th><th class="n">s</th><th class="n">r1–3 (Tibia)</th><th class="n">r4</th><th class="n">r6</th><th class="n">r10</th><th class="n">r20</th><th class="n">Rail</th></tr>
+    <tr><td>Vampirism (life leech %)</td><td class="n">3</td><td class="n">4</td><td class="n">5 / 10 / 25</td><td class="n">28.0</td><td class="n">32.4</td><td class="n">38.2</td><td class="n">46.2</td><td class="n">50</td></tr>
+    <tr><td>Void (mana leech %)</td><td class="n">3</td><td class="n">1.5</td><td class="n">3 / 5 / 8</td><td class="n">9.1</td><td class="n">10.8</td><td class="n">12.9</td><td class="n">15.9</td><td class="n">25</td></tr>
+    <tr><td>Strike (crit damage %)</td><td class="n">3</td><td class="n">12</td><td class="n">5 / 15 / 40</td><td class="n">49.0</td><td class="n">62.2</td><td class="n">79.5</td><td class="n">103.5</td><td class="n">none</td></tr>
+    <tr><td>Slash / Chop / Precision / Epiphany (skill)</td><td class="n">3</td><td class="n">2</td><td class="n">1 / 2 / 4</td><td class="n">5</td><td class="n">7</td><td class="n">10</td><td class="n">14</td><td class="n">none</td></tr>
+    <tr><td>Swiftness (speed)</td><td class="n">3</td><td class="n">10</td><td class="n">10 / 15 / 30</td><td class="n">37</td><td class="n">48</td><td class="n">63</td><td class="n">83</td><td class="n">none</td></tr>
+    <tr><td>Dragon Hide etc. (protection %)</td><td class="n">3</td><td class="n">3</td><td class="n">3 / 8 / 15</td><td class="n">17.3</td><td class="n">20.6</td><td class="n">24.9</td><td class="n">30.9</td><td class="n">50 (with gear)</td></tr>
+    <tr><td>Wound, Zap... (charm chance %)</td><td class="n">3</td><td class="n">2</td><td class="n">5 / 10 / 11</td><td class="n">12.5</td><td class="n">14.7</td><td class="n">17.6</td><td class="n">21.6</td><td class="n">35</td></tr>
+    <tr><td>Dodge, Parry (charm chance %)</td><td class="n">3</td><td class="n">1.5</td><td class="n">5 / 10 / 11</td><td class="n">12.1</td><td class="n">13.8</td><td class="n">15.9</td><td class="n">18.9</td><td class="n">30</td></tr>
+    <tr><td>Great Energy Beam (grade, damage %)</td><td class="n">3</td><td class="n">3</td><td class="n">11 / 12 / 15</td><td class="n">17.3</td><td class="n">20.6</td><td class="n">24.9</td><td class="n">30.9</td><td class="n">none</td></tr>
+    <tr><td>Run bonus: Experience (%)</td><td class="n">5</td><td class="n">20</td><td class="n">20…100 (r1–5)</td><td class="n">r6: 117</td><td class="n">r8: 144</td><td class="n">165</td><td class="n">231</td><td class="n">none</td></tr>
+    <tr><td>Luck (run)</td><td class="n">10</td><td class="n">5</td><td class="n">5…50 (r1–10)</td><td class="n">r11: 54.5</td><td class="n">r14: 66</td><td class="n">r15: 70</td><td class="n">83</td><td class="n">150 total</td></tr>
+  </table>
+  <p class="small">Skills and magic levels are whole numbers in Tibia's formulas, so skill lines floor their value (r10 = +10). Increments shrink but there's no wall: in the sim's 60-minute runs a heavily stacked line reaches rank 8 to 12, so nobody gets near a rail before the late game.</p>
+</section>
+
+<!-- ============ 5. CARDS ============ -->
+<section id="cards">
+  <h2><span class="num">5</span>What a card looks like</h2>
+  <p>The same line, Vampirism, from a knight who already has it at Powerful, at each rarity. Today all four would read "Powerful Vampirism" and three of them couldn't even be offered. Every layer is its own row, colour-coded by the rarity that adds it, so you can read a card at a glance.</p>
+  <div class="cards">
+    <div class="card r0"><span class="rar">Common</span><div class="ico"><div class="gem blood"></div></div><b class="t">1. Vampirism · Powerful +1</b><em>Imbuement · Weapon socket</em>
+      <div class="ln rank"><span class="h">Rank 4</span>Life leech <span class="now">25%</span> → <span class="up">28%</span></div>
+      <div class="foot">Evolves: Blood Rage (with Strike)</div></div>
+    <div class="card r1"><span class="rar">Rare</span><div class="ico"><div class="gem blood"></div></div><b class="t">2. Vampirism · Powerful +1</b><em>Imbuement · Weapon socket</em>
+      <div class="ln rank"><span class="h">Rank 4</span>Life leech <span class="now">25%</span> → <span class="up">28%</span></div>
+      <div class="ln sec"><span class="h">Secondary · Vitality</span>Max health +4% <span class="now">(rank 1)</span></div>
+      <div class="foot">Evolves: Blood Rage (with Strike)</div></div>
+    <div class="card r2"><span class="rar">Epic</span><div class="ico"><div class="gem blood"></div></div><b class="t">3. Vampirism · Powerful +1</b><em>Imbuement · Weapon socket</em>
+      <div class="ln rank"><span class="h">Rank 4</span>Life leech <span class="now">25%</span> → <span class="up">28%</span></div>
+      <div class="ln sec"><span class="h">Secondary · Vitality</span>Max health +4%</div>
+      <div class="ln perk"><span class="h">Perk · Combat Mastery</span>6% chance a melee hit strikes twice</div>
+      <div class="foot">Knight perk · Evolves: Blood Rage</div></div>
+    <div class="card r3"><span class="rar">Legendary</span><div class="ico"><div class="gem blood"></div></div><b class="t">4. Vampirism · Powerful +1</b><em>Imbuement · Weapon socket</em>
+      <div class="ln rank"><span class="h">Rank 4</span>Life leech <span class="now">25%</span> → <span class="up">28%</span></div>
+      <div class="ln sec"><span class="h">Secondary · Vitality</span>Max health +4%</div>
+      <div class="ln relic"><span class="h">Relic · Blood of the Mountain</span>Life leech also works on charm, rune and field damage. Overhealing becomes a shield of up to 15% max health.</div>
+      <div class="foot">Unique relic: once per run</div></div>
+  </div>
+
+  <h3>The full screen, at level 47</h3>
+  <p class="small">A mock-up of <code>UI.levelUp</code> for a level-47 paladin. Nothing on it is "full". The Skip button replaces the gold card.</p>
+  <div class="screen">
+    <h3>Level 47!</h3>
+    <p class="sub">Sockets 5/6 (Shield socket free) · Charms: Major 3/3, Minor 2/3 · <b>Luck 35</b> · Relics 1</p>
+    <div class="cards">
+      <div class="card r0"><span class="rar">Common</span><div class="ico"><div class="gem axe"></div></div><b class="t">1. Precision · Powerful +3</b><em>Imbuement · Weapon socket</em>
+        <div class="ln rank"><span class="h">Rank 6</span>Distance fighting <span class="now">+6</span> → <span class="up">+7</span></div>
+        <div class="foot">Evolves: Elemental Burst</div></div>
+      <div class="card r1"><span class="rar">Rare</span><div class="ico"><div class="gem holy"></div></div><b class="t">2. Divine Caldera · grade III+1</b><em>Spell grade (Wheel of Destiny)</em>
+        <div class="ln rank"><span class="h">Supreme rank 4</span>Damage <span class="now">+15.5%</span> → <span class="up">+17.8%</span>, -20 mana, +18% crit damage</div>
+        <div class="ln sec"><span class="h">Secondary · Swiftcast</span>Spell cooldowns -4%</div>
+        <div class="foot">Paladin spell</div></div>
+      <div class="card r2"><span class="rar">Epic</span><div class="ico"><div class="gem ice"></div></div><b class="t">3. Frost · Intricate</b><em>Imbuement · Weapon socket (replaces nothing: 2nd weapon socket free)</em>
+        <div class="ln rank"><span class="h">Rank 2</span>25% of weapon damage becomes ice</div>
+        <div class="ln sec"><span class="h">Secondary · Battle Focus</span>Weapon damage +3%</div>
+        <div class="ln perk"><span class="h">Perk · Ballistic Mastery</span>6% chance a distance hit ricochets to another creature for 60%</div>
+        <div class="foot">Paladin perk</div></div>
+      <div class="card r0"><span class="rar">Common</span><div class="ico"><div class="gem earth"></div></div><b class="t">4. Prey: Dragon · 11★</b><em>Prey mastery (past 10 stars)</em>
+        <div class="ln rank"><span class="h">Star 11</span>Damage to dragons <span class="now">+25%</span> → <span class="up">+26.8%</span></div>
+        <div class="foot">Prey 3/3</div></div>
+    </div>
+    <span class="btn">Reroll (2 left)</span> <span class="btn gold">Skip: +3,525 gold</span> <span class="btn">Banish a line (1 left)</span>
+  </div>
+</section>
+
+<!-- ============ 6. AFFIXES ============ -->
+<section id="affixes">
+  <h2><span class="num">6</span>Affix tables</h2>
+  <p>Each line has an <b>affinity</b>: the secondaries and perks it can roll, filtered by vocation. A Rare Vampirism never rolls Focus (mana) for a knight; a Rare Void never rolls Battle Focus for a druid. Every secondary and perk is itself a line on the same curve, so getting the same one twice stacks.</p>
+
+  <h3>The layers by rarity</h3>
+  <table>
+    <tr><th>Rarity</th><th class="n">Odds (luck 0)</th><th>What the card gives</th><th>Roughly worth</th></tr>
+    <tr><td class="tc">Common</td><td class="n">70%</td><td>+1 rank of the line</td><td>1 rank</td></tr>
+    <tr><td class="tr">Rare</td><td class="n">22%</td><td>+1 rank, plus <b>1 rank of a secondary</b> from the line's affinity</td><td>about 2 ranks, in two lines</td></tr>
+    <tr><td class="te">Epic</td><td class="n">7%</td><td>Rare, plus <b>1 rank of a perk</b> (a vocation proc)</td><td>2 ranks and a new behaviour</td></tr>
+    <tr><td class="tl">Legendary</td><td class="n">1%</td><td>Rare, plus a <b>relic</b> you don't own yet (a unique rule-breaker, 3 slots), or with 3 relics held, <b>awakens</b> one of them; never downgraded</td><td>2 ranks and a new rule</td></tr>
+  </table>
+  <p class="small">Odds and luck scaling stay exactly as in <code>rarity.ts</code>. <code>fitRarity</code> is deleted: since no line is ever full, <b>a Legendary roll is always Legendary</b>.</p>
+
+  <h3>Rare: secondaries</h3>
+  <table>
+    <tr><th>Secondary</th><th>Per rank (r1 / r3 / r10)</th><th>Who</th><th>Rolled by</th></tr>
+    <tr><td>Vitality</td><td>Max health +4% / +12% / +25%</td><td>all</td><td>Vampirism, protections, Blockade, Dodge, Parry</td></tr>
+    <tr><td>Focus</td><td>Max mana +4% / +12% / +25%</td><td><span class="p">P</span> <span class="s">S</span> <span class="d">D</span></td><td>Void, Epiphany, Overflux, mage grades</td></tr>
+    <tr><td>Battle Focus</td><td>Weapon damage +3% / +9% / +19%</td><td><span class="k">K</span> <span class="p">P</span></td><td>Strike, skill imbuements, elemental damage, Wound</td></tr>
+    <tr><td>Arcane Focus</td><td>Spell and rune damage +3% / +9% / +19%</td><td><span class="p">P</span> <span class="s">S</span> <span class="d">D</span></td><td>Epiphany, attack-spell grades, element charms</td></tr>
+    <tr><td>Swiftcast</td><td>Spell cooldowns -4% / -12% / -25% (rail 35%)</td><td>all</td><td>Void, any grade, Swiftness</td></tr>
+    <tr><td>Mending</td><td>Healing received +4% / +12% / +25%</td><td>all</td><td>Vampirism, healing-spell grades, Cleanse</td></tr>
+    <tr><td>Alchemy</td><td>Potions heal and restore +8% / +24% / +50%</td><td>all</td><td>Void, Vampirism, protections</td></tr>
+    <tr><td>Hardening</td><td>Armor +1 / +3 / +6</td><td><span class="k">K</span> <span class="p">P</span></td><td>protections, Blockade, Parry</td></tr>
+    <tr><td>Fleetness</td><td>Speed +6 / +18 / +38</td><td>all</td><td>Swiftness, Adrenaline Burst, Dodge</td></tr>
+    <tr><td>Fortune</td><td>Luck +2 / +6 / +13 (counts toward the 150 rail)</td><td>all</td><td>run bonuses, prey</td></tr>
+  </table>
+  <p class="small">Secondaries use K = 3, linear up to rank 3, then s = one rank's value.</p>
+
+  <h3>Epic: perks (vocation procs)</h3>
+  <p>Named after Wheel of Destiny revelation perks so they read as Tibia; the effects are ours and go in README's "Not real" list. Chances: 6% / 11% / 15% at ranks 1–3, then tail s = 2%, rail 35%.</p>
+  <table>
+    <tr><th>Perk</th><th>Who</th><th>Effect (rank 1)</th><th>Hook</th></tr>
+    <tr><td>Combat Mastery</td><td><span class="k">Knight</span></td><td>6% chance a melee hit strikes twice (the second hit rolls its own damage)</td><td><code>weaponHit</code></td></tr>
+    <tr><td>Battle Instinct</td><td><span class="k">Knight</span></td><td>+1 shielding per adjacent creature (up to 8); ranks add +1 per creature at r3, r6, r10</td><td><code>Character.skill</code></td></tr>
+    <tr><td>Executioner's Edge</td><td><span class="k">Knight</span></td><td>+15% damage to creatures under 30% health (ranks add damage: +25% at r3)</td><td><code>damageMonster</code></td></tr>
+    <tr><td>Ballistic Mastery</td><td><span class="p">Paladin</span></td><td>6% chance a distance hit ricochets to another creature within 3 tiles for 60%</td><td><code>weaponHit</code></td></tr>
+    <tr><td>Positional Tactics</td><td><span class="p">Paladin</span></td><td>+10% damage while no creature is adjacent (+20% at r3)</td><td><code>damageMonster</code></td></tr>
+    <tr><td>Divine Empowerment</td><td><span class="p">Paladin</span></td><td>6% chance a hit marks the target: +15% damage taken from you for 5 s</td><td><code>damageMonster</code></td></tr>
+    <tr><td>Focus Mastery</td><td><span class="s">Sorcerer</span> <span class="d">Druid</span></td><td>6% chance a spell costs no mana (the proc is rolled on cast; the hotbar flashes)</td><td><code>Game.manaCost</code>, <code>cast</code></td></tr>
+    <tr><td>Beam Mastery</td><td><span class="s">Sorcerer</span></td><td>6% chance a beam or wave casts again at 50% one tick later</td><td><code>cast</code></td></tr>
+    <tr><td>Runic Mastery</td><td><span class="s">Sorcerer</span> <span class="d">Druid</span> <span class="p">Paladin</span></td><td>8% chance a rune isn't used up</td><td><code>cast</code> (rune branch)</td></tr>
+    <tr><td>Twin Bursts</td><td><span class="d">Druid</span></td><td>6% chance an ice or earth spell bursts again on the target's tile (3x3, 50%)</td><td><code>cast</code></td></tr>
+    <tr><td>Blessing of the Grove</td><td><span class="d">Druid</span></td><td>Healing spells heal +20% while under 40% health (+35% at r3)</td><td><code>cast</code> (healing)</td></tr>
+    <tr><td>Bloodlust</td><td>all</td><td>A kill gives +3% damage for 5 s, stacking 5 times (stacks rise with rank)</td><td><code>killMonster</code></td></tr>
+    <tr><td>Second Wind</td><td>all</td><td>6% chance a kill heals 4% max health and mana</td><td><code>killMonster</code></td></tr>
+  </table>
+</section>
+
+<!-- ============ 7. RELICS ============ -->
+<section id="relics">
+  <h2><span class="num">7</span>Legendary relics</h2>
+  <p>A relic is a rule-breaker you can hold only once. A Legendary roll offers a relic you don't have, from the card line's family (weapon-flavoured lines roll weapon relics, healing lines roll the blessings). The vocation relics are named after real Tibia weapons, the universal ones after the real blessings. In the sim a 60-minute run rolls 5 to 10 Legendaries (charm cards included, and luck climbs to 50 fast). Today only 1 to 4 of them stay Legendary. With this pitch every one of them does, so relics need a limit of their own:</p>
+  <div class="callout"><b>3 relic slots.</b> Your first three Legendaries each add a new relic. After that, a Legendary <b>awakens</b> a relic you hold: relics have ranks too (Thunder Hammer chains to one more creature, Wand of Starstorm frees every 4th spell, then every 3rd...). Rule-breakers stay rare enough to remember, and Legendaries never go dead.</div>
+  <div class="grid2">
+  <table>
+    <tr><th colspan="2" class="tl">Knight</th></tr>
+    <tr><td>Thunder Hammer</td><td>Critical hits chain to a second creature within 2 tiles for 60% damage.</td></tr>
+    <tr><td>Stonecutter Axe</td><td>Every weapon attack strikes twice; the second hit deals 50%.</td></tr>
+    <tr><td>Warlord Sword</td><td>Casting an exori spell resets your weapon attack: it swings right away.</td></tr>
+    <tr><td>Demonbone</td><td>Blood Rage no longer raises damage taken (still 135% melee, no shield).</td></tr>
+    <tr><th colspan="2" class="tl">Paladin</th></tr>
+    <tr><td>Arbalest</td><td>Distance attacks pierce: they also hit the creature behind the target.</td></tr>
+    <tr><td>Composite Hornbow</td><td>Every 4th distance attack fires three missiles in a cone.</td></tr>
+    <tr><td>Royal Crossbow</td><td>Sharpshooter no longer slows you or blocks healing spells.</td></tr>
+    <tr><td>Elvish Bow</td><td>Weapon attacks every 1.5 s instead of 2 s.</td></tr>
+    <tr><th colspan="2" class="tl">Sorcerer</th></tr>
+    <tr><td>Wand of Starstorm</td><td>Every 5th attack spell is free and skips its own cooldown.</td></tr>
+    <tr><td>Wand of Inferno</td><td>Fire spells leave a burning fire field on the tiles they hit (Tibia's fire field, 7 x 10).</td></tr>
+    <tr><td>Ferumbras' Hat</td><td>Mana leech past max mana becomes a magic shield (up to 20% max mana).</td></tr>
+    <tr><td>Wand of Voodoo</td><td>A kill with death damage curses the nearest creature for 10% of its max health over 5 s.</td></tr>
+  </table>
+  <table>
+    <tr><th colspan="2" class="tl">Druid</th></tr>
+    <tr><td>Hailstorm Rod</td><td>Ice damage roots creatures for 1.5 s (each creature once per 8 s).</td></tr>
+    <tr><td>Northwind Rod</td><td>Ice Wave, Strong Ice Wave and Terra Wave fire twice: forward and backward.</td></tr>
+    <tr><td>Springsprout Rod</td><td>Healing spells also heal 5% max health over 5 s and cure poison.</td></tr>
+    <tr><td>Muck Rod</td><td>Earth spells leave a poison field on the tiles they hit.</td></tr>
+    <tr><th colspan="2" class="tl">Everyone (the blessings)</th></tr>
+    <tr><td>Twist of Fate</td><td>One more card on every level-up (luck's 4th card becomes a 5th).</td></tr>
+    <tr><td>Spark of the Phoenix</td><td>Once every 3 minutes, a lethal hit leaves you at 1 HP and heals 50% over 3 s.</td></tr>
+    <tr><td>Fire of the Suns</td><td>Every 10th kill erupts holy fire on the 3x3 around it for 25% of its max health.</td></tr>
+    <tr><td>Spiritual Shielding</td><td>Every 8 s, the next hit you take is absorbed completely.</td></tr>
+    <tr><td>Embrace of Tibia</td><td>Potions heal 50% more and have a 25% chance not to be used up.</td></tr>
+    <tr><td>Wisdom of Solitude</td><td>+25% damage while no creature is adjacent.</td></tr>
+    <tr><td>Blood of the Mountain</td><td>Life leech works on charm, rune and field damage; overhealing becomes a shield (15% max health).</td></tr>
+    <tr><td>Heart of the Mountain</td><td>Max health +15%, and Protector no longer lowers your damage.</td></tr>
+  </table>
+  </div>
+  <p class="small">8 relics are in the pool from the start: one per vocation (Thunder Hammer, Arbalest, Wand of Starstorm, Hailstorm Rod) plus Twist of Fate, Fire of the Suns, Spiritual Shielding and Embrace of Tibia. The others unlock in a <b>Relic Codex</b> the first time you kill each zone's boss: meta progression that's about variety, not power.</p>
+</section>
+
+<!-- ============ 8. SYSTEMS ============ -->
+<section id="systems">
+  <h2><span class="num">8</span>Imbuements, charms, grades: a clean split</h2>
+  <div class="grid3">
+    <div class="stat"><div class="big" style="font-size:22px">Imbuements = your gear</div><div class="lbl">Flat stats: leech, crit damage, element share, skill and magic level, speed, protection. Limited by <b>sockets on body slots</b>, the way Tibia limits them by item. Ranks uncapped.</div></div>
+    <div class="stat"><div class="big" style="font-size:22px">Charms = the creatures</div><div class="lbl">Procs that react to creatures: on hit, on kill, when hit. Limited by <b>3 Major + 3 Minor charm slots</b> (Tibia's own major/minor split, already in <code>data.json</code>). Ranks uncapped.</div></div>
+    <div class="stat"><div class="big" style="font-size:22px">Grades = your spells</div><div class="lbl">Per-spell bonuses from the Wheel. No slots: limited by the spells you know. Past grade 3, <b>supreme ranks</b> keep adding the gem's damage or healing.</div></div>
+  </div>
+
+  <h3>Imbuement sockets (6, by body slot)</h3>
+  <table>
+    <tr><th>Socket</th><th class="n">#</th><th>Takes (Tibia's item rules, simplified)</th></tr>
+    <tr><td>Weapon</td><td class="n">2</td><td>Strike, Vampirism, Void, one elemental damage (Scorch, Frost, Electrify, Venom, Reap), Bash / Slash / Chop / Precision, Epiphany (wands and rods)</td></tr>
+    <tr><td>Armor</td><td class="n">1</td><td>Vampirism, protections (Dragon Hide, Snake Skin, Quara Scale, Cloud Fabric, Demon Presence, Lich Shroud)</td></tr>
+    <tr><td>Helmet</td><td class="n">1</td><td>Void, skill imbuements, Epiphany</td></tr>
+    <tr><td>Boots</td><td class="n">1</td><td>Swiftness</td></tr>
+    <tr><td>Shield / spellbook</td><td class="n">1</td><td>Blockade (shield), Epiphany (spellbook), protections. Dormant while you hold a two-handed weapon: a bow costs you a socket, as it costs you a shield in Tibia.</td></tr>
+  </table>
+  <p>The decision is now real and readable: <b>Strike or Vampirism on the second weapon socket?</b> Only one protection fits on your armor unless you give up the shield socket. Sockets belong to the body slot, not the item, so buying a better helmet never wipes an imbuement.</p>
+
+  <h3>Charm slots</h3>
+  <table>
+    <tr><th>Kind</th><th class="n">Slots</th><th>Charms</th></tr>
+    <tr><td>Major</td><td class="n">3</td><td>Wound, Enflame, Poison, Freeze, Zap, Curse, Divine Wrath, Low Blow, Savage Blow, Carnage, Overpower, Overflux, Parry, Dodge</td></tr>
+    <tr><td>Minor</td><td class="n">3</td><td>Cripple, Numb, Fatal Hold, Adrenaline Burst, Cleanse, Vampiric Embrace, Void's Call, Void Inversion</td></tr>
+  </table>
+  <p>A bestiary stage still offers 3 charm cards (rarity layers apply: a Rare Freeze also rolls Arcane Focus). Once your Major slots are full, Major cards only offer the charms you hold, at the next rank. <b>Charm Expansion</b> (a real Tibia store item) becomes a soul unlock: 4 + 4 slots.</p>
+
+  <h3>The overlap, fixed</h3>
+  <ul>
+    <li><b>Pooled totals.</b> Life leech, mana leech, crit chance and crit damage each become one number, <code>Character.stat(key)</code>, summing every source (imbuement curve + charm curve + the casting spell's grade) and clamped by one rail. One place to read, one place to balance.</li>
+    <li><b>Low Blow works on its own.</b> Any crit source makes your attacks crit-capable at 10%; Low Blow adds to that. No more dead picks.</li>
+    <li><b>Charm damage scales.</b> Charm hits are capped at <code>level × 2</code> today, so a level-80 Wound does at most 160 damage. The cap becomes <code>level × 2 × (1 + 0.1 × ranks past 3)</code>: stacking a charm is worth it late.</li>
+  </ul>
+</section>
+
+<!-- ============ 9. OTHERS ============ -->
+<section id="others">
+  <h2><span class="num">9</span>Prey, run bonuses, luck, boosts, evolutions, fillers</h2>
+  <table>
+    <tr><th>System</th><th>Today</th><th>Uncapped &amp; Unequal</th></tr>
+    <tr><td>Prey</td><td>3 slots, 1–10 stars by rarity, a 4th card replaces the oldest</td><td>A prey card for a creature you already hunt adds <b>+1 star</b> (past 10: prey mastery on the curve, K = 10, s = 1 star). Rarity adds layers: <span class="tr">Rare</span> adds a second bonus type on the same creature, <span class="te">Epic</span> spreads the bonus to its whole hunting ground (all orcs in the Orc Fortress), <span class="tl">Legendary</span> makes it a <b>wildcard</b> for every creature in the zone.</td></tr>
+    <tr><td>Run bonuses</td><td>+20% per pick, 5 picks max</td><td>Same first 5 picks, then the curve (r10 = +165%, r20 = +231%). They stop being a "grab these first" tax.</td></tr>
+    <tr><td>Luck</td><td>Luck cards up to +50 per run; boost up to +50</td><td>Run luck past 50 follows the curve; total luck rails at 150 (Legendary odds 7.6%). Luck still adds the 4th card.</td></tr>
+    <tr><td>Boosts (souls)</td><td>11 boosts, levels 0–10</td><td>Unchanged: they're the between-runs lever and they work. New soul tracks: <b>Charm Expansion</b> (4+4 slots), <b>Banish</b> (1–3 per run: remove a line from this run's pool) and the <b>Relic Codex</b>.</td></tr>
+    <tr><td>Evolutions</td><td>8 recipes from boss chests; "Powerful" = tier 3</td><td>Recipes stay ("Powerful" = rank 3+). Evolutions now <b>scale with ranks</b>: Blood Rage heals for 50% of crit damage + 5% per Strike rank past 3; Avatar of Steel is 30% + 1% per protection rank past 3 (rail 45%). The partner keeps growing after the evolution.</td></tr>
+    <tr><td>Boss chests</td><td>1 / 3 / 5 picks, 35% blessing</td><td>Same, but a 5-pick chest guarantees one Epic or better, and every chest pick is a full card with layers.</td></tr>
+    <tr><td>Gold, potions</td><td>Cards, 50 x level gold, 25 potions</td><td>Removed from cards. <b>Skip</b> pays 75 gold x level. Potions live in the shop. Exercise weapons stay as a line (skill +1 per rank, uncapped as today).</td></tr>
+  </table>
+</section>
+
+<!-- ============ 10. VOCATIONS ============ -->
+<section id="vocations">
+  <h2><span class="num">10</span>Four vocations, four runs</h2>
+  <p>Illustrative level-ups, picked the way a player would, with the odds the game would really roll (about 1 Epic per 14 cards). Each run shows the build taking shape and still growing at the end.</p>
+
+  <div class="run"><div class="rh"><b class="k">Knight: "The Thunder Hammer"</b><span class="small">axe, crits that chain, sustain through leech</span></div>
+  <ol>
+    <li><span class="lv">L8</span><span class="rbad c">Common</span><span>Chop (weapon socket 1): axe +1</span></li>
+    <li><span class="lv">L10</span><span class="rbad r">Rare</span><span>Strike (weapon socket 2): crit +5%, <i>Battle Focus</i> weapon damage +3%</span></li>
+    <li><span class="lv">L12</span><span class="rbad c">Common</span><span>Brutal Strike grade I</span></li>
+    <li><span class="lv">L15</span><span class="rbad c">Common</span><span>Chop Intricate (+2)</span></li>
+    <li><span class="lv">L18</span><span class="rbad e">Epic</span><span>Strike Intricate, <i>Battle Focus</i> 2, perk <i>Combat Mastery</i> 6%: melee hits sometimes strike twice</span></li>
+    <li><span class="lv">L21</span><span class="rbad c">Common</span><span>Vampirism (armor socket) Basic 5%</span></li>
+    <li><span class="lv">L24</span><span class="rbad r">Rare</span><span>Low Blow (Major charm): +4% crit chance, <i>Vitality</i> +4% health</span></li>
+    <li><span class="lv">L29</span><span class="rbad c">Common</span><span>Strike Powerful: +40% crit damage</span></li>
+    <li><span class="lv">L33</span><span class="rbad l">Legendary</span><span><b class="tl">Strike +1</b> (49%), <i>Battle Focus</i> 3, relic <b class="tl">Thunder Hammer</b>: crits chain to a second creature</span></li>
+    <li><span class="lv">L38</span><span class="rbad c">Common</span><span>Vampirism Powerful: 25% (boss chest: <b>Blood Rage</b> evolves, 30% crit chance, crits heal)</span></li>
+    <li><span class="lv">L45</span><span class="rbad e">Epic</span><span>Chop Powerful +1, <i>Vitality</i> 2, <i>Combat Mastery</i> 2 (11%)</span></li>
+    <li><span class="lv">L52</span><span class="rbad c">Common</span><span>Strike Powerful +2 (56%): Blood Rage now heals 60% of each crit</span></li>
+  </ol>
+  <div class="end">At L52: 30% crit chance (Blood Rage) + 8% Low Blow, 56% crit damage, crits chain and heal, 11% double strikes. Today this knight would have stopped growing at L38: Strike, Vampirism and Chop at Powerful, and only fillers left.</div></div>
+
+  <div class="run"><div class="rh"><b class="p">Paladin: "The Ricochet"</b><span class="small">bow, piercing missiles, hit-and-run</span></div>
+  <ol>
+    <li><span class="lv">L8</span><span class="rbad c">Common</span><span>Precision (weapon) +1</span></li>
+    <li><span class="lv">L11</span><span class="rbad c">Common</span><span>Ethereal Spear grade I</span></li>
+    <li><span class="lv">L14</span><span class="rbad r">Rare</span><span>Swiftness (boots) +10 speed, <i>Fleetness</i> +6 speed</span></li>
+    <li><span class="lv">L17</span><span class="rbad e">Epic</span><span>Frost (weapon 2) 10% ice, <i>Battle Focus</i>, perk <i>Positional Tactics</i>: +10% damage with nothing adjacent</span></li>
+    <li><span class="lv">L22</span><span class="rbad c">Common</span><span>Prey: Wyvern damage, 6 stars</span></li>
+    <li><span class="lv">L26</span><span class="rbad r">Rare</span><span>Precision Intricate, <i>Hardening</i> +1 armor</span></li>
+    <li><span class="lv">L31</span><span class="rbad e">Epic</span><span>Ethereal Spear III, <i>Arcane Focus</i>, perk <i>Ballistic Mastery</i>: 6% ricochets</span></li>
+    <li><span class="lv">L36</span><span class="rbad c">Common</span><span>Frost Powerful: 50% ice (boss chest: <b>Elemental Burst</b>, ice splashes the 8 tiles around)</span></li>
+    <li><span class="lv">L41</span><span class="rbad l">Legendary</span><span>Precision Powerful, <i>Fleetness</i> 2, relic <b class="tl">Arbalest</b>: missiles pierce to the creature behind</span></li>
+    <li><span class="lv">L47</span><span class="rbad r">Rare</span><span>Divine Caldera III+1, <i>Swiftcast</i> -4% cooldowns</span></li>
+    <li><span class="lv">L55</span><span class="rbad c">Common</span><span>Prey: Wyvern 11 stars (prey mastery)</span></li>
+  </ol>
+  <div class="end">At L55 a piercing, ricocheting, ice-splashing kiter who's rewarded for keeping distance. A shield-and-spear paladin would roll toward Blockade, Hardening and Royal Crossbow instead: different relics, different run.</div></div>
+
+  <div class="run"><div class="rh"><b class="s">Sorcerer: "Starstorm"</b><span class="small">free casts, beams, a mana shield made of leech</span></div>
+  <ol>
+    <li><span class="lv">L8</span><span class="rbad c">Common</span><span>Epiphany (helmet): magic level +1</span></li>
+    <li><span class="lv">L13</span><span class="rbad r">Rare</span><span>Energy Strike grade I, <i>Swiftcast</i> -4%</span></li>
+    <li><span class="lv">L16</span><span class="rbad c">Common</span><span>Void (weapon) 3% mana leech</span></li>
+    <li><span class="lv">L19</span><span class="rbad e">Epic</span><span>Epiphany Intricate, <i>Focus</i> +4% mana, perk <i>Focus Mastery</i>: 6% of spells cost no mana</span></li>
+    <li><span class="lv">L23</span><span class="rbad c">Common</span><span>Great Energy Beam grade I</span></li>
+    <li><span class="lv">L28</span><span class="rbad r">Rare</span><span>Enflame (Major charm), <i>Arcane Focus</i> +3% spell damage</span></li>
+    <li><span class="lv">L34</span><span class="rbad e">Epic</span><span>Great Energy Beam II, <i>Swiftcast</i> 2, perk <i>Beam Mastery</i>: beams sometimes fire twice</span></li>
+    <li><span class="lv">L40</span><span class="rbad c">Common</span><span>Void Powerful: 8% (boss chest with Magic Training 10: <b>Mastermind</b>)</span></li>
+    <li><span class="lv">L44</span><span class="rbad l">Legendary</span><span>Epiphany Powerful (+4), <i>Focus</i> 2, relic <b class="tl">Wand of Starstorm</b>: every 5th attack spell is free with no cooldown</span></li>
+    <li><span class="lv">L52</span><span class="rbad c">Common</span><span>Great Energy Beam III+1 (supreme rank 4: +17.3%)</span></li>
+    <li><span class="lv">L60</span><span class="rbad l">Legendary</span><span>Void +1 (9.1%), <i>Alchemy</i>, relic <b class="tl">Ferumbras' Hat</b>: leech past max mana becomes a magic shield</span></li>
+  </ol>
+  <div class="end">The sim sorcerer had literally nothing left to pick at L43. This one at L60 still wants Epiphany ranks (magic level is damage), Void ranks (shield size), Swiftcast and more beam grades.</div></div>
+
+  <div class="run"><div class="rh"><b class="d">Druid: "Northwind"</b><span class="small">ice waves both ways, roots, a grove that keeps you standing</span></div>
+  <ol>
+    <li><span class="lv">L8</span><span class="rbad c">Common</span><span>Epiphany (spellbook socket): magic level +1</span></li>
+    <li><span class="lv">L12</span><span class="rbad c">Common</span><span>Ice Wave grade I</span></li>
+    <li><span class="lv">L15</span><span class="rbad r">Rare</span><span>Freeze (Major charm), <i>Arcane Focus</i></span></li>
+    <li><span class="lv">L20</span><span class="rbad e">Epic</span><span>Strong Ice Wave grade I, <i>Focus</i>, perk <i>Twin Bursts</i>: ice spells sometimes burst again</span></li>
+    <li><span class="lv">L24</span><span class="rbad c">Common</span><span>Quara Scale (armor) 3% ice protection</span></li>
+    <li><span class="lv">L29</span><span class="rbad r">Rare</span><span>Mass Healing grade I, <i>Mending</i> +4% healing received</span></li>
+    <li><span class="lv">L33</span><span class="rbad e">Epic</span><span>Epiphany Intricate, <i>Swiftcast</i>, perk <i>Blessing of the Grove</i>: +20% healing under 40% health</span></li>
+    <li><span class="lv">L39</span><span class="rbad l">Legendary</span><span>Strong Ice Wave III, <i>Arcane Focus</i> 2, relic <b class="tl">Northwind Rod</b>: waves fire forward and backward</span></li>
+    <li><span class="lv">L44</span><span class="rbad c">Common</span><span>Prey: Frost Dragon defense 8 stars</span></li>
+    <li><span class="lv">L50</span><span class="rbad r">Rare</span><span>Freeze +1 (12.5%), <i>Vitality</i></span></li>
+    <li><span class="lv">L58</span><span class="rbad c">Common</span><span>Strong Ice Wave III+1 (supreme rank 4)</span></li>
+  </ol>
+  <div class="end">A druid that never sees a melee card: no Overpower, no Battle Focus, no Combat Mastery. Its perks and relics are all druid. Its build has a shape: waves, roots, healing.</div></div>
+</section>
+
+<!-- ============ 11. WHY ============ -->
+<section id="why">
+  <h2><span class="num">11</span>Why this over the others</h2>
+  <table>
+    <tr><th>Alternative</th><th>What it fixes</th><th>Where it falls short</th></tr>
+    <tr><td><b>Just add tiers 4 and 5</b></td><td>Gives Legendary somewhere to land</td><td>Moves the wall from minute 40 to minute 60. Rarity is still "more of the same". Overlap stays hidden.</td></tr>
+    <tr><td><b>A Wheel of Destiny talent tree</b></td><td>Deep, very Tibia, class identity</td><td>A tree is planned, not drafted: it kills the surprise of the card screen, which is the core of a survivors game. And a tree also ends when it's filled.</td></tr>
+    <tr><td><b>Vampire Survivors weapons</b> (new auto-weapons per pick)</td><td>Visual variety</td><td>Fights the game's identity: Tibia's real spells and auto-attack <i>are</i> the weapons. Invented weapons would be off-tone.</td></tr>
+    <tr><td><b>Fewer, bigger picks</b></td><td>Each pick feels big</td><td>Level-ups come every few seconds (levels and skill advances). Fewer picks means fewer moments, not better ones.</td></tr>
+    <tr><td class="tl"><b>Uncapped &amp; Unequal</b></td><td colspan="2">Keeps every real Tibia value, keeps the draft, never runs dry, makes rarity a different card instead of a bigger one, gives each vocation its own perks and relics, and makes the overlap one readable number. It's an <b>evolution of the existing code</b>: the same <code>LevelChoice</code>, <code>withRarity</code>, <code>applyChoice</code> and UI, not a rewrite.</td></tr>
+  </table>
+  <p>The proof is cheap: the sim already counts filler share, and I've already instrumented it. The target is <b>under 10% filler on offers 51–100</b>, against 78–88% today, with no vocation's 60-minute power index beyond 1.5x the median.</p>
+</section>
+
+<!-- ============ 12. RISKS ============ -->
+<section id="risks">
+  <h2><span class="num">12</span>Risks and mitigations</h2>
+  <table>
+    <tr><th>Risk</th><th>How likely</th><th>Mitigation</th></tr>
+    <tr><td><b>Runaway power</b>: uncapped stacking plus relics snowball and a run never ends</td><td>Medium</td><td>Harmonic tail (rank 20 is worth about 6 ranks past the knee, not 17), rails on every chance stat, relics unique. The world already scales outward, so a strong build pushes deeper and meets harder monsters. Sim gate: no 60-minute run with a power index over 1.5x the median.</td></tr>
+    <tr><td><b>Card readability</b>: up to four rows on a 232 px card</td><td>Medium</td><td>One row per layer, coloured by the rarity that adds it, with a short header. Common cards stay one row. Tooltips carry the "now → next" detail.</td></tr>
+    <tr><td><b>Tibia authenticity</b>: ranks past Powerful, perks and relics are invented</td><td>Certain (by design)</td><td>Ranks 1–3 are untouched real values. Every invented layer gets a Tibia name and goes in README's "Not real" list, as boosts and luck already do.</td></tr>
+    <tr><td><b>Pool dilution</b>: more lines means less chance of the one you want</td><td>Medium</td><td>Sockets and charm slots cap how many lines are live. Banish removes a line for the run. Owned lines get offer weight x2 once sockets are full.</td></tr>
+    <tr><td><b>Relic balance</b>: 24 rule-breakers, some will be duds or broken</td><td>High</td><td>3 relic slots per run, extra Legendaries awaken a held relic. Ship 8 first (phase 3), the rest behind the Relic Codex, each with a sim A/B. Relics are data plus a small hook, so tuning is cheap.</td></tr>
+    <tr><td><b>Combat cost</b>: more procs per hit</td><td>Low</td><td>Pooled stats are cached and recomputed only on <code>applyChoice</code>. Perks are an array of the ones you hold, read in the hooks that already run.</td></tr>
+    <tr><td><b>Sim bot can't evaluate cards</b> (it ranks by kind today)</td><td>Certain</td><td>Add a scoring heuristic: marginal stat value per card from the curve, plus a flat bonus per perk or relic. Needed anyway for balancing.</td></tr>
+    <tr><td><b>Players miss the Epic "jump to Powerful"</b></td><td>Low</td><td>Epic now gives two ranks and a new behaviour. If tests say it isn't enough, Epic can give +2 ranks of the main line.</td></tr>
+  </table>
+</section>
+
+<!-- ============ 13. EFFORT ============ -->
+<section id="effort">
+  <h2><span class="num">13</span>Effort and rollout</h2>
+  <p>About <b>24 developer-days</b>, in five phases. Each one ships on its own and leaves the game playable.</p>
+  <table>
+    <tr><th>Phase</th><th>Scope</th><th class="n">Days</th><th>Done when</th></tr>
+    <tr><td>1. Curves</td><td><code>curves.ts</code>, ranks past the knee for imbuements, charms, grades, run bonuses, luck, prey stars; delete <code>fitRarity</code>/<code>room</code>; gold and potion cards become Skip</td><td class="n">4</td><td>Filler share on offers 51–75 under 15% in the sim; no Legendary downgrades</td></tr>
+    <tr><td>2. One sheet</td><td><code>Character.stat()</code> pooling, rails, Low Blow fix, charm damage scaling, pooled Upgrades window</td><td class="n">3</td><td>Upgrades window shows totals with per-source tooltips; leech and crit numbers match before and after for runs without ranks past 3</td></tr>
+    <tr><td>3. Rarity layers</td><td>Affinity tables, secondaries, 13 perks, the first 8 relics, combat hooks, new card layout</td><td class="n">8</td><td>Every card renders its layers; the sim scores cards and plays perks and relics</td></tr>
+    <tr><td>4. Sockets and charm slots</td><td>Socketed imbuements, dormant shield socket, Major/Minor charm slots, Banish, Charm Expansion, save v4</td><td class="n">4</td><td>Old saves load (version 3 → 4); new tracks buyable</td></tr>
+    <tr><td>5. Balance and the codex</td><td>Sim sweeps (4 vocations x 10 runs x 60 min), tune <i>s</i> and rails, the 16 remaining relics behind the Relic Codex, README "Not real" update</td><td class="n">5</td><td>All vocations within 1.5x median power index; filler under 10% on offers 51–100</td></tr>
+  </table>
+  <div class="bar" title="Effort split: Curves 4, One sheet 3, Rarity layers 8, Sockets 4, Balance 5" aria-label="Effort split: Curves 4, One sheet 3, Rarity layers 8, Sockets 4, Balance 5">
+    <span style="width:16.7%;background:#8a8a8a"></span><span style="width:12.5%;background:#3d7fc4"></span><span style="width:33.3%;background:#8a4fc9"></span><span style="width:16.7%;background:#b88a2a"></span><span style="width:20.8%;background:#e08a1e"></span>
+  </div>
+  <p class="small" style="margin-top:6px">Curves 4 · One sheet 3 · Rarity layers 8 · Sockets and charm slots 4 · Balance and codex 5. Phase 1 alone already fixes the dead late game: if you only fund one phase, fund that one.</p>
+</section>
+
+<!-- ============ 14. ASK ============ -->
+<section id="ask">
+  <h2><span class="num">14</span>The ask</h2>
+  <p class="lead">Give me <b>phase 1 (4 days)</b> on a branch. I'll come back with the sim's filler-share table before and after, for all four vocations. If filler on offers 51–75 isn't under 15% and no Legendary roll gets downgraded, we stop there and you've lost four days. If it works, phases 2–5 follow, about four more weeks, each one a squash-merged PR with its sim numbers in the description.</p>
+  <ul class="ask">
+    <li><b>Decide now:</b> sockets by body slot (my recommendation) or keep 6 free slots?</li>
+    <li><b>Decide now:</b> may perks use Wheel of Destiny names for invented effects, listed under "Not real"?</li>
+    <li><b>Decide later:</b> how many relics at launch (8 recommended) and whether the Relic Codex costs souls or comes from boss kills.</li>
+  </ul>
+  <div class="callout ok"><span class="quote">Tibia's real numbers stay where they are. The run just stops ending in coins.</span></div>
+  <p>Thanks for reading. I'd love to build this.</p>
+  <div class="sig">Mira Halvorsen</div>
+  <div class="small">Roguelite systems designer · "Uncapped &amp; Unequal" · engineering detail in <a href="IMPLEMENTATION.md">IMPLEMENTATION.md</a></div>
+  <p class="foot-note">Numbers come from the current code (rarity.ts, character.ts, picks.ts, imbuements.ts, upgrades.ts, game.ts) and from the headless sim with a counter on every offer: 3 runs per vocation, 60 min each, Dawnport, XP boost 6, training 5, luck 2.</p>
+</section>
+</main>
+</div>
+
+<script>
+// Life leech by rank: today's Vampirism (stops at Powerful) vs the proposed curve (K = 3, s = 4, rail 50).
+(function () {
+  var H = function (n) { var s = 0; for (var i = 1; i <= n; i++) s += 1 / i; return s; };
+  var today = [5, 10, 25], prop = [];
+  for (var r = 1; r <= 20; r++) prop.push(r <= 3 ? today[r - 1] : Math.min(50, 25 + 4 * 3 * (H(r) - H(3))));
+  var X0 = 50, X1 = 740, Y0 = 260, Y1 = 10, maxY = 55;
+  var x = function (r) { return X0 + (r - 1) * (X1 - X0) / 19; };
+  var y = function (v) { return Y0 - v * (Y0 - Y1) / maxY; };
+  var NS = "http://www.w3.org/2000/svg";
+  var el = function (tag, a, parent, text) { var e = document.createElementNS(NS, tag); for (var k in a) e.setAttribute(k, a[k]); if (text) e.textContent = text; parent.appendChild(e); return e; };
+  var grid = document.getElementById("grid"), lines = document.getElementById("lines"), hover = document.getElementById("hover");
+  [0, 10, 20, 30, 40, 50].forEach(function (v) {
+    el("line", { x1: X0, x2: X1, y1: y(v), y2: y(v), stroke: "#3a2e1e", "stroke-width": 1 }, grid);
+    el("text", { x: X0 - 8, y: y(v) + 4, fill: "#8d826d", "font-size": 11, "text-anchor": "end" }, grid, v + "%");
+  });
+  [1, 3, 5, 10, 15, 20].forEach(function (r) { el("text", { x: x(r), y: Y0 + 18, fill: "#8d826d", "font-size": 11, "text-anchor": "middle" }, grid, "r" + r); });
+  el("text", { x: X1, y: Y0 + 34, fill: "#8d826d", "font-size": 11, "text-anchor": "end" }, grid, "rank");
+  el("line", { x1: X0, x2: X1, y1: y(50), y2: y(50), stroke: "#8d826d", "stroke-width": 1.5, "stroke-dasharray": "5 4" }, lines);
+  el("text", { x: X1, y: y(50) - 6, fill: "#bfb299", "font-size": 11, "text-anchor": "end" }, lines, "rail 50%");
+  var path = function (vals) { return vals.map(function (v, i) { return (i ? "L" : "M") + x(i + 1).toFixed(1) + " " + y(v).toFixed(1); }).join(" "); };
+  el("path", { d: path(prop), fill: "none", stroke: "#b88a2a", "stroke-width": 2, "stroke-linejoin": "round" }, lines);
+  el("path", { d: path(today), fill: "none", stroke: "#5f8fd6", "stroke-width": 2 }, lines);
+  // The wall: today's line ends at rank 3.
+  el("line", { x1: x(3), x2: x(3), y1: y(25) - 14, y2: Y0, stroke: "#e07a6a", "stroke-width": 1.5, "stroke-dasharray": "2 3" }, lines);
+  el("text", { x: x(3) + 6, y: y(25) + 22, fill: "#e9dfc9", "font-size": 11 }, lines, "today: Powerful, then the card is gone");
+  el("text", { x: x(20) - 4, y: y(prop[19]) + 18, fill: "#e9dfc9", "font-size": 11, "text-anchor": "end" }, lines, "r20: " + prop[19].toFixed(1) + "%");
+  prop.forEach(function (v, i) { el("circle", { cx: x(i + 1), cy: y(v), r: 4, fill: "#b88a2a", stroke: "#1b1712", "stroke-width": 2 }, lines); });
+  today.forEach(function (v, i) { el("circle", { cx: x(i + 1), cy: y(v), r: 4, fill: "#5f8fd6", stroke: "#1b1712", "stroke-width": 2 }, lines); });
+  var cross = el("line", { y1: Y1, y2: Y0, stroke: "#e5c46a", "stroke-width": 1, opacity: 0 }, hover);
+  var svg = document.querySelector("#chart svg"), tip = document.getElementById("tip"), box = document.getElementById("chart");
+  var names = ["Basic", "Intricate", "Powerful"];
+  var move = function (ev) {
+    var pt = svg.getBoundingClientRect(), sx = (ev.clientX - pt.left) * 760 / pt.width;
+    var r = Math.max(1, Math.min(20, Math.round((sx - X0) / ((X1 - X0) / 19)) + 1));
+    cross.setAttribute("x1", x(r)); cross.setAttribute("x2", x(r)); cross.setAttribute("opacity", 0.6);
+    var label = r <= 3 ? names[r - 1] : "Powerful +" + (r - 3);
+    tip.innerHTML = "<b>Rank " + r + "</b> · " + label + "<br>Proposed: " + prop[r - 1].toFixed(1) + "%<br>Today: " + (r <= 3 ? today[r - 1] + "%" : "not offered (line full)");
+    tip.style.opacity = 1;
+    var bx = box.getBoundingClientRect(), left = ev.clientX - bx.left + 14;
+    if (left > bx.width - 200) left -= 220;
+    tip.style.left = left + "px"; tip.style.top = (ev.clientY - bx.top - 10) + "px";
+  };
+  var hit = document.getElementById("hit");
+  hit.addEventListener("mousemove", move);
+  hit.addEventListener("mouseleave", function () { tip.style.opacity = 0; cross.setAttribute("opacity", 0); });
+})();
+</script>
+</body>
+</html>

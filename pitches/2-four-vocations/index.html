@@ -1,0 +1,613 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Four Vocations, Four Games — a level-up rework for Tibia Survivors</title>
+<style>
+:root{
+  --bg:#14110d; --stone:#211c16; --stone2:#2b241c; --edge:#4a3d2b; --edge2:#6b5636;
+  --parch:#e8dcc0; --parch2:#cdbd98; --ink:#e9e1cf; --dim:#a99d86; --gold:#d9b25a; --gold2:#f3d68a;
+  --knight:#d8483c; --paladin:#f0cf55; --sorc:#36b9ee; --druid:#62c75a; --rook:#b9a98a;
+  --common:#9d9d9d; --rare:#3f7dff; --epic:#a64ee8; --legend:#ff8a1c;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:
+  radial-gradient(ellipse at 20% -10%,#3a2c1a 0,transparent 55%),
+  radial-gradient(ellipse at 110% 30%,#22301f 0,transparent 45%),
+  repeating-linear-gradient(45deg,#16130f 0 6px,#14110d 6px 12px);
+  color:var(--ink);font:16px/1.6 Georgia,"Palatino Linotype","Book Antiqua",serif}
+a{color:var(--gold2)}
+.layout{display:grid;grid-template-columns:250px minmax(0,1fr);max-width:1320px;margin:0 auto;gap:28px;padding:24px}
+nav.toc{position:sticky;top:18px;align-self:start;max-height:calc(100vh - 36px);overflow:auto;
+  background:linear-gradient(#2a221a,#1d1812);border:2px solid var(--edge);border-radius:6px;padding:14px 12px;
+  box-shadow:inset 0 0 0 1px #000,0 8px 24px #0008}
+nav.toc h4{margin:0 0 8px;font:bold 13px/1.2 Verdana,sans-serif;letter-spacing:.12em;text-transform:uppercase;color:var(--gold)}
+nav.toc a{display:block;color:var(--parch2);text-decoration:none;font:13px/1.35 Verdana,sans-serif;padding:4px 8px;border-left:3px solid transparent;border-radius:2px}
+nav.toc a:hover{background:#3a2f22;color:var(--gold2);border-left-color:var(--gold)}
+nav.toc a.k{border-left-color:var(--knight)} nav.toc a.p{border-left-color:var(--paladin)}
+nav.toc a.s{border-left-color:var(--sorc)} nav.toc a.d{border-left-color:var(--druid)}
+nav.toc .sig{margin-top:10px;font:italic 12px Georgia,serif;color:var(--dim);padding:6px 8px;border-top:1px solid var(--edge)}
+main{min-width:0}
+section{margin:0 0 34px;background:linear-gradient(#251f18,#1c1712);border:2px solid var(--edge);border-radius:6px;padding:26px 30px;
+  box-shadow:inset 0 0 0 1px #000,inset 0 1px 0 #ffffff10,0 10px 30px #0007;position:relative}
+section::before{content:"";position:absolute;inset:6px;border:1px solid #ffffff08;border-radius:3px;pointer-events:none}
+h1,h2,h3{font-family:"Trajan Pro","Cinzel",Georgia,serif;letter-spacing:.03em}
+h2{margin:0 0 14px;color:var(--gold2);font-size:26px;border-bottom:1px solid var(--edge2);padding-bottom:8px;text-shadow:0 2px 0 #000}
+h3{color:var(--gold);font-size:19px;margin:22px 0 8px}
+p{margin:.55em 0}
+.lead{font-size:18px;color:var(--parch)}
+small,.dim{color:var(--dim)}
+code{font:13px Consolas,monospace;background:#0006;border:1px solid #ffffff14;padding:1px 5px;border-radius:3px;color:#f0e2bd}
+.tag{display:inline-block;font:bold 11px Verdana,sans-serif;letter-spacing:.06em;text-transform:uppercase;padding:2px 7px;border-radius:3px;border:1px solid currentColor;margin-right:4px}
+/* hero */
+.hero{padding:44px 40px 34px;background:
+  linear-gradient(180deg,#0000 0,#0009 100%),
+  radial-gradient(ellipse at 50% 0,#5a4223 0,#241b12 60%,#18130e 100%);text-align:center;border-color:var(--edge2)}
+.hero .kicker{font:bold 12px Verdana,sans-serif;letter-spacing:.3em;text-transform:uppercase;color:var(--gold)}
+.hero h1{font-size:54px;margin:10px 0 6px;color:var(--gold2);text-shadow:0 3px 0 #000,0 0 30px #d9b25a55}
+.hero h1 span{display:inline-block}
+.hero .four{display:flex;justify-content:center;gap:10px;margin:18px 0 8px;flex-wrap:wrap}
+.hero .four b{font:bold 13px Verdana,sans-serif;padding:6px 14px;border-radius:20px;border:1px solid currentColor;background:#0006}
+.hero p.lead{max-width:780px;margin:14px auto 0}
+.hook{margin:26px auto 0;max-width:820px;display:grid;grid-template-columns:1fr auto 1fr;gap:16px;align-items:stretch;text-align:left}
+.hook .vs{align-self:center;font:bold 22px Georgia;color:var(--gold)}
+.mini{background:#0007;border:1px solid var(--edge);border-radius:5px;padding:12px 14px;font:13px/1.45 Verdana,sans-serif}
+.mini h5{margin:0 0 6px;font:bold 12px Verdana;letter-spacing:.1em;text-transform:uppercase}
+.mini ul{margin:0;padding-left:18px}
+/* stats */
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(185px,1fr));gap:12px;margin:16px 0}
+.stat{background:#0005;border:1px solid var(--edge);border-left:4px solid var(--gold);border-radius:4px;padding:12px 14px}
+.stat b{display:block;font:bold 30px Georgia;color:var(--gold2);line-height:1.1}
+.stat span{font:13px/1.4 Verdana,sans-serif;color:var(--parch2)}
+/* tables */
+table{width:100%;border-collapse:collapse;margin:12px 0;font:13.5px/1.45 Verdana,sans-serif}
+th,td{border:1px solid #4a3d2b;padding:7px 9px;text-align:left;vertical-align:top}
+th{background:#3a2e1f;color:var(--gold2);font-weight:bold}
+tr:nth-child(even) td{background:#ffffff06}
+.num{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+/* parchment callout */
+.parch{background:linear-gradient(#efe3c6,#ddcba3);color:#2c2115;border:1px solid #8a6f42;border-radius:4px;padding:16px 20px;
+  box-shadow:inset 0 0 40px #b08f5a66,0 4px 14px #0008;font-size:16px}
+.parch h3{color:#5a3d16;margin-top:0}
+.parch b{color:#4a2c08}
+/* rarity */
+.r0{--rc:var(--common)} .r1{--rc:var(--rare)} .r2{--rc:var(--epic)} .r3{--rc:var(--legend)}
+.rt{color:var(--rc);font-weight:bold}
+/* level-up card mock */
+.levelup{background:radial-gradient(ellipse at 50% 0,#3a2d1d,#15110c);border:2px solid var(--edge2);border-radius:8px;padding:20px;margin:16px 0}
+.levelup .title{text-align:center;font:bold 18px Georgia;color:var(--gold2);margin-bottom:4px;text-shadow:0 2px 0 #000}
+.levelup .sub{text-align:center;font:12px Verdana;color:var(--dim);margin-bottom:14px}
+.cards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+.card{position:relative;background:linear-gradient(#2e261c,#1e1913);border:2px solid var(--rc);border-radius:7px;padding:30px 14px 12px;
+  box-shadow:0 0 0 1px #000,0 0 18px color-mix(in srgb,var(--rc) 35%,transparent),inset 0 0 22px #0008;font:13px/1.45 Verdana,sans-serif;min-height:250px}
+.card .rar{position:absolute;top:-1px;left:50%;transform:translateX(-50%);background:var(--rc);color:#120d07;font:bold 11px Verdana;letter-spacing:.12em;text-transform:uppercase;padding:2px 12px;border-radius:0 0 6px 6px}
+.card .ribbon{position:absolute;top:8px;right:-2px;background:var(--pc);color:#0d0a06;font:bold 10px Verdana;padding:2px 8px 2px 10px;border-radius:3px 0 0 3px;letter-spacing:.05em}
+.card .ico{width:48px;height:48px;margin:2px auto 8px;border-radius:6px;border:1px solid #000;background:radial-gradient(circle at 35% 30%,var(--pc),#000 85%);box-shadow:0 0 12px var(--pc);display:grid;place-items:center;font:bold 22px Georgia;color:#0008}
+.card b.n{display:block;text-align:center;font:bold 15px Georgia;color:var(--parch)}
+.card em{display:block;text-align:center;font-style:normal;color:var(--dim);font-size:11.5px;margin:2px 0 8px}
+.card .pips{text-align:center;letter-spacing:3px;color:var(--pc);font-size:14px}
+.card .prog{margin-top:10px;height:8px;background:#000;border:1px solid #000;border-radius:4px;overflow:hidden;position:relative}
+.card .prog i{display:block;height:100%;background:linear-gradient(90deg,var(--pc),#fff8)}
+.card .prog u{position:absolute;top:-2px;bottom:-2px;width:2px;background:var(--gold2)}
+.card .foot{margin-top:8px;font-size:10.5px;color:var(--gold);text-align:center;letter-spacing:.04em}
+.card .rec{position:absolute;top:8px;left:8px;color:var(--gold2);font-size:16px}
+.card.key{background:linear-gradient(#3a2c48,#1d1424);box-shadow:0 0 0 1px #000,0 0 26px #a64ee877,inset 0 0 0 3px #d9b25a55}
+/* path tree */
+.tree{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;margin:16px 0}
+.path{background:#0006;border:1px solid var(--edge);border-top:4px solid var(--pc);border-radius:5px;padding:12px 10px 14px;text-align:center}
+.path h4{margin:0;font:bold 15px Georgia;color:var(--pc)}
+.path .why{font:12px/1.4 Verdana;color:var(--dim);margin:4px 0 12px;min-height:34px}
+.tier{display:flex;justify-content:center;gap:10px;position:relative;padding:10px 0}
+.tier+.tier::before{content:"";position:absolute;top:-6px;left:50%;width:2px;height:16px;background:linear-gradient(var(--pc),#0000);transform:translateX(-50%)}
+.node{width:64px;font:10.5px/1.2 Verdana;color:var(--parch2)}
+.node i{display:grid;place-items:center;width:44px;height:44px;margin:0 auto 4px;border-radius:50%;border:2px solid var(--rc);background:radial-gradient(circle at 35% 30%,color-mix(in srgb,var(--pc) 70%,#fff 0%),#000 90%);
+  box-shadow:0 0 10px color-mix(in srgb,var(--rc) 60%,transparent);font:bold 12px Verdana;font-style:normal;color:#fff;text-shadow:0 1px 2px #000}
+.node.ks i{border-radius:8px;transform:rotate(45deg);width:46px;height:46px}
+.node.ks i span{transform:rotate(-45deg)}
+.node.rv i{width:56px;height:56px;border-width:3px;box-shadow:0 0 20px var(--legend)}
+.node.own i{outline:2px solid var(--gold2);outline-offset:2px}
+.node.dim{opacity:.45}
+.gate{font:bold 10px Verdana;color:var(--gold);letter-spacing:.08em;text-transform:uppercase;margin:2px 0}
+/* vocation sections */
+.voc{border-color:color-mix(in srgb,var(--vc) 55%,#4a3d2b)}
+.voc h2{color:var(--vc);border-bottom-color:color-mix(in srgb,var(--vc) 50%,#000)}
+.voc .banner{display:flex;gap:16px;align-items:center;margin-bottom:10px}
+.voc .crest{flex:none;width:64px;height:64px;border-radius:50%;border:3px solid var(--vc);background:radial-gradient(circle at 35% 30%,var(--vc),#000 85%);display:grid;place-items:center;font:bold 28px Georgia;color:#000a;box-shadow:0 0 24px color-mix(in srgb,var(--vc) 50%,transparent)}
+.cols{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin:12px 0}
+.pcol{background:#0005;border:1px solid var(--edge);border-top:3px solid var(--pc);border-radius:4px;padding:10px 12px;font:13px/1.5 Verdana,sans-serif}
+.pcol h4{margin:0 0 2px;font:bold 15px Georgia;color:var(--pc)}
+.pcol .sp{font-size:11.5px;color:var(--dim);margin-bottom:6px}
+.pcol ul{margin:4px 0 0;padding-left:16px}
+.pcol li{margin:3px 0}
+.pcol .k{color:var(--epic);font-weight:bold} .pcol .l{color:var(--legend);font-weight:bold}
+.timeline{border-left:3px solid var(--vc);margin:10px 0 6px 8px;padding-left:16px;font:13px/1.5 Verdana,sans-serif}
+.timeline div{position:relative;margin:6px 0}
+.timeline div::before{content:"";position:absolute;left:-23px;top:6px;width:11px;height:11px;border-radius:50%;background:var(--rc,var(--vc));border:2px solid #000}
+.timeline .lv{display:inline-block;min-width:54px;font-weight:bold;color:var(--gold2)}
+.feel{border-left:4px solid var(--vc);background:#0005;padding:10px 14px;margin-top:12px;font-style:italic;color:var(--parch)}
+.real{color:#8fd18a;font:bold 10px Verdana;letter-spacing:.05em;text-transform:uppercase;border:1px solid #8fd18a66;padding:0 4px;border-radius:3px;margin-left:4px;vertical-align:1px}
+.inv{color:#c9a0ff;font:bold 10px Verdana;letter-spacing:.05em;text-transform:uppercase;border:1px solid #c9a0ff66;padding:0 4px;border-radius:3px;margin-left:4px;vertical-align:1px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.pro{border-left:4px solid #6fcf5a} .con{border-left:4px solid var(--knight)}
+.box{background:#0005;border:1px solid var(--edge);border-radius:4px;padding:12px 16px;font:13.5px/1.5 Verdana,sans-serif}
+.box h4{margin:0 0 6px;font:bold 15px Georgia;color:var(--gold)}
+.bar{display:flex;height:22px;border-radius:4px;overflow:hidden;border:1px solid #000;margin:6px 0 2px;font:bold 11px Verdana;color:#000}
+.bar span{display:grid;place-items:center}
+.ask{text-align:center;background:radial-gradient(ellipse at 50% 0,#4a3720,#1d1711);border-color:var(--gold)}
+.ask .big{font:bold 30px Georgia;color:var(--gold2);margin:8px 0}
+.sign{margin-top:22px;font:italic 26px "Brush Script MT","Segoe Script",cursive;color:var(--gold2)}
+.sign small{display:block;font:12px Verdana;color:var(--dim);font-style:normal;margin-top:4px}
+@media (max-width:980px){.layout{grid-template-columns:1fr}nav.toc{position:static;max-height:none}.cards,.tree,.cols{grid-template-columns:1fr}.hook,.grid2{grid-template-columns:1fr}.hero h1{font-size:38px}}
+</style>
+</head>
+<body>
+<div class="layout">
+
+<nav class="toc">
+  <h4>The pitch</h4>
+  <a href="#top">Four Vocations, Four Games</a>
+  <a href="#problem">1. What's wrong today</a>
+  <a href="#vision">2. The vision</a>
+  <a href="#levelup">3. A level-up, rebuilt</a>
+  <a href="#tree">4. Paths, keystones, revelations</a>
+  <a class="s" href="#sorcerer">5. Sorcerer</a>
+  <a class="d" href="#druid">6. Druid</a>
+  <a class="k" href="#knight">7. Knight</a>
+  <a class="p" href="#paladin">8. Paladin</a>
+  <a href="#rookie">9. Rookie: the preview</a>
+  <a href="#universal">10. The universal pool</a>
+  <a href="#systems">11. Imbuements, charms, grades…</a>
+  <a href="#rarity">12. What rarity means now</a>
+  <a href="#auto">13. Hands-off players</a>
+  <a href="#why">14. Why this, not that</a>
+  <a href="#risks">15. Risks, honestly</a>
+  <a href="#effort">16. Effort and rollout</a>
+  <a href="#ask">17. The ask</a>
+  <a href="IMPLEMENTATION.md">Engineering plan →</a>
+  <div class="sig">Pitch by Tomasz "Tom" Wieczorek,<br>class design</div>
+</nav>
+
+<main>
+
+<!-- HERO -->
+<section class="hero" id="top">
+  <div class="kicker">A level-up rework for Tibia Survivors</div>
+  <h1><span>Four Vocations,</span> <span>Four Games</span></h1>
+  <div class="four">
+    <b style="color:var(--knight)">Knight</b><b style="color:var(--paladin)">Paladin</b><b style="color:var(--sorc)">Sorcerer</b><b style="color:var(--druid)">Druid</b>
+  </div>
+  <p class="lead">Right now, picking a vocation changes your sprite, your spell list and which potion you drink. It doesn't change how you level up. I want each vocation to be its own game, built from Tibia's own Wheel of Destiny, so that a sorcerer's level 30 and a knight's level 30 are two different things.</p>
+
+  <div class="hook">
+    <div class="mini">
+      <h5 style="color:var(--sorc)">Sorcerer, level 9, today</h5>
+      <ul><li>Basic Vampirism — <span class="dim">5% life leech</span></li><li>Experience +20% — <span class="dim">this run</span></li><li>Prey: Troll ★★★ — <span class="dim">+11% damage</span></li></ul>
+    </div>
+    <div class="vs">=</div>
+    <div class="mini">
+      <h5 style="color:var(--knight)">Knight, level 9, today</h5>
+      <ul><li>Basic Vampirism — <span class="dim">5% life leech</span></li><li>Gold +20% — <span class="dim">this run</span></li><li>Prey: Wolf ★★ — <span class="dim">+9% damage</span></li></ul>
+    </div>
+  </div>
+  <p class="dim" style="margin-top:14px;font:13px Verdana">Both are real draws from <code>Character.rollChoices</code>. Six of its eight candidate slots are identical for every vocation.</p>
+</section>
+
+<!-- PROBLEM -->
+<section id="problem">
+  <h2>1. What's wrong today</h2>
+  <p class="lead">The systems are good, and they're real Tibia. The trouble is that they all point at the same few stats, so every vocation's run converges on one build.</p>
+
+  <div class="stats">
+    <div class="stat"><b>6 of 8</b><span>candidate slots per level-up are vocation-blind: 2 imbuements, prey, 2 run bonuses, luck</span></div>
+    <div class="stat"><b>13 / 20</b><span>of the sorcerer's gradable spells grade as the same flat +5/10/15%. For the druid it's 12 of 18</span></div>
+    <div class="stat"><b>3 systems</b><span>sell life leech (Vampirism 25%, Vampiric Embrace 3.2%, Front Sweep / Terra Wave grades 5%), and 3 sell crit</span></div>
+    <div class="stat"><b>1% → 0</b><span>A Legendary roll can never land on an imbuement, charm or grade. The rarest roll in the game buys gold</span></div>
+  </div>
+
+  <h3>The evidence from our own simulator</h3>
+  <p>I ran <code>npm run sim -- &lt;voc&gt; 16</code>, a fresh campaign per vocation where the bot buys unlocks and boosts between 60-minute runs. Two things stand out:</p>
+  <table id="baseline">
+    <tr><th>Vocation</th><th class="num">Runs</th><th class="num">Median level at death / 60:00</th><th class="num">Best</th><th class="num">Magic level / main skill</th><th>Deepest zone</th><th>What its level-ups could offer</th></tr>
+    <tr><td style="color:var(--knight)">Knight</td><td class="num">14</td><td class="num"><b>34.5</b></td><td class="num">50</td><td class="num">axe 24–61</td><td>Cyclopolis, Ancient Tombs</td><td>Up to ~50 axe and shielding advances, each one a pick, all from the shared pool</td></tr>
+    <tr><td style="color:var(--paladin)">Paladin</td><td class="num">12</td><td class="num"><b>9.5</b></td><td class="num">15</td><td class="num">distance 18–38</td><td>Troll Woods</td><td>Ethereal Spear (23) never arrives</td></tr>
+    <tr><td style="color:var(--sorc)">Sorcerer</td><td class="num">13</td><td class="num"><b>9</b></td><td class="num">19</td><td class="num">ml 0–27</td><td>Orc Fortress</td><td>Strikes only. Fire Wave (18) shows up in 1 run of 13</td></tr>
+    <tr><td style="color:var(--druid)">Druid</td><td class="num">13</td><td class="num"><b>11</b></td><td class="num">25</td><td class="num">ml 0–38</td><td>Minotaur Hills</td><td>Strikes only. Ice Wave (18) shows up in 4 runs of 13</td></tr>
+  </table>
+  <p class="dim" style="font:12.5px Verdana">Every run of the 16 in which the bot reached level 8 and became its vocation (the early ones die as rookies). Same bot, same shopping. A third finding, outside this pitch's scope: knights end up 3–4x the level of the other three, which says the shared pool suits melee best. Raw output stays with the PR.</p>
+  <div class="parch">
+    <h3>What this means</h3>
+    <p><b>1. Most of a run happens before a vocation's spells show up.</b> A typical sorcerer spends its whole hour as a level 8–15 character with Energy Strike and a wand, so the only "sorcerer" cards it can see are "Energy Strike +5%". Its identity has to come from the level-up cards, starting at level 9. That's why element cards also work on <b>wand and rod hits</b> of their element: a wand of vortex feeds Storm Caller, a snakebite rod feeds Earthshaper.</p>
+    <p><b>2. Our own bot doesn't choose the build.</b> The sim's pick order (<code>src/sim.ts</code>) is run bonus Experience, then training, then loot and gold, and imbuements and grades only after that. If the "sensible" pick is always the economy, the build is decoration.</p>
+  </div>
+
+  <h3>Overlap: one stat, three systems</h3>
+  <table>
+    <tr><th>Stat</th><th>Imbuement</th><th>Charm</th><th>Spell grade</th><th>Result</th></tr>
+    <tr><td>Life leech</td><td>Vampirism 5 / 10 / 25%</td><td>Vampiric Embrace 1.6 / 2.4 / 3.2%</td><td>Front Sweep, Terra Wave 5%</td><td>The charm is an eighth of the imbuement: a dead card</td></tr>
+    <tr><td>Mana leech</td><td>Void 3 / 5 / 8%</td><td>Void's Call 0.8 / 1.2 / 1.6%</td><td>Strong Ice Wave 3%</td><td>Same</td></tr>
+    <tr><td>Crit</td><td>Strike: 10% chance, +5 / 15 / 40%</td><td>Low Blow +4 / 8 / 9% chance, Savage Blow +20 / 40 / 44%</td><td>up to +22.5% crit damage</td><td>Low Blow does <i>nothing</i> without Strike or Blood Rage, and the card doesn't say so</td></tr>
+    <tr><td>Protection</td><td>6 separate imbuements, 3 / 8 / 15%</td><td>—</td><td>—</td><td>One decision split across six cards</td></tr>
+  </table>
+</section>
+
+<!-- VISION -->
+<section id="vision">
+  <h2>2. The vision</h2>
+  <p class="lead">Each vocation gets <b>its own card pool</b>, made of three <b>paths</b>. Each path has a playstyle, a keystone that changes how you fight, and a Wheel of Destiny revelation as its peak.</p>
+  <div class="grid2">
+    <div class="box"><h4>Three rules</h4>
+      <ol style="margin:0;padding-left:20px">
+        <li><b>Cards change how you play, not just your numbers.</b> "Spells recast" and "hits strike twice" instead of "+5% damage".</li>
+        <li><b>Two cards for your vocation, one universal.</b> Leech, crit, prey and luck still exist, in a small shared pool.</li>
+        <li><b>Real Tibia where it exists.</b> Wheel revelations (Avatar of Storm, Twin Bursts, Executioner's Throw, Divine Grenade), Forge tiers (Momentum, Onslaught), Tibia conditions (burning, poisoned, electrified). Invented cards are labelled and go into README's "Not real".</li>
+      </ol>
+    </div>
+    <div class="box"><h4>What you get for it</h4>
+      <ul style="margin:0;padding-left:20px">
+        <li>12 builds instead of 1, and a reason to play the other three characters.</li>
+        <li>Spell grades get a home: grading Energy Beam is a step down the Storm Caller path.</li>
+        <li>Bosses become goals: their chests hand out revelations.</li>
+        <li>Endless runs get a late game: uncapped Mastery cards once a path is complete.</li>
+        <li>A sorcerer feels like a sorcerer from level 9, with its wand.</li>
+      </ul>
+    </div>
+  </div>
+  <table>
+    <tr><th></th><th style="color:var(--sorc)">Sorcerer</th><th style="color:var(--druid)">Druid</th><th style="color:var(--knight)">Knight</th><th style="color:var(--paladin)">Paladin</th></tr>
+    <tr><td><b>Path 1</b></td><td>Storm Caller: beams, chains, free casts</td><td>Frostwarden: slow, root, shatter</td><td>Berserker: twin strikes, Blood Rage</td><td>Marksman: ricochet, pierce, multishot</td></tr>
+    <tr><td><b>Path 2</b></td><td>Death Mage: burns, spell echo, resets</td><td>Grovekeeper: heals that hurt</td><td>Juggernaut: blocks, retaliation</td><td>Skirmisher: spears, kiting</td></tr>
+    <tr><td><b>Path 3</b></td><td>Rune Master: charges, rune weaving</td><td>Earthshaper: poison that spreads</td><td>Warlord: exori rotation, cleave</td><td>Holy Avenger: marks, holy ground</td></tr>
+  </table>
+</section>
+
+<!-- LEVEL UP -->
+<section id="levelup">
+  <h2>3. A level-up, rebuilt</h2>
+  <p>Below is a sorcerer at level 25 with 4 points in Storm Caller. Two cards come from its paths and one from the universal pool. The star marks the card from the path you've invested in most. The bar shows how close you are to a keystone.</p>
+  <div class="levelup">
+    <div class="title">You advanced to Level 25</div>
+    <div class="sub">Choose one · Luck 15 · Reroll (1 left)</div>
+    <div class="cards">
+      <div class="card r1" style="--pc:var(--sorc)">
+        <span class="rar">Rare</span><span class="ribbon">STORM CALLER</span><span class="rec">★</span>
+        <div class="ico">⚡</div>
+        <b class="n">Widening Beam II</b><em>New · minor node</em>
+        <div class="pips">●●○</div>
+        <p>Beams are <b>2 tiles longer</b>: Energy Beam 5 → 7, Great Energy Beam 8 → 10.</p>
+        <div class="prog"><i style="width:50%"></i><u style="left:41.6%"></u></div>
+        <div class="foot">Storm Caller 4 → 6 · keystone unlocked!</div>
+      </div>
+      <div class="card key r2" style="--pc:var(--sorc)">
+        <span class="rar">Epic</span><span class="ribbon">DEATH MAGE</span>
+        <div class="ico">☠</div>
+        <b class="n">Spell Echo II</b><em>New · notable</em>
+        <div class="pips">●●</div>
+        <p>18% of the time an attack spell <b>recasts 0.4 s later at 50% power</b>, free.</p>
+        <div class="prog"><i style="width:17%;background:linear-gradient(90deg,#c0392b,#fff8)"></i><u style="left:41.6%"></u></div>
+        <div class="foot">Death Mage 0 → 2</div>
+      </div>
+      <div class="card r0" style="--pc:#b9a98a">
+        <span class="rar">Common</span><span class="ribbon">UNIVERSAL</span>
+        <div class="ico">◆</div>
+        <b class="n">Basic Void</b><em>Imbuement · slot 2/4</em>
+        <div class="pips">●○○</div>
+        <p><b>3% mana leech</b>: regain mana from the damage you deal.</p>
+        <div class="foot" style="color:var(--dim)">Part of: Mastermind</div>
+      </div>
+    </div>
+  </div>
+  <div class="grid2">
+    <div class="box"><h4>The roll</h4>
+      <ul style="margin:0;padding-left:20px">
+        <li><b>2 vocation cards</b>: path nodes and the grades of your spells. Paths you've invested in weigh x2, and a path with a pending keystone x3.</li>
+        <li><b>1 universal card</b>: imbuement, protection, prey or luck.</li>
+        <li><b>A 4th card</b> with luck, as today (luck / 2 %, at most 50%).</li>
+        <li>Fillers (training, potions, gold) only when nothing else fits, and <b>Mastery</b> replaces them once a path is maxed.</li>
+      </ul>
+    </div>
+    <div class="box"><h4>Where the 8 candidate slots go</h4>
+      <div class="dim" style="font-size:12px">Today</div>
+      <div class="bar"><span style="flex:2;background:#8a7a5e">imbue ×2</span><span style="flex:2;background:var(--sorc)">grades ×2</span><span style="flex:1;background:#8a7a5e">prey</span><span style="flex:2;background:#8a7a5e">run bonus ×2</span><span style="flex:1;background:#8a7a5e">luck</span></div>
+      <div class="dim" style="font-size:12px;margin-top:8px">Proposed (share of the 3 cards)</div>
+      <div class="bar"><span style="flex:2;background:var(--sorc)">your vocation: 2 of 3</span><span style="flex:1;background:#8a7a5e">universal: 1</span></div>
+      <p class="dim" style="font-size:12px">Vocation share goes from 25% to 67%.</p>
+    </div>
+  </div>
+</section>
+
+<!-- TREE -->
+<section id="tree">
+  <h2>4. Paths, keystones, revelations</h2>
+  <p>Every path has the same shape: <b>3 minor nodes</b> (3 ranks each), <b>2 notables</b> (2 ranks, Rare or rarer), <b>a keystone</b> (Epic, from 5 path points) and <b>a revelation</b> (Legendary, from 12 points plus the keystone, one per run). Wheel grades of the path's spells count as points too. You can mix two paths, but you get at most two keystones and one revelation.</p>
+
+  <div class="tree">
+    <div class="path" style="--pc:var(--sorc)">
+      <h4>Storm Caller</h4><div class="why">Energy. Longer beams, chain lightning, free casts.</div>
+      <div class="tier"><div class="node own r0"><i>II</i>Arc Conduit</div><div class="node own r1"><i>II</i>Static Charge</div><div class="node own r1"><i>III</i>Widening Beam</div></div>
+      <div class="tier"><div class="node own r1"><i>I</i>Mana Weave</div><div class="node r1 dim"><i>–</i>Overcharge</div></div>
+      <div class="gate">5 points</div>
+      <div class="tier"><div class="node ks own r2"><i><span>K</span></i>Beam Mastery</div></div>
+      <div class="gate">12 points + keystone</div>
+      <div class="tier"><div class="node rv r3"><i>★</i>Avatar of Storm</div></div>
+    </div>
+    <div class="path" style="--pc:#d0503a">
+      <h4>Death Mage</h4><div class="why">Fire and death. Burns, echoes, cooldown resets.</div>
+      <div class="tier"><div class="node r0 dim"><i>–</i>Searing</div><div class="node r0 dim"><i>–</i>Soul Harvest</div><div class="node r0 dim"><i>–</i>Momentum</div></div>
+      <div class="tier"><div class="node own r1"><i>II</i>Spell Echo</div><div class="node r1 dim"><i>–</i>Hellfire</div></div>
+      <div class="gate">5 points</div>
+      <div class="tier"><div class="node ks r2 dim"><i><span>K</span></i>Drain Body</div></div>
+      <div class="gate">12 points + keystone</div>
+      <div class="tier"><div class="node rv r3 dim"><i>★</i>Ferumbras' Legacy</div></div>
+    </div>
+    <div class="path" style="--pc:#d4a017">
+      <h4>Rune Master</h4><div class="why">Runes. Saved charges, runes off the spell cooldown.</div>
+      <div class="tier"><div class="node own r0"><i>I</i>Runic Mastery</div><div class="node r0 dim"><i>–</i>Thrifty Charges</div><div class="node r0 dim"><i>–</i>Bulk Conjuring</div></div>
+      <div class="tier"><div class="node r1 dim"><i>–</i>Rune Weaving</div><div class="node r1 dim"><i>–</i>Area Runes</div></div>
+      <div class="gate">5 points</div>
+      <div class="tier"><div class="node ks r2 dim"><i><span>K</span></i>Rune Cascade</div></div>
+      <div class="gate">12 points + keystone</div>
+      <div class="tier"><div class="node rv r3 dim"><i>★</i>Arcane Barrage</div></div>
+    </div>
+  </div>
+  <p class="dim" style="font:12.5px Verdana">The example runs in sections 5–8 follow a veteran character (boosts bought, Rookgaard unlocks) through a long run. The levels are illustrative and the card values are the proposed ones.</p>
+  <p class="dim" style="font:12.5px Verdana">A sorcerer at level 34, 11 points in Storm Caller (8 node ranks, plus 3 grades: Energy Beam II and Great Energy Beam I; keystones don't count). One more point and the next boss chest offers Avatar of Storm. Ring colours are the card's rarity: <span class="rt r0">Common</span> minor, <span class="rt r1">Rare</span> notable, <span class="rt r2">Epic</span> keystone, <span class="rt r3">Legendary</span> revelation.</p>
+</section>
+
+<!-- SORCERER -->
+<section class="voc" id="sorcerer" style="--vc:var(--sorc)">
+  <div class="banner"><div class="crest">S</div><div><h2 style="margin:0;border:0">5. Sorcerer: the spellslinger</h2><div class="dim">Fire, energy and death magic, and runes. Today: a stronger wand. Proposed: three ways to break the spellbook.</div></div></div>
+  <div class="cols">
+    <div class="pcol" style="--pc:var(--sorc)"><h4>Storm Caller</h4><div class="sp">Energy Strike, Energy Beam, Great Energy Beam, Energy Wave, Rage of the Skies</div>
+      <ul><li>Arc Conduit: energy hits arc to 1 more creature for 25 / 35 / 50%</li><li>Widening Beam: beams +1 / +2 / +3 tiles</li><li>Mana Weave: 8 / 15% of casts are free</li><li>Overcharge: above 80% mana, +20 / 35% damage for +50% mana</li>
+      <li class="k">Beam Mastery<span class="real">Wheel</span>: beams −2 s cooldown, +8% per extra creature hit</li><li class="l">Avatar of Storm<span class="real">Wheel</span>: every 90 s, 15 s of crits, free casts and −15% damage taken</li></ul></div>
+    <div class="pcol" style="--pc:#d0503a"><h4>Death Mage</h4><div class="sp">Death Strike, Flame Strikes, Fire Wave, Hell's Core, Great Death Beam</div>
+      <ul><li>Searing<span class="real">Tibia burning</span>: fire hits burn for 10 / 20 / 30%</li><li>Momentum<span class="real">Forge</span>: spell kills reset its cooldown 5 / 10 / 15%</li><li>Spell Echo: 10 / 18% recast at 50%</li><li>Soul Harvest: death kills restore 1 / 2 / 3% mana</li>
+      <li class="k">Drain Body<span class="real">Wheel</span>: 4% life / 2% mana leech, +15% under 30% health</li><li class="l">Ferumbras' Legacy: Hell's Core and the Ultimate strikes always echo</li></ul></div>
+    <div class="pcol" style="--pc:#d4a017"><h4>Rune Master</h4><div class="sp">Heavy magic missile, great fireball, thunderstorm, sudden death; conjuring</div>
+      <ul><li>Runic Mastery<span class="real">Wheel</span>: rune damage +8 / 16 / 24%</li><li>Thrifty Charges: 10 / 20 / 30% keep the charge</li><li>Bulk Conjuring: +1 / 2 / 3 runes per conjure (SD 3 → 6)</li><li>Rune Weaving: 25 / 50% of runes skip the attack group cooldown</li>
+      <li class="k">Rune Cascade: every 4th rune fires a free copy</li><li class="l">Arcane Barrage: 3 runes in 6 s → 8 s of 0.5 s rune cooldowns</li></ul></div>
+  </div>
+  <h3>Example run: Storm Caller with a Rune Master splash</h3>
+  <div class="timeline">
+    <div><span class="lv">Lv 8</span>Becomes a sorcerer. <i>Calling: the Flame II</i> from Rookgaard → 2 points in Storm Caller.</div>
+    <div style="--rc:var(--common)"><span class="lv">Lv 9</span><span class="rt r0">Common</span> Arc Conduit I. The wand of vortex is energy, so its bolts already arc.</div>
+    <div style="--rc:var(--rare)"><span class="lv">Lv 11</span><span class="rt r1">Rare</span> Static Charge II: trolls crackle with electrified ticks.</div>
+    <div style="--rc:var(--common)"><span class="lv">Lv 14</span><span class="rt r0">Common</span> Runic Mastery I (heavy magic missiles hit 8% harder).</div>
+    <div style="--rc:var(--rare)"><span class="lv">Lv 18</span><span class="rt r1">Rare</span> Mana Weave I: 8% of casts free. Fewer mana potions.</div>
+    <div style="--rc:var(--epic)"><span class="lv">Lv 23</span>Learns Energy Beam. <span class="rt r2">Epic</span> Widening Beam III: a beam 8 tiles long.</div>
+    <div style="--rc:var(--epic)"><span class="lv">Lv 24</span>Keystone pity: <span class="rt r2">Epic</span> <b>Beam Mastery</b>. Beams every 2 s, +8% per creature in the line.</div>
+    <div style="--rc:var(--rare)"><span class="lv">Lv 29</span><span class="rt r1">Rare</span> Great Energy Beam grade II (Wheel: +12% damage, +18% crit damage) = 2 path points.</div>
+    <div style="--rc:var(--legend)"><span class="lv">Lv 36</span>Kills Demodras. The chest: <span class="rt r3">Legendary</span> <b>Avatar of Storm</b>.</div>
+  </div>
+  <div class="feel">You stop walking at things and start lining them up. Every 90 seconds the screen turns to lightning.</div>
+</section>
+
+<!-- DRUID -->
+<section class="voc" id="druid" style="--vc:var(--druid)">
+  <div class="banner"><div class="crest">D</div><div><h2 style="margin:0;border:0">6. Druid: the warden</h2><div class="dim">Ice, earth, and the best healing in the game. Today: a sorcerer with different colours. Proposed: control, sustain and attrition.</div></div></div>
+  <div class="cols">
+    <div class="pcol" style="--pc:#8fd8ff"><h4>Frostwarden</h4><div class="sp">Ice Strike, Ice Wave, Strong Ice Wave, Eternal Winter; icicle, avalanche</div>
+      <ul><li>Chill<span class="real">Tibia paralysis</span>: ice hits slow 10 / 20 / 30% for 3 s</li><li>Deep Freeze: 4 / 8 / 12% root for 3 s</li><li>Shatter: +10 / 20 / 30% to slowed or rooted (Cripple counts)</li><li>Frost Armor: melee attackers slowed, −5 / 10% damage from them</li>
+      <li class="k">Twin Bursts<span class="real">Wheel</span>: every 12 s an ice spell bursts 3×3 and roots</li><li class="l">Glacial Grasp: Eternal Winter every 20 s, roots, frozen kills burst</li></ul></div>
+    <div class="pcol" style="--pc:#6fcf5a"><h4>Grovekeeper</h4><div class="sp">Healing spells and runes, Mass Healing, Recovery</div>
+      <ul><li>Regrowth: heals leave a 6 s HoT for 10 / 20 / 30%</li><li>Nature's Splash: overheal hits adjacent creatures for 50 / 75 / 100% as earth</li><li>Wellspring: mana regeneration +15 / 30 / 45%</li><li>Deep Roots: heals +10 / 20% while standing still</li>
+      <li class="k">Nature's Embrace: every heal pulses 40% of itself as earth within 2 tiles</li><li class="l">Blessing of the Grove<span class="real">Wheel</span>: +25% heals, overheal shield, every 3rd heal double</li></ul></div>
+    <div class="pcol" style="--pc:#b08a3a"><h4>Earthshaper</h4><div class="sp">Terra Strike, Terra Wave, Wrath of Nature; stalagmite, stone shower</div>
+      <ul><li>Venom<span class="real">Tibia poison</span>: earth hits poison for 15 / 25 / 35%</li><li>Contagion: poison passes to 1 / 2 / 3 neighbours on death</li><li>Spore Field<span class="real">poison field</span>: Terra Wave leaves 1 / 2 / 3 fields</li><li>Rot: poisoned creatures deal 8 / 15% less</li>
+      <li class="k">Plague Bearer: your poisons stack and tick 25% faster</li><li class="l">Avatar of Nature<span class="real">Wheel</span>: 15 s of crits and double poison ticks</li></ul></div>
+  </div>
+  <h3>Example run: Grovekeeper, the healer who kills by healing</h3>
+  <div class="timeline">
+    <div><span class="lv">Lv 8</span>Becomes a druid with <i>Calling: the Grove I</i> → 1 point in Grovekeeper.</div>
+    <div style="--rc:var(--rare)"><span class="lv">Lv 9</span><span class="rt r1">Rare</span> Nature's Splash II: Light Healing at full health now singes the wolf next to you.</div>
+    <div style="--rc:var(--common)"><span class="lv">Lv 12</span><span class="rt r0">Common</span> Regrowth I. <span class="rt r0">Common</span> Basic Vampirism (universal).</div>
+    <div style="--rc:var(--common)"><span class="lv">Lv 16</span><span class="rt r0">Common</span> Wellspring I. Auto-combat now casts heals as attacks in a crowd.</div>
+    <div style="--rc:var(--epic)"><span class="lv">Lv 20</span><span class="rt r2">Epic</span> <b>Nature's Embrace</b> (5 points). Intense Healing pulses every creature in 2 tiles.</div>
+    <div style="--rc:var(--rare)"><span class="lv">Lv 30</span><span class="rt r1">Rare</span> Ultimate Healing grade II (Wheel +6%) = 2 points.</div>
+    <div style="--rc:var(--epic)"><span class="lv">Lv 36</span>Mass Healing. <span class="rt r2">Epic</span> Deep Roots II: you plant yourself in the Orc Fortress gate.</div>
+    <div style="--rc:var(--legend)"><span class="lv">Lv 41</span>The Old Widow's chest: <span class="rt r3">Legendary</span> <b>Blessing of the Grove</b>.</div>
+  </div>
+  <div class="feel">The only vocation that wins by standing still and refusing to die. Crowds that should kill you feed you instead.</div>
+</section>
+
+<!-- KNIGHT -->
+<section class="voc" id="knight" style="--vc:var(--knight)">
+  <div class="banner"><div class="crest">K</div><div><h2 style="margin:0;border:0">7. Knight: the wall and the blade</h2><div class="dim">Axes, swords, clubs and a shield. Today: up to ~50 skill-advance picks an hour, all leech, gold and protection. Proposed: three ways to stand in the middle.</div></div></div>
+  <div class="cols">
+    <div class="pcol" style="--pc:#e03c31"><h4>Berserker</h4><div class="sp">Berserk, Fierce Berserk, Annihilation, Blood Rage</div>
+      <ul><li>Twin Strike: 8 / 14 / 20% of weapon attacks hit twice</li><li>Bloodlust<span class="real">utito tempo</span>: Blood Rage +2/4/6 s, damage taken 115% → 100%</li><li>Frenzy: +3 / 5 / 7% melee per adjacent creature (4 max)</li><li>Rampage: kills extend Blood Rage and heal 2 / 4%</li>
+      <li class="k">Battle Instinct<span class="real">Wheel name</span>: surrounded hits cleave 50% to all</li><li class="l">Avatar of Steel<span class="real">Wheel</span>: 15 s of crits, −15% damage, shield kept in Blood Rage</li></ul></div>
+    <div class="pcol" style="--pc:#9aa7b0"><h4>Juggernaut</h4><div class="sp">Wound Cleansing family, Protector, Recovery</div>
+      <ul><li>Iron Wall<span class="real">blockCount</span>: +1 / 2 / 3 max blocks (2 → 5)</li><li>Retaliation: 6 / 12 / 18% strike back for a full attack</li><li>Bulwark<span class="real">utamo tempo</span>: Protector +3/6/9 s, dealt 65% → 95%</li><li>Shield Bash: blocks hurt the attacker</li>
+      <li class="k">Battle Healing<span class="real">Wheel</span>: 1% health per adjacent creature every 2 s</li><li class="l">Combat Mastery<span class="real">Wheel</span>: Protector costs no damage, 5 blocks → 300% sweep</li></ul></div>
+    <div class="pcol" style="--pc:#e08a2c"><h4>Warlord</h4><div class="sp">Brutal Strike, Whirlwind Throw, Groundshaker, Front Sweep</div>
+      <ul><li>Weapon Drill: exori cooldowns −0.5 / 1 / 1.5 s</li><li>Cleave: weapon attacks hit 1 more for 25 / 40 / 55%</li><li>Onslaught<span class="real">Forge</span>: 4 / 8 / 12% of hits deal +60%</li><li>Shockwave: Groundshaker 5×5, roots 1 / 2 s</li>
+      <li class="k">Weapon Dance: each exori hit takes 1 s off the others</li><li class="l">Executioner's Throw<span class="real">Wheel spell</span>: every 18 s, 300% (+100% on low health), bounces</li></ul></div>
+  </div>
+  <h3>Example run: Berserker</h3>
+  <div class="timeline">
+    <div><span class="lv">Lv 8</span>Knight with an axe. <i>Calling: the Blade II</i> → 2 points in Berserker.</div>
+    <div style="--rc:var(--common)"><span class="lv">Axe 22</span><span class="rt r0">Common</span> Twin Strike I. Skill advances are picks too, and now they're axe picks.</div>
+    <div style="--rc:var(--rare)"><span class="lv">Lv 11</span><span class="rt r1">Rare</span> Frenzy II: wolves around you are a damage buff.</div>
+    <div style="--rc:var(--common)"><span class="lv">Lv 13</span><span class="rt r0">Common</span> Basic Vampirism (universal): leech has a single home now.</div>
+    <div style="--rc:var(--epic)"><span class="lv">Axe 31</span><span class="rt r2">Epic</span> <b>Battle Instinct</b>: in a crowd, every swing cleaves.</div>
+    <div style="--rc:var(--common)"><span class="lv">Lv 35</span>Berserk learned. <span class="rt r0">Common</span> Berserk grade I (Wheel +5.5%, +13.2% crit damage).</div>
+    <div style="--rc:var(--rare)"><span class="lv">Lv 60</span>Blood Rage. <span class="rt r1">Rare</span> Bloodlust II: 14 s of rage at 105% damage taken.</div>
+    <div style="--rc:var(--legend)"><span class="lv">Lv 62</span>A boss chest: <span class="rt r3">Legendary</span> <b>Avatar of Steel</b>.</div>
+  </div>
+  <div class="feel">The Berserker wants the crowd, the Juggernaut doesn't care about it, and the Warlord's exori never stops. Three knights who walk the same map in three different ways.</div>
+</section>
+
+<!-- PALADIN -->
+<section class="voc" id="paladin" style="--vc:var(--paladin)">
+  <div class="banner"><div class="crest">P</div><div><h2 style="margin:0;border:0">8. Paladin: the hunter</h2><div class="dim">Spears, bows and holy magic. Today: spear damage and potions. Proposed: geometry, distance and marks.</div></div></div>
+  <div class="cols">
+    <div class="pcol" style="--pc:#c7e36b"><h4>Marksman</h4><div class="sp">Weapon attacks, Sharpshooter</div>
+      <ul><li>Ricochet: 10 / 20 / 30% bounce for 60%</li><li>Piercing Shot: hit the one behind for 30 / 45 / 60%</li><li>Steady Aim: +5 / 10 / 15% hit chance</li><li>Multishot: 15 / 30% fire at 2 more</li><li>Deadeye<span class="real">utito tempo san</span>: Sharpshooter longer, no slow at II</li>
+      <li class="k">Ballistic Mastery<span class="real">Wheel</span>: ammo crits 10%, +30% crit damage</li><li class="l">Avatar of Light<span class="real">Wheel</span>: 15 s of triple shots that always crit</li></ul></div>
+    <div class="pcol" style="--pc:#5fd3a6"><h4>Skirmisher</h4><div class="sp">Ethereal Spear, Strong Ethereal Spear, spears</div>
+      <ul><li>Spear Recovery<span class="real">breakchance</span>: 20 / 40 / 60% of broken spears survive</li><li>Hit and Run: +10 / 20 / 30% on the shot after a step</li><li>Light Feet: +10 / 20 / 30 speed with a creature near</li><li>Evasion: 5 / 10% dodge while moving</li>
+      <li class="k">Positional Tactics<span class="real">Wheel</span>: +20% at 4+ tiles, −10% taken from 2+</li><li class="l">Spear Storm: Strong Ethereal Spear every 4 s, hits all within 5</li></ul></div>
+    <div class="pcol" style="--pc:#ffe08a"><h4>Holy Avenger</h4><div class="sp">Divine Missile, Divine Caldera, holy missile rune, Salvation</div>
+      <ul><li>Holy Mark: Divine Missile marks, +8 / 14 / 20% from everything</li><li>Consecration: Caldera leaves holy ground (10 / 20 / 30% per s)</li><li>Zeal: +6 / 12 / 18% holy vs undead and demons</li><li>Absolution: heals +15 / 30% and pulse holy</li>
+      <li class="k">Divine Empowerment<span class="real">Wheel</span>: every 30 s, +25% damage ground</li><li class="l">Divine Grenade<span class="real">Wheel spell</span>: every 15 s, 400% on the marked</li></ul></div>
+  </div>
+  <h3>Example run: Skirmisher</h3>
+  <div class="timeline">
+    <div><span class="lv">Lv 8</span>Paladin with 10 spears. <i>Calling: the Bow I</i> → 1 point in Skirmisher.</div>
+    <div style="--rc:var(--rare)"><span class="lv">Lv 9</span><span class="rt r1">Rare</span> Spear Recovery II: 40% of broken spears survive. No more running out at the Wolf Den.</div>
+    <div style="--rc:var(--common)"><span class="lv">Dist 20</span><span class="rt r0">Common</span> Hit and Run I: steering is now damage.</div>
+    <div style="--rc:var(--common)"><span class="lv">Lv 14</span><span class="rt r0">Common</span> Light Feet I. Prey: Amazon ★★★★★★ (universal).</div>
+    <div style="--rc:var(--epic)"><span class="lv">Lv 20</span><span class="rt r2">Epic</span> <b>Positional Tactics</b>: you fight at the edge of the screen.</div>
+    <div style="--rc:var(--rare)"><span class="lv">Lv 23</span>Ethereal Spear. <span class="rt r1">Rare</span> Ethereal Volley I: it hits 2 creatures.</div>
+    <div style="--rc:var(--rare)"><span class="lv">Lv 50</span><span class="rt r1">Rare</span> Evasion I: kiting the Dragon Lair becomes a dance.</div>
+    <div style="--rc:var(--legend)"><span class="lv">Lv 90</span>Strong Ethereal Spear, then Demodras: <span class="rt r3">Legendary</span> <b>Spear Storm</b>.</div>
+  </div>
+  <div class="feel">The paladin is the vocation where steering matters most, and the cards pay you for it. If you stand still, Holy Avenger is the path for you.</div>
+</section>
+
+<!-- ROOKIE -->
+<section id="rookie" style="--vc:var(--rook)">
+  <h2>9. Rookie: the preview (levels 1–8)</h2>
+  <p>Rookgaard gets a small pool: four <b>Callings</b> plus luck, fillers and the run bonuses (reaching level 8 matters most here). Each Calling helps right away, and if it matches the vocation you take at level 8 it becomes path points. It's a preview of the choice, and a reason to plan from level 2.</p>
+  <table>
+    <tr><th>Card</th><th>In Rookgaard (per rank)</th><th>At level 8, if it matches</th></tr>
+    <tr><td style="color:var(--knight)">Calling: the Blade</td><td>+1 melee skill</td><td>Knight: 1 point per rank in Berserker, Juggernaut or Warlord</td></tr>
+    <tr><td style="color:var(--paladin)">Calling: the Bow</td><td>+5% distance hit chance</td><td>Paladin: 1 point per rank in a path you choose</td></tr>
+    <tr><td style="color:var(--sorc)">Calling: the Flame</td><td>+5% spell damage</td><td>Sorcerer: same</td></tr>
+    <tr><td style="color:var(--druid)">Calling: the Grove</td><td>+10% healing</td><td>Druid: same</td></tr>
+  </table>
+  <p class="dim">A character with a locked vocation (meta.ts) sees its own Calling twice as often. Each card shows its vocation's three path names, so a new player learns the paths before they choose.</p>
+</section>
+
+<!-- UNIVERSAL -->
+<section id="universal">
+  <h2>10. The universal pool: small and clean</h2>
+  <p>Shared stats stay, but they get one card per level-up, and each stat has <b>one home</b>.</p>
+  <table>
+    <tr><th>Card</th><th>Today</th><th>Proposed</th></tr>
+    <tr><td>Vampirism, Void, Strike, Swiftness</td><td>Imbuements, 6 slots</td><td>Same values, <b>4 slots</b> (weapon, helmet, armor, boots)</td></tr>
+    <tr><td>Protection</td><td>6 separate imbuements</td><td><b>1 card</b>, element from the zone: Dragon Hide in the Dragon Lair, Lich Shroud in the Vampire Crypt (3 / 8 / 15%)</td></tr>
+    <tr><td>Elemental and skill imbuements</td><td>Imbuements</td><td>Kept, inside the 4 slots</td></tr>
+    <tr><td>Prey · Luck</td><td>1 card each</td><td>Unchanged</td></tr>
+    <tr><td>Run bonuses (XP, gold, loot, training)</td><td>Up to 2 per level-up</td><td><b>Moved to boss chests</b> and Rookgaard</td></tr>
+    <tr><td>Training · potions · gold</td><td>Fillers</td><td>Unchanged. <b>Mastery</b> (uncapped +2% per stack to your path) replaces them late in the run</td></tr>
+    <tr><td><span class="rt r3">Gift of Life</span><span class="real">Wheel</span></td><td>—</td><td>Legendary-only, every vocation: once per run, survive a lethal hit at 1 HP, heal 30%, 2 s immune</td></tr>
+  </table>
+</section>
+
+<!-- SYSTEMS -->
+<section id="systems">
+  <h2>11. Imbuements, charms, grades, prey, luck, boosts, evolutions</h2>
+  <table>
+    <tr><th>System</th><th>Change</th><th>Why</th></tr>
+    <tr><td><b>Imbuements</b></td><td>6 → 4 slots, protections merged, still 3 tiers (Basic / Intricate / Powerful at real values)</td><td>Imbuements are your gear, the always-on stats. A smaller footprint leaves room for the build</td></tr>
+    <tr><td><b>Charms</b></td><td>Unslotted, 3 tiers, from bestiary stages, as today. <b>Vampiric Embrace and Void's Call are removed</b>, and Low Blow works with any crit source</td><td>Charms are the creature layer: procs. They stop duplicating imbuement leech at an eighth of the value</td></tr>
+    <tr><td><b>Spell grades</b></td><td>Real Wheel data, unchanged values. <b>Every gradable spell belongs to one path</b>, and each grade is a path point. Grade cards are vocation cards</td><td>The Wheel of Destiny is already a class-focus system. Paths give its grades a direction</td></tr>
+    <tr><td><b>Prey</b></td><td>Unchanged, universal</td><td>It's about the zone, not the vocation</td></tr>
+    <tr><td><b>Luck</b></td><td>Unchanged. It now also speeds up keystones (Epic 7% → 15% at 50 luck)</td><td>The Luck boost finally pays off in build terms</td></tr>
+    <tr><td><b>Boosts</b></td><td>Unchanged. New soul track <b>Path Attunement</b>: start with 1 / 2 / 3 points in a path (150 / 400 / 1000 souls)</td><td>Meta progression that serves the build</td></tr>
+    <tr><td><b>Evolutions</b></td><td>Economy evolutions unchanged. Blood Rage needs Powerful Vampirism + Battle Instinct; Mastermind needs Magic Training 10 + Void + a mage keystone; Elemental Burst needs a Marksman or Warlord keystone. The evolution "Avatar of Steel" becomes <b>Steel Skin</b></td><td>Evolutions become a build's finishing move, not a stat combo</td></tr>
+    <tr><td><b>Caps</b></td><td><b>Caps on cards, no cap on the run.</b> Nodes have 1–3 ranks, Mastery is uncapped</td><td>Endless runs need a late game. Individual cards need a ceiling to stay balanced</td></tr>
+  </table>
+</section>
+
+<!-- RARITY -->
+<section id="rarity">
+  <h2>12. What rarity means now</h2>
+  <p>Today rarity is a multiplier, and three-tier cards cut it off, so Legendary means nothing on the cards that matter. In my system <b>rarity decides what kind of card it is</b>. The odds and luck stay exactly as they are (<code>rarity.ts</code>).</p>
+  <table>
+    <tr><th>Rarity</th><th class="num">Odds (luck 0 → 50)</th><th>Path card</th><th>Universal card</th></tr>
+    <tr><td class="rt r0">Common</td><td class="num">70% → 50%</td><td>+1 rank of a minor node, or +1 grade</td><td>+1 tier / x1, as today</td></tr>
+    <tr><td class="rt r1">Rare</td><td class="num">22% → 31.4%</td><td>+2 ranks, a notable's rank I, or +2 grades</td><td>+2 tiers / x2</td></tr>
+    <tr><td class="rt r2">Epic</td><td class="num">7% → 15%</td><td>+3 ranks, a notable maxed, or <b>a keystone</b> (half of Epic rolls once you have 5 points)</td><td>+3 tiers / x3</td></tr>
+    <tr><td class="rt r3">Legendary</td><td class="num">1% → 3.6%</td><td><b>A revelation</b> (12 points + keystone)</td><td>x5 on uncapped cards, and Gift of Life</td></tr>
+  </table>
+  <div class="grid2">
+    <div class="box"><h4>Never stuck on luck</h4>Once you have 5 points (and know a spell the keystone needs), the <b>keystone is guaranteed within 3 level-ups</b>. At 12 points, the next <b>boss chest offers your revelation</b> against two Epic cards. Today 60% of chests give a single pick. Bosses become something to plan a run around.</div>
+    <div class="box"><h4>Legendary is an event</h4>Avatar of Storm, Twin Bursts' big brother, Executioner's Throw, Divine Grenade: real Wheel revelations, one per run. When the orange frame shows up, the run changes.</div>
+  </div>
+</section>
+
+<!-- AUTO -->
+<section id="auto">
+  <h2>13. Hands-off players get it too</h2>
+  <p>Combat is fully automatic (<code>src/autocast.ts</code>), so every card has to pay off for someone who only steers.</p>
+  <ul>
+    <li><b>Procs need nothing.</b> Free casts, echoes, twin strikes, cleave, ricochet, burns, poison and blocks all live inside <code>Game.cast</code> and <code>weaponHit</code>.</li>
+    <li><b>Spell choice follows the build.</b> <code>expected()</code> gets multiplied by the path's value (echo chance, chain targets, Runic Mastery, Mastery stacks), so a Storm Caller casts beams. The 0.9 rune penalty rises with Thrifty Charges, so a Rune Master leans on runes.</li>
+    <li><b>Stance thresholds move into path data:</b> Battle Instinct starts Blood Rage with 1 adjacent creature (instead of 2), Juggernaut starts Protector at 60% health (instead of 45%), and Grovekeeper heals at 80% (instead of 60%) and <b>casts heals as attacks</b> when creatures are near.</li>
+    <li><b>Avatars and auto spells fire on their own</b> when something is within 4 tiles.</li>
+    <li><b>Movement cards are only 4 of 84</b>, and chase mode counts as moving. Standing players have Holy Avenger and Grovekeeper's Deep Roots.</li>
+    <li>The level-up screen <b>stars the card from your main path</b>.</li>
+  </ul>
+</section>
+
+<!-- WHY -->
+<section id="why">
+  <h2>14. Why this, not that</h2>
+  <table>
+    <tr><th>Alternative</th><th>What it gets right</th><th>Why paths beat it</th></tr>
+    <tr><td>A deeper shared pool: more stats, more cards</td><td>Cheap, no per-vocation work</td><td>It makes the convergence worse. Four characters still play one game, with more ways to type "+5%"</td></tr>
+    <tr><td>A between-runs talent wheel (meta tree)</td><td>Long-term goals</td><td>The fun happens <i>in</i> the run, at level-ups. Path Attunement and the Codex give meta goals on top of paths anyway</td></tr>
+    <tr><td>More Vampire Survivors evolutions</td><td>Big moments</td><td>Evolutions are rare (boss chests) and mostly economy. Paths make every level-up a build decision, and revelations are evolution-sized moments that fit the class</td></tr>
+    <tr><td>Rebalancing numbers and rarity only</td><td>Smallest change</td><td>It fixes Legendary but not the core problem: the cards don't care what vocation you are</td></tr>
+  </table>
+  <div class="parch"><b>The one-line case:</b> we already have four vocations with real Tibia spells and the Wheel of Destiny's class data in the repo. Paths turn that data into four games, so content we already have becomes replay value.</div>
+</section>
+
+<!-- RISKS -->
+<section id="risks">
+  <h2>15. Risks, honestly</h2>
+  <div class="grid2">
+    <div class="box con"><h4>Risks</h4>
+      <ul style="margin:0;padding-left:18px">
+        <li><b>Card count:</b> 84 path cards to balance.</li>
+        <li><b>Proc chains</b> (echo → arc → poison → contagion) can snowball or cost frame time.</li>
+        <li><b>Invented mechanics</b> dilute "real Tibia inside a run".</li>
+        <li><b>Slower leveling</b> without XP run bonuses on level-ups.</li>
+        <li><b>Hands-off players</b> miss movement cards.</li>
+        <li><b>Four vocations = four times the bugs.</b></li>
+      </ul></div>
+    <div class="box pro"><h4>Mitigations</h4>
+      <ul style="margin:0;padding-left:18px">
+        <li>One vocation per phase, each gated on the sim (±15% between paths).</li>
+        <li>Procs never re-proc (<code>from.src</code>), conditions only on primary hits, Contagion max 3, one pending echo per spell. All node effects compile into one <code>Mods</code> object once per pick, so there's no per-hit lookup.</li>
+        <li>Every card carries its origin, and invented ones go into README's "Not real". Values are built on real ones (Onslaught's 60%, Canary's stances, Tibia's condition ticks).</li>
+        <li>Run bonuses move to boss chests, boosts are untouched, and the sim compares level at 60:00.</li>
+        <li>4 of 84 cards are movement cards, chase mode counts, and the Recommended star helps.</li>
+        <li>A <code>PATHS</code> flag keeps today's system live until each vocation passes.</li>
+      </ul></div>
+  </div>
+</section>
+
+<!-- EFFORT -->
+<section id="effort">
+  <h2>16. Effort and rollout</h2>
+  <table>
+    <tr><th>Phase</th><th>Scope</th><th class="num">Dev-days</th></tr>
+    <tr><td>0. Framework</td><td><code>paths.ts</code>, <code>Mods</code>, <code>rollChoices</code> rewrite, pity and chest revelations, card UI, Paths window, sim <code>--path</code> and damage-by-source</td><td class="num">5</td></tr>
+    <tr><td style="color:var(--sorc)">1. Sorcerer</td><td>Hooks in <code>cast()</code>: free cast, echo, chain, overcharge, area growth, runes. Path-aware autocast</td><td class="num">6</td></tr>
+    <tr><td style="color:var(--knight)">2. Knight</td><td>Hooks in <code>weaponHit</code>: double, cleave, Onslaught, blocks, retaliation, stances, Executioner's Throw</td><td class="num">6</td></tr>
+    <tr><td style="color:var(--druid)">3. Druid</td><td>Slow, root, stacking poison, heal hooks, heals as attacks</td><td class="num">7</td></tr>
+    <tr><td style="color:var(--paladin)">4. Paladin</td><td>Ricochet, pierce, multishot, marks, holy ground, Divine Grenade</td><td class="num">6</td></tr>
+    <tr><td>5. Universal and cleanup</td><td>4 slots, protection merge, charm removals, run bonuses into chests, evolutions, Callings, Attunement, Codex, save v4, docs</td><td class="num">4</td></tr>
+    <tr><th colspan="2">Total</th><th class="num">≈ 34 (6–7 weeks)</th></tr>
+  </table>
+  <p>The full engineering plan (types, every hook in <code>game.ts</code>, autocast, save migration, UI, sim targets and the full card tables) is in <a href="IMPLEMENTATION.md">IMPLEMENTATION.md</a>.</p>
+</section>
+
+<!-- ASK -->
+<section class="ask" id="ask">
+  <h2 style="border:0;text-align:center">17. The ask</h2>
+  <div class="big">Give me 11 days: the framework and the Sorcerer.</div>
+  <p class="lead" style="max-width:720px;margin:0 auto">It ships behind a flag, so <code>main</code> stays as it is. You'll get a sorcerer with three paths, a sim report that compares them with today's sorcerer, and a build you can play. If a level-9 Storm Caller doesn't feel different from a level-9 knight, we stop there. If it does, the other three vocations follow at about a week each.</p>
+  <div class="sign">Tomasz "Tom" Wieczorek<small>Class design · Diablo, WoW talent trees, Last Epoch masteries</small></div>
+</section>
+
+</main>
+</div>
+</body>
+</html>

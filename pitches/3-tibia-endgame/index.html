@@ -1,0 +1,775 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Play Tibia's Endgame in 30 Minutes · a progression pitch for Tibia Survivors</title>
+<style>
+:root{
+  --stone:#1b1814; --stone2:#24201a; --stone3:#2e2820; --edge:#0b0907;
+  --parch:#e9dcbc; --parch2:#d8c69c; --ink:#2a2116; --ink2:#5a4a33;
+  --gold:#c9a24a; --gold2:#f0cf73; --gold3:#8a6a26;
+  --text:#e6dcc6; --muted:#a8997c; --dim:#7d705a;
+  --common:#a9a9a9; --rare:#4f8fe6; --epic:#a55fe0; --legendary:#ff9a2e;
+  --green:#4caf50; --red:#d9473b; --purple:#a05cd6; --blue:#3f8fd8;
+  --ok:#7fc56b; --bad:#e0644f;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:16px}
+body{margin:0;color:var(--text);font:15px/1.6 Verdana,Tahoma,"Segoe UI",sans-serif;
+  background:
+    radial-gradient(ellipse at 20% 0%,rgba(201,162,74,.08),transparent 55%),
+    repeating-linear-gradient(0deg,rgba(255,255,255,.012) 0 2px,transparent 2px 4px),
+    repeating-linear-gradient(90deg,rgba(0,0,0,.05) 0 1px,transparent 1px 64px),
+    repeating-linear-gradient(0deg,rgba(0,0,0,.07) 0 1px,transparent 1px 32px),
+    var(--stone);}
+a{color:var(--gold2)}
+h1,h2,h3,h4{font-family:"Palatino Linotype",Palatino,"Book Antiqua",Georgia,serif;color:var(--gold2);letter-spacing:.3px;line-height:1.25}
+h2{font-size:30px;margin:0 0 6px}
+h3{font-size:20px;margin:26px 0 8px}
+h4{font-size:16px;margin:16px 0 6px}
+p{margin:0 0 12px}
+code,kbd{font:12.5px/1.4 Consolas,"Courier New",monospace;background:rgba(0,0,0,.35);border:1px solid #3a3226;border-radius:3px;padding:1px 4px;color:#f2e3bd}
+small,.small{font-size:12.5px;color:var(--muted)}
+.layout{display:grid;grid-template-columns:250px minmax(0,1fr);gap:28px;max-width:1260px;margin:0 auto;padding:22px}
+/* ---------- TOC ---------- */
+nav.toc{position:sticky;top:16px;align-self:start;max-height:calc(100vh - 32px);overflow:auto}
+.win{background:linear-gradient(#2b251d,#221d17);border:1px solid #000;box-shadow:inset 0 0 0 1px #4a3f2e,0 6px 18px rgba(0,0,0,.45);border-radius:2px}
+.win>.title{font:bold 12px Verdana,sans-serif;color:#d9cba8;padding:4px 8px;background:linear-gradient(#3b3326,#2a241b);border-bottom:1px solid #000;box-shadow:inset 0 1px 0 #5b4e38;display:flex;justify-content:space-between;align-items:center}
+.win>.title .btns{display:flex;gap:3px}
+.win>.title .btns i{width:11px;height:11px;border:1px solid #000;background:linear-gradient(#5b4e38,#3a3226);box-shadow:inset 0 0 0 1px #7a6a4e;display:block}
+nav.toc ol{list-style:none;margin:0;padding:8px 6px 10px}
+nav.toc li a{display:block;padding:4px 8px;color:#d6c8a6;text-decoration:none;font-size:12.5px;border-left:2px solid transparent}
+nav.toc li a:hover{background:rgba(201,162,74,.08);border-left-color:var(--gold);color:var(--gold2)}
+nav.toc li a b{color:var(--gold);font-weight:normal;display:inline-block;width:34px}
+nav.toc .sig{padding:8px 12px 12px;border-top:1px solid #3a3226;font-size:11.5px;color:var(--muted)}
+/* ---------- sections ---------- */
+main section{margin:0 0 34px;padding:26px 30px;position:relative}
+main section.panel{background:linear-gradient(180deg,#26211a,#1f1b15);border:1px solid #000;box-shadow:inset 0 0 0 1px #3f3627,0 10px 30px rgba(0,0,0,.35)}
+.kicker{font:bold 11px Verdana,sans-serif;letter-spacing:2px;text-transform:uppercase;color:var(--gold)}
+.lede{font-size:16.5px;color:#efe4cb}
+.parch{background:
+   radial-gradient(ellipse at 30% 20%,rgba(255,255,255,.35),transparent 60%),
+   radial-gradient(ellipse at 80% 90%,rgba(120,80,30,.18),transparent 55%),
+   linear-gradient(#ecdfbf,#dccb9f);
+  color:var(--ink);border:1px solid #6d5631;box-shadow:inset 0 0 30px rgba(110,80,30,.35),0 8px 20px rgba(0,0,0,.4);border-radius:3px;padding:18px 22px}
+.parch h3,.parch h4{color:#6b3f12}
+.parch code{background:rgba(255,255,255,.4);border-color:#b8a172;color:#3b2a12}
+.parch .small,.parch small{color:#6f5b3b}
+/* ---------- hero ---------- */
+.hero{padding:44px 34px 30px!important;overflow:hidden;
+  background:
+   radial-gradient(ellipse at 85% 10%,rgba(255,154,46,.16),transparent 45%),
+   radial-gradient(ellipse at 10% 100%,rgba(79,143,230,.12),transparent 45%),
+   linear-gradient(180deg,#2a241c,#1a1612)!important}
+.hero h1{font-size:46px;margin:6px 0 8px;text-shadow:0 2px 0 #000,0 0 24px rgba(240,207,115,.25)}
+.hero h1 span{color:var(--legendary)}
+.hero .sub{font-size:17px;color:#e8dcc0;max-width:760px}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:22px}
+.stat{background:rgba(0,0,0,.35);border:1px solid #4a3f2e;padding:12px 14px;border-radius:2px}
+.stat b{display:block;font:bold 26px "Palatino Linotype",Georgia,serif;color:var(--gold2)}
+.stat span{font-size:12px;color:var(--muted)}
+.byline{margin-top:18px;font-size:13px;color:var(--muted)}
+/* ---------- generic ---------- */
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.card{background:rgba(0,0,0,.28);border:1px solid #3e3527;border-top:2px solid var(--gold3);padding:14px 16px;border-radius:2px}
+.card h4{margin-top:0}
+.card .num{font:bold 30px "Palatino Linotype",Georgia,serif;color:var(--bad);line-height:1}
+.card.good .num{color:var(--ok)}
+table{border-collapse:collapse;width:100%;font-size:13px;margin:8px 0 14px}
+th,td{padding:6px 9px;border-bottom:1px solid #3a3226;text-align:left;vertical-align:top}
+th{color:var(--gold);font-weight:bold;background:rgba(0,0,0,.25);border-bottom:1px solid #5a4a2e}
+tr:hover td{background:rgba(201,162,74,.04)}
+.parch th{color:#6b3f12;background:rgba(107,63,18,.08);border-bottom-color:#a8905e}
+.parch td{border-bottom-color:#c7b386}
+.tag{display:inline-block;font:bold 10.5px Verdana,sans-serif;padding:1px 6px;border-radius:2px;letter-spacing:.4px;text-transform:uppercase;vertical-align:1px}
+.t-real{background:#1f3a1d;color:#9fe08c;border:1px solid #3d6b37}
+.t-comp{background:#3a321b;color:#f0cf73;border:1px solid #6b5a2d}
+.t-inv{background:#3d1d1a;color:#ff9d8a;border:1px solid #6b3530}
+.c-common{color:var(--common)} .c-rare{color:var(--rare)} .c-epic{color:var(--epic)} .c-legendary{color:var(--legendary)}
+.pill{display:inline-block;padding:2px 9px;border-radius:12px;font-size:12px;border:1px solid}
+.callout{border-left:3px solid var(--gold);background:rgba(201,162,74,.07);padding:10px 14px;margin:12px 0}
+.callout.warn{border-left-color:var(--bad);background:rgba(224,100,79,.07)}
+.quote{font-family:"Palatino Linotype",Georgia,serif;font-style:italic;font-size:18px;color:#f1e4c3;border-left:3px solid var(--legendary);padding:6px 16px;margin:16px 0}
+ul.tight{margin:6px 0 12px;padding-left:20px} ul.tight li{margin:3px 0}
+/* ---------- system ownership ---------- */
+.own{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:14px 0}
+.own .o{padding:14px;border:1px solid #3e3527;background:rgba(0,0,0,.25);border-radius:2px;position:relative}
+.own .o h4{margin:0 0 4px}
+.own .o .role{font-size:12px;color:var(--muted);margin-bottom:6px}
+.own .o .lim{font-size:12.5px;color:#e9d9b0;border-top:1px dashed #4a3f2e;padding-top:6px;margin-top:8px}
+.own .o:before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px}
+.o.w:before{background:linear-gradient(var(--green),var(--red),var(--purple),var(--blue))}
+.o.g:before{background:var(--rare)} .o.f:before{background:var(--legendary)} .o.c:before{background:var(--epic)} .o.p:before{background:var(--ok)} .o.b:before{background:var(--gold)}
+/* ---------- wheel mock ---------- */
+.wheelwrap{display:grid;grid-template-columns:400px 1fr;gap:18px;align-items:start}
+svg.wheel{width:100%;max-width:400px;height:auto;display:block;background:radial-gradient(circle,#211b14 0,#15110c 70%);border:1px solid #000;box-shadow:inset 0 0 0 1px #4a3f2e}
+svg.wheel .wc1{font:bold 22px Georgia,serif;fill:var(--gold2)} svg.wheel .wc2{font:10px Verdana;fill:#a8997c}
+svg.wheel .wl{font:bold 11.5px Verdana} svg.wheel .wl2{font:10.5px Verdana;fill:#a8997c}
+.wside .row{display:flex;justify-content:space-between;gap:8px;padding:5px 8px;border-bottom:1px solid #2f281e;font-size:12.5px}
+.wside .row b{color:#efe2c2;font-weight:normal}
+.bar{height:8px;background:#120f0b;border:1px solid #000;position:relative;margin:4px 0 2px}
+.bar i{position:absolute;left:0;top:0;bottom:0}
+.bar .m{position:absolute;top:-3px;bottom:-3px;width:2px;background:#f0cf73;opacity:.8}
+.wcard{display:flex;gap:10px;padding:9px 10px;margin:8px 0;border:1px solid #4a3f2e;background:linear-gradient(#2c261d,#211c16);cursor:default}
+.wcard:hover{border-color:var(--gold)}
+.wcard .dot{width:14px;height:14px;border-radius:50%;margin-top:3px;flex:none;box-shadow:0 0 0 2px #000}
+.wcard b{color:#f3e6c6;font-size:13px} .wcard div{font-size:12px;color:var(--muted)}
+.wcard .done{color:var(--gold2)}
+/* ---------- imbuement window mock ---------- */
+.imbwrap{display:grid;grid-template-columns:230px 1fr;gap:18px;align-items:start}
+.eq{padding:10px}
+.eqgrid{display:grid;grid-template-columns:repeat(3,58px);grid-auto-rows:58px;gap:6px;justify-content:center}
+.slot{position:relative;background:linear-gradient(#141110,#0d0b09);border:1px solid #000;box-shadow:inset 0 0 0 1px #3d3427,inset 0 0 12px rgba(0,0,0,.8);display:flex;align-items:center;justify-content:center}
+.slot.empty:after{content:attr(data-s);font-size:9.5px;color:#4d4434;text-transform:uppercase}
+.item{width:40px;height:40px;border-radius:3px;position:relative;box-shadow:inset 0 0 0 1px rgba(255,255,255,.12),0 1px 0 #000}
+.item.axe{background:linear-gradient(135deg,transparent 42%,#8b8f97 43% 56%,transparent 57%),linear-gradient(45deg,transparent 30%,#6b4b2a 31% 39%,transparent 40%),radial-gradient(circle at 70% 30%,#c9ced6 0 30%,transparent 31%)}
+.item.helm{background:radial-gradient(ellipse at 50% 60%,#d8b24c 0 45%,transparent 46%),radial-gradient(ellipse at 50% 30%,#f0d27a 0 30%,transparent 31%)}
+.item.arm{background:linear-gradient(#b9bec6,#7c828c);clip-path:polygon(18% 8%,82% 8%,96% 30%,84% 40%,84% 94%,16% 94%,16% 40%,4% 30%)}
+.item.legs{background:linear-gradient(#9aa0a9,#666b73);clip-path:polygon(15% 5%,85% 5%,90% 95%,58% 95%,50% 40%,42% 95%,10% 95%)}
+.item.boots{background:linear-gradient(#8a5a2b,#5a3a1b);clip-path:polygon(25% 5%,60% 5%,60% 60%,95% 70%,95% 95%,20% 95%)}
+.item.shield{background:radial-gradient(circle at 50% 45%,#c9a24a 0 18%,#3b6aa8 19% 60%,#22406a 61%);border-radius:50% 50% 45% 45%}
+.item.amu{background:radial-gradient(circle at 50% 62%,#5ad0c0 0 22%,transparent 23%),linear-gradient(90deg,transparent 47%,#c9a24a 48% 52%,transparent 53%)}
+.item.ring{background:radial-gradient(circle,transparent 0 30%,#d8b24c 31% 48%,transparent 49%)}
+.tierb{position:absolute;right:2px;top:1px;font:bold 10px Verdana;color:#fff;text-shadow:0 0 2px #000,0 0 2px #000}
+.pips{position:absolute;left:3px;bottom:3px;display:flex;gap:2px}
+.pips i{width:7px;height:7px;border:1px solid #000;background:#2b251d;display:block}
+.pips i.b{background:#9aa0a6} .pips i.n{background:#4f8fe6} .pips i.p{background:#ff9a2e}
+.slot.c1{box-shadow:inset 0 0 0 1px var(--common),inset 0 0 12px rgba(0,0,0,.8)}
+.slot.c2{box-shadow:inset 0 0 0 1px var(--rare),inset 0 0 12px rgba(0,0,0,.8)}
+.slot.c3{box-shadow:inset 0 0 0 1px var(--epic),inset 0 0 12px rgba(0,0,0,.8)}
+.slot.c4{box-shadow:inset 0 0 0 1px var(--legendary),inset 0 0 12px rgba(0,0,0,.8)}
+.imb{padding:12px 14px}
+.imb .head{display:flex;gap:12px;align-items:center;border-bottom:1px solid #3a3226;padding-bottom:10px;margin-bottom:10px}
+.imb .head .slot{width:58px;height:58px;flex:none}
+.imb .head b{font-size:15px}
+.isl{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:10px}
+.is{border:1px solid #3e3527;background:rgba(0,0,0,.3);padding:8px;font-size:12px;min-height:76px}
+.is.sel{border-color:var(--gold);box-shadow:0 0 0 1px var(--gold3) inset}
+.is .nm{font-weight:bold;color:#f3e6c6}
+.is .tr{font-size:11px;letter-spacing:.5px;text-transform:uppercase}
+.choices{display:flex;flex-wrap:wrap;gap:5px;margin:6px 0 10px}
+.choices span{font-size:11.5px;padding:3px 7px;border:1px solid #4a3f2e;background:#1a1612;color:#d8cba9}
+.choices span.on{border-color:var(--gold);color:var(--gold2);background:#2a2217}
+.choices span.off{opacity:.35;text-decoration:line-through}
+.cost{display:grid;grid-template-columns:1fr auto;gap:2px 12px;font-size:12.5px;border-top:1px solid #3a3226;padding-top:8px}
+.cost .have{color:var(--ok)} .cost .miss{color:var(--bad)}
+.btn{display:inline-block;margin-top:10px;font:bold 12px Verdana;color:#f4e7c6;padding:6px 14px;background:linear-gradient(#5b4e38,#3a3226);border:1px solid #000;box-shadow:inset 0 0 0 1px #7a6a4e}
+/* ---------- forge ---------- */
+.forge{display:grid;grid-template-columns:1fr auto 1fr auto 1fr;gap:10px;align-items:center;margin:10px 0}
+.forge .fx{text-align:center;font:bold 22px Georgia;color:var(--gold)}
+.forge .fi{border:1px solid #3e3527;background:rgba(0,0,0,.3);padding:10px;text-align:center;font-size:12px}
+.forge .fi .slot{width:58px;height:58px;margin:0 auto 6px}
+/* ---------- vocations ---------- */
+.voc{border:1px solid #3e3527;background:rgba(0,0,0,.25);padding:16px 18px;border-radius:2px}
+.voc h3{margin:0 0 2px}
+.voc .who{font-size:12px;color:var(--muted);margin-bottom:10px}
+.tl{list-style:none;margin:0;padding:0;border-left:2px solid #4a3f2e}
+.tl li{position:relative;padding:4px 0 8px 16px;font-size:13px}
+.tl li:before{content:"";position:absolute;left:-6px;top:9px;width:10px;height:10px;border-radius:50%;background:#2b251d;border:2px solid var(--gold3)}
+.tl li b{color:var(--gold2);font-weight:normal;font-family:Georgia,serif}
+.tl li.rev:before{background:var(--legendary);border-color:#ffd18a}
+/* ---------- before / after ---------- */
+.ba{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.ba ul{list-style:none;margin:0;padding:0}
+.ba li{padding:6px 10px;margin:4px 0;border:1px solid #3e3527;background:rgba(0,0,0,.25);font-size:13px}
+.ba li.gone{text-decoration:line-through;color:#9a8b70}
+.ba li.new{border-color:#3d6b37;background:rgba(63,107,55,.12)}
+.ba li.stay{opacity:.75}
+/* ---------- risks ---------- */
+.risk{display:grid;grid-template-columns:170px 1fr 1fr;gap:0;border:1px solid #3e3527;margin:8px 0}
+.risk>div{padding:10px 12px;font-size:13px}
+.risk>div:first-child{background:rgba(224,100,79,.08);color:#ffcfc4;font-weight:bold;border-right:1px solid #3e3527}
+.risk>div:last-child{background:rgba(127,197,107,.06);border-left:1px solid #3e3527}
+/* ---------- effort ---------- */
+.phase{display:grid;grid-template-columns:44px 1fr 90px;gap:12px;align-items:center;padding:8px 0;border-bottom:1px solid #2f281e;font-size:13px}
+.phase .n{font:bold 20px Georgia;color:var(--gold);text-align:center}
+.phase .d{text-align:right;color:var(--gold2);font-family:Georgia,serif}
+.ask{text-align:center;padding:34px 30px!important;background:radial-gradient(ellipse at 50% 0%,rgba(255,154,46,.15),transparent 60%),linear-gradient(#2a241c,#1c1814)!important}
+.ask h2{font-size:34px}
+.sign{font-family:"Segoe Script","Brush Script MT","Lucida Handwriting",cursive;font-size:30px;color:var(--gold2);margin-top:14px}
+footer{text-align:center;color:var(--dim);font-size:12px;padding:10px 0 40px}
+@media (max-width:1000px){
+  .layout{grid-template-columns:1fr}
+  nav.toc{position:relative;top:0;max-height:none}
+  nav.toc ol{columns:2}
+  .grid2,.grid3,.grid4,.own,.wheelwrap,.imbwrap,.ba,.stats{grid-template-columns:1fr}
+  .risk{grid-template-columns:1fr}
+  .hero h1{font-size:34px}
+}
+</style>
+</head>
+<body>
+<div class="layout">
+
+<nav class="toc win" aria-label="Contents">
+  <div class="title"><span>Pitch: Contents</span><span class="btns"><i></i><i></i></span></div>
+  <ol>
+    <li><a href="#hook"><b>I</b>The hook</a></li>
+    <li><a href="#problems"><b>II</b>What's wrong today</a></li>
+    <li><a href="#vision"><b>III</b>The vision</a></li>
+    <li><a href="#wheel"><b>IV</b>Wheel of Destiny</a></li>
+    <li><a href="#imbue"><b>V</b>Imbuements on gear</a></li>
+    <li><a href="#forge"><b>VI</b>Exaltation Forge</a></li>
+    <li><a href="#charms"><b>VII</b>Charms and bestiary</a></li>
+    <li><a href="#prey"><b>VIII</b>Prey and boosts</a></li>
+    <li><a href="#rarity"><b>IX</b>What rarity becomes</a></li>
+    <li><a href="#vocations"><b>X</b>Four vocations, four runs</a></li>
+    <li><a href="#real"><b>XI</b>Not real → real</a></li>
+    <li><a href="#why"><b>XII</b>Why this, not that</a></li>
+    <li><a href="#risks"><b>XIII</b>Risks, honestly</a></li>
+    <li><a href="#effort"><b>XIV</b>Effort and rollout</a></li>
+    <li><a href="#ask"><b>XV</b>The ask</a></li>
+  </ol>
+  <div class="sig">Pitch 3 of 3 · Ana Lucía "Lu" Ferreira<br>Engineering detail: <a href="IMPLEMENTATION.md">IMPLEMENTATION.md</a></div>
+</nav>
+
+<main>
+
+<!-- ======================================================= I -->
+<section id="hook" class="panel hero">
+  <div class="kicker">Progression rework · pitch 3</div>
+  <h1>Play Tibia's Endgame <span>in 30 Minutes</span></h1>
+  <p class="sub">Tibia already has the best build system any survivors game could want. It's just spread over two years of
+  grinding: the Wheel of Destiny, imbuement slots on real gear, the Exaltation Forge, the bestiary's charms, prey.
+  I want to compress it into one run, keep the real numbers, and let Tibia's own limits make the choices.</p>
+  <div class="stats">
+    <div class="stat"><b>4</b><span>Tibia endgame systems, each with one job</span></div>
+    <div class="stat"><b>0</b><span>invented perks left in the level-up deck</span></div>
+    <div class="stat"><b>176</b><span>items in our loot data with real imbuement slots</span></div>
+    <div class="stat"><b>36</b><span>Wheel slots per vocation, straight from <code>io_wheel.cpp</code></span></div>
+  </div>
+  <p class="quote">"The game's identity is real Tibia rules, yet its progression is the most invented part. I'd flip that."</p>
+  <div class="byline">Ana Lucía "Lu" Ferreira · systems designer · playing since 7.4, running Canary servers since it was OTX</div>
+</section>
+
+<!-- ======================================================= II -->
+<section id="problems" class="panel">
+  <div class="kicker">II · The problem</div>
+  <h2>What's wrong with the level-up today</h2>
+  <p class="lede">Combat, loot, monsters, formulas: all Canary. Then you level up, and you're in a different game.
+  These numbers come from <code>SKILLS.md</code>, <code>character.ts</code> and the README's own "Not real" list.</p>
+
+  <div class="grid3">
+    <div class="card"><div class="num">6</div><h4>Imbuement slots tied to nothing</h4>
+      <p class="small">21 imbuements arrive as cards and fill <code>MAX_SLOTS = 6</code>. A sorcerer holding a wand of inferno
+      (no imbuement slot in Tibia) can carry Powerful Vampirism 25%, Void 8%, Strike +40%, Epiphany +4, Swiftness +30 and
+      Dragon Hide 15%, all at once.</p></div>
+    <div class="card"><div class="num">22</div><h4>Charms on every creature</h4>
+      <p class="small">All 22 playable charms work on everything. Each creature's 5 / 25 / 100 kills in a run offers 3 charm
+      cards: Rookgaard Fields alone (5 creatures) can open 15 charm screens. Low Blow III costs 4,000 charm points in Tibia;
+      here it's one Epic card (7%).</p></div>
+    <div class="card"><div class="num">4→3</div><h4>Four systems, three stats</h4>
+      <p class="small">Crit comes from Strike, Low Blow, Savage Blow, spell grades and Blood Rage. Leech from Vampirism, Void,
+      Vampiric Embrace, Void's Call, grades and Blood Rage. Every system feeds crit, leech or element: picking is accounting.</p></div>
+    <div class="card"><div class="num">1%</div><h4>Legendary that can't exist</h4>
+      <p class="small">Rarity multiplies x1 / x2 / x3 / x5. But imbuements, charms and spell grades have 3 tiers, so a Legendary
+      roll on 3 of the 5 headline systems silently drops to Epic (<code>fitRarity</code>). Rarity means "more", never "different".</p></div>
+    <div class="card"><div class="num">24</div><h4>The Wheel as a lookup table</h4>
+      <p class="small">Only 24 spells get Wheel grades; the rest get an invented +5 / 10 / 15%. No points, no domains, no
+      revelation perks, no avatars. The system that has defined Tibia's vocations since 2023 is a damage table.</p></div>
+    <div class="card"><div class="num">8</div><h4>Invented evolutions</h4>
+      <p class="small">"Avatar of Steel" here is a flat 30% damage cut from Shield Training 10 + a protection imbuement. The real
+      Avatar of Steel is a 15-second, 100%-crit revelation spell. Same name, different thing, and players notice.</p></div>
+  </div>
+  <div class="callout warn"><b>And loot is a stat stick.</b> A dragon slayer (3 imbuement slots in Tibia) and a giant sword
+  differ only by attack in <code>Character.score()</code>. The thing Tibia players care most about when they see a drop
+  (slots, classification, tier) doesn't exist yet. Meanwhile skill advances add a card every 20 s
+  (<code>Game.advance</code>), so at x50 training the deck is mostly filler.</div>
+
+  <h3>Baseline: what the current game does today</h3>
+  <p>I ran the existing campaign sim (<code>npm run sim -- &lt;voc&gt; 30</code>: 30 runs from a fresh account, buying
+  unlocks and boosts in between, each run capped at 60 minutes) on the current code, one campaign per vocation:</p>
+  <table><tr><th>Vocation</th><th>Runs</th><th>Median level, last 10 runs</th><th>Median kills, last 10</th><th>Best run</th><th>Boosts at the end</th></tr><tr><td>Knight</td><td>30</td><td>L46.5</td><td>801</td><td>L62 (run 30, Minotaur Hills)</td><td class="small">gold9 train_axe9 train_shielding9 train_club9 loot9 haste8 xp8</td></tr><tr><td>Paladin</td><td>30</td><td>L35</td><td>749.5</td><td>L48 (run 25, Ancient Tombs)</td><td class="small">gold8 train_distance8 train_shielding8 train_club8 loot7 haste7 xp7</td></tr><tr><td>Sorcerer</td><td>30</td><td>L18</td><td>226.5</td><td>L33 (run 27, Minotaur Hills)</td><td class="small">gold7 train_shielding7 train_club6 train_magic6 loot6 haste6 xp6</td></tr><tr><td>Druid</td><td>30</td><td>L27</td><td>474</td><td>L41 (run 27, Minotaur Hills)</td><td class="small">gold7 train_shielding7 train_club7 train_magic7 loot7 haste7 xp7</td></tr></table>
+
+  <p class="small">Read it as a trend, not a balance verdict: the sim bot steers simply. Two things matter for this pitch:
+  every vocation's build comes from the same pool of cards, and the mages fall far behind with the same meta purchases.
+  Under my proposal each vocation gets its own spine (its Wheel and revelations), and the sim gains columns for each new system
+  (<a href="IMPLEMENTATION.md">IMPLEMENTATION.md §7</a>).</p>
+</section>
+
+<!-- ======================================================= III -->
+<section id="vision" class="panel">
+  <div class="kicker">III · The vision</div>
+  <h2>One run, Tibia's whole endgame, one job per system</h2>
+  <p class="lede">Today four systems compete for the same three stats from the same deck. In Tibia they don't overlap,
+  because each lives somewhere different: on your <b>level</b>, on your <b>gear</b>, on a <b>creature</b>, on your
+  <b>account</b>. I copy that split.</p>
+
+  <div class="own">
+    <div class="o w"><h4>Wheel of Destiny</h4><div class="role">the level-up spine · <span class="tag t-real">real</span></div>
+      Every level gives promotion points for your vocation's wheel: HP, mana, mitigation, convictions, spell augments, and
+      revelation perks at 3 thresholds.<div class="lim">Limit: 800 points; a run reaches 200-300. You commit to 1-2 of 4 domains.</div></div>
+    <div class="o g"><h4>Imbuements on gear</h4><div class="role">what you wear · <span class="tag t-real">real</span></div>
+      Each item has its real slot count (1-3) and allowed types. Loot and the shop decide what you can imbue.
+      <div class="lim">Limit: 9 slots at best (weapon 3, armor 2, helmet 2, shield 1, boots 1), only with the right items.</div></div>
+    <div class="o f"><h4>Exaltation Forge</h4><div class="role">duplicates become procs · <span class="tag t-real">real</span></div>
+      Fuse two identical items to raise the tier: Onslaught, Ruse, Momentum, Transcendence, Amplification.
+      <div class="lim">Limit: the item's real classification caps the tier (1, 2, 3 or 10).</div></div>
+    <div class="o c"><h4>Charms</h4><div class="role">the bestiary's reward · <span class="tag t-real">real</span></div>
+      Completing bestiary entries across runs earns charm points; charms are bought and assigned to one creature each.
+      <div class="lim">Limit: 2 assigned charms (6 with an unlock). Targeted, not global.</div></div>
+    <div class="o p"><h4>Prey</h4><div class="role">this zone's creatures · <span class="tag t-real">real</span></div>
+      Unchanged mechanics (Canary's <code>ioprey.cpp</code>), now the "hunt" card on level-ups; prey wildcards from bosses.
+      <div class="lim">Limit: 3 prey slots.</div></div>
+    <div class="o b"><h4>Boosts</h4><div class="role">the meta lever · <span class="tag t-inv">not real, on purpose</span></div>
+      XP, Loot, Gold, Haste, training, Luck: unchanged. Loot Boost now also feeds the Forge with duplicates.
+      <div class="lim">Limit: level 10 each, as now.</div></div>
+  </div>
+
+  <table>
+    <tr><th>Stat</th><th>Who owns it now</th><th>Scope, so it never double-dips</th></tr>
+    <tr><td>Life / mana leech</td><td>Vampirism / Void on weapon, armor, helmet · Wheel convictions (+0.75% / +0.25%) · Vampiric Embrace</td><td>gear: always · wheel: always, small · charm: <b>one creature</b></td></tr>
+    <tr><td>Critical hits</td><td>Strike on the weapon · Avatar (100% for 15 s) · Combat Mastery · Low Blow / Savage Blow</td><td>gear: always · wheel: a cooldown window · charm: one creature</td></tr>
+    <tr><td>"Hit harder" procs</td><td>Onslaught (weapon tier, +60% damage) · Executioner's Throw / Divine Grenade / Twin Bursts</td><td>forge: chance · wheel: target-health windows</td></tr>
+    <tr><td>"Cast again" procs</td><td>Momentum (helmet tier, -2 s on every cooldown) · Wheel cooldown gems (+Momentum) · Gift of Life (-60 s on all)</td><td>forge + gems, all real</td></tr>
+    <tr><td>Defense</td><td>Protection imbuements · Wheel mitigation · Ruse (armor tier dodge) · Avatar reduction · Dodge / Parry charms</td><td>gear · wheel · forge · one creature</td></tr>
+  </table>
+</section>
+
+<!-- ======================================================= IV -->
+<section id="wheel" class="panel">
+  <div class="kicker">IV · System 1</div>
+  <h2>The Wheel of Destiny becomes the level-up</h2>
+  <p class="lede">The game already reads <code>io_wheel.cpp</code> for spell grades. I want the rest of it: the 36 slots,
+  the four domains, dedication per point, convictions on full slots, revelation perks, gem vessels.</p>
+
+  <div class="wheelwrap">
+    <div class="win">
+      <div class="title"><span>Wheel of Destiny · Elite Knight, level 41</span><span class="btns"><i></i><i></i></span></div>
+      <svg viewBox="0 0 400 400" class="wheel" role="img" aria-label="Compact Wheel of Destiny mock: knight at level 74 with 130 points in the red domain"><path d="M140.6,198.8 A59.4,59.4 0 0 1 198.8,140.6 L199.3,164.4 A35.6,35.6 0 0 0 164.4,199.3 Z" fill="#1d3a20" stroke="#0b0907" stroke-width="1"><title>green ring 1: 0/10</title></path><path d="M113.6,198.2 A86.4,86.4 0 0 1 137.6,140.2 L154.8,156.7 A62.6,62.6 0 0 0 137.4,198.7 Z" fill="#1d3a20" stroke="#0b0907" stroke-width="1"><title>green ring 2: 0/15</title></path><path d="M140.2,137.6 A86.4,86.4 0 0 1 198.2,113.6 L198.7,137.4 A62.6,62.6 0 0 0 156.7,154.8 Z" fill="#1d3a20" stroke="#0b0907" stroke-width="1"><title>green ring 2: 0/15</title></path><path d="M86.6,197.6 A113.4,113.4 0 0 1 100.6,145.4 L121.5,156.8 A89.6,89.6 0 0 0 110.4,198.1 Z" fill="#1d3a20" stroke="#0b0907" stroke-width="1"><title>green ring 3: 0/20</title></path><path d="M103.0,141.3 A113.4,113.4 0 0 1 141.3,103.0 L153.6,123.4 A89.6,89.6 0 0 0 123.4,153.6 Z" fill="#1d3a20" stroke="#0b0907" stroke-width="1"><title>green ring 3: 0/20</title></path><path d="M145.4,100.6 A113.4,113.4 0 0 1 197.6,86.6 L198.1,110.4 A89.6,89.6 0 0 0 156.8,121.5 Z" fill="#1d3a20" stroke="#0b0907" stroke-width="1"><title>green ring 3: 0/20</title></path><path d="M59.6,197.1 A140.4,140.4 0 0 1 98.7,102.8 L115.8,119.3 A116.6,116.6 0 0 0 83.4,197.6 Z" fill="#1d3a20" stroke="#0b0907" stroke-width="1"><title>green ring 4: 0/30</title></path><path d="M102.8,98.7 A140.4,140.4 0 0 1 197.1,59.6 L197.6,83.4 A116.6,116.6 0 0 0 119.3,115.8 Z" fill="#1d3a20" stroke="#0b0907" stroke-width="1"><title>green ring 4: 0/30</title></path><path d="M32.6,196.5 A167.4,167.4 0 0 1 196.5,32.6 L197.0,56.4 A143.6,143.6 0 0 0 56.4,197.0 Z" fill="#1d3a20" stroke="#0b0907" stroke-width="1"><title>green ring 5: 0/40</title></path><path d="M201.2,140.6 A59.4,59.4 0 0 1 259.4,198.8 L235.6,199.3 A35.6,35.6 0 0 0 200.7,164.4 Z" fill="#3d1a17" stroke="#0b0907" stroke-width="1"><title>red ring 1: 10/10</title></path><path d="M201.2,140.6 A59.4,59.4 0 0 1 259.4,198.8 L235.6,199.3 A35.6,35.6 0 0 0 200.7,164.4 Z" fill="#d9473b" opacity="1"/><path d="M201.8,113.6 A86.4,86.4 0 0 1 259.8,137.6 L243.3,154.8 A62.6,62.6 0 0 0 201.3,137.4 Z" fill="#3d1a17" stroke="#0b0907" stroke-width="1"><title>red ring 2: 15/15</title></path><path d="M201.8,113.6 A86.4,86.4 0 0 1 259.8,137.6 L243.3,154.8 A62.6,62.6 0 0 0 201.3,137.4 Z" fill="#d9473b" opacity="1"/><path d="M262.4,140.2 A86.4,86.4 0 0 1 286.4,198.2 L262.6,198.7 A62.6,62.6 0 0 0 245.2,156.7 Z" fill="#3d1a17" stroke="#0b0907" stroke-width="1"><title>red ring 2: 15/15</title></path><path d="M262.4,140.2 A86.4,86.4 0 0 1 286.4,198.2 L262.6,198.7 A62.6,62.6 0 0 0 245.2,156.7 Z" fill="#d9473b" opacity="1"/><path d="M202.4,86.6 A113.4,113.4 0 0 1 254.6,100.6 L243.2,121.5 A89.6,89.6 0 0 0 201.9,110.4 Z" fill="#3d1a17" stroke="#0b0907" stroke-width="1"><title>red ring 3: 20/20</title></path><path d="M202.4,86.6 A113.4,113.4 0 0 1 254.6,100.6 L243.2,121.5 A89.6,89.6 0 0 0 201.9,110.4 Z" fill="#d9473b" opacity="1"/><path d="M258.7,103.0 A113.4,113.4 0 0 1 297.0,141.3 L276.6,153.6 A89.6,89.6 0 0 0 246.4,123.4 Z" fill="#3d1a17" stroke="#0b0907" stroke-width="1"><title>red ring 3: 20/20</title></path><path d="M258.7,103.0 A113.4,113.4 0 0 1 297.0,141.3 L276.6,153.6 A89.6,89.6 0 0 0 246.4,123.4 Z" fill="#d9473b" opacity="1"/><path d="M299.4,145.4 A113.4,113.4 0 0 1 313.4,197.6 L289.6,198.1 A89.6,89.6 0 0 0 278.5,156.8 Z" fill="#3d1a17" stroke="#0b0907" stroke-width="1"><title>red ring 3: 20/20</title></path><path d="M299.4,145.4 A113.4,113.4 0 0 1 313.4,197.6 L289.6,198.1 A89.6,89.6 0 0 0 278.5,156.8 Z" fill="#d9473b" opacity="1"/><path d="M202.9,59.6 A140.4,140.4 0 0 1 297.2,98.7 L280.7,115.8 A116.6,116.6 0 0 0 202.4,83.4 Z" fill="#3d1a17" stroke="#0b0907" stroke-width="1"><title>red ring 4: 30/30</title></path><path d="M202.9,59.6 A140.4,140.4 0 0 1 297.2,98.7 L280.7,115.8 A116.6,116.6 0 0 0 202.4,83.4 Z" fill="#d9473b" opacity="1"/><path d="M301.3,102.8 A140.4,140.4 0 0 1 340.4,197.1 L316.6,197.6 A116.6,116.6 0 0 0 284.2,119.3 Z" fill="#3d1a17" stroke="#0b0907" stroke-width="1"><title>red ring 4: 0/30</title></path><path d="M203.5,32.6 A167.4,167.4 0 0 1 367.4,196.5 L343.6,197.0 A143.6,143.6 0 0 0 203.0,56.4 Z" fill="#3d1a17" stroke="#0b0907" stroke-width="1"><title>red ring 5: 0/40</title></path><path d="M259.4,201.2 A59.4,59.4 0 0 1 201.2,259.4 L200.7,235.6 A35.6,35.6 0 0 0 235.6,200.7 Z" fill="#2f1d3f" stroke="#0b0907" stroke-width="1"><title>purple ring 1: 2/10</title></path><path d="M240.4,200.8 A40.36,40.36 0 0 1 200.8,240.4 L200.7,235.6 A35.6,35.6 0 0 0 235.6,200.7 Z" fill="#a05cd6" opacity="0.75"/><path d="M286.4,201.8 A86.4,86.4 0 0 1 262.4,259.8 L245.2,243.3 A62.6,62.6 0 0 0 262.6,201.3 Z" fill="#2f1d3f" stroke="#0b0907" stroke-width="1"><title>purple ring 2: 0/15</title></path><path d="M259.8,262.4 A86.4,86.4 0 0 1 201.8,286.4 L201.3,262.6 A62.6,62.6 0 0 0 243.3,245.2 Z" fill="#2f1d3f" stroke="#0b0907" stroke-width="1"><title>purple ring 2: 0/15</title></path><path d="M313.4,202.4 A113.4,113.4 0 0 1 299.4,254.6 L278.5,243.2 A89.6,89.6 0 0 0 289.6,201.9 Z" fill="#2f1d3f" stroke="#0b0907" stroke-width="1"><title>purple ring 3: 0/20</title></path><path d="M297.0,258.7 A113.4,113.4 0 0 1 258.7,297.0 L246.4,276.6 A89.6,89.6 0 0 0 276.6,246.4 Z" fill="#2f1d3f" stroke="#0b0907" stroke-width="1"><title>purple ring 3: 0/20</title></path><path d="M254.6,299.4 A113.4,113.4 0 0 1 202.4,313.4 L201.9,289.6 A89.6,89.6 0 0 0 243.2,278.5 Z" fill="#2f1d3f" stroke="#0b0907" stroke-width="1"><title>purple ring 3: 0/20</title></path><path d="M340.4,202.9 A140.4,140.4 0 0 1 301.3,297.2 L284.2,280.7 A116.6,116.6 0 0 0 316.6,202.4 Z" fill="#2f1d3f" stroke="#0b0907" stroke-width="1"><title>purple ring 4: 0/30</title></path><path d="M297.2,301.3 A140.4,140.4 0 0 1 202.9,340.4 L202.4,316.6 A116.6,116.6 0 0 0 280.7,284.2 Z" fill="#2f1d3f" stroke="#0b0907" stroke-width="1"><title>purple ring 4: 0/30</title></path><path d="M367.4,203.5 A167.4,167.4 0 0 1 203.5,367.4 L203.0,343.6 A143.6,143.6 0 0 0 343.6,203.0 Z" fill="#2f1d3f" stroke="#0b0907" stroke-width="1"><title>purple ring 5: 0/40</title></path><path d="M198.8,259.4 A59.4,59.4 0 0 1 140.6,201.2 L164.4,200.7 A35.6,35.6 0 0 0 199.3,235.6 Z" fill="#172c40" stroke="#0b0907" stroke-width="1"><title>blue ring 1: 0/10</title></path><path d="M198.2,286.4 A86.4,86.4 0 0 1 140.2,262.4 L156.7,245.2 A62.6,62.6 0 0 0 198.7,262.6 Z" fill="#172c40" stroke="#0b0907" stroke-width="1"><title>blue ring 2: 0/15</title></path><path d="M137.6,259.8 A86.4,86.4 0 0 1 113.6,201.8 L137.4,201.3 A62.6,62.6 0 0 0 154.8,243.3 Z" fill="#172c40" stroke="#0b0907" stroke-width="1"><title>blue ring 2: 0/15</title></path><path d="M197.6,313.4 A113.4,113.4 0 0 1 145.4,299.4 L156.8,278.5 A89.6,89.6 0 0 0 198.1,289.6 Z" fill="#172c40" stroke="#0b0907" stroke-width="1"><title>blue ring 3: 0/20</title></path><path d="M141.3,297.0 A113.4,113.4 0 0 1 103.0,258.7 L123.4,246.4 A89.6,89.6 0 0 0 153.6,276.6 Z" fill="#172c40" stroke="#0b0907" stroke-width="1"><title>blue ring 3: 0/20</title></path><path d="M100.6,254.6 A113.4,113.4 0 0 1 86.6,202.4 L110.4,201.9 A89.6,89.6 0 0 0 121.5,243.2 Z" fill="#172c40" stroke="#0b0907" stroke-width="1"><title>blue ring 3: 0/20</title></path><path d="M197.1,340.4 A140.4,140.4 0 0 1 102.8,301.3 L119.3,284.2 A116.6,116.6 0 0 0 197.6,316.6 Z" fill="#172c40" stroke="#0b0907" stroke-width="1"><title>blue ring 4: 0/30</title></path><path d="M98.7,297.2 A140.4,140.4 0 0 1 59.6,202.9 L83.4,202.4 A116.6,116.6 0 0 0 115.8,280.7 Z" fill="#172c40" stroke="#0b0907" stroke-width="1"><title>blue ring 4: 0/30</title></path><path d="M196.5,367.4 A167.4,167.4 0 0 1 32.6,203.5 L56.4,203.0 A143.6,143.6 0 0 0 197.0,343.6 Z" fill="#172c40" stroke="#0b0907" stroke-width="1"><title>blue ring 5: 0/40</title></path><circle cx="200" cy="200" r="32" fill="#15110c" stroke="#c9a24a" stroke-width="2"/><text x="200" y="196" text-anchor="middle" class="wc1">132</text><text x="200" y="211" text-anchor="middle" class="wc2">points</text><circle cx="200" cy="200" r="172" fill="none" stroke="#5a4a2e" stroke-width="1.5"/><text x="18" y="22" text-anchor="start" class="wl" fill="#4caf50">Gift of Life</text><text x="18" y="35" text-anchor="start" class="wl2">0 / 200</text><text x="382" y="22" text-anchor="end" class="wl" fill="#d9473b">Executioner's Throw</text><text x="382" y="35" text-anchor="end" class="wl2">130 / 200 · II</text><text x="382" y="388" text-anchor="end" class="wl" fill="#a05cd6">Avatar of Steel</text><text x="382" y="375" text-anchor="end" class="wl2">2 / 200</text><text x="18" y="388" text-anchor="start" class="wl" fill="#3f8fd8">Combat Mastery</text><text x="18" y="375" text-anchor="start" class="wl2">0 / 200</text></svg>
+    </div>
+    <div class="wside">
+      <div class="win" style="margin-bottom:12px">
+        <div class="title"><span>Domains</span></div>
+        <div style="padding:8px 10px">
+          <div class="row"><span style="color:var(--red)">Red · Executioner's Throw</span><b>130 / 200 · stage II</b></div>
+          <div class="bar"><i style="width:65%;background:var(--red)"></i><span class="m" style="left:25%"></span><span class="m" style="left:50%"></span></div>
+          <div class="row"><span style="color:var(--purple)">Purple · Avatar of Steel</span><b>2 / 200</b></div>
+          <div class="bar"><i style="width:1%;background:var(--purple)"></i><span class="m" style="left:25%"></span><span class="m" style="left:50%"></span></div>
+          <div class="row"><span style="color:var(--green)">Green · Gift of Life</span><b>0 / 200</b></div>
+          <div class="row"><span style="color:var(--blue)">Blue · Combat Mastery</span><b>0 / 200</b></div>
+          <div class="row"><span>Dedication</span><b>+96 HP · +60 mana · +1.5% mitigation</b></div>
+          <div class="row"><span>Convictions</span><b>Fierce Berserk I · Chivalrous Challenge I · +1 melee · life leech +0.75% · 2 vessels</b></div>
+        </div>
+      </div>
+      <div class="small" style="margin:2px 0 4px">Level 42 · 4 points to place · pick one</div>
+      <div class="wcard"><span class="dot" style="background:var(--red)"></span><div><b>Red · 150 slot (bottom) +4</b>
+        <div>+12 HP · 0 / 30 → 4 / 30 · <span class="done">completes at 30: mana leech +0.25%</span></div></div></div>
+      <div class="wcard"><span class="dot" style="background:var(--purple)"></span><div><b>Purple · 50 slot +4</b>
+        <div>+12 HP · 2 / 10 → 6 / 10 · completes: a gem vessel, opens the 75s</div></div></div>
+      <div class="wcard"><span class="dot" style="background:var(--ok)"></span><div><b>Prey: dragon (6 stars)</b>
+        <div>+17% damage to dragons · 2 of 3 prey slots used</div></div></div>
+    </div>
+  </div>
+
+  <h3>How it plays</h3>
+  <ul class="tight">
+    <li><b>4 promotion points per level from 8</b>, placed through the level-up cards (two reachable slots + a hunt card),
+      or freely in the Wheel window while paused (Tibia lets you respec in a protection zone; the pause menu is ours).</li>
+    <li><b>Fill order is Tibia's</b>: inner ring first (50 → 75 → 100 → 150 → 200, <code>getSlotPrioritaryOrder</code>), so
+      reaching a domain's big 200 slot is a path, not a click.</li>
+    <li><b>Today's spell grades become a consequence.</b> Each augmented spell sits in two slots (Front Sweep: Red 200 and Blue 50),
+      matching the two Wheel grades the game already extracts; the third stays the supreme gem mod. No grade card needed.</li>
+    <li><b>Revelation</b> at 50 / 100 / 200 domain points (real 250 / 500 / 1,000, scaled ÷5): +4 / +9 / +20 flat damage and
+      healing, plus the domain's perk at stage I / II / III.</li>
+    <li><b>Gems</b> from boss chests, one per domain: Lesser, Regular, Greater, with real basic and supreme mods
+      (<code>wheel_gems.cpp</code>). Cooldown gems add <b>Momentum</b>, which is how Tibia does "free casts".</li>
+  </ul>
+
+  <h3>Revelation perks, per vocation (values from <code>player_wheel.cpp</code>)</h3>
+  <table>
+    <tr><th></th><th style="color:var(--red)">Red</th><th style="color:var(--purple)">Purple</th><th style="color:var(--blue)">Blue</th></tr>
+    <tr><td><b>Knight</b></td><td>Executioner's Throw: +100 / 125 / 150% damage to targets at ≤30% health</td><td>Avatar of Steel</td><td>Combat Mastery: two-handed +4 / 8 / 12% crit damage, or one-handed +10 / 20 / 30 defense</td></tr>
+    <tr><td><b>Paladin</b></td><td>Divine Grenade: +30 / 60 / 100% damage</td><td>Avatar of Light</td><td>Divine Empowerment: +8 / 10 / 12% damage on its field</td></tr>
+    <tr><td><b>Sorcerer</b></td><td>Beam Mastery: beams +10 / 12 / 14%, Great Death Beam</td><td>Avatar of Storm</td><td>Drain Body: debuffed targets feed mana leech +2 / 3 / 4% or life leech +3 / 4 / 5%</td></tr>
+    <tr><td><b>Druid</b></td><td>Blessing of the Grove: healing +6 / 9 / 12% (≤60%), +12 / 18 / 24% (≤30%)</td><td>Avatar of Nature</td><td>Twin Bursts: Terra / Ice Burst +20 / 40 / 60% on targets above 60% health</td></tr>
+    <tr><td><b>All</b></td><td colspan="3"><span style="color:var(--green)">Green · Gift of Life</span>: a lethal hit instead heals 20 / 25 / 30% and cuts every cooldown by 60 s. Avatars: 15 s, 100% crit chance, +5 / 10 / 15% crit damage, 5 / 10 / 15% less damage taken.</td></tr>
+  </table>
+
+  <h3>Compression, in one table</h3>
+  <table>
+    <tr><th>Tibia</th><th>Here</th><th></th></tr>
+    <tr><td>1 point per level from 51</td><td>4 points per level from 8 (runs end around L45-50 in the sim, so the Wheel must pay off there)</td><td><span class="tag t-comp">compressed</span></td></tr>
+    <tr><td>Slots 50 / 75 / 100 / 150 / 200, domain 1,000</td><td>10 / 15 / 20 / 30 / 40, domain 200 (÷5)</td><td><span class="tag t-comp">compressed</span></td></tr>
+    <tr><td>Revelation at 250 / 500 / 1,000</td><td>50 / 100 / 200 → stage I at L21, II at L33, III at L58 (~L54 with the scrolls met by then)</td><td><span class="tag t-comp">compressed</span></td></tr>
+    <tr><td>Promotion scrolls 3 / 5 / 9 / 13 / 20</td><td>Same, one per boss tier</td><td><span class="tag t-real">real</span></td></tr>
+    <tr><td>Avatar cooldown 2 h; Gift of Life 30 / 20 / 10 h</td><td>180 / 150 / 120 s; 10 / 7 / 4 min</td><td><span class="tag t-comp">compressed</span></td></tr>
+    <tr><td>Dedication: HP / mana per point</td><td>same value per compressed point; mitigation x5 so a slot keeps its real total</td><td><span class="tag t-comp">compressed</span></td></tr>
+    <tr><td>A level-1000 player fills ~1 domain of 4</td><td>A level-60 run fills ~1 domain of 4</td><td>same shape</td></tr>
+  </table>
+</section>
+
+<!-- ======================================================= V -->
+<section id="imbue" class="panel">
+  <div class="kicker">V · System 2</div>
+  <h2>Imbuements go back on the gear</h2>
+  <p class="lede">Every drop now asks the question Tibia players actually ask: <i>how many slots, and what can go in them?</i>
+  The data is already in <code>items.xml</code> (<code>imbuementslot</code> and its allowed types); we just stopped parsing it.</p>
+
+  <div class="imbwrap">
+    <div class="win eq">
+      <div class="title" style="margin:-10px -10px 10px"><span>Equipment</span><span class="btns"><i></i><i></i></span></div>
+      <div class="eqgrid">
+        <div class="slot c1"><div class="item amu"></div></div>
+        <div class="slot c3"><div class="item helm"></div><span class="tierb">T2</span><span class="pips"><i class="n"></i><i></i></span></div>
+        <div class="slot empty" data-s="bag"></div>
+        <div class="slot c3"><div class="item axe"></div><span class="tierb">T2</span><span class="pips"><i class="p"></i><i class="n"></i><i></i></span></div>
+        <div class="slot c2"><div class="item arm"></div><span class="tierb">T1</span><span class="pips"><i class="p"></i><i class="b"></i></span></div>
+        <div class="slot"><div class="item shield"></div><span class="pips"><i class="n"></i></span></div>
+        <div class="slot c1"><div class="item ring"></div></div>
+        <div class="slot c2"><div class="item legs"></div><span class="tierb">T1</span></div>
+        <div class="slot empty" data-s="ammo"></div>
+        <div class="slot empty" data-s=""></div>
+        <div class="slot c2"><div class="item boots"></div><span class="tierb">T2</span><span class="pips"><i class="b"></i></span></div>
+        <div class="slot empty" data-s=""></div>
+      </div>
+      <p class="small" style="margin:10px 2px 0">Border = classification (<span class="c-common">1</span> <span class="c-rare">2</span>
+      <span class="c-epic">3</span> <span class="c-legendary">4</span>), badge = forge tier, pips = imbuement slots
+      (<span style="color:#9aa0a6">Basic</span> / <span class="c-rare">Intricate</span> / <span class="c-legendary">Powerful</span>).</p>
+    </div>
+
+    <div class="win imb">
+      <div class="title" style="margin:-12px -14px 12px"><span>Imbuing · shrine</span><span class="btns"><i></i><i></i></span></div>
+      <div class="head">
+        <div class="slot c3"><div class="item axe"></div><span class="tierb">T2</span></div>
+        <div><b class="c-epic">Twin Axe</b> <span class="small">· level 50 · classification 3 · tier 2 of 3</span><br>
+          <span class="small">Onslaught 1.05% (×1.054 from T2 boots) · 3 imbuement slots</span></div>
+      </div>
+      <div class="isl">
+        <div class="is"><div class="tr c-legendary">Powerful</div><div class="nm">Vampirism</div>25% life leech</div>
+        <div class="is"><div class="tr c-rare">Intricate</div><div class="nm">Strike</div>10% chance, +15% crit damage</div>
+        <div class="is sel"><div class="tr" style="color:var(--muted)">Empty</div><div class="nm">Choose…</div>allowed below</div>
+      </div>
+      <div class="small">This slot accepts (from <code>items.xml</code>):</div>
+      <div class="choices">
+        <span class="on">Chop · axe +1/2/4</span><span>Scorch</span><span>Frost</span><span>Electrify</span><span>Venom</span><span>Reap</span>
+        <span>Void</span><span class="off">Vampirism (already on)</span><span class="off">Strike (already on)</span><span class="off">Epiphany</span>
+      </div>
+      <div class="cost">
+        <span>Basic Chop: 4× orc tooth</span><span class="have">have 11</span>
+        <span>Intricate: + 5× battle stone</span><span class="miss">have 1 · or 6,000 gold at the shrine</span>
+        <span>Gold (÷10) + protection (100% success)</span><span>500 + 1,000 · 3,000 + 3,000</span>
+        <span>Lasts</span><span>the rest of this run</span>
+      </div>
+      <span class="btn">Imbue Basic</span> <span class="btn">Imbue Intricate</span>
+    </div>
+  </div>
+
+  <h3>Rules (all Tibia's)</h3>
+  <table>
+    <tr><th>Gear</th><th>Slots</th><th>Takes</th><th>Example from our loot data</th></tr>
+    <tr><td>Weapons</td><td>1-3</td><td>elemental damage (one), life / mana leech, critical, its skill</td><td>barbarian axe L20: 2 · Zaoan halberd L25: 3 · dragon slayer L45: 3 · crossbow: 3 · wand of draconia L22: 2 (leech, magic level) · wand of inferno: <b>0</b></td></tr>
+    <tr><td>Armor</td><td>1-2</td><td>life leech, six protections</td><td>magic plate armor, golden armor, blue robe: 2 · dragon scale mail, crown armor: 1</td></tr>
+    <tr><td>Helmets</td><td>1-2</td><td>mana leech + weapon skills / shielding, or mana leech + magic level</td><td>royal helmet: 2 · mage hat: 2 (magic level) · magician hat: 2 (warrior skills, a trap for mages, as in Tibia)</td></tr>
+    <tr><td>Shields, spellbooks</td><td>1</td><td>six protections, shielding</td><td>great shield, mastermind shield, spellbook of warding</td></tr>
+    <tr><td>Boots</td><td>1</td><td>speed, paralysis deflection</td><td>steel boots (Swiftness) · boots of haste (deflection only)</td></tr>
+    <tr><td>Legs</td><td>0</td><td>none: legs are the Transcendence slot</td><td>glacier kilt, crown legs</td></tr>
+  </table>
+  <ul class="tight">
+    <li><b>Max 9 slots</b> worn, only with the right gear, versus today's flat 6 with no gear at all. Swapping an item leaves its imbuements on the old one: keep it or not, a real decision.</li>
+    <li><b>Materials are loot.</b> Basic Chop is orc teeth from the Orc Fortress, Epiphany is elvish talismans from elves, Vampirism is vampire teeth from the crypts. 30 of the 63 material slots drop from our 176 creatures; the rest are bought at the shrine for gold <span class="tag t-comp">shortcut</span>.</li>
+    <li><b>Imbuement scrolls</b> (a real item, <code>imbuement_scrolls.lua</code>) drop from boss chests: a free Intricate or Powerful imbuement for something you wear.</li>
+    <li>Compression: materials ÷5, gold ÷10, protection always paid (no failure screens), duration = the run (real: 20 h).</li>
+  </ul>
+</section>
+
+<!-- ======================================================= VI -->
+<section id="forge" class="panel">
+  <div class="kicker">VI · System 3</div>
+  <h2>The Exaltation Forge: Tibia's answer to "proc" perks</h2>
+  <p class="lede">Every survivors game wants "chance to hit harder" and "chance to cast for free". Tibia has both, on the
+  Forge, with real formulas in <code>config.lua.dist</code> and real hooks in <code>combat.cpp</code> and <code>player.cpp</code>.</p>
+
+  <div class="win" style="padding:12px 14px;margin-bottom:14px">
+    <div class="title" style="margin:-12px -14px 12px"><span>Exaltation Forge · fusion</span><span class="btns"><i></i><i></i></span></div>
+    <div class="forge">
+      <div class="fi"><div class="slot c2"><div class="item helm"></div><span class="tierb">T1</span></div>Royal helmet · tier 1<br><span class="small">Momentum 2.00%</span></div>
+      <div class="fx">+</div>
+      <div class="fi"><div class="slot c2"><div class="item helm"></div><span class="tierb">T1</span></div>Royal helmet · tier 1<br><span class="small">the duplicate</span></div>
+      <div class="fx">→</div>
+      <div class="fi" style="border-color:var(--gold)"><div class="slot c2"><div class="item helm"></div><span class="tierb">T2</span></div><b>Royal helmet · tier 2</b><br><span class="small">Momentum 4.05% · class 2 cap reached</span></div>
+    </div>
+    <div class="cost"><span>Gold (class 2, tier 1 → 2: 5,000,000 ÷ 100)</span><span>50,000</span>
+      <span>Dust (from influenced creatures)</span><span>100 · have 143</span>
+      <span>Success</span><span>50% · 65% with an exalted core (have 2)</span>
+      <span>On failure</span><span>the duplicate is lost, the tier stays <span class="tag t-comp">simplified</span></span></div>
+  </div>
+
+  <table>
+    <tr><th>Tier effect</th><th>Gear</th><th>What it does (Canary)</th><th>T1</th><th>T2</th><th>T3</th><th>T10</th></tr>
+    <tr><td><b>Onslaught</b></td><td>weapon</td><td>chance a hit deals +60% damage</td><td>0.50%</td><td>1.05%</td><td>1.70%</td><td>9.05%</td></tr>
+    <tr><td><b>Ruse</b></td><td>armor</td><td>chance to dodge a hit entirely</td><td>0.50%</td><td>1.03%</td><td>1.62%</td><td>7.51%</td></tr>
+    <tr><td><b>Momentum</b></td><td>helmet</td><td>every 2 s in a fight: chance to cut every spell cooldown by 2 s</td><td>2.00%</td><td>4.05%</td><td>6.20%</td><td>24.05%</td></tr>
+    <tr><td><b>Transcendence</b></td><td>legs</td><td>every 2 s attacking: chance to become your avatar for 7 s (stage III values)</td><td>0.13%</td><td>0.27%</td><td>0.44%</td><td>2.35%</td></tr>
+    <tr><td><b>Amplification</b></td><td>boots</td><td>multiplies the four above</td><td>+2.5%</td><td>+5.4%</td><td>+9.1%</td><td>+57.4%</td></tr>
+  </table>
+  <ul class="tight">
+    <li><b>Classification caps the tier</b>, from <code>item_tiers.lua</code>: class 1 → T1, 2 → T2, 3 → T3, 4 → T10. Our loot has
+      130 class-1, 152 class-2, 23 class-3 and 18 class-4 items (chain bolter L60, ravenwing L65, ghazbaran oyoroi L75, the umbral
+      masters). That cap <i>is</i> the late game: chasing a class-4 piece and feeding it duplicates.</li>
+    <li><b>Mages are different, as in Tibia.</b> Every wand and rod is class 1 (T1 at most), so a sorcerer's Forge is the helmet
+      (Momentum), legs (Transcendence) and boots (Amplification). A paladin's is the chain bolter. Identity for free.</li>
+    <li><b>Dust</b> drops from <i>influenced</i> creatures (the real Forge system: 1-5 stacks, <code>random(stack, 3 × stack)</code>
+      dust); 1 spawn in 8 past Rookgaard <span class="tag t-comp">knob</span>. Cores come from boss chests. Loot Boost makes duplicates common.</li>
+  </ul>
+  <div class="callout">The real proc chances are small, and I'm keeping them. Survivors density does the work: a druid's wave hits
+  8 creatures, each rolling Onslaught; a crowd lands several hits a second, each rolling Ruse. Momentum at 4% every 2 s fires
+  about every 50 s, and it's the one players will feel first. If the sim says it's too subtle, there's one knob
+  (<code>FORGE_SCALE</code>), and it's the first thing I'd look at.</div>
+</section>
+
+<!-- ======================================================= VII -->
+<section id="charms" class="panel">
+  <div class="kicker">VII · System 4</div>
+  <h2>Charms become what they are: the bestiary's reward</h2>
+  <div class="grid2">
+    <div>
+      <p class="lede">In Tibia you finish a bestiary entry, earn charm points, buy a charm, and put it <b>on one creature</b>.
+      That's targeted power you earn by hunting, and it's the perfect meta layer for a roguelite.</p>
+      <ul class="tight">
+        <li><b>Earn</b>: when a creature's kills over all your runs (the save already counts them) reach its real <code>toKill</code>
+          ÷10, its real <code>CharmsPoints</code> pay out once: rat 25 kills → 5 points; dragon lord 100 kills → 25; behemoth 250 → 50.</li>
+        <li><b>Buy</b> between runs on a charm board, at real costs ÷5 (Low Blow 160 / 240 / 800). Buying a major tier gives minor
+          charm echoes (50 / 100 / 200, from <code>iobestiary.cpp</code>) for the minor charms, as in Tibia.</li>
+        <li><b>Assign</b> each charm to one creature: 2 slots, 6 with the "Charm Expansion" unlock (Tibia: free 2, premium 6).
+          Reassign free between runs, for gold in a run.</li>
+      </ul>
+    </div>
+    <div class="parch">
+      <h4 style="margin-top:0">Charm board · between runs</h4>
+      <table>
+        <tr><th>Charm</th><th>Tier</th><th>Assigned to</th></tr>
+        <tr><td>Low Blow</td><td class="c-rare">I</td><td>dragon lord</td></tr>
+        <tr><td>Dodge</td><td class="c-epic">II</td><td>hydra</td></tr>
+        <tr><td>Enflame</td><td class="c-rare">I</td><td><i>empty slot (2 / 2 used)</i></td></tr>
+        <tr><td>Vampiric Embrace</td><td class="c-legendary">III</td><td><i>needs a slot</i></td></tr>
+      </table>
+      <p class="small" style="margin:0">Charm points 214 · echoes 150 · entries complete 31 / 139 · next: Freeze I (64)</p>
+    </div>
+  </div>
+  <p>Why ÷5 on costs: our 139 creatures with a bestiary entry hold 3,215 charm points in all; Canary ships 844 non-boss
+  creatures, about 5x more. Dividing costs by 5 keeps Tibia's proportion of "how much of the board a full bestiary buys".
+  It's the only scaled constant in the charm system. The bestiary window's info reveals use the real <code>FirstUnlock</code> /
+  <code>SecondUnlock</code> ÷10 instead of today's fixed 5 / 25 / 100.</p>
+  <div class="callout"><b>Day-one gift:</b> the save migration (version 3 → 4) pays charm points for every entry an existing
+  player has already completed, from <code>Save.kills</code>. Returning players open the game to a full charm board.</div>
+</section>
+
+<!-- ======================================================= VIII -->
+<section id="prey" class="panel">
+  <div class="kicker">VIII · Kept, sharpened</div>
+  <h2>Prey and boosts</h2>
+  <div class="grid2">
+    <div class="card good"><h4>Prey stays (it's already real)</h4>
+      <p class="small">Damage 2s+5%, defense 2s+10%, experience and loot 3s+10% (<code>ioprey.cpp</code>), 3 slots, creatures of the
+      current zone. It becomes the level-up's <b>hunt card</b>, next to two Wheel cards. New: <b>prey wildcards</b> (real) from boss
+      chests reroll a prey's bonus type. Prey's XP and loot bonuses take over the job of today's invented run bonuses (+20% per pick),
+      which retire.</p></div>
+    <div class="card good"><h4>Boosts stay the meta lever</h4>
+      <p class="small">XP, Loot, Gold, Haste, training: x2 → x50, unchanged. They're the one deliberate non-Tibia lever and the
+      README says so. Luck changes meaning: no multipliers left to scale, so it moves <b>quality</b>: the 4th card, prey star bands,
+      and gem quality from boss chests. Loot Boost gains a second job: duplicates for the Forge.</p></div>
+  </div>
+  <p class="small">Retired: run bonuses, Luck cards, the 8 evolutions (Draken Boots survives as the real item: draken boots, L80,
+  class 2, 1 slot, already in our loot), and skill-advance cards (at x50 training they add a card every 20 s; levels carry the cadence now).
+  Boss chests drop real endgame things instead: a promotion scroll, a gem, exalted cores, sometimes an imbuement scroll or a prey wildcard,
+  and the 35% blessing stays.</p>
+</section>
+
+<!-- ======================================================= IX -->
+<section id="rarity" class="panel">
+  <div class="kicker">IX · Rarity</div>
+  <h2>Rarity stops multiplying and starts meaning something</h2>
+  <p class="lede">Keep the four colours. Drop the multipliers. Each colour becomes a quality Tibia actually has.</p>
+  <table>
+    <tr><th>Colour</th><th>Items: classification (appearances.dat)</th><th>Wheel gems</th><th>Prey</th><th>Charms</th></tr>
+    <tr><td class="c-common"><b>Common</b></td><td>class 1 · tier cap 1</td><td>–</td><td>1-7 stars</td><td>–</td></tr>
+    <tr><td class="c-rare"><b>Rare</b></td><td>class 2 · tier cap 2</td><td>Lesser · 1 basic mod</td><td>6-8 stars</td><td>tier I</td></tr>
+    <tr><td class="c-epic"><b>Epic</b></td><td>class 3 · tier cap 3</td><td>Regular · 2 basic mods</td><td>8-9 stars</td><td>tier II</td></tr>
+    <tr><td class="c-legendary"><b>Legendary</b></td><td>class 4 · tier cap 10</td><td>Greater · + supreme mod</td><td>10 stars</td><td>tier III</td></tr>
+  </table>
+  <p>An orange name on a corpse now means what a Tibia player hopes it means: <i>this can go to tier 10</i>. The classification
+  is already in the client's <code>appearances.dat</code>, which our fetch script reads for stackables (field 48: magic plate armor 2,
+  crossbow 1, magician hat 3, chain bolter 4).</p>
+  <h3>On caps: Tibia's caps are the design</h3>
+  <p>9 imbuement slots at best; tiers capped by classification; 800 Wheel points of which a run reaches 200-300; 2 or 6 charms;
+  3 prey; one gem per domain. Every cap forces a choice, which is exactly what today's "6 slots, then only upgrades" tries to fake.
+  <b>Late-game depth</b> (past level ~70 in an endless run): your second and third domains, Greater gems and their supreme mods,
+  class-4 gear climbing toward tier 10 (Onslaught 9.05%, Momentum 24.05%, Amplification +57.4%) on Loot-Boost duplicates, and the charm
+  board growing across runs. Plenty of depth, and none of it invented.</p>
+</section>
+
+<!-- ======================================================= X -->
+<section id="vocations" class="panel">
+  <div class="kicker">X · Example runs</div>
+  <h2>Four vocations, four different runs</h2>
+  <p class="lede">Class identity comes from the Wheel's slices and revelations, plus what each vocation's gear can take. Levels
+  below assume a mid-meta account; items are real ones from our loot data.</p>
+  <div class="grid2">
+    <div class="voc">
+      <h3>Elite Knight · the executioner</h3><div class="who">Red → Purple · axe · Executioner's Throw, Avatar of Steel</div>
+      <ol class="tl">
+        <li><b>L11</b> Red 50 slot full: mitigation, Fierce Berserk grade I (-30 mana). The 75s follow: capacity, life leech +0.75%.</li>
+        <li><b>L20</b> barbarian axe (class 1, 2 slots): Basic Chop from 4 orc teeth, Basic Vampirism from the shrine.</li>
+        <li class="rev"><b>L21</b> Revelation I: Executioner's Throw. Autocast saves it for targets under 30% health: +100%.</li>
+        <li><b>L30</b> a second royal helmet: fused to T1, Momentum 2%. The throw comes back sooner.</li>
+        <li class="rev"><b>L33</b> Revelation II (+125%); the 100s are done: +1 melee, Chivalrous Challenge I.</li>
+        <li class="rev"><b>L46</b> Purple I: Avatar of Steel, 15 s of 100% crits every 180 s.</li>
+        <li><b>L50</b> twin axe (class 3, 3 slots): Powerful Vampirism, Intricate Strike, Chop. Low Blow charm on dragons.</li>
+        <li class="rev"><b>L71</b> back to Red: the 200 slot, Front Sweep grade I, Revelation III (+150%).</li>
+      </ol>
+    </div>
+    <div class="voc">
+      <h3>Royal Paladin · the artillery</h3><div class="who">Red → Blue · crossbow → chain bolter · Divine Grenade, Divine Empowerment</div>
+      <ol class="tl">
+        <li><b>L11</b> Red 50: Divine Caldera grade I (-20 mana). Red 200 will augment Sharpshooter later.</li>
+        <li><b>L15</b> crossbow (class 1, 3 slots): Precision and Strike. The first imbue that really matters.</li>
+        <li class="rev"><b>L21</b> Revelation I: Divine Grenade, +30%. The opener into every pack.</li>
+        <li class="rev"><b>L33</b> Divine Grenade +60%; Blue starts.</li>
+        <li class="rev"><b>L46</b> Blue I: Divine Empowerment, +8% standing on its field; autocast drops it when the bot holds still.</li>
+        <li><b>L55</b> a <span class="c-legendary">chain bolter</span> drops: class 4, 3 slots, tier cap 10. From now on the run feeds it.</li>
+        <li class="rev"><b>L71</b> Red III: Divine Grenade +100%, Sharpshooter augmented.</li>
+        <li><b>L80</b> chain bolter T3: Onslaught 1.79% with T2 boots, and it can keep going to T10.</li>
+      </ol>
+    </div>
+    <div class="voc">
+      <h3>Master Sorcerer · the beam</h3><div class="who">Red → Purple · wands · Beam Mastery, Avatar of Storm</div>
+      <ol class="tl">
+        <li><b>L8-20</b> Red inner ring: 6 mana per point, then +1 magic level from the Red top 100 slot.</li>
+        <li class="rev"><b>L21</b> Revelation I: Beam Mastery, beams +10%. Great Energy Beam and Great Death Beam carry the run.</li>
+        <li><b>L22</b> wand of draconia (class 1, 2 slots): Void and Epiphany. Mage hat (2 slots): mana leech, magic level.</li>
+        <li class="rev"><b>L33</b> Beam Mastery +12%.</li>
+        <li><b>L40</b> wands cap at tier 1, so the Forge goes to the head: magician hat (class 3) at T2, Momentum 4.05%.</li>
+        <li class="rev"><b>L46</b> Purple I: Avatar of Storm. Every beam crits for 15 s.</li>
+        <li><b>L55</b> glacier kilt T2: Transcendence 0.27%, a surprise avatar now and then.</li>
+        <li class="rev"><b>L71</b> Red III: Beam Mastery +14%, the focus spells augmented.</li>
+      </ol>
+    </div>
+    <div class="voc">
+      <h3>Elder Druid · the twin burst</h3><div class="who">Blue → Red · rods · Twin Bursts, Blessing of the Grove</div>
+      <ol class="tl">
+        <li><b>L11</b> Blue 50 full: Strong Ice Wave grade I (3% mana leech).</li>
+        <li class="rev"><b>L21</b> Revelation I: Twin Bursts. Terra and Ice Burst +20% on fresh targets: autocast opens every pack with them.</li>
+        <li><b>L22</b> northwind rod (class 1, 2 slots): Void and Epiphany.</li>
+        <li class="rev"><b>L33</b> Twin Bursts +40%.</li>
+        <li><b>L40</b> Freeze charm on dragons (Freeze I, 64 points), bought between runs.</li>
+        <li class="rev"><b>L46</b> Red I: Blessing of the Grove: healing climbs as health falls (+12% under 30%).</li>
+        <li><b>L60</b> a Greater gem in Blue: Twin Bursts mastery (+30 domain points) pulls stage III closer.</li>
+      </ol>
+    </div>
+  </div>
+</section>
+
+<!-- ======================================================= XI -->
+<section id="real" class="panel">
+  <div class="kicker">XI · The README</div>
+  <h2>What moves from "Not real" to "real"</h2>
+  <div class="ba">
+    <div>
+      <h4>Today's "Not real" line</h4>
+      <ul>
+        <li class="gone">imbuements as level-up rewards</li>
+        <li class="gone">charms working on every creature (in Tibia you assign each to one)</li>
+        <li class="gone">card rarity</li>
+        <li class="gone">spells without Wheel data getting a +5/10/15% grade</li>
+        <li class="stay">the boosts, luck (stays: the deliberate lever)</li>
+        <li class="stay">quick-looting, the shop in the pause menu, selling anywhere (stay)</li>
+        <li class="stay">diagonal steps, spears coming back, fleeing at the screen edge, spawning around you (stay)</li>
+      </ul>
+    </div>
+    <div>
+      <h4>New "What's real" rows</h4>
+      <ul>
+        <li class="new"><b>Wheel of Destiny</b>: slots, dedication, convictions, revelation perks, gems (<code>io_wheel.cpp</code>, <code>player_wheel.cpp</code>, <code>wheel_gems.cpp</code>)</li>
+        <li class="new"><b>Imbuements</b>: per-item slots and allowed types, tiers, materials (<code>items.xml</code>, <code>imbuements.xml</code>)</li>
+        <li class="new"><b>Exaltation Forge</b>: classification caps, tier formulas, Onslaught / Ruse / Momentum / Transcendence / Amplification (<code>item_tiers.lua</code>, <code>item.cpp</code>, <code>config.lua.dist</code>)</li>
+        <li class="new"><b>Bestiary and charms</b>: entry kill counts, charm points, costs, echoes, one creature per charm (monster files, <code>bestiary_charms.lua</code>, <code>iobestiary.cpp</code>)</li>
+      </ul>
+      <h4>New, honest "Not real" entries</h4>
+      <ul>
+        <li>The compression: Wheel ÷5 at 4 points per level, bestiary kills ÷10, charm costs ÷5, forge gold ÷100, imbuing gold ÷10, materials ÷5, avatar and Gift of Life cooldowns in minutes</li>
+        <li>The shrine selling materials no creature here drops; fusions never losing tier; imbuements lasting the run</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ======================================================= XII -->
+<section id="why" class="panel">
+  <div class="kicker">XII · Alternatives</div>
+  <h2>Why this beats the other ways to fix it</h2>
+  <table>
+    <tr><th></th><th>Rebalance today's cards</th><th>New invented perks / synergies</th><th>Per-vocation invented trees</th><th><b style="color:var(--gold2)">Tibia's endgame, compressed</b></th></tr>
+    <tr><td>Fits "real Tibia rules"</td><td>no</td><td>no, it's further away</td><td>no</td><td><b class="c-legendary">yes: four rows move to "real"</b></td></tr>
+    <tr><td>Fixes the overlap</td><td>no</td><td>adds overlap</td><td>partly</td><td><b>yes: level / gear / creature / account</b></td></tr>
+    <tr><td>Class identity</td><td>no</td><td>if designed</td><td>yes, invented</td><td><b>yes, Tibia's own (4 × 4 revelation perks)</b></td></tr>
+    <tr><td>Makes loot matter</td><td>no</td><td>no</td><td>no</td><td><b>yes: slots, classification, tier</b></td></tr>
+    <tr><td>Design work</td><td>low</td><td>high, endless tuning</td><td>high</td><td><b>data exists; tuning is compression</b></td></tr>
+    <tr><td>Who recognises it</td><td>–</td><td>nobody</td><td>nobody</td><td><b>every current Tibia player</b></td></tr>
+  </table>
+  <p>The audience for "Tibia Survivors" is Tibia players. Show them a Wheel with Executioner's Throw on it and a twin axe with
+  three slots, and they already know how to play. Nothing to teach, and a lot for them to theorycraft.</p>
+</section>
+
+<!-- ======================================================= XIII -->
+<section id="risks" class="panel">
+  <div class="kicker">XIII · Risks</div>
+  <h2>Risks, honestly</h2>
+  <div class="risk"><div>Complexity</div><div>Four systems is a lot for a game where you only steer. The Wheel alone has 36 slots.</div>
+    <div>Each system shows up where it lives: the Wheel on level-ups as 2 cards (the planner is optional), imbuing and forge in pause
+    tabs, charms between runs. The bot plays it all: an "auto" Wheel path per vocation and auto-imbue, the same code the sim uses.</div></div>
+  <div class="risk"><div>Data extraction</div><div>Wheel slot effects are C++ functions, not data. About 17 revelation and augment spells aren't in data.json.</div>
+    <div>Transcribe <code>io_wheel.cpp</code> once (36 × 4 rows) with a hash check that warns when the Canary pin moves. Item slots,
+    classification, bestiary, imbuements and forge are plain data in files we already fetch (<code>items.xml</code>,
+    <code>appearances.dat</code>, monster files).</div></div>
+  <div class="risk"><div>Item instances</div><div>Equipment is item ids today; imbuements and tiers need per-item state. About 40 call sites.</div>
+    <div>Mechanical refactor, phase 1, before anything else. <code>Character.imbued()</code> keeps its signature and reads worn gear,
+    so every combat caller stays untouched.</div></div>
+  <div class="risk"><div>Pacing</div><div>Real values are tuned for months. Early runs could feel bare (no Vampirism card at level 15); the Forge could be too subtle.</div>
+    <div>Every compression is one named constant (Wheel scale, points per level, kill ÷10, cost ÷5, gold ÷10 / ÷100, influenced rate),
+    tuned against the sim's new columns. Gates: first imbue by ~L20, revelation I by ~L33, ±15% damage vs baseline at L30 / 60 / 100.</div></div>
+  <div class="risk"><div>Dedication weight</div><div>Wheel HP at x5 per point is far heavier against a level-100 health pool than in Tibia.</div>
+    <div><code>DEDICATION_SCALE</code> between 2 and 5, set by the sim; convictions and revelations stay at real values.</div></div>
+  <div class="risk"><div>Losing the dopamine</div><div>No more x5 Legendary cards.</div>
+    <div>The colours move to drops: an orange chain bolter, a Greater gem, a 10-star prey, an "Onslaught!" number in gold, Avatar
+    triggering mid-crowd. Fewer slot-machine cards, more moments like that.</div></div>
+</section>
+
+<!-- ======================================================= XIV -->
+<section id="effort" class="panel">
+  <div class="kicker">XIV · Effort</div>
+  <h2>Effort and rollout</h2>
+  <p>One developer, phases that each merge to main and leave the game playable (squash-merged PRs, Netlify deploys main).</p>
+  <div class="phase"><div class="n">0</div><div><b>Data</b>: imbuement slots, classification, bestiary, charm points, imbuements.xml, forge config; wheel.ts transcription; new spells</div><div class="d">4-5 days</div></div>
+  <div class="phase"><div class="n">1</div><div><b>Gear</b>: item instances, Imbuing tab, scrolls; imbuement cards and evolutions retired</div><div class="d">7-9 days</div></div>
+  <div class="phase"><div class="n">2</div><div><b>Wheel</b>: state, level-up cards, window, dedication and convictions; augments replace grade cards</div><div class="d">6-8 days</div></div>
+  <div class="phase"><div class="n">3</div><div><b>Revelations</b>: 4 × 4 perks, avatars, Gift of Life, autocast using them</div><div class="d">5-7 days</div></div>
+  <div class="phase"><div class="n">4</div><div><b>Forge</b>: tiers, fusion, influenced creatures and dust, five tier effects</div><div class="d">4-6 days</div></div>
+  <div class="phase"><div class="n">5</div><div><b>Charms</b>: bestiary points, charm board, assignment, save migration v4</div><div class="d">4-5 days</div></div>
+  <div class="phase"><div class="n">6</div><div><b>Polish</b>: gems and vessels, rarity colours, sim balancing, README and SKILLS.md</div><div class="d">5-7 days</div></div>
+  <div class="phase" style="border:0"><div class="n">Σ</div><div><b>Total</b></div><div class="d">35-47 days</div></div>
+  <p class="small">File-by-file changes (fetch script, db.ts, gear.ts, wheel.ts, character.ts, game.ts hooks, autocast, meta migration,
+  hud and ui windows, sim) and every table are in <a href="IMPLEMENTATION.md">IMPLEMENTATION.md</a>.</p>
+</section>
+
+<!-- ======================================================= XV -->
+<section id="ask" class="panel ask">
+  <div class="kicker">XV · The ask</div>
+  <h2>Let me build phase 0 and 1</h2>
+  <p class="lede" style="max-width:720px;margin:0 auto 12px">Two weeks: the data extraction and imbuements on real gear. It's the
+  smallest slice that proves the idea: every drop becomes interesting, one "Not real" line disappears, and the item-instance
+  refactor everything else needs gets done. If the sim and your own runs don't feel better after that, we stop there, and
+  the game still has a cleaner gear system.</p>
+  <p>The game already took Tibia's monsters, spells, loot and formulas. Let's take its endgame too.</p>
+  <div class="sign">Lu Ferreira</div>
+  <div class="small">Ana Lucía "Lu" Ferreira · systems designer · pitch 3 of 3</div>
+</section>
+
+</main>
+</div>
+<footer>Values cite Canary <code>52550d5e3c</code>. Tibia is © CipSoft; this is a design document for a fan project.</footer>
+</body>
+</html>
